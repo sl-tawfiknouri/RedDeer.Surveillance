@@ -30,7 +30,7 @@ namespace Surveillance.Api.DataAccess.Entities
         public string OrderVersionLinkId { get; set; }
         public string OrderGroupId { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime? PlacedDate { get; set; }
+        public DateTime PlacedDate { get; set; }
         public DateTime? BookedDate { get; set; }
         public DateTime? AmendedDate { get; set; }
         public DateTime? RejectedDate { get; set; }

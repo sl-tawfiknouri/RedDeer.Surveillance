@@ -157,8 +157,8 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleBreachQuery();
             query
+                .ArgumentId(5)
                 .RuleBreachNode
-                    .ArgumentId(5)
                     .FieldId()
                     .FieldRuleId()
                     .FieldOrders()

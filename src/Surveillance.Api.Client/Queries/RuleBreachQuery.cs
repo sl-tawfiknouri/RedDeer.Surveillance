@@ -21,6 +21,8 @@ namespace Surveillance.Api.Client.Queries
             RuleBreachNode = new RuleBreachNode(this);
         }
 
+        public RuleBreachQuery ArgumentId(int id) => AddArgument("id", id, this);
+
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
             return await BuildAndPost<Response>("ruleBreaches", RuleBreachNode, request, ctx);

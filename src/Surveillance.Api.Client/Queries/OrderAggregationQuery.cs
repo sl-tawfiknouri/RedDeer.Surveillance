@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace Surveillance.Api.Client.Queries
 {
-    using Response = List<OrderDto>;
+    using Response = List<AggregationDto>;
 
-    public class OrderQuery : OrderArgumentsQuery<OrderQuery, Response>
+    public class Query : Query<Response>
     {
-        public OrderNode OrderNode { get; }
+        public AggregationNode AggregationNode { get; }
 
-        public OrderQuery()
+        public Query()
         {
-            OrderNode = new OrderNode(this);
+            AggregationNode = new AggregationNode(this);
         }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("orders", OrderNode, request, ctx);
+            return await BuildAndPost<Response>("orderAggregation", AggregationNode, request, ctx);
         }
     }
 }

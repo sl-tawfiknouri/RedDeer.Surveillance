@@ -50,6 +50,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string OrderVersion { get; }
         string OrderVersionLinkId { get; }
         string OrderGroupId { get; }
-        DateTime? PlacedDate { get; }
+        DateTime PlacedDate { get; }
     }
 }

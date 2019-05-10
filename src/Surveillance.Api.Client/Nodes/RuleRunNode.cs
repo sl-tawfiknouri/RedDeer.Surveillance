@@ -9,8 +9,6 @@ namespace Surveillance.Api.Client.Nodes
     {
         public RuleRunNode(NodeParent parent) : base(parent) { }
 
-        public RuleRunNode ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds, this);
-
         public RuleRunNode FieldId() => AddField("id", this);
         public RuleRunNode FieldCorrelationId() => AddField("correlationId", this);
         public RuleRunNode FieldRuleDescription() => AddField("ruleDescription", this);

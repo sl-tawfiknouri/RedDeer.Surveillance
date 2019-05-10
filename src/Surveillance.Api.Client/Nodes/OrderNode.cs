@@ -9,13 +9,6 @@ namespace Surveillance.Api.Client.Nodes
     {
         public OrderNode(NodeParent parent) : base(parent) { }
 
-        public OrderNode ArgumentIds(List<int> ids) => AddArgument("ids", ids, this);
-        public OrderNode ArgumentTraderIds(List<string> traderIds) => AddArgument("traderIds", traderIds, this);
-        public OrderNode ArgumentReddeerIds(List<string> reddeerIds) => AddArgument("reddeerIds", reddeerIds, this);
-        public OrderNode ArgumentPlacedDateFrom(DateTime dateTime) => AddArgument("placedDateFrom", dateTime, this);
-        public OrderNode ArgumentPlacedDateTo(DateTime dateTime) => AddArgument("placedDateTo", dateTime, this);
-        public OrderNode ArgumentTake(int count) => AddArgument("take", count, this);
-
         public OrderNode FieldId() => AddField("id", this);
         public OrderNode FieldClientOrderId() => AddField("clientOrderId", this);
         public OrderNode FieldOrderVersion() => AddField("orderVersion", this);

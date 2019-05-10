@@ -9,8 +9,6 @@ namespace Surveillance.Api.Client.Nodes
     {
         public RuleBreachNode(NodeParent parent) : base(parent) {}
 
-        public RuleBreachNode ArgumentId(int id) => AddArgument("id", id, this);
-
         public RuleBreachNode FieldId() => AddField("id", this);
         public RuleBreachNode FieldStartOfPeriodUnderInvestigation() => AddField("startOfRuleBreachPeriod", this);
         public RuleBreachNode FieldEndOfPeriodUnderInvestigation() => AddField("endOfRuleBreachPeriod", this);

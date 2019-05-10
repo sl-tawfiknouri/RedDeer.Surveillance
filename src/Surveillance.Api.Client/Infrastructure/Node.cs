@@ -28,16 +28,7 @@ namespace Surveillance.Api.Client.Infrastructure
             {
                 throw new Exception("Self must be set to this");
             }
-
-            if (value is DateTime dateTime)
-            {
-                _arguments[name] = dateTime.ToString(CultureInfo.GetCultureInfo("en-GB"));
-            }
-            else
-            {
-                _arguments[name] = value;
-            }
-
+            _arguments[name] = value;
             return self;
         }
 
@@ -57,12 +48,12 @@ namespace Surveillance.Api.Client.Infrastructure
             return node;
         }
 
-        internal string Build(string name)
+        internal string Build(string name, Dictionary<string, object> additionalArguments = null)
         {
-            var arguments = new List<string>();
-            foreach (var argument in _arguments)
+            var arguments = ExpandArguments(_arguments);
+            if (additionalArguments != null)
             {
-                arguments.Add($"{argument.Key}: {JsonConvert.SerializeObject(argument.Value)}");
+                arguments.AddRange(ExpandArguments(additionalArguments));
             }
 
             var fields = new List<string>();
@@ -88,6 +79,21 @@ namespace Surveillance.Api.Client.Infrastructure
                 s += " { " + string.Join(", ", fields) + " }";
             }
             return s;
+        }
+
+        private List<string> ExpandArguments(Dictionary<string, object> argumentsDictionary)
+        {
+            var arguments = new List<string>();
+            foreach (var argument in argumentsDictionary)
+            {
+                var value = argument.Value;
+                if (argument.Value is DateTime dateTime)
+                {
+                    value = dateTime.ToString(CultureInfo.GetCultureInfo("en-GB"));
+                }
+                arguments.Add($"{argument.Key}: {JsonConvert.SerializeObject(value)}");
+            }
+            return arguments;
         }
     }
 }

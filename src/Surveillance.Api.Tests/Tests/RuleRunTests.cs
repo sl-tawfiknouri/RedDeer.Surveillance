@@ -129,8 +129,8 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleRunQuery();
             query
+                .ArgumentCorrelationIds(new List<string> { "abc", "def" })
                 .RuleRunNode
-                    .ArgumentCorrelationIds(new List<string> { "abc", "def" })
                     .FieldId()
                     .FieldCorrelationId();
 

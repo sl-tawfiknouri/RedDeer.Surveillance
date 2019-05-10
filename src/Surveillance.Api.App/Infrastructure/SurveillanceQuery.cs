@@ -17,6 +17,7 @@ using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
 using System;
 using System.Globalization;
+using Surveillance.Api.App.Types.Aggregation;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -188,49 +189,25 @@ namespace Surveillance.Api.App.Infrastructure
                     ),
                 resolve: context =>
                 {
-                    var ids = context.GetArgument<List<int>>("ids");
-                    var take = context.GetArgument<int?>("take");
-                    var traderIds = context.GetArgument<List<string>>("traderIds");
-                    var reddeerIds = context.GetArgument<List<string>>("reddeerIds");
-                    var placedDateFrom = context.GetArgument<string>("placedDateFrom");
-                    var placedDateTo = context.GetArgument<string>("placedDateTo");
-
-                    Func<IQueryable<IOrder>, IQueryable<IOrder>> filter = (i) =>
-                    {
-                        if (ids != null)
-                        {
-                            i = i.Where(x => ids.Contains(x.Id));
-                        }
-                        if (traderIds != null)
-                        {
-                            i = i.Where(x => traderIds.Contains(x.TraderId));
-                        }
-                        if (reddeerIds != null)
-                        {
-                            i = i.Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
-                        }
-                        if (placedDateFrom != null)
-                        {
-                            var dateTime = DateTime.Parse(placedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
-                            i = i.Where(x => x.PlacedDate >= dateTime);
-                        }
-                        if (placedDateTo != null)
-                        {
-                            var dateTime = DateTime.Parse(placedDateTo, CultureInfo.GetCultureInfo("en-GB"));
-                            i = i.Where(x => x.PlacedDate <= dateTime);
-                        }
-
-                        i = i.OrderByDescending(x => x.PlacedDate);
-
-                        if (take != null)
-                        {
-                            i = i.Take(take.Value);
-                        }
-
-                        return i;
-                    };
-
+                    var filter = OrderFilter(context);
                     return orderRepository.Query(filter);
+                });
+
+            Field<ListGraphType<AggregationGraphType>>(
+                "orderAggregation",
+                description: "Aggregation of orders uploaded by client",
+                arguments: new QueryArguments(
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
+                    new QueryArgument<IntGraphType> { Name = "take" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateTo" }
+                    ),
+                resolve: context =>
+                {
+                    var filter = OrderFilter(context);
+                    return orderRepository.AggregationQuery(filter);
                 });
 
             Field<ListGraphType<RulesTypeEnumGraphType>>(
@@ -253,6 +230,53 @@ namespace Surveillance.Api.App.Infrastructure
                 "A primitive perspective on the asset class. To see further details use the CFI code",
                 resolve: context => InstrumentTypes.None.GetEnumPermutations());
 
+        }
+
+        private Func<IQueryable<IOrder>, IQueryable<IOrder>> OrderFilter(ResolveFieldContext<object> context)
+        {
+            var ids = context.GetArgument<List<int>>("ids");
+            var take = context.GetArgument<int?>("take");
+            var traderIds = context.GetArgument<List<string>>("traderIds");
+            var reddeerIds = context.GetArgument<List<string>>("reddeerIds");
+            var placedDateFrom = context.GetArgument<string>("placedDateFrom");
+            var placedDateTo = context.GetArgument<string>("placedDateTo");
+
+            Func<IQueryable<IOrder>, IQueryable<IOrder>> filter = (i) =>
+            {
+                if (ids != null)
+                {
+                    i = i.Where(x => ids.Contains(x.Id));
+                }
+                if (traderIds != null)
+                {
+                    i = i.Where(x => traderIds.Contains(x.TraderId));
+                }
+                if (reddeerIds != null)
+                {
+                    i = i.Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
+                }
+                if (placedDateFrom != null)
+                {
+                    var dateTime = DateTime.Parse(placedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
+                    i = i.Where(x => x.PlacedDate >= dateTime);
+                }
+                if (placedDateTo != null)
+                {
+                    var dateTime = DateTime.Parse(placedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                    i = i.Where(x => x.PlacedDate <= dateTime);
+                }
+
+                i = i.OrderByDescending(x => x.PlacedDate);
+
+                if (take != null)
+                {
+                    i = i.Take(take.Value);
+                }
+
+                return i;
+            };
+
+            return filter;
         }
     }
 }

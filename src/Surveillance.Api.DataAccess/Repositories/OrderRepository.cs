@@ -381,5 +381,23 @@ namespace Surveillance.Api.DataAccess.Repositories
                 return orders;
             }
         }
+
+        public async Task<IEnumerable<IAggregation>> AggregationQuery(Func<IQueryable<IOrder>, IQueryable<IOrder>> query)
+        {
+            using (var dbContext = _factory.Build())
+            {
+                var aggregations = await query(dbContext.Orders)
+                    .GroupBy(x => x.PlacedDate)
+                    .Select(x => new Aggregation
+                    {
+                        Key= x.Key.ToString("yyyy-MM-dd"),
+                        Count = x.Count()
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return aggregations;
+            }
+        }
     }
 }

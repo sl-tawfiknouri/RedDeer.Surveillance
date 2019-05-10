@@ -219,8 +219,8 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
+                .ArgumentIds(new List<int> { 4, 5 })
                 .OrderNode
-                    .ArgumentIds(new List<int> { 4, 5 })
                     .FieldId();
 
             // act
@@ -256,8 +256,9 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
+                .ArgumentTake(2)
+                .Self<OrderQuery>()
                 .OrderNode
-                    .ArgumentTake(2)
                     .FieldId();
 
             // act
@@ -296,8 +297,9 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
+                .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                .Self<OrderQuery>()
                 .OrderNode
-                    .ArgumentTraderIds(new List<string> { "vic", "bob" })
                     .FieldId();
 
             // act
@@ -363,8 +365,9 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
+                .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
+                .Self<OrderQuery>()
                 .OrderNode
-                    .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
                     .FieldId();
 
             // act
@@ -406,9 +409,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
+                .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
+                .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
+                .Self<OrderQuery>()
                 .OrderNode
-                    .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
-                    .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
                     .FieldId();
 
             // act

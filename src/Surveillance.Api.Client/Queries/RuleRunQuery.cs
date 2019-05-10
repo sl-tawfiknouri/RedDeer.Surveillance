@@ -20,6 +20,8 @@ namespace Surveillance.Api.Client.Queries
             RuleRunNode = new RuleRunNode(this);
         }
 
+        public RuleRunQuery ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds, this);
+
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
             return await BuildAndPost<Response>("ruleRuns", RuleRunNode, request, ctx);

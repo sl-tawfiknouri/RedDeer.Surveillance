@@ -16,7 +16,7 @@ Scenario: Empty Universe yields no alerts
          When I run the ramping rule
 		 Then I will have 0 ramping alerts
 
-Scenario: Ramping with increasing prices matching increasing order fill values raises 2 alerts
+Scenario: Ramping with increasing prices matching increasing order fill values raises four alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
          | SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
          | Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
@@ -35,7 +35,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		 When I run the ramping rule
 		 Then I will have 4 ramping alerts
 
-Scenario: Ramping with increasing prices matching increasing order fill values raises 7 alerts
+Scenario: Ramping with increasing prices matching increasing order fill values raises nine alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
          | SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
          | Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
@@ -63,7 +63,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		 When I run the ramping rule
 		 Then I will have 9 ramping alerts
 
-Scenario: Ramping with increasing prices matching increasing order fill values raises 8 alerts
+Scenario: Ramping with increasing prices matching increasing order fill values but with mixed sides raises one alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
@@ -91,41 +91,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 1 ramping alerts
 
-Scenario: Ramping with increasing prices matching increasing order fill values raises 9 alerts
-		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
-		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-		| Barclays     | 11      | 01/01/2019 10:50:00 | 01/01/2019 10:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
-		| Barclays     | 12      | 01/01/2019 10:51:00 | 01/01/2019 10:51:00   | Market | Buy       | GBX      |            | 101              | 500           | 500          |
-		| Barclays     | 13      | 01/01/2019 10:52:00 | 01/01/2019 10:52:00   | Market | Buy       | GBX      |            | 102              | 500           | 500          |
-		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
-		| Barclays     | 2       | 01/01/2019 13:51:00 | 01/01/2019 13:51:00   | Market | Sell      | GBX      |            | 101              | 500           | 500          |
-		| Barclays     | 3       | 01/01/2019 13:52:00 | 01/01/2019 13:52:00   | Market | Buy       | GBX      |            | 102              | 500           | 500          |
-		| Barclays     | 4       | 01/01/2019 13:53:00 | 01/01/2019 13:53:00   | Market | Sell      | GBX      |            | 103              | 500           | 500          |
-		| Barclays     | 5       | 01/01/2019 13:54:00 | 01/01/2019 13:54:00   | Market | Buy       | GBX      |            | 104              | 500           | 500          |
-		| Barclays     | 6       | 01/01/2019 13:55:00 | 01/01/2019 13:55:00   | Market | Sell      | GBX      |            | 105              | 500           | 500          |
-		| Barclays     | 7       | 01/01/2019 13:56:00 | 01/01/2019 13:56:00   | Market | Buy       | GBX      |            | 106              | 500           | 500          |
-		| Barclays     | 8       | 01/01/2019 13:57:00 | 01/01/2019 13:57:00   | Market | Sell      | GBX      |            | 107              | 500           | 500          |
-		| Barclays     | 9       | 01/01/2019 13:58:00 | 01/01/2019 13:58:00   | Market | Buy       | GBX      |            | 108              | 500           | 500          |
-		| Barclays     | 10      | 01/01/2019 13:59:00 | 01/01/2019 13:59:00   | Market | Sell      | GBX      |            | 109              | 500           | 500          |
-		And With the intraday market data :
-		| SecurityName | Epoch			      | Bid | Ask | Price	 | Currency | Volume |
-		| Barclays     | 01/01/2019  10:50:00 | 1	  | 20  | 100    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  10:51:00 | 1	  | 20  | 101    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  10:52:00 | 1	  | 20  | 102    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:50:00 | 1	  | 20  | 100    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:51:00 | 1	  | 20  | 101    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:52:00 | 1	  | 20  | 102    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:53:00 | 1	  | 20  | 103    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:54:00 | 1	  | 20  | 104    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:55:00 | 1	  | 20  | 104    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:56:00 | 1	  | 20  | 103    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:57:00 | 1	  | 20  | 102    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 101    | GBX      | 5000  |
-		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 102    | GBX      | 5000  |
-		When I run the ramping rule
-		Then I will have 3 ramping alerts
-
-Scenario: Ramping with increasing prices matching increasing order fill values raises 10 alerts
+Scenario: Ramping with increasing prices matching increasing order fill values raises three alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 11      | 01/01/2019 10:50:00 | 01/01/2019 10:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
@@ -162,7 +128,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		# ACCEPTANCE TEST SECTION 
 
 		# ***** B U Y S *****
-	Scenario: Ramping buys with increasing prices yields 10 alerts
+	Scenario: Ramping buys with increasing prices yields nine alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy       | GBX      |            | 100              | 500           | 500          |
@@ -190,7 +156,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 9 ramping alerts
 
-	Scenario: Ramping buys with stagnant prices yields 10 alerts
+	Scenario: Ramping buys with stagnant prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy        | GBX      |            | 100              | 500           | 500          |
@@ -218,7 +184,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping buys with decreasing prices yields 0 alerts
+	Scenario: Ramping buys with decreasing prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy        | GBX      |            | 100              | 500           | 500          |
@@ -246,7 +212,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping buys with oscilliating prices yields 10 alerts
+	Scenario: Ramping buys with oscilliating prices yields four alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Buy        | GBX      |            | 100              | 500           | 500          |
@@ -275,7 +241,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		Then I will have 4 ramping alerts
 
 		# ***** S E L L S *****
-	Scenario: Ramping sells with increasing prices yields 10 alerts
+	Scenario: Ramping sells with increasing prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Sell       | GBX      |            | 100              | 500           | 500          |
@@ -303,7 +269,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping sells with stagnant prices yields 10 alerts
+	Scenario: Ramping sells with stagnant prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Sell        | GBX      |            | 100              | 500           | 500          |
@@ -331,7 +297,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping sells with decreasing prices yields 0 alerts
+	Scenario: Ramping sells with decreasing prices yields nine alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Sell        | GBX      |            | 100              | 500           | 500          |
@@ -359,7 +325,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 9 ramping alerts
 
-	Scenario: Ramping sells with oscilliating prices yields 10 alerts
+	Scenario: Ramping sells with oscilliating prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Sell       | GBX      |            | 100              | 500           | 500          |
@@ -391,7 +357,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 
 		# ***** C O V E R S *****
 
-			Scenario: Ramping covers with increasing prices yields 10 alerts
+			Scenario: Ramping covers with increasing prices yields nine alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Cover      | GBX      |            | 100              | 500           | 500          |
@@ -419,7 +385,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 9 ramping alerts
 
-	Scenario: Ramping covers with stagnant prices yields 10 alerts
+	Scenario: Ramping covers with stagnant prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Cover      | GBX      |            | 100              | 500           | 500          |
@@ -447,7 +413,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping covers with decreasing prices yields 0 alerts
+	Scenario: Ramping covers with decreasing prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Cover      | GBX      |            | 100              | 500           | 500          |
@@ -475,7 +441,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping covers with oscilliating prices yields 10 alerts
+	Scenario: Ramping covers with oscilliating prices yields four alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Cover      | GBX      |            | 100              | 500           | 500          |
@@ -505,8 +471,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 
 
 		# ***** S H O R T S *****
-
-	Scenario: Ramping shorts with increasing prices yields 10 alerts
+	Scenario: Ramping shorts with increasing prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Short       | GBX      |            | 100              | 500           | 500          |
@@ -534,7 +499,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping shorts with stagnant prices yields 10 alerts
+	Scenario: Ramping shorts with stagnant prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Short        | GBX      |            | 100              | 500           | 500          |
@@ -562,7 +527,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 0 ramping alerts
 
-	Scenario: Ramping shorts with decreasing prices yields 0 alerts
+	Scenario: Ramping shorts with decreasing prices yields nine alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Short        | GBX      |            | 100              | 500           | 500          |
@@ -590,7 +555,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		When I run the ramping rule
 		Then I will have 9 ramping alerts
 
-	Scenario: Ramping shorts with oscilliating prices yields 10 alerts
+	Scenario: Ramping shorts with oscilliating prices yields zero alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
 		| SecurityName | OrderId | PlacedDate			| FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 		| Barclays     | 1       | 01/01/2019 13:50:00 | 01/01/2019 13:50:00   | Market | Short       | GBX      |            | 100              | 500           | 500          |

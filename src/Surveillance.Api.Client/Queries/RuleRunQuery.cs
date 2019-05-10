@@ -11,7 +11,7 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<RuleRunDto>;
 
-    public class RuleRunQuery : Query<Response>
+    public class RuleRunQuery : Query<RuleRunQuery, Response>
     {
         public RuleRunNode RuleRunNode { get; }
 
@@ -20,7 +20,7 @@ namespace Surveillance.Api.Client.Queries
             RuleRunNode = new RuleRunNode(this);
         }
 
-        public RuleRunQuery ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds, this);
+        public RuleRunQuery ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds);
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {

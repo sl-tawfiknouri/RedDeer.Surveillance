@@ -38,7 +38,7 @@ namespace Surveillance.Api.Tests.Tests
 
             await _dbContext.SaveChangesAsync();
 
-            var query = new Query();
+            var query = new OrderAggregationQuery();
             query
                 .AggregationNode
                     .FieldKey()

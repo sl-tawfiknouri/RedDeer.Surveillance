@@ -12,7 +12,7 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<RuleBreachDto>;
 
-    public class RuleBreachQuery : Query<Response>
+    public class RuleBreachQuery : Query<RuleBreachQuery, Response>
     {
         public RuleBreachNode RuleBreachNode { get; }
 
@@ -21,7 +21,7 @@ namespace Surveillance.Api.Client.Queries
             RuleBreachNode = new RuleBreachNode(this);
         }
 
-        public RuleBreachQuery ArgumentId(int id) => AddArgument("id", id, this);
+        public RuleBreachQuery ArgumentId(int id) => AddArgument("id", id);
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {

@@ -11,18 +11,18 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<AggregationDto>;
 
-    public class Query : Query<Response>
+    public class OrderAggregationQuery : Query<OrderAggregationQuery, Response>
     {
         public AggregationNode AggregationNode { get; }
 
-        public Query()
+        public OrderAggregationQuery()
         {
             AggregationNode = new AggregationNode(this);
         }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("orderAggregation", AggregationNode, request, ctx);
+            return await BuildAndPost<Response>("orderAggregation", AggregationNode as Node<AggregationNode>, request, ctx);
         }
     }
 }

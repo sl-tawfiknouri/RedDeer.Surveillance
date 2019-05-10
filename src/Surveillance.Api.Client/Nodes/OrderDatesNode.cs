@@ -5,16 +5,16 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Nodes
 {
-    public class OrderDatesNode : Node
+    public class OrderDatesNode : Node<OrderDatesNode>
     {
         public OrderDatesNode(NodeParent parent) : base(parent) { }
 
-        public OrderDatesNode FieldAmended() => AddField("amendedDate", this);
-        public OrderDatesNode FieldBooked() => AddField("bookedDate", this);
-        public OrderDatesNode FieldCancelled() => AddField("cancelledDate", this);
-        public OrderDatesNode FieldFilled() => AddField("filledDate", this);
-        public OrderDatesNode FieldPlaced() => AddField("placedDate", this);
-        public OrderDatesNode FieldRejected() => AddField("rejectedDate", this);
-        public OrderDatesNode FieldStatusChanged() => AddField("statusChangedDate", this);
+        public OrderDatesNode FieldAmended() => AddField("amendedDate");
+        public OrderDatesNode FieldBooked() => AddField("bookedDate");
+        public OrderDatesNode FieldCancelled() => AddField("cancelledDate");
+        public OrderDatesNode FieldFilled() => AddField("filledDate");
+        public OrderDatesNode FieldPlaced() => AddField("placedDate");
+        public OrderDatesNode FieldRejected() => AddField("rejectedDate");
+        public OrderDatesNode FieldStatusChanged() => AddField("statusChangedDate");
     }
 }

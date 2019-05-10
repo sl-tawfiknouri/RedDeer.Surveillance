@@ -257,7 +257,6 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .ArgumentTake(2)
-                .Self<OrderQuery>()
                 .OrderNode
                     .FieldId();
 
@@ -298,7 +297,6 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .ArgumentTraderIds(new List<string> { "vic", "bob" })
-                .Self<OrderQuery>()
                 .OrderNode
                     .FieldId();
 
@@ -366,7 +364,6 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
-                .Self<OrderQuery>()
                 .OrderNode
                     .FieldId();
 
@@ -411,7 +408,6 @@ namespace Surveillance.Api.Tests.Tests
             query
                 .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
                 .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
-                .Self<OrderQuery>()
                 .OrderNode
                     .FieldId();
 

@@ -17,7 +17,7 @@ namespace Surveillance.Api.Client
             _request = new Request(url, bearer, httpMessageHandler);
         }
 
-        public async Task<R> QueryAsync<R>(Query<R> query, CancellationToken ctx)
+        public async Task<R> QueryAsync<Z, R>(Query<Z, R> query, CancellationToken ctx) where Z : class
         {
             return await query.HandleAsync(_request, ctx);
         }

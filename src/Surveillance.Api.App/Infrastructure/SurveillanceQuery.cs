@@ -15,6 +15,8 @@ using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -176,13 +178,45 @@ namespace Surveillance.Api.App.Infrastructure
             Field<ListGraphType<OrderGraphType>>(
                 "orders",
                 description: "Orders uploaded by client",
-                arguments: new QueryArguments(new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" }),
+                arguments: new QueryArguments(
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
+                    new QueryArgument<IntGraphType> { Name = "take" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" }
+                    ),
                 resolve: context =>
                 {
                     var ids = context.GetArgument<List<int>>("ids");
+                    var take = context.GetArgument<int?>("take");
+                    var traderIds = context.GetArgument<List<string>>("traderIds");
+                    var reddeerIds = context.GetArgument<List<string>>("reddeerIds");
 
-                    IQueryable<IOrder> filter(IQueryable<IOrder> i)
-                        => i.Where(x => ids == null || ids.Contains(x.Id));
+                    Func<IQueryable<IOrder>, IQueryable<IOrder>> filter = (i) =>
+                    {
+                        if (ids != null)
+                        {
+                            i = i.Where(x => ids.Contains(x.Id));
+                        }
+                        if (traderIds != null)
+                        {
+                            i = i.Where(x => traderIds.Contains(x.TraderId));
+                        }
+                        if (reddeerIds != null)
+                        {
+                            i = (i as DbSet<IOrder>)
+                                .Include(x => x.FinancialInstrument)
+                                .Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
+                        }
+
+                        i = i.OrderByDescending(x => x.PlacedDate);
+
+                        if (take != null)
+                        {
+                            i = i.Take(take.Value);
+                        }
+
+                        return i;
+                    };
 
                     return orderRepository.Query(filter);
                 });

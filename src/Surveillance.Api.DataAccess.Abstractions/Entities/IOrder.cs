@@ -39,6 +39,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         /// </summary>
         OrderTypes OrderTypes { get; }
         int SecurityId { get;  }
+        IFinancialInstrument FinancialInstrument { get; }
         string SettlementCurrency { get;  }
         ITrader Trader { get; }
         string TraderId { get; }
@@ -49,5 +50,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string OrderVersion { get; }
         string OrderVersionLinkId { get; }
         string OrderGroupId { get; }
+        DateTime? PlacedDate { get; }
     }
 }

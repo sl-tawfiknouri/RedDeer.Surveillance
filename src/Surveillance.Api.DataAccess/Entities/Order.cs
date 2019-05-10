@@ -21,6 +21,9 @@ namespace Surveillance.Api.DataAccess.Entities
 
         public int SecurityId { get; set; }
 
+        [ForeignKey("SecurityId")]
+        public FinancialInstrument FinancialInstrument { get; }
+
         public string ClientOrderId { get; set; }
 
         public string OrderVersion { get; set; }
@@ -195,6 +198,10 @@ namespace Surveillance.Api.DataAccess.Entities
         int IOrder.SecurityId
         {
             get => SecurityId;
+        }
+        IFinancialInstrument IOrder.FinancialInstrument
+        {
+            get => FinancialInstrument;
         }
 
         string IOrder.SettlementCurrency

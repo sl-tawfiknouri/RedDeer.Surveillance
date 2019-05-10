@@ -195,5 +195,186 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(instrument.IssuerIdentifier, Is.EqualTo("issuer identifier"));
             Assert.That(instrument.ReddeerId, Is.EqualTo("reddeer id"));
         }
+
+        [Test]
+        public async Task CanRequest_Orders_ById_OrderedByPlacedDateDesc()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 6
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .OrderNode
+                    .ArgumentIds(new List<int> { 4, 5 })
+                    .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(5));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task CanRequest_Orders_WithTop()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 09, 07, 50, 05, DateTimeKind.Utc)
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .OrderNode
+                    .ArgumentTake(2)
+                    .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(5));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task CanRequest_Orders_ByTraderId()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "bob"
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "sam"
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "vic"
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .OrderNode
+                    .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                    .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(6));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task CanRequest_Orders_ByReddeerId()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                SecurityId = 9
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc),
+                SecurityId = 10
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc),
+                SecurityId = 10
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 7,
+                PlacedDate = new DateTime(2019, 05, 12, 06, 50, 05, DateTimeKind.Utc),
+                SecurityId = 11
+            });
+
+            _dbContext.DbDFinancialInstruments.Add(new FinancialInstrument
+            {
+                Id = 9,
+                ReddeerId = "abc"
+            });
+            _dbContext.DbDFinancialInstruments.Add(new FinancialInstrument
+            {
+                Id = 10,
+                ReddeerId = "xyz"
+            });
+            _dbContext.DbDFinancialInstruments.Add(new FinancialInstrument
+            {
+                Id = 11,
+                ReddeerId = "qwe"
+            });
+            _dbContext.DbDFinancialInstruments.Add(new FinancialInstrument
+            {
+                Id = 12,
+                ReddeerId = "iop"
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .OrderNode
+                    .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
+                    .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(3));
+            Assert.That(orders[0].Id, Is.EqualTo(6));
+            Assert.That(orders[1].Id, Is.EqualTo(5));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
     }
 }

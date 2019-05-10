@@ -376,5 +376,48 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(orders[1].Id, Is.EqualTo(5));
             Assert.That(orders[2].Id, Is.EqualTo(4));
         }
+
+        [Test]
+        public async Task CanRequest_Orders_WithDateRange()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc)
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 7,
+                PlacedDate = new DateTime(2019, 05, 13, 07, 50, 05, DateTimeKind.Utc)
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .OrderNode
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
+                    .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(6));
+            Assert.That(orders[1].Id, Is.EqualTo(5));
+        }
     }
 }

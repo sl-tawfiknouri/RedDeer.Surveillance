@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Surveillance.Api.Client.Infrastructure
@@ -27,7 +28,16 @@ namespace Surveillance.Api.Client.Infrastructure
             {
                 throw new Exception("Self must be set to this");
             }
-            _arguments[name] = value;
+
+            if (value is DateTime dateTime)
+            {
+                _arguments[name] = dateTime.ToString(CultureInfo.GetCultureInfo("en-GB"));
+            }
+            else
+            {
+                _arguments[name] = value;
+            }
+
             return self;
         }
 

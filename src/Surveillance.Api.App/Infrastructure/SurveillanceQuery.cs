@@ -16,6 +16,7 @@ using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
 using System;
+using System.Globalization;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -181,7 +182,9 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<IntGraphType> { Name = "take" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
-                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" }
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateTo" }
                     ),
                 resolve: context =>
                 {
@@ -189,6 +192,8 @@ namespace Surveillance.Api.App.Infrastructure
                     var take = context.GetArgument<int?>("take");
                     var traderIds = context.GetArgument<List<string>>("traderIds");
                     var reddeerIds = context.GetArgument<List<string>>("reddeerIds");
+                    var placedDateFrom = context.GetArgument<string>("placedDateFrom");
+                    var placedDateTo = context.GetArgument<string>("placedDateTo");
 
                     Func<IQueryable<IOrder>, IQueryable<IOrder>> filter = (i) =>
                     {
@@ -203,6 +208,16 @@ namespace Surveillance.Api.App.Infrastructure
                         if (reddeerIds != null)
                         {
                             i = i.Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
+                        }
+                        if (placedDateFrom != null)
+                        {
+                            var dateTime = DateTime.Parse(placedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
+                            i = i.Where(x => x.PlacedDate >= dateTime);
+                        }
+                        if (placedDateTo != null)
+                        {
+                            var dateTime = DateTime.Parse(placedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                            i = i.Where(x => x.PlacedDate <= dateTime);
                         }
 
                         i = i.OrderByDescending(x => x.PlacedDate);

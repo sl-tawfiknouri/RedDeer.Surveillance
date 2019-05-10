@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            if (!ExceedsTradingFrequencyThreshold())
+            if (!ExceedsTradingFrequencyThreshold(tradeWindow))
             {
                 // LOG THEN EXIT
                 _logger.LogInformation($"Trading Frequency of {_rampingParameters.ThresholdOrdersExecutedInWindow} was not exceeded. Returning.");
@@ -201,14 +201,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             return rampingPercentage;
         }
 
-        private bool ExceedsTradingFrequencyThreshold()
+        private bool ExceedsTradingFrequencyThreshold(Stack<Order> orders)
         {
             if (_rampingParameters?.ThresholdOrdersExecutedInWindow == null)
             {
                 return true;
             }
 
-            return true;
+            if (orders == null
+                || !orders.Any())
+            {
+                return false;
+            }
+
+            return orders.Count >= _rampingParameters.ThresholdOrdersExecutedInWindow.GetValueOrDefault(0);
         }
 
         private bool ExceedsTradingVolumeInWindowThreshold()

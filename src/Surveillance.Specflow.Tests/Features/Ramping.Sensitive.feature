@@ -8,7 +8,7 @@ Feature: Ramping Sensitive Parameters
 Background:
 			Given I have the ramping rule parameter values
 			| WindowHours | AutoCorrelationCoefficient | ThresholdOrdersExecutedInWindow | ThresholdVolumePercentageWindow | 
-			| 1           | 0.3                        |                                 |                                 |
+			| 1           | 0.7                        | 3                               |                                 |
 		
 Scenario: Empty Universe yields no alerts
 		 Given I have the orders for a universe from 01/01/2018 to 01/05/2018 :
@@ -33,7 +33,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:54:00 | 1	  | 20  | 104    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:55:00 | 1	  | 20  | 105    | GBX      | 5000  |
 		 When I run the ramping rule
-		 Then I will have 4 ramping alerts
+		 Then I will have 2 ramping alerts
 
 Scenario: Ramping with increasing prices matching increasing order fill values raises 7 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -61,7 +61,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 108    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 109    | GBX      | 5000  |
 		 When I run the ramping rule
-		 Then I will have 9 ramping alerts
+		 Then I will have 7 ramping alerts
 
 Scenario: Ramping with increasing prices matching increasing order fill values raises 8 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -89,7 +89,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 101    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 102    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 1 ramping alerts
+		Then I will have 0 ramping alerts
 
 Scenario: Ramping with increasing prices matching increasing order fill values raises 9 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -123,7 +123,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 101    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 102    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 3 ramping alerts
+		Then I will have 0 ramping alerts
 
 Scenario: Ramping with increasing prices matching increasing order fill values raises 10 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -157,7 +157,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 101    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 102    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 3 ramping alerts
+		Then I will have 0 ramping alerts
 
 		# ACCEPTANCE TEST SECTION 
 
@@ -188,7 +188,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 108    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 109    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 9 ramping alerts
+		Then I will have 7 ramping alerts
 
 	Scenario: Ramping buys with stagnant prices yields 10 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -272,7 +272,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 99     | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 100    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 4 ramping alerts
+		Then I will have 0 ramping alerts
 
 		# ***** S E L L S *****
 	Scenario: Ramping sells with increasing prices yields 10 alerts
@@ -357,7 +357,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 92     | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 91     | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 9 ramping alerts
+		Then I will have 7 ramping alerts
 
 	Scenario: Ramping sells with oscilliating prices yields 10 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -417,7 +417,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 108    | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 109    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 9 ramping alerts
+		Then I will have 7 ramping alerts
 
 	Scenario: Ramping covers with stagnant prices yields 10 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
@@ -501,7 +501,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 99     | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 100    | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 4 ramping alerts
+		Then I will have 0 ramping alerts
 
 
 		# ***** S H O R T S *****
@@ -588,7 +588,7 @@ Scenario: Ramping with increasing prices matching increasing order fill values r
 		| Barclays     | 01/01/2019  13:58:00 | 1	  | 20  | 92     | GBX      | 5000  |
 		| Barclays     | 01/01/2019  13:59:00 | 1	  | 20  | 91     | GBX      | 5000  |
 		When I run the ramping rule
-		Then I will have 9 ramping alerts
+		Then I will have 7 ramping alerts
 
 	Scenario: Ramping shorts with oscilliating prices yields 10 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :

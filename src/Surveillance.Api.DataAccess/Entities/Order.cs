@@ -22,7 +22,7 @@ namespace Surveillance.Api.DataAccess.Entities
         public int SecurityId { get; set; }
 
         [ForeignKey("SecurityId")]
-        public FinancialInstrument FinancialInstrument { get; }
+        public FinancialInstrument FinancialInstrument { get; set; }
 
         public string ClientOrderId { get; set; }
 

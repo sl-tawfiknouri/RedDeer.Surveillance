@@ -374,7 +374,7 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(orders, Has.Count.EqualTo(3));
             Assert.That(orders[0].Id, Is.EqualTo(6));
             Assert.That(orders[1].Id, Is.EqualTo(5));
-            Assert.That(orders[1].Id, Is.EqualTo(4));
+            Assert.That(orders[2].Id, Is.EqualTo(4));
         }
     }
 }

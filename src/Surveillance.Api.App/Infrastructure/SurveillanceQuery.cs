@@ -16,7 +16,6 @@ using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
 using System;
-using Microsoft.EntityFrameworkCore;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -203,9 +202,7 @@ namespace Surveillance.Api.App.Infrastructure
                         }
                         if (reddeerIds != null)
                         {
-                            i = (i as DbSet<IOrder>)
-                                .Include(x => x.FinancialInstrument)
-                                .Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
+                            i = i.Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
                         }
 
                         i = i.OrderByDescending(x => x.PlacedDate);

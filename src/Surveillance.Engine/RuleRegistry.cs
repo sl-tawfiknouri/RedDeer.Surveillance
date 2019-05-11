@@ -76,6 +76,8 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Lazy;
+using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
@@ -231,6 +233,7 @@ namespace Surveillance.Engine.Rules
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
 
+            For<ILazyScheduledExecutioner>().Use<LazyScheduledExecutioner>();
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();

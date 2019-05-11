@@ -48,6 +48,18 @@ namespace Surveillance.Engine.Rules.Universe
         /// </summary>
         public async Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
+            return await Summon(execution, opCtx, true, true);
+        }
+
+        /// <summary>
+        /// Crack the cosmic egg and unscramble your reality
+        /// </summary>
+        public async Task<IUniverse> Summon(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx,
+            bool includeGenesis,
+            bool includeEschaton)
+        {
             if (execution == null)
             {
                 _logger.LogError($"had a null execution or rule parameters and therefore null data sets for {opCtx.Id} operation context");
@@ -71,7 +83,7 @@ namespace Surveillance.Engine.Rules.Universe
             _logger.LogInformation($"completed fetching inter day for equities");
 
             _logger.LogInformation($"fetching universe event data");
-            var universe = await UniverseEvents(execution, projectedTradesAllocations, intradayEquityBars, interDayEquityBars);
+            var universe = await UniverseEvents(execution, projectedTradesAllocations, intradayEquityBars, interDayEquityBars, includeGenesis, includeEschaton);
             _logger.LogInformation($"completed fetching universe event data");
 
             _logger.LogInformation($"returning a new universe");
@@ -121,7 +133,9 @@ namespace Surveillance.Engine.Rules.Universe
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
             IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
-            IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates)
+            IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
+            bool includeGenesis,
+            bool includeEschaton)
         {
             var tradeSubmittedEvents =
                 trades
@@ -152,8 +166,6 @@ namespace Surveillance.Engine.Rules.Universe
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime);
 
-            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
-
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
             intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
@@ -162,7 +174,14 @@ namespace Surveillance.Engine.Rules.Universe
             intraUniversalHistoryEvents.AddRange(marketEvents);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe, _universeSorter).ToList();
 
-            var universeEvents = new List<IUniverseEvent> {genesis};
+            var universeEvents = new List<IUniverseEvent>();
+
+            if (includeGenesis)
+            {
+                var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
+                universeEvents.Add(genesis);
+            }
+
             universeEvents.AddRange(orderedIntraUniversalHistory);
 
             var youngestEventInUniverse = orderedIntraUniversalHistory.Any()
@@ -171,8 +190,12 @@ namespace Surveillance.Engine.Rules.Universe
             var eschatonDate = youngestEventInUniverse > execution.TimeSeriesTermination.DateTime
                 ? youngestEventInUniverse
                 : execution.TimeSeriesTermination.DateTime;
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, eschatonDate, execution);
-            universeEvents.Add(eschaton);
+
+            if (includeEschaton)
+            {
+                var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, eschatonDate, execution);
+                universeEvents.Add(eschaton);
+            }
 
             return universeEvents;
         }

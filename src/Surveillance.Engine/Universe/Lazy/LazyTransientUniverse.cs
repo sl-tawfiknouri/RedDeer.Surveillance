@@ -5,8 +5,9 @@ using System.Linq;
 using Domain.Surveillance.Scheduling;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 
-namespace Surveillance.Engine.Rules.Universe
+namespace Surveillance.Engine.Rules.Universe.Lazy
 {
     /// <summary>
     /// Both transient and lazy
@@ -14,24 +15,29 @@ namespace Surveillance.Engine.Rules.Universe
     /// Does not keep long lasting references to events
     /// Therefore this class should not be used in a multi threaded context
     /// Or called multiple times - populate another collection with the results
-    /// if you wish to cache them but beware of memory consumption
+    /// If you wish to cache them but beware of memory consumption
     /// </summary>
     public class LazyTransientUniverse : IEnumerable<IUniverseEvent>
     {
         private bool _hasEschatonOccurred = false;
         private bool _eschatonInBuffer = false;
+        private bool _hasFetchedExecutions = false;
 
-        private readonly ISystemProcessOperationContext _opCtx;
         private readonly ScheduledExecution _scheduledExecution;
-        private readonly IUniverseBuilder _universeUniverseBuilder;
+        private readonly ILazyScheduledExecutioner _scheduledExecutioner;
+        private readonly ISystemProcessOperationContext _opCtx;
+        private readonly IUniverseBuilder _universeBuilder;
         private readonly Queue<IUniverseEvent> _buffer = new Queue<IUniverseEvent>();
+        private Stack<ScheduledExecution> _executions = new Stack<ScheduledExecution>();
 
         public LazyTransientUniverse(
+            ILazyScheduledExecutioner scheduledExecutioner,
             IUniverseBuilder universeBuilder,
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx)
         {
-            _universeUniverseBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
+            _scheduledExecutioner = scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
+            _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
             _scheduledExecution = execution ?? throw new ArgumentNullException(nameof(execution));
             _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
         }
@@ -54,13 +60,31 @@ namespace Surveillance.Engine.Rules.Universe
                 return;
             }
 
-            _buffer.Enqueue(new UniverseEvent(UniverseStateEvent.Order, DateTime.Now, "haha!"));
+            var fetchGenesis = !_hasFetchedExecutions;
+            if (!_hasFetchedExecutions)
+            {
+                _executions = _scheduledExecutioner.Execute(_scheduledExecution);
+                _hasFetchedExecutions = true;
+            }
 
-            _hasEschatonOccurred = true;
-            _eschatonInBuffer = true;
+            while (_executions.Any())
+            {
+                var exe = _executions.Pop();
+                var fetchEschaton = exe.TimeSeriesTermination >= _scheduledExecution.TimeSeriesTermination;
+                var universe = _universeBuilder.Summon(exe, _opCtx, fetchGenesis, fetchEschaton).Result;
+
+                foreach (var bufferedItem in universe.UniverseEvents)
+                {
+                    _buffer.Enqueue(bufferedItem);
+                }
+
+                _eschatonInBuffer = _eschatonInBuffer || fetchEschaton;
+
+                if (universe.UniverseEvents.Any())
+                    break;
+            }
         }
 
-        // due to the transient property of this IEnumerable this is probably adding more complexity then it solves! May be better to implement direct in the lazyTransientUniverse
         private class LazyEnumerator : IEnumerator<IUniverseEvent>
         {
             private int _index = -1;
@@ -79,8 +103,12 @@ namespace Surveillance.Engine.Rules.Universe
                 {
                     _universe._buffer.Dequeue();
                 }
+                else
+                {
+                    _universe.ReloadBuffer();
+                }
 
-                return !_universe._hasEschatonOccurred;
+                return !_universe._hasEschatonOccurred && _universe._buffer.Any();
             }
 
             public void Reset()

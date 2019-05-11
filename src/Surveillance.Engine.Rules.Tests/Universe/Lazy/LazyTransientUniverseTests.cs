@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using FakeItEasy;
 using NUnit.Framework;
@@ -25,16 +26,23 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
         }
 
         [Test]
-        public void Testy()
+        public void Enumerate_WhenEmptyUniverse_ReturnsEmptyEnumeration()
         {
             var execution = new ScheduledExecution();
 
-            var lol = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
+            A
+                .CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored, A<ISystemProcessOperationContext>.Ignored,
+                A<bool>.Ignored, A<bool>.Ignored))
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, null)));
 
-            foreach (var ohYah in lol)
+            var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
+            
+            foreach (var _ in lazyCollection)
             {
-                Console.WriteLine($"HOT DAMN MAN! {ohYah.StateChange} {ohYah.UnderlyingEvent} {ohYah.EventTime}");
+                Assert.Fail("Should of been empty collection and not able to access enumeration");
             }
+
+            Assert.True(true);
         }
     }
 }

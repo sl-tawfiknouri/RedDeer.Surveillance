@@ -44,5 +44,96 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
 
             Assert.True(true);
         }
+
+        [Test]
+        public void Enumerate_WhenOnlyGenesisAndEschaton_EnumeratesTwiceOnly()
+        {
+            var execution = new ScheduledExecution();
+
+            var universeEventColl = new[]
+            {
+                A.Fake<IUniverseEvent>(),
+                A.Fake<IUniverseEvent>()
+            };
+
+            A
+                .CallTo(() => _universeBuilder.Summon(
+                    A<ScheduledExecution>.Ignored,
+                    A<ISystemProcessOperationContext>.Ignored,
+                    A<bool>.Ignored,
+                    A<bool>.Ignored))
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl)));
+
+            var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
+
+            var tracker = 2;
+            foreach (var _ in lazyCollection)
+            {
+                tracker--;
+            }
+
+            if (tracker != 0)
+            {
+                Assert.Fail("Enumerated over an unexpected number of items");
+            }
+            else
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
+        public void Enumerate_WhenFiveEvents_OverTwoFetches_EnumeratesFiveOnly()
+        {
+            var initialDate = new DateTimeOffset(2019, 01, 01, 0, 0, 0, TimeSpan.Zero);
+            var terminalDate = new DateTimeOffset(2019, 01, 07, 0, 0, 0, TimeSpan.Zero);
+            var execution = new ScheduledExecution { TimeSeriesInitiation = initialDate, TimeSeriesTermination = terminalDate };
+
+            var universeEventColl1 = new[]
+            {
+                A.Fake<IUniverseEvent>(),
+                A.Fake<IUniverseEvent>()
+            };
+
+            var universeEventColl2 = new[]
+            {
+                A.Fake<IUniverseEvent>(),
+                A.Fake<IUniverseEvent>(),
+                A.Fake<IUniverseEvent>()
+            };
+            
+            A
+                .CallTo(() => _universeBuilder.Summon(
+                    A<ScheduledExecution>.Ignored,
+                    A<ISystemProcessOperationContext>.Ignored,
+                    true,
+                    false))
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl1)));
+
+            A
+                .CallTo(() => _universeBuilder.Summon(
+                    A<ScheduledExecution>.Ignored,
+                    A<ISystemProcessOperationContext>.Ignored,
+                    false,
+                    true))
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl2)));
+
+            var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
+
+            var tracker = 5;
+            foreach (var _ in lazyCollection)
+            {
+                tracker--;
+            }
+
+            if (tracker != 0)
+            {
+                Assert.Fail("Enumerated over an unexpected number of items");
+            }
+            else
+            {
+                Assert.True(true);
+            }
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
                 initiation = termination;
             }
 
-            return response;
+            return new Stack<ScheduledExecution>(response);
         }
     }
 }

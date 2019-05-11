@@ -101,14 +101,23 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
 
                 if (_index > 0)
                 {
-                    _universe._buffer.Dequeue();
+                    if (_universe._buffer.Any())
+                        _universe._buffer.Dequeue();
                 }
                 else
                 {
+                    // initial load
                     _universe.ReloadBuffer();
+                    if (!_universe._buffer.Any())
+                        return false;
                 }
 
-                return !_universe._hasEschatonOccurred && _universe._buffer.Any();
+                if (_universe._eschatonInBuffer && !_universe._buffer.Any())
+                {
+                    _universe._hasEschatonOccurred = true;
+                }
+
+                return !_universe._hasEschatonOccurred;
             }
 
             public void Reset()

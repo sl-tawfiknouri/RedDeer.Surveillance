@@ -224,6 +224,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return true;
             }
 
+            // we need to implement this before we're done
+
             return true;
         }
 

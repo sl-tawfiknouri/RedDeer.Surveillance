@@ -38,32 +38,31 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
             }
 
             var orderedOrders = orderSegment.Reverse();
-
             var head = orderedOrders.First();
+
+            var summary01 = ClassifyRampingStrategy(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay, timeBars);
+            var summary05 = ClassifyRampingStrategy(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay, timeBars);
+            var summary15 = ClassifyRampingStrategy(head, orderSegment, TimeSpan.FromDays(15), TimeSegment.FifteenDay, timeBars);
+            var summary30 = ClassifyRampingStrategy(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay, timeBars);
+
+            return new RampingStrategySummaryPanel(summary01, summary05, summary15, summary30);
+        }
+
+        private IRampingStrategySummary ClassifyRampingStrategy(
+            Order head,
+            IReadOnlyCollection<Order> orderSegment,
+            TimeSpan span,
+            TimeSegment segment,
+            List<EquityInstrumentIntraDayTimeBar> timeBars)
+        {
             var to = head.FilledDate.Value;
+            var fromAdjusted = to - span;
 
-            var fromOneDay = to - TimeSpan.FromDays(1);
-            var fromFiveDay = to - TimeSpan.FromDays(5);
-            var fromFifteenDay = to - TimeSpan.FromDays(15);
-            var fromThirtyDay = to - TimeSpan.FromDays(30);
+            var weightedPriceImpact = ClassifyOrderPriceImpactByWeightedVolume(head, orderSegment, span, segment);
+            var segmentPriceTrendThirty = _trendClassifier.Classify(timeBars, head.Instrument, fromAdjusted, to, TimeSegment.ThirtyDay);
+            var dayThirtySummary = IdentifyRampingStrategy(weightedPriceImpact, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
 
-            var dayOne = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
-            var segmentPriceTrendOne = _trendClassifier.Classify(timeBars, head.Instrument, fromOneDay, to, TimeSegment.OneDay);
-            var dayOneSummary = IdentifyRampingStrategy(dayOne, segmentPriceTrendOne, TimeSegment.OneDay);
-
-            var dayFive = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
-            var segmentPriceTrendFive = _trendClassifier.Classify(timeBars, head.Instrument, fromFiveDay, to, TimeSegment.FiveDay);
-            var dayFiveSummary = IdentifyRampingStrategy(dayFive, segmentPriceTrendFive, TimeSegment.FiveDay);
-
-            var dayFifteen = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(15), TimeSegment.FifteenDay);
-            var segmentPriceTrendFifteen = _trendClassifier.Classify(timeBars, head.Instrument, fromFifteenDay, to, TimeSegment.FifteenDay);
-            var dayFifteenSummary = IdentifyRampingStrategy(dayFifteen, segmentPriceTrendFifteen, TimeSegment.FifteenDay);
-
-            var dayThirty = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
-            var segmentPriceTrendThirty = _trendClassifier.Classify(timeBars, head.Instrument, fromThirtyDay, to, TimeSegment.ThirtyDay);
-            var dayThirtySummary = IdentifyRampingStrategy(dayThirty, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
-
-            return new RampingStrategySummaryPanel(dayOneSummary, dayFiveSummary, dayFifteenSummary, dayThirtySummary);
+            return dayThirtySummary;
         }
 
         public IRampingStrategySummary IdentifyRampingStrategy(
@@ -115,14 +114,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
                 timeSegment);
         }
 
-        private IPriceImpactSummary ClassifyOrderPriceImpactByDate(
+        private IPriceImpactSummary ClassifyOrderPriceImpactByWeightedVolume(
             Order root,
             IReadOnlyCollection<Order> orderSegment,
             TimeSpan span,
             TimeSegment segment)
         {
             var filteredOrders = FilterOrderByDate(root, orderSegment, span);
-            var segmentTradeTrend = _orderPriceImpactClassifier.ClassifyByTradeCount(filteredOrders, segment);
+            var segmentTradeTrend = _orderPriceImpactClassifier.ClassifyByWeightedVolume(filteredOrders, segment);
 
             return segmentTradeTrend;
         }

@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
         public void Enumerate_WhenFiveEvents_OverTwoFetches_EnumeratesFiveOnly()
         {
             var initialDate = new DateTimeOffset(2019, 01, 01, 0, 0, 0, TimeSpan.Zero);
-            var terminalDate = new DateTimeOffset(2019, 01, 07, 0, 0, 0, TimeSpan.Zero);
+            var terminalDate = new DateTimeOffset(2019, 01, 09, 0, 0, 0, TimeSpan.Zero);
             var execution = new ScheduledExecution { TimeSeriesInitiation = initialDate, TimeSeriesTermination = terminalDate };
 
             var universeEventColl1 = new[]

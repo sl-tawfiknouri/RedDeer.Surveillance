@@ -99,7 +99,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            if (!ExceedsTradingVolumeInWindowThreshold())
+            if (!ExceedsTradingVolumeInWindowThreshold(tradeWindow.ToList(), tradeWindow.Peek()))
             {
                 // LOG THEN EXIT
                 _logger.LogInformation($"Trading Volume of {_rampingParameters.ThresholdVolumePercentageWindow} was not exceeded. Returning.");
@@ -217,16 +217,65 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             return orders.Count >= _rampingParameters.ThresholdOrdersExecutedInWindow.GetValueOrDefault(0);
         }
 
-        private bool ExceedsTradingVolumeInWindowThreshold()
+        private bool ExceedsTradingVolumeInWindowThreshold(List<Order> orders, Order mostRecentTrade)
         {
-            if (_rampingParameters?.ThresholdVolumePercentageWindow == null)
+            if (_rampingParameters?.ThresholdVolumePercentageWindow == null
+                || _rampingParameters.ThresholdVolumePercentageWindow <= 0
+                || orders == null
+                || !orders.Any())
             {
                 return true;
             }
 
-            // we need to implement this before we're done
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+            }
 
-            return true;
+            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                mostRecentTrade.Market?.MarketIdentifierCode);
+
+            var marketRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market?.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
+                    mostRecentTrade.Instrument.Identifiers,
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                    tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                    _ruleCtx?.Id());
+
+            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
+
+            if (marketResult.HadMissingData)
+            {
+                _logger.LogTrace($"Unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var securityDataTicks = marketResult.Response;
+            var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
+            var threshold = (long)Math.Ceiling(_rampingParameters.ThresholdVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+
+            if (threshold <= 0)
+            {
+                _hadMissingData = true;
+                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+                return false;
+            }
+
+            var tradedVolume = orders.Sum(_ => _.OrderFilledVolume.GetValueOrDefault(0));
+                
+            if (tradedVolume >= threshold)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

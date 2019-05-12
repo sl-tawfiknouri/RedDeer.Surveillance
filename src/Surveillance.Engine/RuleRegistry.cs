@@ -235,6 +235,7 @@ namespace Surveillance.Engine.Rules
 
             For<ILazyScheduledExecutioner>().Use<LazyScheduledExecutioner>();
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<ILazyTransientUniverseFactory>().Use<LazyTransientUniverseFactory>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
         }

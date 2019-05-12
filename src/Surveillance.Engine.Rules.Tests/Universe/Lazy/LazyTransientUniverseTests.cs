@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
             A
                 .CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored, A<ISystemProcessOperationContext>.Ignored,
                 A<bool>.Ignored, A<bool>.Ignored))
-                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, null)));
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null)));
 
             var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
             
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     A<bool>.Ignored,
                     A<bool>.Ignored))
-                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl)));
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl)));
 
             var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
 
@@ -108,7 +108,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     true,
                     false))
-                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl1)));
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl1)));
 
             A
                 .CallTo(() => _universeBuilder.Summon(
@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     false,
                     true))
-                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(null, null, null, universeEventColl2)));
+                .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl2)));
 
             var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
 

@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Universe
             if (execution == null)
             {
                 _logger.LogError($"had a null execution or rule parameters and therefore null data sets for {opCtx.Id} operation context");
-                return new Universe(null, null, null, null);
+                return new Universe(null);
             }
 
             _logger.LogInformation($"fetching aurora trade data");
@@ -87,7 +87,7 @@ namespace Surveillance.Engine.Rules.Universe
             _logger.LogInformation($"completed fetching universe event data");
 
             _logger.LogInformation($"returning a new universe");
-            return new Universe(projectedTradesAllocations, intradayEquityBars, interDayEquityBars, universe);
+            return new Universe(universe);
         }
 
         private async Task<IReadOnlyCollection<Order>> TradeDataFetchAurora(

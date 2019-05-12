@@ -124,11 +124,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Engine.Rules.Universe.Universe(
-                    new Order[0],
-                    new EquityIntraDayTimeBarCollection[0],
-                    new EquityInterDayTimeBarCollection[0],
-                    orderedUniverse);
+                new Engine.Rules.Universe.Universe(orderedUniverse);
         }
 
         private IUniverseEvent MapRowToIntradayMarketDataEvent(IntradayMarketDataParameters marketDataParam)
@@ -206,11 +202,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Engine.Rules.Universe.Universe(
-                    new Order[0],
-                    new EquityIntraDayTimeBarCollection[0],
-                    new EquityInterDayTimeBarCollection[0],
-                    orderedUniverse);
+                new Engine.Rules.Universe.Universe(orderedUniverse);
         }
 
         private IUniverseEvent MapRowToInterdayMarketDataEvent(InterdayMarketDataParameters marketDataParam)
@@ -334,11 +326,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 
         private Engine.Rules.Universe.Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
-            return new Engine.Rules.Universe.Universe(
-                new Order[0],
-                new EquityIntraDayTimeBarCollection[0],
-                new EquityInterDayTimeBarCollection[0],
-                universeEvents);
+            return new Engine.Rules.Universe.Universe(universeEvents);
         }
     }
 }

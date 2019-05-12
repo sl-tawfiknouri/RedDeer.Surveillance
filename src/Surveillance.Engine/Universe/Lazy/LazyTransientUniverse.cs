@@ -16,6 +16,8 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
     /// Therefore this class should not be used in a multi threaded context
     /// Or called multiple times - populate another collection with the results
     /// If you wish to cache them but beware of memory consumption
+    ///
+    /// It only exists when you try to observe it
     /// </summary>
     public class LazyTransientUniverse : IEnumerable<IUniverseEvent>
     {

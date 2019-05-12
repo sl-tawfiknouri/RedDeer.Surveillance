@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
             var span = schedule.TimeSeriesTermination - schedule.TimeSeriesInitiation;
             var response = new Stack<ScheduledExecution>();
 
-            if (span.TotalDays < 5)
+            if (span.TotalDays < 8)
             {
                 response.Push(schedule);
                 return response;
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
             var initiation = schedule.TimeSeriesInitiation;
             while (initiation < schedule.TimeSeriesTermination)
             {
-                var termination = initiation.AddDays(4);
+                var termination = initiation.AddDays(7);
                 if (schedule.TimeSeriesTermination < termination)
                 {
                     termination = schedule.TimeSeriesTermination;

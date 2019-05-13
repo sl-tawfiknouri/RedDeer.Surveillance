@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -14,15 +17,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
     public class PlacingOrderWithNoIntentToExecuteRule : BaseUniverseRule, IPlacingOrdersWithNoIntentToExecuteRule
     {
+        private bool _hadMissingData;
+
         private readonly ILogger _logger;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IUniverseAlertStream _alertStream;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         public PlacingOrderWithNoIntentToExecuteRule(
             TimeSpan windowSize,
             IUniverseOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger) 
@@ -39,6 +48,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
 
@@ -72,14 +83,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         protected override void MarketClose(MarketOpenClose exchange)
         {
             // this will be used to pull in the orders for the day and check the sigma of limit order price level
-
             _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred at {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occurred");
-            _ruleCtx?.EndEvent();
+
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                // delete event
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
+
+                _dataRequestSubscriber.SubmitRequest();
+                _ruleCtx.EndEvent();
+            }
+            else
+            {
+                _ruleCtx?.EndEvent();
+            }
         }
 
         public IUniverseCloneableRule Clone(IFactorValue factor)

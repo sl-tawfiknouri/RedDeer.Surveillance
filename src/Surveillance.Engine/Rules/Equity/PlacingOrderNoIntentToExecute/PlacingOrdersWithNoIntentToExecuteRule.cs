@@ -4,6 +4,7 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -21,8 +22,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
         private readonly ILogger _logger;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         public PlacingOrdersWithNoIntentToExecuteRule(
@@ -38,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             : base(
                 windowSize,
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
-                "STUB THIS OUT WITH THE FACTORY STATIC METHOD",
+                EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",
                 ruleCtx,
                 marketCacheFactory,
@@ -93,7 +94,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
-                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(
+                    Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, 
+                    null,
+                    _ruleCtx,
+                    false,
+                    true);
+
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

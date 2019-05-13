@@ -233,7 +233,7 @@ namespace Surveillance.Engine.Rules
 
             For<IPlacingOrdersWithNoIntentToExecuteMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteMessageSender>();
             For<IPlacingOrdersWithNoIntentToExecuteRule>().Use<PlacingOrdersWithNoIntentToExecuteRule>();
-
+            For<IEquityRulePlacingOrdersWithoutIntentToExecuteFactory>().Use<EquityRulePlacingOrdersWithoutIntentToExecuteFactory>();
 
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
 

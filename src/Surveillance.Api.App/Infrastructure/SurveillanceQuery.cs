@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System;
 using System.Globalization;
 using Surveillance.Api.App.Types.Aggregation;
+using Surveillance.Api.DataAccess.Repositories;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -189,8 +190,16 @@ namespace Surveillance.Api.App.Infrastructure
                     ),
                 resolve: context =>
                 {
-                    var filter = OrderFilter(context);
-                    return orderRepository.Query(filter);
+                    var options = new OrderQueryOptions
+                    {
+                        Ids = context.GetArgument<List<int>>("ids"),
+                        Take = context.GetArgument<int?>("take"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<string>("placedDateTo")
+                    };
+                    return orderRepository.Query(options);
                 });
 
             Field<ListGraphType<AggregationGraphType>>(
@@ -206,8 +215,16 @@ namespace Surveillance.Api.App.Infrastructure
                     ),
                 resolve: context =>
                 {
-                    var filter = OrderFilter(context);
-                    return orderRepository.AggregationQuery(filter);
+                    var options = new OrderQueryOptions
+                    {
+                        Ids = context.GetArgument<List<int>>("ids"),
+                        Take = context.GetArgument<int?>("take"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<string>("placedDateTo")
+                    };
+                    return orderRepository.AggregationQuery(options);
                 });
 
             Field<ListGraphType<RulesTypeEnumGraphType>>(
@@ -230,53 +247,6 @@ namespace Surveillance.Api.App.Infrastructure
                 "A primitive perspective on the asset class. To see further details use the CFI code",
                 resolve: context => InstrumentTypes.None.GetEnumPermutations());
 
-        }
-
-        private Func<IQueryable<IOrder>, IQueryable<IOrder>> OrderFilter(ResolveFieldContext<object> context)
-        {
-            var ids = context.GetArgument<List<int>>("ids");
-            var take = context.GetArgument<int?>("take");
-            var traderIds = context.GetArgument<List<string>>("traderIds");
-            var reddeerIds = context.GetArgument<List<string>>("reddeerIds");
-            var placedDateFrom = context.GetArgument<string>("placedDateFrom");
-            var placedDateTo = context.GetArgument<string>("placedDateTo");
-
-            Func<IQueryable<IOrder>, IQueryable<IOrder>> filter = (i) =>
-            {
-                if (ids != null)
-                {
-                    i = i.Where(x => ids.Contains(x.Id));
-                }
-                if (traderIds != null)
-                {
-                    i = i.Where(x => traderIds.Contains(x.TraderId));
-                }
-                if (reddeerIds != null)
-                {
-                    i = i.Where(x => reddeerIds.Contains(x.FinancialInstrument.ReddeerId));
-                }
-                if (placedDateFrom != null)
-                {
-                    var dateTime = DateTime.Parse(placedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
-                    i = i.Where(x => x.PlacedDate >= dateTime);
-                }
-                if (placedDateTo != null)
-                {
-                    var dateTime = DateTime.Parse(placedDateTo, CultureInfo.GetCultureInfo("en-GB"));
-                    i = i.Where(x => x.PlacedDate <= dateTime);
-                }
-
-                i = i.OrderByDescending(x => x.PlacedDate);
-
-                if (take != null)
-                {
-                    i = i.Take(take.Value);
-                }
-
-                return i;
-            };
-
-            return filter;
         }
     }
 }

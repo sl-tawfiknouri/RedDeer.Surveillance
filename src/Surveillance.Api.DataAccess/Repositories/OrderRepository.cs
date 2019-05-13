@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -372,21 +373,21 @@ namespace Surveillance.Api.DataAccess.Repositories
             return mappedOrders.ToArray();
         }
 
-        public async Task<IEnumerable<IOrder>> Query(Func<IQueryable<IOrder>, IQueryable<IOrder>> query)
+        public async Task<IEnumerable<IOrder>> Query(IOrderQueryOptions options)
         {
             using (var dbContext = _factory.Build())
             {
-                var orders = await query(dbContext.Orders).AsNoTracking().ToListAsync();
+                var orders = await SetOrderQueryOptions(dbContext.Orders, options).AsNoTracking().ToListAsync();
 
                 return orders;
             }
         }
 
-        public async Task<IEnumerable<IAggregation>> AggregationQuery(Func<IQueryable<IOrder>, IQueryable<IOrder>> query)
+        public async Task<IEnumerable<IAggregation>> AggregationQuery(IOrderQueryOptions options)
         {
             using (var dbContext = _factory.Build())
             {
-                var aggregations = await query(dbContext.Orders)
+                var aggregations = await SetOrderQueryOptions(dbContext.Orders, options)
                     .GroupBy(x => x.PlacedDate)
                     .Select(x => new Aggregation
                     {
@@ -398,6 +399,41 @@ namespace Surveillance.Api.DataAccess.Repositories
 
                 return aggregations;
             }
+        }
+
+        private IQueryable<IOrder> SetOrderQueryOptions(IQueryable<IOrder> query, IOrderQueryOptions options)
+        {
+            if (options.Ids != null)
+            {
+                query = query.Where(x => options.Ids.Contains(x.Id));
+            }
+            if (options.TraderIds != null)
+            {
+                query = query.Where(x => options.TraderIds.Contains(x.TraderId));
+            }
+            if (options.ReddeerIds != null)
+            {
+                query = query.Where(x => options.ReddeerIds.Contains(x.FinancialInstrument.ReddeerId));
+            }
+            if (options.PlacedDateFrom != null)
+            {
+                var dateTime = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
+                query = query.Where(x => x.PlacedDate >= dateTime);
+            }
+            if (options.PlacedDateTo != null)
+            {
+                var dateTime = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                query = query.Where(x => x.PlacedDate <= dateTime);
+            }
+
+            query = query.OrderByDescending(x => x.PlacedDate);
+
+            if (options.Take != null)
+            {
+                query = query.Take(options.Take.Value);
+            }
+
+            return query;
         }
     }
 }

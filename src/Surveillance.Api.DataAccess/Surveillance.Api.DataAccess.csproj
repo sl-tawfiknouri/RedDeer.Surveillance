@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="DbContexts\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

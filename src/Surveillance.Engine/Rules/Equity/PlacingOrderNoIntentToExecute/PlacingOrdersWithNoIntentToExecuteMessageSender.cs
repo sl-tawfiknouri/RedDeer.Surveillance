@@ -15,7 +15,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             IRuleBreachOrdersRepository ruleBreachOrdersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
             IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper,
-            ILogger logger) 
+            ILogger<PlacingOrdersWithNoIntentToExecuteMessageSender> logger) 
             : base(
                 "Automated Placing Orders With No Intent To Execute Rule Breach Detected",
                 "Placing Orders Without Intent To Execute Message Sender",

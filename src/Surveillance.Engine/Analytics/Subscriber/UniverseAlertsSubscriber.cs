@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _equityWashTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
-        private readonly IPlacingOrdersWithNoIntentToExecuteMessageSender _placingOrdersMessageSender;
+        private readonly IPlacingOrdersWithNoIntentToExecuteCacheMessageSender _placingOrdersMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender equityWashTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
-            IPlacingOrdersWithNoIntentToExecuteMessageSender placingOrdersMessageSender,
+            IPlacingOrdersWithNoIntentToExecuteCacheMessageSender placingOrdersCacheMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _isBackTest = isBackTest;
@@ -88,8 +88,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 ?? throw new ArgumentNullException(nameof(fixedIncomeWashTradeMessageSender));
             
             _placingOrdersMessageSender = 
-                placingOrdersMessageSender
-                ?? throw new ArgumentNullException(nameof(placingOrdersMessageSender));
+                placingOrdersCacheMessageSender
+                ?? throw new ArgumentNullException(nameof(placingOrdersCacheMessageSender));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Analytics = new AlertAnalytics {SystemProcessOperationId = opCtxId};
@@ -164,7 +164,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private void PlacingOrdersWithoutIntentToExecuteFlush()
         {
             _logger.LogInformation($"placing orders without intent to execute flushing alerts");
-            Analytics.PlacingOrdersAlertsAdjusted += 1; // SET THIS DIRECTLY FROM A CACHED MESSAGE SENDER FLUSH!
+            Analytics.PlacingOrdersAlertsAdjusted = _placingOrdersMessageSender.Flush();
         }
 
         private void CancelledOrders(IUniverseAlertEvent alert)

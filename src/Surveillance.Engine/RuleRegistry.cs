@@ -232,6 +232,7 @@ namespace Surveillance.Engine.Rules
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
 
             For<IPlacingOrdersWithNoIntentToExecuteMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteCacheMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteCacheMessageSender>();
             For<IPlacingOrdersWithNoIntentToExecuteRule>().Use<PlacingOrdersWithNoIntentToExecuteRule>();
             For<IEquityRulePlacingOrdersWithoutIntentToExecuteFactory>().Use<EquityRulePlacingOrdersWithoutIntentToExecuteFactory>();
 

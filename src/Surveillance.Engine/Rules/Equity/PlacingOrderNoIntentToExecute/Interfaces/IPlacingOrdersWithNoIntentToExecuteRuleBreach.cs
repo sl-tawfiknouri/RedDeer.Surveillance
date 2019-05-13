@@ -2,6 +2,6 @@
 
 namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces
 {
-    public interface IPlacingOrdersWithNoIntentToExecuteBreach : IRuleBreach
+    public interface IPlacingOrdersWithNoIntentToExecuteRuleBreach : IRuleBreach
     { }
 }

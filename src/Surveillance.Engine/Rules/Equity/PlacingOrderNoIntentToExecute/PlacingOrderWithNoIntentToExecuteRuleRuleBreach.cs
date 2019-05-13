@@ -6,9 +6,9 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
-    public class PlacingOrderWithNoIntentToExecuteRuleBreach : IPlacingOrdersWithNoIntentToExecuteBreach
+    public class PlacingOrderWithNoIntentToExecuteRuleRuleBreach : IPlacingOrdersWithNoIntentToExecuteRuleBreach
     {
-        public PlacingOrderWithNoIntentToExecuteRuleBreach(
+        public PlacingOrderWithNoIntentToExecuteRuleRuleBreach(
             TimeSpan window, 
             ITradePosition trades,
             FinancialInstrument security,

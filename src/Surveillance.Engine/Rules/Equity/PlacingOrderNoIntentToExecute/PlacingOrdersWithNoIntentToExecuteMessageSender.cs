@@ -28,9 +28,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         {
         }
 
-        public async Task Send(IPlacingOrdersWithNoIntentToExecuteBreach ruleBreach)
+        public async Task Send(IPlacingOrdersWithNoIntentToExecuteRuleBreach ruleRuleBreach)
         {
-            if (ruleBreach == null)
+            if (ruleRuleBreach == null)
             {
                 Logger?.LogInformation($"SpoofingRuleMessageSender Send received a null rule breach for op ctx. Returning.");
                 return;

@@ -2,8 +2,8 @@
 
 namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces
 {
-    interface IPlacingOrdersWithNoIntentToExecuteMessageSender
+    public interface IPlacingOrdersWithNoIntentToExecuteMessageSender
     {
-        Task Send(IPlacingOrdersWithNoIntentToExecuteBreach breach);
+        Task Send(IPlacingOrdersWithNoIntentToExecuteRuleBreach ruleBreach);
     }
 }

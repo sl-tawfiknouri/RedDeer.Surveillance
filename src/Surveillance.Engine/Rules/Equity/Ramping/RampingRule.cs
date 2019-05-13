@@ -75,7 +75,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -388,10 +389,10 @@ namespace Surveillance.Api.DataAccess.Repositories
             using (var dbContext = _factory.Build())
             {
                 var aggregations = await SetOrderQueryOptions(dbContext.Orders, options)
-                    .GroupBy(x => x.PlacedDate)
+                    .GroupBy(x => x.PlacedDate.Date)
                     .Select(x => new Aggregation
                     {
-                        Key= x.Key.ToString("yyyy-MM-dd"),
+                        Key = x.Key.ToString("yyyy-MM-dd"),
                         Count = x.Count()
                     })
                     .AsNoTracking()

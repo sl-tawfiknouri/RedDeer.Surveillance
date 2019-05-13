@@ -56,6 +56,8 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
 
         private void ReloadBuffer()
         {
+            GC.Collect();
+
             if (_eschatonInBuffer)
             {
                 _hasEschatonOccurred = true;

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Domain.Core.Financial.Assets;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -9,6 +8,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
     public class PlacingOrderWithNoIntentToExecuteRuleBreach : IPlacingOrdersWithNoIntentToExecuteBreach
     {
+        public PlacingOrderWithNoIntentToExecuteRuleBreach(
+            TimeSpan window, 
+            ITradePosition trades,
+            FinancialInstrument security,
+            bool isBackTestRun,
+            string ruleParameterId,
+            string systemOperationId,
+            string correlationId,
+            IFactorValue factorValue)
+        {
+            Window = window;
+            Trades = trades;
+            Security = security;
+
+            IsBackTestRun = isBackTestRun;
+            RuleParameterId = ruleParameterId;
+            SystemOperationId = systemOperationId;
+            CorrelationId = correlationId;
+            FactorValue = factorValue;
+        }
+
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }

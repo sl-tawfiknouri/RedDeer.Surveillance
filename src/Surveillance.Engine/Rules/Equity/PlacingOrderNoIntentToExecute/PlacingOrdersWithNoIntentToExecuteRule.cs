@@ -15,7 +15,7 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
-    public class PlacingOrderWithNoIntentToExecuteRule : BaseUniverseRule, IPlacingOrdersWithNoIntentToExecuteRule
+    public class PlacingOrdersWithNoIntentToExecuteRule : BaseUniverseRule, IPlacingOrdersWithNoIntentToExecuteRule
     {
         private bool _hadMissingData;
 
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
-        public PlacingOrderWithNoIntentToExecuteRule(
+        public PlacingOrdersWithNoIntentToExecuteRule(
             TimeSpan windowSize,
             IUniverseOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -107,7 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            var clone = (PlacingOrderWithNoIntentToExecuteRule)Clone();
+            var clone = (PlacingOrdersWithNoIntentToExecuteRule)Clone();
             clone.OrganisationFactorValue = factor;
 
             return clone;
@@ -115,7 +115,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
         public object Clone()
         {
-            var clone = (PlacingOrderWithNoIntentToExecuteRule)this.MemberwiseClone();
+            var clone = (PlacingOrdersWithNoIntentToExecuteRule)this.MemberwiseClone();
             clone.BaseClone();
 
             return clone;

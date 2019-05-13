@@ -58,10 +58,10 @@ using Surveillance.Engine.Rules.Rules.Equity.Layering;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
@@ -230,6 +230,10 @@ namespace Surveillance.Engine.Rules
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
+
+            For<IPlacingOrdersWithNoIntentToExecuteMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteRule>().Use<PlacingOrdersWithNoIntentToExecuteRule>();
+
 
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
 

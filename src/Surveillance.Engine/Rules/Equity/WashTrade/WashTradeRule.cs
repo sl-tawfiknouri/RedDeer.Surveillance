@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             IUniverseAlertStream alertStream,
             ICurrencyConverterService currencyConverterService,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
                 ruleCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

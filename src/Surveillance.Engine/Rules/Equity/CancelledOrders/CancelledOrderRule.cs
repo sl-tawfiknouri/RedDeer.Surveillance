@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -46,7 +46,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 opCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

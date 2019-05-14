@@ -5,6 +5,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
@@ -34,6 +35,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public IPlacingOrdersWithNoIntentToExecuteRule Build(
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,

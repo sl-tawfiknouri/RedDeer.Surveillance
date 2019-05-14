@@ -279,11 +279,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
-        {
+        { 
+            // we don't use post order event in ramping rule
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
+            // we don't use post order event in ramping rule
         }
 
         protected override void Genesis()

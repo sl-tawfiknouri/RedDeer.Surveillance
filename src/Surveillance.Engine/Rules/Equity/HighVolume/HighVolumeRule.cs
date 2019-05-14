@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
                 opCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

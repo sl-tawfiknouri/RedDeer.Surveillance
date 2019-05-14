@@ -17,6 +17,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
         IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos);
         IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos);
         IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(List<RampingRuleParameterDto> dtos);
+        IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos);
 
         IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos);
         IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos);

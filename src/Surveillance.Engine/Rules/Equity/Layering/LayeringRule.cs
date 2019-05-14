@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             ILogger logger,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             ISystemProcessOperationRunRuleContext opCtx,
             RuleRunMode runMode,
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
                 opCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

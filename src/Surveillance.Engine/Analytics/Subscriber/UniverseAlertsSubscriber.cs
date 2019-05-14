@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
@@ -33,6 +34,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly IWashTradeCachedMessageSender _equityWashTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
         private readonly IRampingRuleCachedMessageSender _rampingRuleMessageSender;
+        private readonly IPlacingOrdersWithNoIntentToExecuteCacheMessageSender _placingOrdersMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
@@ -50,6 +52,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             IWashTradeCachedMessageSender equityWashTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
             IRampingRuleCachedMessageSender rampingRuleMessageSender,
+            IPlacingOrdersWithNoIntentToExecuteCacheMessageSender placingOrdersCacheMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _isBackTest = isBackTest;
@@ -85,10 +88,14 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _fixedIncomeWashTradeMessageSender =
                 fixedIncomeWashTradeMessageSender
                 ?? throw new ArgumentNullException(nameof(fixedIncomeWashTradeMessageSender));
-
+            
             _rampingRuleMessageSender =
                 rampingRuleMessageSender
                 ?? throw new ArgumentNullException(nameof(rampingRuleMessageSender));
+                
+            _placingOrdersMessageSender = 
+                placingOrdersCacheMessageSender
+                ?? throw new ArgumentNullException(nameof(placingOrdersCacheMessageSender));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Analytics = new AlertAnalytics {SystemProcessOperationId = opCtxId};
@@ -137,12 +144,39 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 case Domain.Surveillance.Scheduling.Rules.Ramping:
                     Ramping(value);
                     break;
+                case Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute:
+                    PlacingOrdersWithoutIntentToExecute(value);
+                    break;
                 default:
                     _logger.LogError($"met a rule type it did not identify {value.Rule}. This should be explicitly addressed.");
                     break;
             }
         }
 
+        private void PlacingOrdersWithoutIntentToExecute(IUniverseAlertEvent alert)
+        {
+            if (alert.IsFlushEvent)
+            {
+                return;
+            }
+
+            var ruleBreach = (IPlacingOrdersWithNoIntentToExecuteRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
+
+            _logger.LogInformation($"adding alert to placing orders without intent to execute message sender");
+            _placingOrdersMessageSender.Send(ruleBreach);
+
+            _logger.LogInformation($"placing orders without intent to execute incrementing raw alert count by 1");
+            Analytics.PlacingOrdersAlertsRaw += 1;
+        }
+
+        private void PlacingOrdersWithoutIntentToExecuteFlush()
+        {
+            _logger.LogInformation($"placing orders without intent to execute flushing alerts");
+            Analytics.PlacingOrdersAlertsAdjusted = _placingOrdersMessageSender.Flush();
+        }
+        
+        
         private void Ramping(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
@@ -165,6 +199,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _logger.LogInformation($"ramping flushing alerts");
             Analytics.RampingAlertsAdjusted += _rampingRuleMessageSender.Flush();
         }
+        
 
         private void CancelledOrders(IUniverseAlertEvent alert)
         {
@@ -405,6 +440,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
             RampingFlush();
             CancelledOrdersFlush();
+            PlacingOrdersWithoutIntentToExecuteFlush();
 
             _logger?.LogInformation($"flush completed.");
         }

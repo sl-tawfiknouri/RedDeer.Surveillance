@@ -97,7 +97,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             return
                 Accounts?.Type != RuleFilterType.None
                 || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None;
+                || Markets?.Type != RuleFilterType.None
+                || Funds?.Type != RuleFilterType.None
+                || Strategies?.Type != RuleFilterType.None;
         }
     }
 }

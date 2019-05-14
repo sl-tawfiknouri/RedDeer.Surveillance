@@ -39,6 +39,8 @@ namespace Domain.Surveillance.Scheduling
         [Description("Fixed Income Wash Trades")]
         FixedIncomeWashTrades,
         [Description("Ramping")]
-        Ramping
+        Ramping,
+        [Description("Placing Orders With No Intent To Execute")]
+        PlacingOrderWithNoIntentToExecute,
     }
 }

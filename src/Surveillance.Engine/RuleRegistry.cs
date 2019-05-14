@@ -60,6 +60,8 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
@@ -242,6 +244,12 @@ namespace Surveillance.Engine.Rules
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
+
+            For<IPlacingOrdersWithNoIntentToExecuteMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteCacheMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteCacheMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteRule>().Use<PlacingOrdersWithNoIntentToExecuteRule>();
+            For<IEquityRulePlacingOrdersWithoutIntentToExecuteFactory>().Use<EquityRulePlacingOrdersWithoutIntentToExecuteFactory>();
+            For<IPlacingOrdersWithNoIntentToExecuteEquitySubscriber>().Use<PlacingOrdersWithNoIntentToExecuteEquitySubscriber>();
 
             For<ILazyScheduledExecutioner>().Use<LazyScheduledExecutioner>();
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();

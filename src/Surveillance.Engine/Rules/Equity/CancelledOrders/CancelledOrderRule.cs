@@ -170,6 +170,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             // do nothing
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Universe Genesis occurred");

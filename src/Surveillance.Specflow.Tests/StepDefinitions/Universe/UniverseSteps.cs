@@ -324,11 +324,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 
             var universeEventOrder = new UniverseEvent(UniverseStateEvent.Order, order.MostRecentDateEvent(), order);
             var universeEventOrderPlaced = new UniverseEvent(UniverseStateEvent.OrderPlaced, order.PlacedDate.GetValueOrDefault(), order);
+            var universeEventOrderFilled = new UniverseEvent(UniverseStateEvent.OrderFilled, order.FilledDate.GetValueOrDefault(), order);
 
             return new[]
             {
                 universeEventOrder,
-                universeEventOrderPlaced
+                universeEventOrderPlaced,
+                universeEventOrderFilled
             };
         }
 

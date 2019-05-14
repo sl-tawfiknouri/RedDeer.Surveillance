@@ -310,6 +310,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         {
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {           
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occured");

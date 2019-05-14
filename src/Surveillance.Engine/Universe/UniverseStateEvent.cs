@@ -19,6 +19,8 @@ namespace Surveillance.Engine.Rules.Universe
         Order, // A order 
         [Description("Order Placed")]
         OrderPlaced, // An order submitted
+        [Description("Order Filled")]
+        OrderFilled, // An order filled
         [Description("Security Data Intra Day Tick (equity)")]
         EquityIntradayTick, // An equity tick
         [Description("Security Data Inter Daily Tick (equity)")]

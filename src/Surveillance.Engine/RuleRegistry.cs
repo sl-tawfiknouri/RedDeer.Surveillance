@@ -58,6 +58,14 @@ using Surveillance.Engine.Rules.Rules.Equity.Layering;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
@@ -195,9 +203,14 @@ namespace Surveillance.Engine.Rules
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
             For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
 
+            For<IRampingEquitySubscriber>().Use<RampingEquitySubscriber>();
+            For<IRampingRule>().Use<RampingRule>();
+            For<IEquityRuleRampingFactory>().Use<EquityRuleRampingFactory>();
+            For<IRampingRuleMessageSender>().Use<RampingRuleMessageSender>();
+            For<IRampingRuleCachedMessageSender>().Use<RampingRuleCachedMessageSender>();
+
             For<IPortfolioFactory>().Use<PortfolioFactory>();
-
-
+            
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverterService>().Use<CurrencyConverterService>();
             For<IExchangeRatesService>().Use<ExchangeRatesService>();
@@ -231,9 +244,13 @@ namespace Surveillance.Engine.Rules
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
 
+            For<ITimeSeriesTrendClassifier>().Use<TimeSeriesTrendClassifier>();
+
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<IOrderPriceImpactClassifier>().Use<OrderPriceImpactClassifier>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
+            For<IRampingAnalyser>().Use<RampingAnalyser>();
         }
     }
 }

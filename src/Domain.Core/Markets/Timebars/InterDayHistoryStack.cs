@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Domain.Core.Markets.Collections;
 using Domain.Core.Markets.Interfaces;
 
@@ -9,7 +8,6 @@ namespace Domain.Core.Markets.Timebars
     public class InterDayHistoryStack : IInterDayHistoryStack
     {
         private readonly Stack<EquityInterDayTimeBarCollection> _activeStack;
-        private readonly Queue<EquityInterDayTimeBarCollection> _history;
         private Market _market;
 
         private readonly object _lock = new object();
@@ -17,7 +15,6 @@ namespace Domain.Core.Markets.Timebars
         public InterDayHistoryStack()
         {
             _activeStack = new Stack<EquityInterDayTimeBarCollection>();
-            _history = new Queue<EquityInterDayTimeBarCollection>();
         }
 
         public void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime)
@@ -33,10 +30,6 @@ namespace Domain.Core.Markets.Timebars
                 {
                     _activeStack.Push(frame);
                 }
-                else
-                {
-                    _history.Enqueue(frame);
-                }
             }
         }
 
@@ -50,11 +43,7 @@ namespace Domain.Core.Markets.Timebars
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Date != poppedItem.Epoch.Date)
-                    {
-                        _history.Enqueue(poppedItem);
-                    }
-                    else
+                    if (currentTime.Date == poppedItem.Epoch.Date)
                     {
                         counterPartyStack.Push(poppedItem);
                     }
@@ -98,8 +87,7 @@ namespace Domain.Core.Markets.Timebars
             }
 
             // ReSharper disable once InconsistentlySynchronizedField
-            _market = _activeStack?.Peek()?.Exchange
-                ?? _history?.FirstOrDefault()?.Exchange;
+            _market = _activeStack?.Peek()?.Exchange;
 
             return _market;
         }

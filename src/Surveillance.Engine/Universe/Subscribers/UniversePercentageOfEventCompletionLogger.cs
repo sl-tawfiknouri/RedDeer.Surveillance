@@ -7,6 +7,10 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
+    /// <summary>
+    /// This logger is a bad mix with a lazy transient universe
+    /// Beware before using it
+    /// </summary>
     public class UniversePercentageOfEventCompletionLogger : IUniversePercentageOfEventCompletionLogger
     {
         private readonly IList<PercentageLandMark> _list;
@@ -26,7 +30,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                 return;
             }
 
-            var events = (decimal)universe.UniverseEvents.Count;
+            var events = (decimal)universe.UniverseEvents.Count();
 
             if (events < 10m)
             {

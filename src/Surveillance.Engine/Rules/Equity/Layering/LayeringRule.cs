@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             ILogger logger,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             ISystemProcessOperationRunRuleContext opCtx,
             RuleRunMode runMode,
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
                 opCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -498,6 +498,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on when their status last changed in the layering rule
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // we don't analyse rules based on fills in the layering rule
         }
 
         protected override void Genesis()

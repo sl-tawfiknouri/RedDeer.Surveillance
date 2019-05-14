@@ -9,7 +9,6 @@ namespace Domain.Core.Markets.Timebars
     public class IntraDayHistoryStack : IIntraDayHistoryStack
     {
         private readonly Stack<EquityIntraDayTimeBarCollection> _activeStack;
-        private readonly Queue<EquityIntraDayTimeBarCollection> _history;
         private Market _market;
 
         private readonly object _lock = new object();
@@ -18,7 +17,6 @@ namespace Domain.Core.Markets.Timebars
         public IntraDayHistoryStack(TimeSpan activeTradeDuration)
         {
             _activeStack = new Stack<EquityIntraDayTimeBarCollection>();
-            _history = new Queue<EquityIntraDayTimeBarCollection>();
             _activeTradeDuration = activeTradeDuration;
         }
 
@@ -35,10 +33,6 @@ namespace Domain.Core.Markets.Timebars
                 {
                     _activeStack.Push(frame);
                 }
-                else
-                {
-                    _history.Enqueue(frame);
-                }
             }
         }
 
@@ -52,11 +46,7 @@ namespace Domain.Core.Markets.Timebars
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Subtract((DateTime) poppedItem.Epoch) > _activeTradeDuration)
-                    {
-                        _history.Enqueue(poppedItem);
-                    }
-                    else
+                    if (currentTime.Subtract((DateTime) poppedItem.Epoch) <= _activeTradeDuration)
                     {
                         counterPartyStack.Push(poppedItem);
                     }
@@ -100,8 +90,7 @@ namespace Domain.Core.Markets.Timebars
             }
 
             // ReSharper disable once InconsistentlySynchronizedField
-            _market = _activeStack?.Peek()?.Exchange
-                ?? _history?.FirstOrDefault()?.Exchange;
+            _market = _activeStack?.Peek()?.Exchange;
 
             return _market;
         }

@@ -69,6 +69,12 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\31 - Add rule analytic alert cols for place orders.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\29 - Add etl file type to enum tbl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

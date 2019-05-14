@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
-                factory,
+                marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -260,6 +260,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // do nothing
         }

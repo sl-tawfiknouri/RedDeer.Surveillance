@@ -15,8 +15,9 @@ namespace Surveillance.Engine.Rules.Universe
                 { UniverseStateEvent.EquityInterDayTick, 4 },
                 { UniverseStateEvent.OrderPlaced, 5 },
                 { UniverseStateEvent.Order, 6 },
-                { UniverseStateEvent.ExchangeClose, 7 },
-                { UniverseStateEvent.Eschaton, 8 },
+                { UniverseStateEvent.OrderFilled, 7 },
+                { UniverseStateEvent.ExchangeClose, 8 },
+                { UniverseStateEvent.Eschaton, 9 },
             };
 
         /*

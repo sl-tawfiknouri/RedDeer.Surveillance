@@ -54,12 +54,30 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis
                             || _.OrderDirection == OrderDirections.COVER)
                         .Sum(_ => _.OrderFilledVolume ?? 0);
 
+            var sellSide =
+                orders
+                    .Where(_ =>
+                        _.OrderDirection == OrderDirections.SELL
+                        || _.OrderDirection == OrderDirections.SHORT)
+                    .Sum(_ => _.OrderFilledVolume ?? 0);
+
             if (buySide == 0)
             {
-                return new PriceImpactSummary(PriceImpactClassification.Negative, segment);
+                var impact = 
+                    sellSide == 0 
+                        ? PriceImpactClassification.Unknown 
+                        : PriceImpactClassification.Negative;
+
+                return new PriceImpactSummary(impact, segment);
             }
 
             var totalVolume = orders.Sum(_ => _.OrderFilledVolume ?? 0);
+
+            if (totalVolume == 0)
+            {
+                return new PriceImpactSummary(PriceImpactClassification.Unknown, segment);
+            }
+
             var proportionBuySide = (decimal)buySide / (decimal)totalVolume;
 
             if (proportionBuySide >= 0.66m)

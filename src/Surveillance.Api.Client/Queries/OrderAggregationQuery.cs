@@ -1,5 +1,4 @@
-﻿using GraphQL.Common.Request;
-using Surveillance.Api.Client.Dtos;
+﻿using Surveillance.Api.Client.Dtos;
 using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
@@ -11,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace Surveillance.Api.Client.Queries
 {
-    using Response = List<RuleBreachDto>;
+    using Response = List<AggregationDto>;
 
-    public class RuleBreachQuery : Query<Response>
+    public class OrderAggregationQuery : Query<Response>
     {
-        public RuleBreachFilter<RuleBreachNode> Filter { get; }
+        public OrderFilter<AggregationNode> Filter { get; }
 
-        public RuleBreachQuery()
+        public OrderAggregationQuery()
         {
-            Filter = new RuleBreachFilter<RuleBreachNode>(new RuleBreachNode(this));
+            Filter = new OrderFilter<AggregationNode>(new AggregationNode(this));
         }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("ruleBreaches", Filter, request, ctx);
+            return await BuildAndPost<Response>("orderAggregation", Filter, request, ctx);
         }
     }
 }

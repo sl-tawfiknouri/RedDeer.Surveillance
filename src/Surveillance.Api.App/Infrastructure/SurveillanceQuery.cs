@@ -15,6 +15,10 @@ using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
+using System;
+using System.Globalization;
+using Surveillance.Api.App.Types.Aggregation;
+using Surveillance.Api.DataAccess.Repositories;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -171,6 +175,56 @@ namespace Surveillance.Api.App.Infrastructure
                     IQueryable<IOrder> IdQuery(IQueryable<IOrder> i) => i.Where(x => id == null || x.TraderId == id);
 
                     return orderRepository.TradersQuery(IdQuery);
+                });
+
+            Field<ListGraphType<OrderGraphType>>(
+                "orders",
+                description: "Orders uploaded by client",
+                arguments: new QueryArguments(
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
+                    new QueryArgument<IntGraphType> { Name = "take" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateTo" }
+                    ),
+                resolve: context =>
+                {
+                    var options = new OrderQueryOptions
+                    {
+                        Ids = context.GetArgument<List<int>>("ids"),
+                        Take = context.GetArgument<int?>("take"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<string>("placedDateTo")
+                    };
+                    return orderRepository.Query(options);
+                });
+
+            Field<ListGraphType<AggregationGraphType>>(
+                "orderAggregation",
+                description: "Aggregation of orders uploaded by client",
+                arguments: new QueryArguments(
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<StringGraphType> { Name = "placedDateTo" },
+                    new QueryArgument<StringGraphType> { Name = "tzName" }
+                    ),
+                resolve: context =>
+                {
+                    var options = new OrderQueryOptions
+                    {
+                        Ids = context.GetArgument<List<int>>("ids"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<string>("placedDateTo"),
+                        TzName = context.GetArgument<string>("tzName")
+                    };
+                    return orderRepository.AggregationQuery(options);
                 });
 
             Field<ListGraphType<RulesTypeEnumGraphType>>(

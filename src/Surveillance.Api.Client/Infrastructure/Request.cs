@@ -20,7 +20,7 @@ namespace Surveillance.Api.Client.Infrastructure
         {
             _client = new GraphQLClient(url, new GraphQLClientOptions
             {
-                HttpMessageHandler = httpMessageHandler
+                HttpMessageHandler = httpMessageHandler ?? new HttpClientHandler()
             });
             _client.DefaultRequestHeaders.Add("Authorization", $"bearer {bearer}");
         }

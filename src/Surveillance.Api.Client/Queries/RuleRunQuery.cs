@@ -1,4 +1,5 @@
 ﻿using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
 using System;
@@ -13,16 +14,16 @@ namespace Surveillance.Api.Client.Queries
 
     public class RuleRunQuery : Query<Response>
     {
-        public RuleRunNode RuleRunNode { get; private set; }
+        public RuleRunFilter<RuleRunNode> Filter { get; }
 
         public RuleRunQuery()
         {
-            RuleRunNode = new RuleRunNode(this);
+            Filter = new RuleRunFilter<RuleRunNode>(new RuleRunNode(this));
         }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("ruleRuns", RuleRunNode, request, ctx);
+            return await BuildAndPost<Response>("ruleRuns", Filter, request, ctx);
         }
     }
 }

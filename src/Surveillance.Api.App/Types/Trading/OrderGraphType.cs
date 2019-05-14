@@ -52,6 +52,11 @@ namespace Surveillance.Api.App.Types.Trading
                 });
 
             Field(i => i.ClientOrderId).Description("Client Order Id");
+            Field(i => i.OrderVersion).Description("Order version");
+            Field(i => i.OrderVersionLinkId).Description("Order version link id");
+            Field(i => i.OrderGroupId).Description("Order group id");
+            Field(i => i.OrderType).Description("Order type");
+            Field(i => i.Direction).Description("Order direction");
 
             Field<OrderDatesGraphType>().Name("orderDates").Description("Dates of key events in the order life cycle");
             Field<OrderManagementSystemGraphType>().Name("oms").Description("Order Management System data");

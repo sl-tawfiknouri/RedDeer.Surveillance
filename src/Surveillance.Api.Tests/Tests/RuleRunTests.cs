@@ -40,18 +40,19 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleRunQuery();
             query
-                .RuleRunNode
-                    .FieldId()
-                    .FieldCorrelationId()
-                    .FieldRuleDescription()
-                    .FieldRuleVersion()
-                    .FieldScheduleRuleStart()
-                    .FieldScheduleRuleEnd()
-                    .FieldProcessOperation()
+                .Filter
+                    .Node
                         .FieldId()
-                        .FieldOperationStart()
-                        .FieldOperationEnd()
-                        .FieldOperationState();
+                        .FieldCorrelationId()
+                        .FieldRuleDescription()
+                        .FieldRuleVersion()
+                        .FieldScheduleRuleStart()
+                        .FieldScheduleRuleEnd()
+                        .FieldProcessOperation()
+                            .FieldId()
+                            .FieldOperationStart()
+                            .FieldOperationEnd()
+                            .FieldOperationState();
 
             // act
             var ruleRuns = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -88,9 +89,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleRunQuery();
             query
-                .RuleRunNode
-                    .FieldProcessOperation()
-                        .FieldOperationEnd();
+                .Filter
+                    .Node
+                        .FieldProcessOperation()
+                            .FieldOperationEnd();
 
             // act
             var ruleRuns = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -129,10 +131,11 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleRunQuery();
             query
-                .RuleRunNode
+                .Filter
                     .ArgumentCorrelationIds(new List<string> { "abc", "def" })
-                    .FieldId()
-                    .FieldCorrelationId();
+                    .Node
+                        .FieldId()
+                        .FieldCorrelationId();
 
             // act
             var ruleRuns = await _apiClient.QueryAsync(query, CancellationToken.None);

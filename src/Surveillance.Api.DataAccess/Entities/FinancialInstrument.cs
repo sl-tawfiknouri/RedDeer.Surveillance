@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using Domain.Core.Financial.Assets;
@@ -8,6 +9,7 @@ namespace Surveillance.Api.DataAccess.Entities
 {
     public class FinancialInstrument : IFinancialInstrument
     {
+        [Key]
         public int Id { get; set; }
         public int MarketId { get; set; }
         [NotMapped]

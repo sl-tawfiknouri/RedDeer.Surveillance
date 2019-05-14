@@ -1,75 +1,35 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Surveillance.Api.Client.Infrastructure
 {
-    public class Node : NodeParent
+    public class Node<Z> : NodeBase where Z : class
     {
-        private readonly NodeParent _parent;
-        private readonly Dictionary<string, object> _arguments = new Dictionary<string, object>();
-        private readonly Dictionary<string, Node> _fields = new Dictionary<string, Node>();
+        private readonly Parent _parent;
 
-        public Node(NodeParent parent)
+        public Node(Parent parent)
         {
             _parent = parent;
         }
 
-        public T Parent<T>() where T : NodeParent
+        public T Parent<T>() where T : Parent
         {
             return _parent as T;
         }
 
-        protected T AddArgument<T>(string name, object value, T self) where T : Node
-        {
-            _arguments[name] = value;
-            return self;
-        }
-
-        protected T AddField<T>(string name, T self) where T : Node
+        protected Z AddField(string name)
         {
             _fields[name] = null;
-            return self;
+            return this as Z;
         }
 
-        protected T AddChild<T>(string name, T node) where T : Node
+        protected T AddChild<T>(string name, T node) where T : Parent
         {
             _fields[name] = node;
             return node;
-        }
-
-        internal string Build(string name)
-        {
-            var arguments = new List<string>();
-            foreach (var argument in _arguments)
-            {
-                arguments.Add($"{argument.Key}: {JsonConvert.SerializeObject(argument.Value)}");
-            }
-
-            var fields = new List<string>();
-            foreach (var field in _fields)
-            {
-                if (field.Value != null)
-                {
-                    fields.Add(field.Value.Build(field.Key));
-                }
-                else
-                {
-                    fields.Add(field.Key);
-                }
-            }
-
-            var s = name;
-            if (arguments.Count > 0)
-            {
-                s += "(" + string.Join(", ", arguments) + ")";
-            }
-            if (fields.Count > 0)
-            {
-                s += " { " + string.Join(", ", fields) + " }";
-            }
-            return s;
         }
     }
 }

@@ -5,18 +5,16 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Nodes
 {
-    public class RuleRunNode : Node
+    public class RuleRunNode : Node<RuleRunNode>
     {
-        public RuleRunNode(NodeParent parent) : base(parent) { }
+        public RuleRunNode(Parent parent) : base(parent) { }
 
-        public RuleRunNode ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds, this);
-
-        public RuleRunNode FieldId() => AddField("id", this);
-        public RuleRunNode FieldCorrelationId() => AddField("correlationId", this);
-        public RuleRunNode FieldRuleDescription() => AddField("ruleDescription", this);
-        public RuleRunNode FieldRuleVersion() => AddField("ruleVersion", this);
-        public RuleRunNode FieldScheduleRuleStart() => AddField("start", this);
-        public RuleRunNode FieldScheduleRuleEnd() => AddField("end", this);
+        public RuleRunNode FieldId() => AddField("id");
+        public RuleRunNode FieldCorrelationId() => AddField("correlationId");
+        public RuleRunNode FieldRuleDescription() => AddField("ruleDescription");
+        public RuleRunNode FieldRuleVersion() => AddField("ruleVersion");
+        public RuleRunNode FieldScheduleRuleStart() => AddField("start");
+        public RuleRunNode FieldScheduleRuleEnd() => AddField("end");
         public ProcessOperationNode FieldProcessOperation() => AddChild("processOperation", new ProcessOperationNode(this));
 
     }

@@ -68,8 +68,6 @@ using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
@@ -84,6 +82,8 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Lazy;
+using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
@@ -108,7 +108,6 @@ namespace Surveillance.Engine.Rules
             For<IOriginFactory>().Use<OriginFactory>();
             For<ISpoofingRule>().Use<SpoofingRule>();
 
-            For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
@@ -244,6 +243,9 @@ namespace Surveillance.Engine.Rules
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
 
+            For<ILazyScheduledExecutioner>().Use<LazyScheduledExecutioner>();
+            For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<ILazyTransientUniverseFactory>().Use<LazyTransientUniverseFactory>();
             For<ITimeSeriesTrendClassifier>().Use<TimeSeriesTrendClassifier>();
 
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();

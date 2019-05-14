@@ -14,6 +14,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Engine.Rules.Analysis
@@ -23,7 +24,6 @@ namespace Surveillance.Engine.Rules.Analysis
     /// </summary>
     public class AnalysisEngine : IAnalysisEngine
     {
-        private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
         private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
@@ -39,11 +39,11 @@ namespace Surveillance.Engine.Rules.Analysis
 
         private readonly IRuleParameterService _ruleParameterService;
         private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
-        
+        private readonly ILazyTransientUniverseFactory _universeFactory;
+
         private readonly ILogger<AnalysisEngine> _logger;
 
         public AnalysisEngine(
-            IUniverseBuilder universeBuilder,
             IUniversePlayerFactory universePlayerFactory,
             IUniverseRuleSubscriber ruleSubscriber,
             IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
@@ -56,9 +56,9 @@ namespace Surveillance.Engine.Rules.Analysis
             IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
             IRuleParameterService ruleParameterService,
             IRuleParameterLeadingTimespanService leadingTimespanService,
+            ILazyTransientUniverseFactory universeFactory,
             ILogger<AnalysisEngine> logger)
         {
-            _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
             _universePlayerFactory =
                 universePlayerFactory
@@ -76,13 +76,13 @@ namespace Surveillance.Engine.Rules.Analysis
 
             _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
             _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
+            _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
-
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {
@@ -95,11 +95,9 @@ namespace Surveillance.Engine.Rules.Analysis
 
             var ruleParameters = await _ruleParameterService.RuleParameters(execution);
             execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
-            var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
 
             _universeCompletionLogger.InitiateTimeLogger(execution);
-            _universeCompletionLogger.InitiateEventLogger(universe);
             player.Subscribe(_universeCompletionLogger);
 
             var dataRequestSubscriber = _dataRequestSubscriberFactory.Build(opCtx);
@@ -115,7 +113,8 @@ namespace Surveillance.Engine.Rules.Analysis
             player.Subscribe(universeAnalyticsSubscriber);
 
             _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
-            player.Play(universe);
+            var lazyUniverse = _universeFactory.Build(execution, opCtx);
+            player.Play(lazyUniverse);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             universeAlertSubscriber.Flush();

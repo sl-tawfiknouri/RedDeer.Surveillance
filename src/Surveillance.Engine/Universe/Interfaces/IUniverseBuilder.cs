@@ -7,5 +7,6 @@ namespace Surveillance.Engine.Rules.Universe.Interfaces
     public interface IUniverseBuilder
     {
         Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx);
+        Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx, bool includeGenesis, bool includeEschaton);
     }
 }

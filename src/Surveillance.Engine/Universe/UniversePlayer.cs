@@ -44,8 +44,6 @@ namespace Surveillance.Engine.Rules.Universe
                 || !_universeObservers.Any())
             {
                 _logger.LogError($"play universe to null or empty observers. Returning");
-
-                // does a tree fall in an empty forest? no
                 return;
             }
 

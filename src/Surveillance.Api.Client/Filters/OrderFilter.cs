@@ -15,5 +15,6 @@ namespace Surveillance.Api.Client.Filters
         public OrderFilter<T> ArgumentPlacedDateFrom(DateTime dateTime) => AddArgument("placedDateFrom", dateTime);
         public OrderFilter<T> ArgumentPlacedDateTo(DateTime dateTime) => AddArgument("placedDateTo", dateTime);
         public OrderFilter<T> ArgumentTake(int count) => AddArgument("take", count);
+        public OrderFilter<T> ArgumentTzName(string tzName) => AddArgument("tzName", tzName);
     }
 }

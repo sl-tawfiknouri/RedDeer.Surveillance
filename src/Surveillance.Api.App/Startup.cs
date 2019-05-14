@@ -25,8 +25,10 @@ using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
+using Surveillance.Api.DataAccess.Abstractions.Services;
 using Surveillance.Api.DataAccess.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Repositories;
+using Surveillance.Api.DataAccess.Services;
 
 namespace Surveillance.Api.App
 {
@@ -70,6 +72,7 @@ namespace Surveillance.Api.App
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.AddScoped<IProvideClaimsPrincipal, GraphQlUserContext>();
             services.AddScoped<IGraphQlDbContextFactory, GraphQlDbContextFactory>();
+            services.AddScoped<ITimeZoneService, TimeZoneService>();
 
             services.AddScoped<IMarketRepository, MarketRepository>();
             services.AddScoped<IRuleBreachRepository, RuleBreachRepository>();

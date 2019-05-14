@@ -23,7 +23,7 @@ namespace Surveillance.Api.Tests.Tests
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 5,
-                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+                PlacedDate = new DateTime(2019, 05, 10, 23, 30, 00, DateTimeKind.Utc) // BST conversion will end up on 11th
             });
             _dbContext.DbOrders.Add(new Order
             {
@@ -41,6 +41,9 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderAggregationQuery();
             query
                 .Filter
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2019, 05, 13, 07, 50, 05, DateTimeKind.Utc))
+                    .ArgumentTzName("Europe/London")
                     .Node
                         .FieldKey()
                         .FieldCount();
@@ -50,11 +53,11 @@ namespace Surveillance.Api.Tests.Tests
 
             // assert
             Assert.That(aggregations, Has.Count.EqualTo(3));
-            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-13"));
+            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-10"));
             Assert.That(aggregations[0].Count, Is.EqualTo(1));
             Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-11"));
             Assert.That(aggregations[1].Count, Is.EqualTo(2));
-            Assert.That(aggregations[2].Key, Is.EqualTo("2019-05-10"));
+            Assert.That(aggregations[2].Key, Is.EqualTo("2019-05-13"));
             Assert.That(aggregations[2].Count, Is.EqualTo(1));
         }
 
@@ -65,17 +68,17 @@ namespace Surveillance.Api.Tests.Tests
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 4,
-                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc)
+                PlacedDate = new DateTime(2019, 01, 09, 07, 50, 05, DateTimeKind.Utc)
             });
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 5,
-                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+                PlacedDate = new DateTime(2019, 02, 11, 07, 50, 05, DateTimeKind.Utc) // not in daylight savings
             });
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 6,
-                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc)
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc) // in daylight savings
             });
             _dbContext.DbOrders.Add(new Order
             {
@@ -89,6 +92,9 @@ namespace Surveillance.Api.Tests.Tests
             query
                 .Filter
                     .ArgumentIds(new List<int> { 5, 6 })
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentTzName("America/Los_Angeles")
                     .Node
                         .FieldKey()
                         .FieldCount();
@@ -97,9 +103,11 @@ namespace Surveillance.Api.Tests.Tests
             var aggregations = await _apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
-            Assert.That(aggregations, Has.Count.EqualTo(1));
-            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-11"));
-            Assert.That(aggregations[0].Count, Is.EqualTo(2));
+            Assert.That(aggregations, Has.Count.EqualTo(2));
+            Assert.That(aggregations[0].Key, Is.EqualTo("2019-02-10"));
+            Assert.That(aggregations[0].Count, Is.EqualTo(1));
+            Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-11"));
+            Assert.That(aggregations[1].Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -134,6 +142,7 @@ namespace Surveillance.Api.Tests.Tests
                 .Filter
                     .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 00, 00, 00, DateTimeKind.Utc))
                     .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentTzName("America/Phoenix")
                     .Node
                         .FieldKey()
                         .FieldCount();
@@ -182,6 +191,9 @@ namespace Surveillance.Api.Tests.Tests
             query
                 .Filter
                     .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentTzName("Europe/Paris")
                     .Node
                         .FieldKey()
                         .FieldCount();
@@ -191,9 +203,9 @@ namespace Surveillance.Api.Tests.Tests
 
             // assert
             Assert.That(aggregations, Has.Count.EqualTo(2));
-            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-13"));
+            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-10"));
             Assert.That(aggregations[0].Count, Is.EqualTo(1));
-            Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-10"));
+            Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-13"));
             Assert.That(aggregations[1].Count, Is.EqualTo(1));
         }
 
@@ -248,6 +260,9 @@ namespace Surveillance.Api.Tests.Tests
             query
                 .Filter
                     .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc))
+                    .ArgumentTzName("Europe/Paris")
                     .Node
                         .FieldKey()
                         .FieldCount();
@@ -257,9 +272,9 @@ namespace Surveillance.Api.Tests.Tests
 
             // assert
             Assert.That(aggregations, Has.Count.EqualTo(2));
-            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-11"));
+            Assert.That(aggregations[0].Key, Is.EqualTo("2019-05-10"));
             Assert.That(aggregations[0].Count, Is.EqualTo(1));
-            Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-10"));
+            Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-11"));
             Assert.That(aggregations[1].Count, Is.EqualTo(1));
         }
     }

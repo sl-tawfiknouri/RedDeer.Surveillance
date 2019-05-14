@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
+using Surveillance.Api.DataAccess.Abstractions.Services;
 using Surveillance.Api.DataAccess.Entities;
 
 namespace Surveillance.Api.DataAccess.Repositories
@@ -15,10 +16,12 @@ namespace Surveillance.Api.DataAccess.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly IGraphQlDbContextFactory _factory;
+        private readonly ITimeZoneService _timeZoneService;
 
-        public OrderRepository(IGraphQlDbContextFactory factory)
+        public OrderRepository(IGraphQlDbContextFactory factory, ITimeZoneService timeZoneService)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _timeZoneService = timeZoneService ?? throw new ArgumentNullException(nameof(timeZoneService));
         }
 
         public async Task<ILookup<int, IOrder>> GetAllForRuleBreach(IEnumerable<int> ruleBreachId)
@@ -378,7 +381,29 @@ namespace Surveillance.Api.DataAccess.Repositories
         {
             using (var dbContext = _factory.Build())
             {
-                var orders = await SetOrderQueryOptions(dbContext.Orders, options).AsNoTracking().ToListAsync();
+                var query = SetOrderQueryOptions(dbContext.Orders, options);
+
+                if (options.PlacedDateFrom != null)
+                {
+                    var dateTime = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
+                    query = query.Where(x => x.PlacedDate >= dateTime);
+                }
+                if (options.PlacedDateTo != null)
+                {
+                    var dateTime = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                    query = query.Where(x => x.PlacedDate <= dateTime);
+                }
+
+                query = query.OrderByDescending(x => x.PlacedDate); // apply Order before Take
+
+                if (options.Take != null)
+                {
+                    query = query.Take(options.Take.Value);
+                }
+
+                var orders = await query
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 return orders;
             }
@@ -388,17 +413,62 @@ namespace Surveillance.Api.DataAccess.Repositories
         {
             using (var dbContext = _factory.Build())
             {
-                var aggregations = await SetOrderQueryOptions(dbContext.Orders, options)
-                    .GroupBy(x => x.PlacedDate.Date)
-                    .Select(x => new Aggregation
-                    {
-                        Key = x.Key.ToString("yyyy-MM-dd"),
-                        Count = x.Count()
-                    })
-                    .AsNoTracking()
-                    .ToListAsync();
+                var aggregations = new Dictionary<string, int>();
 
-                return aggregations;
+                var from = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
+                var to = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                var segments = _timeZoneService.GetOffsetSegments(from, to, options.TzName);
+
+                foreach (var segment in segments)
+                {
+                    var query = SetOrderQueryOptions(dbContext.Orders, options);
+
+                    if (segment.FromIncluding)
+                    {
+                        query = query.Where(x => x.PlacedDate >= segment.FromUtc);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.PlacedDate > segment.FromUtc);
+                    }
+
+                    if (segment.ToIncluding)
+                    {
+                        query = query.Where(x => x.PlacedDate <= segment.ToUtc);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.PlacedDate < segment.ToUtc);
+                    }
+
+                    var segmentAggregations = await query
+                        .GroupBy(x => x.PlacedDate.AddHours(segment.HourOffset).Date)
+                        .Select(x => new Aggregation
+                        {
+                            Key = x.Key.ToString("yyyy-MM-dd"),
+                            Count = x.Count()
+                        })
+                        .AsNoTracking()
+                        .ToListAsync();
+
+                    foreach (var segmentAggregation in segmentAggregations)
+                    {
+                        var key = segmentAggregation.Key;
+                        if (!aggregations.ContainsKey(key))
+                        {
+                            aggregations[key] = 0;
+                        }
+                        aggregations[key] += segmentAggregation.Count;
+                    }
+                }
+
+                return aggregations.Select(x => new Aggregation
+                {
+                    Key = x.Key,
+                    Count = x.Value
+                })
+                .OrderBy(x => x.Key)
+                .ToList();
             }
         }
 
@@ -415,23 +485,6 @@ namespace Surveillance.Api.DataAccess.Repositories
             if (options.ReddeerIds != null)
             {
                 query = query.Where(x => options.ReddeerIds.Contains(x.FinancialInstrument.ReddeerId));
-            }
-            if (options.PlacedDateFrom != null)
-            {
-                var dateTime = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
-                query = query.Where(x => x.PlacedDate >= dateTime);
-            }
-            if (options.PlacedDateTo != null)
-            {
-                var dateTime = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
-                query = query.Where(x => x.PlacedDate <= dateTime);
-            }
-
-            query = query.OrderByDescending(x => x.PlacedDate);
-
-            if (options.Take != null)
-            {
-                query = query.Take(options.Take.Value);
             }
 
             return query;

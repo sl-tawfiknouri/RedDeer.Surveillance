@@ -13,5 +13,6 @@ namespace Surveillance.Api.DataAccess.Repositories
         public List<string> ReddeerIds { get; set; }
         public string PlacedDateFrom { get; set; }
         public string PlacedDateTo { get; set; }
+        public string TzName { get; set; }
     }
 }

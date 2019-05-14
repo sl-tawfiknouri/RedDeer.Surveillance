@@ -12,5 +12,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
         List<string> ReddeerIds { get; }
         string PlacedDateFrom { get; }
         string PlacedDateTo { get; }
+        string TzName { get; }
     }
 }

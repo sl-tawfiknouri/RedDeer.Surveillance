@@ -16,11 +16,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
         IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(List<LayeringRuleParameterDto> dtos);
         IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos);
         IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos);
+        IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos);
+
         IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos);
-
         IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos);
-
         IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos);
-
     }
 }

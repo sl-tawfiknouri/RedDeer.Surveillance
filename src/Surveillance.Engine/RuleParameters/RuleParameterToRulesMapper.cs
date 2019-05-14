@@ -310,5 +310,31 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
         }
+
+        public IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"asked to map null or empty {nameof(PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters)}");
+                return null;
+            }
+
+            return dtos
+                .Select(_ =>
+                    new PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
+                        _.Id, 
+                        _.Sigma, 
+                        _.WindowSize, 
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors), 
+                        _.AggregateNonFactorableIntoOwnCategory, 
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies)))
+                .ToList();
+        }
     }
 }

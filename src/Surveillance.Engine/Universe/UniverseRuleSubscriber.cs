@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
@@ -34,6 +35,7 @@ namespace Surveillance.Engine.Rules.Universe
         private readonly IMarkingTheCloseEquitySubscriber _markingTheCloseEquitySubscriber;
         private readonly ILayeringEquitySubscriber _layeringEquitySubscriber;
         private readonly IWashTradeEquitySubscriber _washTradeEquitySubscriber;
+        private readonly IRampingEquitySubscriber _rampingEquitySubscriber;
         private readonly IPlacingOrdersWithNoIntentToExecuteEquitySubscriber _placingOrdersEquitySubscriber;
 
         // Fixed Income
@@ -52,6 +54,7 @@ namespace Surveillance.Engine.Rules.Universe
             IMarkingTheCloseEquitySubscriber markingTheCloseEquitySubscriber,
             ILayeringEquitySubscriber layeringEquitySubscriber,
             IWashTradeEquitySubscriber washTradeEquitySubscriber,
+            IRampingEquitySubscriber rampingEquitySubscriber,
             IPlacingOrdersWithNoIntentToExecuteEquitySubscriber placingOrdersEquitySubscriber,
             IRuleParameterDtoIdExtractor idExtractor,
             ILogger<UniverseRuleSubscriber> logger, 
@@ -66,6 +69,7 @@ namespace Surveillance.Engine.Rules.Universe
             _markingTheCloseEquitySubscriber = markingTheCloseEquitySubscriber ?? throw new ArgumentNullException(nameof(markingTheCloseEquitySubscriber));
             _layeringEquitySubscriber = layeringEquitySubscriber ?? throw new ArgumentNullException(nameof(layeringEquitySubscriber));
             _washTradeEquitySubscriber = washTradeEquitySubscriber ?? throw new ArgumentNullException(nameof(washTradeEquitySubscriber));
+            _rampingEquitySubscriber = rampingEquitySubscriber ?? throw new ArgumentNullException(nameof(rampingEquitySubscriber));
             _placingOrdersEquitySubscriber = placingOrdersEquitySubscriber ?? throw new ArgumentNullException(nameof(placingOrdersEquitySubscriber));
 
             _idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
@@ -111,6 +115,9 @@ namespace Surveillance.Engine.Rules.Universe
             var spoofingSubscriptions =
                 _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
+            var rampingSubscriptions =
+                _rampingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                
             var placingOrdersSubscriptions =
                 _placingOrdersEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
@@ -162,12 +169,20 @@ namespace Surveillance.Engine.Rules.Universe
                 _logger.LogInformation($"Subscribe Rules subscribing a {nameof(SpoofingRule)}");
                 player.Subscribe(sub);
             }
-
+            
+            
+            foreach (var sub in rampingSubscriptions)
+            {
+                _logger.LogInformation($"Subscribe rules subscribing a {nameof(RampingRule)}");
+                player.Subscribe(sub);
+            }
+            
             foreach (var sub in placingOrdersSubscriptions)
             {
                 _logger.LogInformation($"Subscribe Rules subscribing a {nameof(PlacingOrdersWithNoIntentToExecuteRule)}");
                 player.Subscribe(sub);
             }
+  
 
             // FIXED INCOME
 

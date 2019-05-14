@@ -231,6 +231,34 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
+        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(List<RampingRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"asked to map null or empty ramping dtos");
+                return null;
+            }
+
+            return
+                dtos
+                    .Select(dto =>
+                        new RampingRuleEquitiesParameters(
+                            dto.Id,
+                            dto.WindowSize,
+                            dto.AutoCorrelationCoefficient,
+                            dto.ThresholdOrdersExecutedInWindow,
+                            dto.ThresholdVolumePercentageWindow,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets),
+                            _ruleProjector.Project(dto.Funds),
+                            _ruleProjector.Project(dto.Strategies),
+                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                            dto.AggregateNonFactorableIntoOwnCategory))
+                    .ToList();
+        }
+
         public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
             if (dtos == null

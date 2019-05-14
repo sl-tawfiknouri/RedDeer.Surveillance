@@ -68,6 +68,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
             var allLayerings = ruleDtos.SelectMany(ru => ru.Layerings).ToArray();
             var allHighVolumes = ruleDtos.SelectMany(ru => ru.HighVolumes).ToArray();
             var allWashTrades = ruleDtos.SelectMany(ru => ru.WashTrades).ToArray();
+            var allRampings = ruleDtos.SelectMany(ru => ru.Rampings).ToArray();
 
             _logger.LogInformation($"has fetched the rule parameters");
 
@@ -79,7 +80,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 Spoofings = allSpoofings,
                 Layerings = allLayerings,
                 HighVolumes = allHighVolumes,
-                WashTrades = allWashTrades
+                WashTrades = allWashTrades,
+                Rampings = allRampings
             };
         }
     }

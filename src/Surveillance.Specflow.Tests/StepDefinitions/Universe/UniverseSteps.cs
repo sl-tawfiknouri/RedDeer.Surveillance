@@ -124,11 +124,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Engine.Rules.Universe.Universe(
-                    new Order[0],
-                    new EquityIntraDayTimeBarCollection[0],
-                    new EquityInterDayTimeBarCollection[0],
-                    orderedUniverse);
+                new Engine.Rules.Universe.Universe(orderedUniverse);
         }
 
         private IUniverseEvent MapRowToIntradayMarketDataEvent(IntradayMarketDataParameters marketDataParam)
@@ -206,11 +202,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Engine.Rules.Universe.Universe(
-                    new Order[0],
-                    new EquityIntraDayTimeBarCollection[0],
-                    new EquityInterDayTimeBarCollection[0],
-                    orderedUniverse);
+                new Engine.Rules.Universe.Universe(orderedUniverse);
         }
 
         private IUniverseEvent MapRowToInterdayMarketDataEvent(InterdayMarketDataParameters marketDataParam)
@@ -324,21 +316,19 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 
             var universeEventOrder = new UniverseEvent(UniverseStateEvent.Order, order.MostRecentDateEvent(), order);
             var universeEventOrderPlaced = new UniverseEvent(UniverseStateEvent.OrderPlaced, order.PlacedDate.GetValueOrDefault(), order);
+            var universeEventOrderFilled = new UniverseEvent(UniverseStateEvent.OrderFilled, order.FilledDate.GetValueOrDefault(), order);
 
             return new[]
             {
                 universeEventOrder,
-                universeEventOrderPlaced
+                universeEventOrderPlaced,
+                universeEventOrderFilled
             };
         }
 
         private Engine.Rules.Universe.Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
-            return new Engine.Rules.Universe.Universe(
-                new Order[0],
-                new EquityIntraDayTimeBarCollection[0],
-                new EquityInterDayTimeBarCollection[0],
-                universeEvents);
+            return new Engine.Rules.Universe.Universe(universeEvents);
         }
     }
 }

@@ -206,6 +206,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             // spoofing rule does not monitor by last status changed
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // spoofing rule does not monitor by filled orders
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred");

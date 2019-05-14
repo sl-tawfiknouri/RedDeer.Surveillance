@@ -8,9 +8,9 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -33,6 +33,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _equityWashTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
+        private readonly IRampingRuleCachedMessageSender _rampingRuleMessageSender;
         private readonly IPlacingOrdersWithNoIntentToExecuteCacheMessageSender _placingOrdersMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
@@ -50,6 +51,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender equityWashTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
+            IRampingRuleCachedMessageSender rampingRuleMessageSender,
             IPlacingOrdersWithNoIntentToExecuteCacheMessageSender placingOrdersCacheMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
@@ -87,6 +89,10 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 fixedIncomeWashTradeMessageSender
                 ?? throw new ArgumentNullException(nameof(fixedIncomeWashTradeMessageSender));
             
+            _rampingRuleMessageSender =
+                rampingRuleMessageSender
+                ?? throw new ArgumentNullException(nameof(rampingRuleMessageSender));
+                
             _placingOrdersMessageSender = 
                 placingOrdersCacheMessageSender
                 ?? throw new ArgumentNullException(nameof(placingOrdersCacheMessageSender));
@@ -135,6 +141,9 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 case Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades:
                     FixedIncomeWashTrade(value);
                     break;
+                case Domain.Surveillance.Scheduling.Rules.Ramping:
+                    Ramping(value);
+                    break;
                 case Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute:
                     PlacingOrdersWithoutIntentToExecute(value);
                     break;
@@ -166,6 +175,31 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _logger.LogInformation($"placing orders without intent to execute flushing alerts");
             Analytics.PlacingOrdersAlertsAdjusted = _placingOrdersMessageSender.Flush();
         }
+        
+        
+        private void Ramping(IUniverseAlertEvent alert)
+        {
+            if (alert.IsFlushEvent)
+            {
+                return;
+            }
+
+            var ruleBreach = (IRampingRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
+
+            _logger.LogInformation($"ramping adding alert to ramping message sender");
+            _rampingRuleMessageSender.Send(ruleBreach);
+
+            _logger.LogInformation($"ramping incrementing raw alert count by 1");
+            Analytics.RampingAlertsRaw += 1;
+        }
+
+        private void RampingFlush()
+        {
+            _logger.LogInformation($"ramping flushing alerts");
+            Analytics.RampingAlertsAdjusted += _rampingRuleMessageSender.Flush();
+        }
+        
 
         private void CancelledOrders(IUniverseAlertEvent alert)
         {
@@ -404,6 +438,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             HighVolumeFlush();
             HighProfitsFlush();
 
+            RampingFlush();
             CancelledOrdersFlush();
             PlacingOrdersWithoutIntentToExecuteFlush();
 

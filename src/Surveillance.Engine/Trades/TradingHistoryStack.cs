@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,6 @@ namespace Surveillance.Engine.Rules.Trades
     public class TradingHistoryStack : ITradingHistoryStack
     {
         private readonly Stack<Order> _activeStack;
-        private readonly Queue<Order> _history;
         private Market _market;
 
         private readonly object _lock = new object();
@@ -25,7 +23,6 @@ namespace Surveillance.Engine.Rules.Trades
             ILogger<TradingHistoryStack> logger)
         {
             _activeStack = new Stack<Order>();
-            _history = new Queue<Order>();
             _activeTradeDuration = activeTradeDuration;
             _getFrameTime = getFrameTime;
 
@@ -49,8 +46,7 @@ namespace Surveillance.Engine.Rules.Trades
                 }
                 else
                 {
-                    _logger.LogTrace($"adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}. Found it was outdated for an active trade duration of {_activeTradeDuration} so adding it to history");
-                    _history.Enqueue(order);
+                    _logger.LogTrace($"adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}. Found it was outdated for an active trade duration of {_activeTradeDuration} so discarding it");
                 }
             }
         }
@@ -66,13 +62,7 @@ namespace Surveillance.Engine.Rules.Trades
                 {
                     var poppedItem = _activeStack.Pop();
 
-                    if (currentTime.Subtract(_getFrameTime(poppedItem)) > _activeTradeDuration)
-                    {
-                        _logger.LogTrace($"archiving for {currentTime} and duration of {_activeTradeDuration}. Order with reddeer-order-id of {poppedItem.ReddeerOrderId} archived.");
-
-                        _history.Enqueue(poppedItem);
-                    }
-                    else
+                    if (currentTime.Subtract(_getFrameTime(poppedItem)) <= _activeTradeDuration)
                     {
                         counterPartyStack.Push(poppedItem);
                     }
@@ -116,8 +106,7 @@ namespace Surveillance.Engine.Rules.Trades
             }
             
             // ReSharper disable once InconsistentlySynchronizedField
-            _market = _activeStack?.Peek()?.Market
-                ?? _history?.FirstOrDefault()?.Market;
+            _market = _activeStack?.Peek()?.Market;
 
             return _market;
         }

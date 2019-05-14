@@ -74,6 +74,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             // placing order with no intent to execute will not use this
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // placing order with no intent to execute will not use this
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred");

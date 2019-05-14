@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",
                 ruleCtx,
-                marketCacheFactory,
+                factory,
                 runMode,
                 logger,
                 tradingStackLogger)
@@ -69,6 +69,14 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
 
 
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunInitialSubmissionRule completed for {UniverseDateTime}");
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent called at {UniverseDateTime}");
+
+
+            _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
         }
 
         protected override void Genesis()

@@ -21,6 +21,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var layeringIds = dtos.Layerings?.Select(_ => _.Id)?.ToList() ?? new List<string>();
             var highVolumeIds = dtos.HighVolumes?.Select(_ => _.Id)?.ToList() ?? new List<string>();
             var washTradeIds = dtos.WashTrades?.Select(_ => _.Id)?.ToList() ?? new List<string>();
+            var rampingIds = dtos.Rampings?.Select(_ => _.Id)?.ToList() ?? new List<string>();
             var placingOrderWithNoIntentionToExecute = dtos.PlacingOrders?.Select(_ => _.Id)?.ToList() ?? new List<string>();
 
             var fixedIncomeHighProfitIds = dtos.FixedIncomeHighProfits?.Select(_ => _.Id)?.ToList() ?? new List<string>();
@@ -36,6 +37,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             response.AddRange(layeringIds);
             response.AddRange(highVolumeIds);
             response.AddRange(washTradeIds);
+            response.AddRange(rampingIds);
             response.AddRange(placingOrderWithNoIntentionToExecute);
 
             response.AddRange(fixedIncomeHighProfitIds);

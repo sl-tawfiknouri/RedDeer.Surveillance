@@ -264,6 +264,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             // do nothing
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private void WriteAlertToMessageSender(
             Stack<Order> activeTrades,
             Money absoluteProfit,

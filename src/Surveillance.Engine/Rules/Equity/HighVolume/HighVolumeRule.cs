@@ -344,6 +344,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         { }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        { }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred");

@@ -149,6 +149,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             // do nothing
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities)
         {

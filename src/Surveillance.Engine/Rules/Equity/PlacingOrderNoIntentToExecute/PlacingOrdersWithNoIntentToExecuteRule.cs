@@ -6,6 +6,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -25,9 +26,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        private readonly IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters _parameters;
 
         public PlacingOrdersWithNoIntentToExecuteRule(
-            TimeSpan windowSize,
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             IUniverseOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -37,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger) 
             : base(
-                windowSize,
+                parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",
@@ -52,6 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;

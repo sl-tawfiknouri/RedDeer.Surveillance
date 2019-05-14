@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             RuleRunMode runMode)
         {
             return new PlacingOrdersWithNoIntentToExecuteRule(
-                TimeSpan.MaxValue,
+                parameters,
                 _orderFilterService,
                 ruleCtx,
                 _factory,

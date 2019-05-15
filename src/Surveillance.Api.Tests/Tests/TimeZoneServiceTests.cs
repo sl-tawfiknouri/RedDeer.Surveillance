@@ -41,13 +41,13 @@ namespace Surveillance.Api.Tests.Tests
             segments[0].HourOffset.Should().Be(-8);
 
             segments[1].FromUtc.Should().Be(new DateTime(2018, 03, 11, 10, 00, 00, DateTimeKind.Utc));
-            segments[1].FromIncluding.Should().Be(false);
+            segments[1].FromIncluding.Should().Be(true);
             segments[1].ToUtc.Should().Be(new DateTime(2018, 11, 04, 09, 00, 00, DateTimeKind.Utc));
-            segments[1].FromIncluding.Should().Be(false);
+            segments[1].ToIncluding.Should().Be(false);
             segments[1].HourOffset.Should().Be(-7);
 
             segments[2].FromUtc.Should().Be(new DateTime(2018, 11, 04, 09, 00, 00, DateTimeKind.Utc));
-            segments[2].FromIncluding.Should().Be(false);
+            segments[2].FromIncluding.Should().Be(true);
             segments[2].ToUtc.Should().Be(new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc));
             segments[2].ToIncluding.Should().Be(true);
             segments[2].HourOffset.Should().Be(-8);
@@ -95,7 +95,7 @@ namespace Surveillance.Api.Tests.Tests
             segments[0].HourOffset.Should().Be(1);
 
             segments[1].FromUtc.Should().Be(new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc));
-            segments[1].FromIncluding.Should().Be(false);
+            segments[1].FromIncluding.Should().Be(true);
             segments[1].ToUtc.Should().Be(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc));
             segments[1].ToIncluding.Should().Be(true);
             segments[1].HourOffset.Should().Be(0);

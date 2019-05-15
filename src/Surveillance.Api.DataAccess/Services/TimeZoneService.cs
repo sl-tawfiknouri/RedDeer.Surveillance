@@ -50,7 +50,7 @@ namespace Surveillance.Api.DataAccess.Services
                 {
                     FromUtc = from,
                     ToUtc = next,
-                    FromIncluding = segments.Count == 0,
+                    FromIncluding = true,
                     ToIncluding = isLast,
                     HourOffset = HoursOffset(from, timeZone)
                 });

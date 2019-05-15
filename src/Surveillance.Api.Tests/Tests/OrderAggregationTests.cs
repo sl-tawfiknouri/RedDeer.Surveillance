@@ -33,7 +33,7 @@ namespace Surveillance.Api.Tests.Tests
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 7,
-                PlacedDate = new DateTime(2019, 05, 13, 07, 50, 05, DateTimeKind.Utc)
+                PlacedDate = new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc) // datetime of BST -> GMT switch
             });
 
             await _dbContext.SaveChangesAsync();
@@ -42,7 +42,7 @@ namespace Surveillance.Api.Tests.Tests
             query
                 .Filter
                     .ArgumentPlacedDateFrom(new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc))
-                    .ArgumentPlacedDateTo(new DateTime(2019, 05, 13, 07, 50, 05, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc))
                     .ArgumentTzName("Europe/London")
                     .Node
                         .FieldKey()
@@ -57,7 +57,7 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(aggregations[0].Count, Is.EqualTo(1));
             Assert.That(aggregations[1].Key, Is.EqualTo("2019-05-11"));
             Assert.That(aggregations[1].Count, Is.EqualTo(2));
-            Assert.That(aggregations[2].Key, Is.EqualTo("2019-05-13"));
+            Assert.That(aggregations[2].Key, Is.EqualTo("2019-10-27"));
             Assert.That(aggregations[2].Count, Is.EqualTo(1));
         }
 

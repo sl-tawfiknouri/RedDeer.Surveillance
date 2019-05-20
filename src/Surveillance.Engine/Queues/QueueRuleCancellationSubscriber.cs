@@ -7,11 +7,13 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
+using Surveillance.Engine.Rules.Rules.Cancellation;
 
 namespace Surveillance.Engine.Rules.Queues
 {
     public class QueueRuleCancellationSubscriber : IQueueRuleCancellationSubscriber
     {
+        private readonly IRuleCancellation _ruleCancellation;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly ISystemProcessContext _systemProcessContext;
@@ -22,17 +24,19 @@ namespace Surveillance.Engine.Rules.Queues
         private AwsResusableCancellationToken _token;
 
         public QueueRuleCancellationSubscriber(
+            IRuleCancellation ruleCancellation,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             ISystemProcessContext systemProcessContext,
             IMessageBusSerialiser messageBusSerialiser,
             ILogger<QueueRuleCancellationSubscriber> logger)
         {
-            _awsQueueClient = awsQueueClient;
-            _awsConfiguration = awsConfiguration;
-            _systemProcessContext = systemProcessContext;
-            _messageBusSerialiser = messageBusSerialiser;
-            _logger = logger;
+            _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
+            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
@@ -69,7 +73,7 @@ namespace Surveillance.Engine.Rules.Queues
                 _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} initiated for {messageId}");
 
                 var cancellationMessage = _messageBusSerialiser?.Deserialise<string>(messageBody);
-
+                _ruleCancellation?.Cancel(cancellationMessage);
 
                 _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} completed for {messageId}");
             }

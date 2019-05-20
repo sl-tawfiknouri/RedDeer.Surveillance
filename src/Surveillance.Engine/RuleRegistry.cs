@@ -261,6 +261,8 @@ namespace Surveillance.Engine.Rules
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
             For<IRampingAnalyser>().Use<RampingAnalyser>();
+
+            For<IQueueRuleCancellationSubscriber>().Use<QueueRuleCancellationSubscriber>();
         }
     }
 }

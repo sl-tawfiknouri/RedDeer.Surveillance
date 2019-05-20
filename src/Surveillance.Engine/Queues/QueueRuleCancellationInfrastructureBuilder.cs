@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.SharedInterfaces;
 using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;
@@ -35,9 +37,9 @@ namespace Surveillance.Engine.Rules.Queues
             _logger?.LogInformation($"Setup {nameof(QueueRuleCancellationInfrastructureBuilder)} initiating");
 
             await RemoveDeadProcessesQueues();
-            await CreateSnsTopic();
-            await CreateInstanceSqsQueue();
-            await SubscribeSqsQueueToSns();
+            var topicArn = await CreateSnsTopic();
+            var sqsQueue = await CreateInstanceSqsQueue();
+            await SubscribeSqsQueueToSns(topicArn, _awsQueueClient.SqsClient, sqsQueue);
 
             _logger?.LogInformation($"Setup {nameof(QueueRuleCancellationInfrastructureBuilder)} completed");
         }
@@ -46,30 +48,51 @@ namespace Surveillance.Engine.Rules.Queues
         {
         }
 
-        private async Task CreateInstanceSqsQueue()
+        private async Task<string> CreateInstanceSqsQueue()
         {
-            var queueExists = await _awsQueueClient.ExistsQueue(CancellationQueueNameBuilder());
+            var queueName = CancellationQueueNameBuilder();
+            var queueExists = await _awsQueueClient.ExistsQueue(queueName);
 
             if (!queueExists)
             {
-                await _awsQueueClient.CreateQueue(CancellationQueueNameBuilder());
+                var queueUrl = await _awsQueueClient.CreateQueue(queueName);
+                return queueUrl;
+            }
+            else
+            {
+                var queueUrl = await _awsQueueClient.UrlQueue(queueName);
+                return queueUrl;
             }
         }
 
-        private async Task CreateSnsTopic()
+        private async Task<string> CreateSnsTopic()
         {
-            // does sns topic exist?
-            await _awsSnsClient.CreateSnsTopic();
+            var cts = new CancellationTokenSource(1000 * 60);
+            var topicArn = await _awsSnsClient.CreateSnsTopic(CancellationTopicNameBuilder(), cts.Token);
+
+            return topicArn;
         }
 
-        private async Task SubscribeSqsQueueToSns()
+        private async Task SubscribeSqsQueueToSns(string topicArn, ICoreAmazonSQS sqsClient, string sqsUrl)
         {
-            await _awsSnsClient.SubscribeQueueToSnsTopic(new object());
+            if (string.IsNullOrWhiteSpace(topicArn)
+                || string.IsNullOrWhiteSpace(sqsUrl))
+            {
+                _logger?.LogError($"{nameof(topicArn)} or {nameof(sqsUrl)} was null in subscribe sqs queue to sns");
+                return;
+            }
+
+            await _awsSnsClient.SubscribeQueueToSnsTopic(topicArn, sqsClient, sqsUrl);
         }
 
         private string CancellationQueueNameBuilder()
         {
             return $"{_ruleEngineConfiguration.Environment}-surveillance-{_ruleEngineConfiguration.Client}-rule-cancellation-{_systemProcess.MachineId}";
+        }
+
+        private string CancellationTopicNameBuilder()
+        {
+            return $"{_ruleEngineConfiguration.Environment}-surveillance-{_ruleEngineConfiguration.Client}-rule-cancellation";
         }
     }
 }

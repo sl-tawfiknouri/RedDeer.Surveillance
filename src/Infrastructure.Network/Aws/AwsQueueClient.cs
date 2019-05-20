@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.SharedInterfaces;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Infrastructure.Network.Aws.Interfaces;
@@ -29,6 +30,8 @@ namespace Infrastructure.Network.Aws
 
             _logger = logger;
         }
+
+        public ICoreAmazonSQS SqsClient => _sqsClient;
 
         public async Task PurgeQueue(string queueName, CancellationToken token)
         {
@@ -184,16 +187,17 @@ namespace Infrastructure.Network.Aws
             return queueDeletion.IsSuccessStatusCode();
         }
 
-        public async Task CreateQueue(string queueName)
+        public async Task<string> CreateQueue(string queueName)
         {
             if (string.IsNullOrWhiteSpace(queueName))
             {
-                return;
+                return string.Empty;
             }
-            // allow a minute to create the queue
+
             var cts = new CancellationTokenSource(1000 * 60);
             var queueCreation = await _sqsClient.CreateQueueAsync(queueName, cts.Token);
 
+            return queueCreation.QueueUrl;
         }
 
         public async Task<bool> ExistsQueue(string queueName)
@@ -206,6 +210,18 @@ namespace Infrastructure.Network.Aws
             var queues = await _sqsClient.ListQueuesAsync(new ListQueuesRequest(queueName));
 
             return queues?.QueueUrls?.Any() ?? false;
+        }
+
+        public async Task<string> UrlQueue(string queueName)
+        {
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                return string.Empty;
+            }
+
+            var queues = await _sqsClient.GetQueueUrlAsync(queueName);
+
+            return queues?.QueueUrl ?? string.Empty;
         }
     }
 }

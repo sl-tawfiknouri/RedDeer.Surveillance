@@ -63,7 +63,6 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleCancellation ruleCancellation,
             ILogger<AnalysisEngine> logger)
         {
-
             _universePlayerFactory =
                 universePlayerFactory
                 ?? throw new ArgumentNullException(nameof(universePlayerFactory));
@@ -104,7 +103,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             var ruleParameters = await _ruleParameterService.RuleParameters(execution);
             execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
-            var player = _universePlayerFactory.Build();
+            var player = _universePlayerFactory.Build(cts.Token);
 
             _universeCompletionLogger.InitiateTimeLogger(execution);
             player.Subscribe(_universeCompletionLogger);
@@ -125,6 +124,18 @@ namespace Surveillance.Engine.Rules.Analysis
             var lazyUniverse = _universeFactory.Build(execution, opCtx);
             player.Play(lazyUniverse);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
+
+            if (cts.IsCancellationRequested)
+            {
+                opCtx.EndEventWithError("USER CANCELLED RUN");
+
+                _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
+
+                _ruleCancellation.Unsubscribe(ruleCancellation);
+                await RuleRunUpdateMessageSend(execution, ids);
+
+                return;
+            }
 
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -12,14 +13,17 @@ namespace Surveillance.Engine.Rules.Universe
     /// </summary>
     public class UniversePlayer : IUniversePlayer
     {
+        private readonly CancellationToken _ct;
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ILogger<UniversePlayer> _logger;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
         public UniversePlayer(
+            CancellationToken ct,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
             ILogger<UniversePlayer> logger)
         {
+            _ct = ct;
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory =
                 universeUnsubscriberFactory
@@ -53,6 +57,12 @@ namespace Surveillance.Engine.Rules.Universe
                 foreach (var obs in _universeObservers)
                 {
                     obs.Value?.OnNext(item);
+                }
+
+                if (_ct.IsCancellationRequested)
+                {
+                    _logger.LogInformation($"play universe cancelled - breaking at event {item.EventTime} {item.StateChange}");
+                    break;
                 }
             }
         }

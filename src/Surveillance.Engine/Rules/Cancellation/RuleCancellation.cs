@@ -59,7 +59,13 @@ namespace Surveillance.Engine.Rules.Rules.Cancellation
                 foreach (var rule in rulesToCancel)
                 {
                     rule.CancellationToken.Cancel();
-                    Unsubscribe(rule);
+
+                    if (!_cancellableRules.Contains(rule))
+                    {
+                        return;
+                    }
+
+                    _cancellableRules.Remove(rule);
                 }
             }
         }
@@ -80,8 +86,9 @@ namespace Surveillance.Engine.Rules.Rules.Cancellation
                 }
 
                 _cancellableRules.Add(cancellableRule);
-                _PostSubscriptionCheck(cancellableRule);
             }
+
+            _PostSubscriptionCheck(cancellableRule);
         }
 
         private void _PostSubscriptionCheck(ICancellableRule cancellableRule)

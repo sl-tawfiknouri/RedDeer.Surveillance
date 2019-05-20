@@ -13,9 +13,10 @@ using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Engine.DataCoordinator.Configuration;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+using Surveillance.Engine.Rules.Config;
+using Surveillance.Engine.Rules.Config.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
-
 namespace RedDeer.Surveillance.App.Configuration
 {
     public class Configuration
@@ -93,6 +94,39 @@ namespace RedDeer.Surveillance.App.Configuration
                 };
 
                 return ruleConfiguration;
+            }
+        }
+
+        public IRuleEngineConfiguration BuildRuleEngineConfiguration(IConfigurationRoot configurationBuilder)
+        {
+            lock (_lock)
+            {
+                Ec2Check();
+
+                var environment = GetTag("Environment");
+                var customer = GetTag("Customer");
+
+                IsUnitTest = AppDomain
+                    .CurrentDomain
+                    .GetAssemblies()
+                    .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
+
+                IsEC2Instance =
+                    IsUnitTest == false &&
+                    Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+
+                if (IsEC2Instance)
+                {
+                    var ruleConfiguration = new RuleEngineConfiguration(customer, environment);
+
+                    return ruleConfiguration;
+                }
+                else
+                {
+                    var ruleConfiguration = new RuleEngineConfiguration("reddeer", "dev");
+
+                    return ruleConfiguration;
+                }
             }
         }
 

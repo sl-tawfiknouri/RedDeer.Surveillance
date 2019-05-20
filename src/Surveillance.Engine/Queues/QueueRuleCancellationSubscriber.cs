@@ -18,6 +18,7 @@ namespace Surveillance.Engine.Rules.Queues
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IMessageBusSerialiser _messageBusSerialiser;
+        private readonly IQueueRuleCancellationInfrastructureBuilder _ruleCancellationInfrastructureBuilder;
 
         private readonly ILogger<QueueRuleCancellationSubscriber> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -29,6 +30,7 @@ namespace Surveillance.Engine.Rules.Queues
             IAwsConfiguration awsConfiguration,
             ISystemProcessContext systemProcessContext,
             IMessageBusSerialiser messageBusSerialiser,
+            IQueueRuleCancellationInfrastructureBuilder ruleCancellationInfrastructureBuilder,
             ILogger<QueueRuleCancellationSubscriber> logger)
         {
             _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
@@ -36,6 +38,7 @@ namespace Surveillance.Engine.Rules.Queues
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
+            _ruleCancellationInfrastructureBuilder = ruleCancellationInfrastructureBuilder ?? throw new ArgumentNullException(nameof(ruleCancellationInfrastructureBuilder));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -46,6 +49,8 @@ namespace Surveillance.Engine.Rules.Queues
             _messageBusCts?.Cancel();
             _messageBusCts = new CancellationTokenSource();
             _token = new AwsResusableCancellationToken();
+
+            _ruleCancellationInfrastructureBuilder.Setup().Wait();
 
             _awsQueueClient.SubscribeToQueueAsync(
                 _awsConfiguration.ScheduleRuleCancellationQueueName,

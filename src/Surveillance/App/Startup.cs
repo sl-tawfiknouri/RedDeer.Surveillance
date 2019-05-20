@@ -19,6 +19,7 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
+using Surveillance.Engine.Rules.Config.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {
@@ -42,6 +43,7 @@ namespace RedDeer.Surveillance.App
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
             container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
             container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
+            container.Inject(typeof(IRuleEngineConfiguration), configBuilder.BuildRuleEngineConfiguration(configurationBuilder));
             SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
 
             container.Configure(config =>

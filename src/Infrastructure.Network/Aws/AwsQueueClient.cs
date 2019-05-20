@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Infrastructure.Network.Aws.Interfaces;
+using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Network.Aws
@@ -167,6 +169,43 @@ namespace Infrastructure.Network.Aws
                     _logger?.LogError(ex.ToString());
                 }
             }
+        }
+
+        public async Task<bool> DeleteQueue(string queueName)
+        {
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                return true;
+            }
+
+            var cts = new CancellationTokenSource(1000 * 60);
+            var queueDeletion = await _sqsClient.DeleteQueueAsync(queueName, cts.Token);
+
+            return queueDeletion.IsSuccessStatusCode();
+        }
+
+        public async Task CreateQueue(string queueName)
+        {
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                return;
+            }
+            // allow a minute to create the queue
+            var cts = new CancellationTokenSource(1000 * 60);
+            var queueCreation = await _sqsClient.CreateQueueAsync(queueName, cts.Token);
+
+        }
+
+        public async Task<bool> ExistsQueue(string queueName)
+        {
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                return false;
+            }
+
+            var queues = await _sqsClient.ListQueuesAsync(new ListQueuesRequest(queueName));
+
+            return queues?.QueueUrls?.Any() ?? false;
         }
     }
 }

@@ -128,7 +128,6 @@ namespace Surveillance.Engine.Rules.Analysis
             if (cts.IsCancellationRequested)
             {
                 opCtx.EndEventWithError("USER CANCELLED RUN");
-
                 _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
 
                 _ruleCancellation.Unsubscribe(ruleCancellation);

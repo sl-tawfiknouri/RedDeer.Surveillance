@@ -10,5 +10,6 @@
         string TestRuleRunUpdateQueueName { get; }
         string EmailServiceSendEmailQueueName { get; }
         string AuroraConnectionString { get; }
+        string ScheduleRuleCancellationQueueName { get; }
     }
 }

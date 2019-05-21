@@ -72,6 +72,9 @@
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\32 - Add cancel queue deleted flag.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\31 - Add rule analytic alert cols for place orders.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

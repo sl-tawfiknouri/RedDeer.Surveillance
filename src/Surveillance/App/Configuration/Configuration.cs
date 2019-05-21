@@ -15,7 +15,6 @@ using Surveillance.Engine.DataCoordinator.Configuration;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
-
 namespace RedDeer.Surveillance.App.Configuration
 {
     public class Configuration
@@ -52,7 +51,8 @@ namespace RedDeer.Surveillance.App.Configuration
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
                     BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder),
-                    UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder)
+                    UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder),
+                    ScheduleRuleCancellationQueueName = GetValue($"ScheduleRuleCancellationQueueName", configurationBuilder)
                 };
 
                 return networkConfiguration;

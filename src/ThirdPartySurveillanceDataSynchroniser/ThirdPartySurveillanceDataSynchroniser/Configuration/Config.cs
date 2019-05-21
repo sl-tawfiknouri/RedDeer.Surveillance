@@ -14,6 +14,7 @@ namespace DataSynchroniser.Configuration
         public string TestRuleRunUpdateQueueName { get; set; }
         public string EmailServiceSendEmailQueueName { get; set; }
         public string AuroraConnectionString { get; set; }
+        public string ScheduleRuleCancellationQueueName { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
 
         public string SurveillanceUserApiAccessToken { get; set; }

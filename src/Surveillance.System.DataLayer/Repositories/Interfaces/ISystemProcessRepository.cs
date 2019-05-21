@@ -9,5 +9,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories.Interfaces
         Task Create(ISystemProcess entity);
         Task Update(ISystemProcess entity);
         Task<IReadOnlyCollection<ISystemProcess>> GetDashboard();
+        Task<IReadOnlyCollection<ISystemProcess>> ExpiredProcessesWithQueues();
     }
 }

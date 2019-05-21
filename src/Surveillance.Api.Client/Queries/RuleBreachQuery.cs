@@ -1,15 +1,15 @@
 ﻿using GraphQL.Common.Request;
-using Surveillance.Api.Client.Dtos;
-using Surveillance.Api.Client.Filters;
-using Surveillance.Api.Client.Infrastructure;
-using Surveillance.Api.Client.Nodes;
+using RedDeer.Surveillance.Api.Client.Dtos;
+using RedDeer.Surveillance.Api.Client.Filters;
+using RedDeer.Surveillance.Api.Client.Infrastructure;
+using RedDeer.Surveillance.Api.Client.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Surveillance.Api.Client.Queries
+namespace RedDeer.Surveillance.Api.Client.Queries
 {
     using Response = List<RuleBreachDto>;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Surveillance.Api.Client.Infrastructure
+namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
     public class Filter<TSelf, TNode> : Parent
         where TSelf : class

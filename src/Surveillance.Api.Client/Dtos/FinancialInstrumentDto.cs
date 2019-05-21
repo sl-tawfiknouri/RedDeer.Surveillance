@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Surveillance.Api.Client.Dtos
+namespace RedDeer.Surveillance.Api.Client.Dtos
 {
     public class FinancialInstrumentDto
     {

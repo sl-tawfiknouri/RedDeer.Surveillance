@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Surveillance.Api.Client.Infrastructure;
+using RedDeer.Surveillance.Api.Client.Infrastructure;
 
-namespace Surveillance.Api.Client.Filters
+namespace RedDeer.Surveillance.Api.Client.Filters
 {
     public class OrderFilter<T> : Filter<OrderFilter<T>, T> where T : Parent
     {

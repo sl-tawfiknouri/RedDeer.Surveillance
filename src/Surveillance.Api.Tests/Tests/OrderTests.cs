@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using Surveillance.Api.Client.Enums;
-using Surveillance.Api.Client.Nodes;
-using Surveillance.Api.Client.Queries;
+using RedDeer.Surveillance.Api.Client.Enums;
+using RedDeer.Surveillance.Api.Client.Nodes;
+using RedDeer.Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;

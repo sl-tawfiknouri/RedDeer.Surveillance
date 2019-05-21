@@ -1,12 +1,12 @@
-﻿using Surveillance.Api.Client.Infrastructure;
-using Surveillance.Api.Client.Queries;
+﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
+using RedDeer.Surveillance.Api.Client.Queries;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Surveillance.Api.Client
+namespace RedDeer.Surveillance.Api.Client
 {
     public class ApiClient
     {

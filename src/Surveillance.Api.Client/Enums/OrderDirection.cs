@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Surveillance.Api.Client.Enums
+namespace RedDeer.Surveillance.Api.Client.Enums
 {
     public enum OrderDirection
     {

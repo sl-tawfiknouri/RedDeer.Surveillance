@@ -1,9 +1,9 @@
-﻿using Surveillance.Api.Client.Infrastructure;
+﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Surveillance.Api.Client.Nodes
+namespace RedDeer.Surveillance.Api.Client.Nodes
 {
     public class ProcessOperationNode : Node<ProcessOperationNode>
     {

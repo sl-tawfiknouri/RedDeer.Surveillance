@@ -6,7 +6,7 @@ using RedDeer.Security.Core;
 using RedDeer.Security.Core.Abstractions;
 using RedDeer.Security.Core.Services;
 using Surveillance.Api.App;
-using Surveillance.Api.Client;
+using RedDeer.Surveillance.Api.Client;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.Tests.Infrastructure;
 using System;

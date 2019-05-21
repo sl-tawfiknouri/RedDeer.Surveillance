@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Surveillance.Api.Client.Infrastructure
+namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
     public interface IRequest
     {

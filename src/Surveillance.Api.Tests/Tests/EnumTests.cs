@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Surveillance.Api.Client.Enums;
+using RedDeer.Surveillance.Api.Client.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

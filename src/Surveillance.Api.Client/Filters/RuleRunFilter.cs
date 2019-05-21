@@ -1,9 +1,9 @@
-﻿using Surveillance.Api.Client.Infrastructure;
+﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Surveillance.Api.Client.Filters
+namespace RedDeer.Surveillance.Api.Client.Filters
 {
     public class RuleRunFilter<T> : Filter<RuleRunFilter<T>, T> where T : Parent
     {

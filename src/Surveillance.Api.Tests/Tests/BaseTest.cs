@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using Surveillance.Api.Client;
+using RedDeer.Surveillance.Api.Client;
 using Surveillance.Api.Tests.Infrastructure;
 using System;
 using System.Collections.Generic;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Surveillance.Api.Client.Infrastructure
+namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
     public class Node<Z> : NodeBase where Z : class
     {

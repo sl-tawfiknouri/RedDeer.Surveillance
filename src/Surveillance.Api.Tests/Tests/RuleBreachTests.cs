@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Surveillance.Api.Client.Queries;
+using RedDeer.Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
 using System;
 using System.Threading;

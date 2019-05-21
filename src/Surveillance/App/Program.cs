@@ -23,7 +23,6 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
-using Surveillance.Engine.Rules.Config.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -61,7 +60,6 @@ namespace RedDeer.Surveillance.App
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
                 Container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
                 Container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
-                Container.Inject(typeof(IRuleEngineConfiguration), configBuilder.BuildRuleEngineConfiguration(configurationBuilder));
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
 
                 Container.Configure(config =>

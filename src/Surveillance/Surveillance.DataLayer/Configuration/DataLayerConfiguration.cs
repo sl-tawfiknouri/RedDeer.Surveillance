@@ -16,6 +16,6 @@ namespace Surveillance.DataLayer.Configuration
         public string ClientServiceUrl { get; set; }
         public string BmllServiceUrl { get; set; }
         public string AuroraConnectionString { get; set; }
-        public string ScheduleRuleCancellationQueueName { get; }
+        public string ScheduleRuleCancellationQueueName { get; set; }
     }
 }

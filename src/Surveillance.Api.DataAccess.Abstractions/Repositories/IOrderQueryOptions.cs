@@ -10,6 +10,8 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
         int? Take { get; }
         List<string> TraderIds { get; }
         List<string> ReddeerIds { get; }
+        List<int> Directions { get; set; }
+        List<int> Types { get; set; }
         string PlacedDateFrom { get; }
         string PlacedDateTo { get; }
         string TzName { get; }

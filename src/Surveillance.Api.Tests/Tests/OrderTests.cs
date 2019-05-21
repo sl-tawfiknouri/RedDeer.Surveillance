@@ -383,6 +383,88 @@ namespace Surveillance.Api.Tests.Tests
         }
 
         [Test]
+        public async Task CanRequest_Orders_ByDirections()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                Direction = (int)Domain.Core.Trading.Orders.OrderDirections.COVER
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc),
+                Direction = (int)Domain.Core.Trading.Orders.OrderDirections.SELL
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc),
+                Direction = (int)Domain.Core.Trading.Orders.OrderDirections.SHORT
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .Filter
+                    .ArgumentDirections(new List<OrderDirection> { OrderDirection.COVER, OrderDirection.SELL })
+                    .Node
+                        .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(5));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task CanRequest_Orders_ByTypes()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                OrderType = (int)Domain.Core.Trading.Orders.OrderTypes.LIMIT
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc),
+                OrderType = (int)Domain.Core.Trading.Orders.OrderTypes.NONE
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc),
+                OrderType = (int)Domain.Core.Trading.Orders.OrderTypes.MARKET
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .Filter
+                    .ArgumentTypes(new List<OrderType> { OrderType.LIMIT, OrderType.NONE })
+                    .Node
+                        .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(5));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
         public async Task CanRequest_Orders_WithDateRange()
         {
             // arrange

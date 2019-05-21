@@ -185,6 +185,8 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<IntGraphType> { Name = "take" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
                     new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
                     new QueryArgument<StringGraphType> { Name = "placedDateTo" }
                     ),
@@ -196,6 +198,8 @@ namespace Surveillance.Api.App.Infrastructure
                         Take = context.GetArgument<int?>("take"),
                         TraderIds = context.GetArgument<List<string>>("traderIds"),
                         ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        Directions = context.GetArgument<List<int>>("directions"),
+                        Types = context.GetArgument<List<int>>("types"),
                         PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
                         PlacedDateTo = context.GetArgument<string>("placedDateTo")
                     };
@@ -209,6 +213,8 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
+                    new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
                     new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
                     new QueryArgument<StringGraphType> { Name = "placedDateTo" },
                     new QueryArgument<StringGraphType> { Name = "tzName" }
@@ -220,6 +226,8 @@ namespace Surveillance.Api.App.Infrastructure
                         Ids = context.GetArgument<List<int>>("ids"),
                         TraderIds = context.GetArgument<List<string>>("traderIds"),
                         ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                        Directions = context.GetArgument<List<int>>("directions"),
+                        Types = context.GetArgument<List<int>>("types"),
                         PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
                         PlacedDateTo = context.GetArgument<string>("placedDateTo"),
                         TzName = context.GetArgument<string>("tzName")

@@ -15,6 +15,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Rules.Cancellation;
+using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;

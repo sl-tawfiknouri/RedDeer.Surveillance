@@ -1,6 +1,4 @@
-﻿using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Cancellation
+﻿namespace Surveillance.Engine.Rules.Rules.Cancellation.Interfaces
 {
     public interface IRuleCancellation
     {

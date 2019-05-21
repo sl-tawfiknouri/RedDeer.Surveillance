@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Infrastructure.Network.Aws;
 using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Rules.Cancellation;
+using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 
 namespace Surveillance.Engine.Rules.Queues
 {
@@ -77,8 +78,8 @@ namespace Surveillance.Engine.Rules.Queues
             {
                 _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} initiated for {messageId}");
 
-                var cancellationMessage = _messageBusSerialiser?.Deserialise<string>(messageBody);
-                _ruleCancellation?.Cancel(cancellationMessage);
+                var cancellationMessage = _messageBusSerialiser?.Deserialise<CancelScheduledExecutionMessage>(messageBody);
+                _ruleCancellation?.Cancel(cancellationMessage?.RuleRunId ?? string.Empty);
 
                 _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} completed for {messageId}");
             }

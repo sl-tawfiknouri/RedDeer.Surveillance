@@ -45,6 +45,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Rules.Cancellation;
+using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;

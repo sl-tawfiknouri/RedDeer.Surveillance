@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory factory,
+            IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
             IPortfolioFactory portfolioFactory,
             IOrderAnalysisService analysisService,
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                   EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
-                  factory,
+                  marketCacheFactory,
                   runMode,
                   logger,
                   tradingHistoryLogger)
@@ -204,6 +204,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // spoofing rule does not monitor by last status changed
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // spoofing rule does not monitor by filled orders
         }
 
         protected override void Genesis()

@@ -104,6 +104,10 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
+                    case Rules.PlacingOrderWithNoIntentToExecute:
+                        var placingOrderRuleRuns = parameters.PlacingOrders?.Select(_ => _ as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, placingOrderRuleRuns, rule, ruleCtx);
+                        break;
                     case Rules.Layering:
                         // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);

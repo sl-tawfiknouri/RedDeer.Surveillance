@@ -2,6 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NUnit.Framework;
+using RedDeer.Security.Core;
+using RedDeer.Security.Core.Abstractions;
+using RedDeer.Security.Core.Services;
 using Surveillance.Api.App;
 using Surveillance.Api.Client;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
@@ -49,20 +52,23 @@ namespace Surveillance.Api.Tests.Tests
             _service = service;
 
             // ApiClient
-            /* {
-                 "exp": 1577836800,
-                 "iss": "dev:test:clientservice",
-                 "aud": "dev:test:clientservice",
-                 "reddeer": "surveillance reader"
-               } */
-            var bearer = @"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4MzY4MDAsImlzcyI6ImRldjp0ZXN0OmNsaWVudHNlcnZpY2UiLCJhdWQiOiJkZXY6dGVzdDpjbGllbnRzZXJ2aWNlIiwicmVkZGVlciI6InN1cnZlaWxsYW5jZSByZWFkZXIifQ.HbvU5W3O5btPQ7Ou5aiyscPuBrRJ6iCm3Jig-QqikBE";
+            var jwtToken = new JwtToken(
+                expires: DateTime.UtcNow.AddHours(1),
+                issuer: new ComponentName("dev", "test", ScopeType.ClientService),
+                audience: new ComponentName("dev", "test", ScopeType.ClientService),
+                claims: new List<IClaim>
+                {
+                    new Claim(ScopeType.Surveillance, AccessType.Read)
+                });
+            var secretKey = "fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F";
+            var jwtTokenService = new JwtTokenService();
+            var bearer = jwtTokenService.Generate(jwtToken, secretKey);
             var url = "https://localhost:8888/graphql/surveillance";
 
-            var client = new ApiClient(url, bearer, new CustomGraphQLHttpExecutor(new HttpClientHandler
+            var client = new ApiClient(url, bearer, new HttpClientHandler
             {
-                UseProxy = false,
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; }
-            }));
+                UseProxy = false
+            });
             Dependencies.ApiClient = client;
         }
 

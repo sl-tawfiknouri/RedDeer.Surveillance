@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             IClusteringService clusteringService,
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleCtx,
-                marketCacheFactory,
+                factory,
                 runMode,
                 logger,
                 tradingStackLogger)
@@ -263,6 +263,15 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
 
             _logger.LogInformation($"RunInitialSubmissionRule completed for {UniverseDateTime}");
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            _logger.LogInformation($"RunOrderFilledEvent called at {UniverseDateTime}");
+
+
+
+            _logger.LogInformation($"RunOrderFilledEvent completed for {UniverseDateTime}");
         }
 
         protected override void Genesis()

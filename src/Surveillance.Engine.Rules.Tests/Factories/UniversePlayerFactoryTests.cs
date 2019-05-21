@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Domain.Surveillance.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -42,7 +43,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             var factory = new UniversePlayerFactory(_universeEventUnsubscriberFactory, _logger);
 
-            var universePlayer = factory.Build();
+            var universePlayer = factory.Build(new CancellationToken());
 
             Assert.IsInstanceOf<UniversePlayer>(universePlayer);
         }

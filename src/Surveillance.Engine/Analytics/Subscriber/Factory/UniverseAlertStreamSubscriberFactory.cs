@@ -7,8 +7,9 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 
 namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
@@ -23,6 +24,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
+        private readonly IRampingRuleCachedMessageSender _rampingMessageSender;
+        private readonly IPlacingOrdersWithNoIntentToExecuteCacheMessageSender _placingOrdersMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         public UniverseAlertStreamSubscriberFactory(
@@ -34,6 +37,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender washTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
+            IRampingRuleCachedMessageSender rampingMessageSender,
+            IPlacingOrdersWithNoIntentToExecuteCacheMessageSender placingOrdersMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _cancelledOrderMessageSender =
@@ -64,9 +69,17 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
                 washTradeMessageSender
                 ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
 
+            _placingOrdersMessageSender =
+                placingOrdersMessageSender
+                ?? throw new ArgumentNullException(nameof(placingOrdersMessageSender));
+
             _fixedIncomeWashTradeMessageSender =
                 fixedIncomeWashTradeMessageSender
                 ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
+
+            _rampingMessageSender =
+                rampingMessageSender
+                ?? throw new ArgumentNullException(nameof(rampingMessageSender));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -84,6 +97,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
                 _spoofingMessageSender,
                 _washTradeMessageSender,
                 _fixedIncomeWashTradeMessageSender,
+                _rampingMessageSender,
+                _placingOrdersMessageSender,
                 _logger);
         }
     }

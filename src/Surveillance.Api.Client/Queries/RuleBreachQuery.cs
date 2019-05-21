@@ -1,9 +1,12 @@
-﻿using Surveillance.Api.Client.Dtos;
+﻿using GraphQL.Common.Request;
+using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Client.Queries
@@ -12,24 +15,16 @@ namespace Surveillance.Api.Client.Queries
 
     public class RuleBreachQuery : Query<Response>
     {
-        public RuleBreachNode RuleBreachNode { get; private set; }
+        public RuleBreachFilter<RuleBreachNode> Filter { get; }
 
         public RuleBreachQuery()
         {
-            RuleBreachNode = new RuleBreachNode(this);
+            Filter = new RuleBreachFilter<RuleBreachNode>(new RuleBreachNode(this));
         }
 
-        internal override async Task<Response> HandleAsync(IRequest request)
+        internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            var response = await request.QueryAsync(builder =>
-                builder
-                    .Field("ruleBreaches", ruleBreaches =>
-                    {
-                        RuleBreachNode._actions.ForEach(x => x(ruleBreaches));
-                    }),
-                    _arguments.ToArray());
-
-            return response.ruleBreaches.ToObject<Response>();
+            return await BuildAndPost<Response>("ruleBreaches", Filter, request, ctx);
         }
     }
 }

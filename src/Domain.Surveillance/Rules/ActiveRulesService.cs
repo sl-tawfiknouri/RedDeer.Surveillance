@@ -18,7 +18,8 @@ namespace Domain.Surveillance.Rules
                 Scheduling.Rules.Spoofing,
                 Scheduling.Rules.FixedIncomeWashTrades,
                 Scheduling.Rules.FixedIncomeHighProfits,
-                Scheduling.Rules.FixedIncomeHighVolumeIssuance
+                Scheduling.Rules.FixedIncomeHighVolumeIssuance,
+                Scheduling.Rules.Ramping
             };
 
         public bool RuleIsEnabled(Scheduling.Rules rule)

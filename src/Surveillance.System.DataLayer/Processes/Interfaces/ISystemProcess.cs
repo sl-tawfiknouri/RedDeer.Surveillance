@@ -10,5 +10,6 @@ namespace Surveillance.Auditing.DataLayer.Processes.Interfaces
         string MachineId { get; set; }
         string ProcessId { get; set; }
         SystemProcessType SystemProcessType { get; set; }
+        bool CancelRuleQueueDeletedFlag { get; set; }
     }
 }

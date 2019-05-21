@@ -5,23 +5,23 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Nodes
 {
-    public class RuleBreachNode : Node
+    public class RuleBreachNode : Node<RuleBreachNode>
     {
-        public RuleBreachNode(NodeParent parent) : base(parent) {}
+        public RuleBreachNode(Parent parent) : base(parent) {}
 
-        public RuleBreachNode ArgumentId(int id) => AddArgument("id", id, this);
-
-        public RuleBreachNode FieldId() => AddField("id", this);
-        public RuleBreachNode FieldRuleId() => AddField("ruleId", this);
-        public OrderNode FieldOrders()
-        {
-            var orderGraph = new OrderNode(this);
-            _actions.Add(ruleBreaches => ruleBreaches
-                .Field("orders", orders =>
-                 {
-                     orderGraph._actions.ForEach(x => x(orders));
-                 }));
-            return orderGraph;
-        }
+        public RuleBreachNode FieldId() => AddField("id");
+        public RuleBreachNode FieldStartOfPeriodUnderInvestigation() => AddField("startOfRuleBreachPeriod");
+        public RuleBreachNode FieldEndOfPeriodUnderInvestigation() => AddField("endOfRuleBreachPeriod");
+        public RuleBreachNode FieldReddeerEnrichmentId() => AddField("reddeerEnrichmentId");
+        public RuleBreachNode FieldTitle() => AddField("title");
+        public RuleBreachNode FieldDescription() => AddField("description");
+        public RuleBreachNode FieldVenue() => AddField("venue");
+        public RuleBreachNode FieldAssetCfi() => AddField("assetCfi");
+        public RuleBreachNode FieldCreatedOn() => AddField("created");
+        public RuleBreachNode FieldRuleId() => AddField("ruleId");
+        public RuleBreachNode FieldCorrelationId() => AddField("correlationId");
+        public RuleBreachNode FieldIsBackTest() => AddField("isBackTest");
+        public RuleBreachNode FieldSystemOperationId() => AddField("systemOperationId");
+        public OrderNode FieldOrders() => AddChild("orders", new OrderNode(this));
     }
 }

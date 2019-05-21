@@ -35,8 +35,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.1" />
-    <PackageReference Include="Security.Core" Version="1.0.0" />
-    <PackageReference Include="Security.Core.Abstractions" Version="1.0.0" />
+    <PackageReference Include="RedDeer.Security.Core" Version="1.1.0" />
+    <PackageReference Include="RedDeer.Security.Core.Abstractions" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

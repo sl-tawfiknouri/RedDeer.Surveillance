@@ -44,6 +44,8 @@ using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
+using Surveillance.Engine.Rules.Rules.Cancellation;
+using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
@@ -58,10 +60,18 @@ using Surveillance.Engine.Rules.Rules.Equity.Layering;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
@@ -76,6 +86,8 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Lazy;
+using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
@@ -100,7 +112,6 @@ namespace Surveillance.Engine.Rules
             For<IOriginFactory>().Use<OriginFactory>();
             For<ISpoofingRule>().Use<SpoofingRule>();
 
-            For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
@@ -195,9 +206,14 @@ namespace Surveillance.Engine.Rules
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
             For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
 
+            For<IRampingEquitySubscriber>().Use<RampingEquitySubscriber>();
+            For<IRampingRule>().Use<RampingRule>();
+            For<IEquityRuleRampingFactory>().Use<EquityRuleRampingFactory>();
+            For<IRampingRuleMessageSender>().Use<RampingRuleMessageSender>();
+            For<IRampingRuleCachedMessageSender>().Use<RampingRuleCachedMessageSender>();
+
             For<IPortfolioFactory>().Use<PortfolioFactory>();
-
-
+            
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverterService>().Use<CurrencyConverterService>();
             For<IExchangeRatesService>().Use<ExchangeRatesService>();
@@ -231,9 +247,25 @@ namespace Surveillance.Engine.Rules
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
 
+            For<IPlacingOrdersWithNoIntentToExecuteMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteCacheMessageSender>().Use<PlacingOrdersWithNoIntentToExecuteCacheMessageSender>();
+            For<IPlacingOrdersWithNoIntentToExecuteRule>().Use<PlacingOrdersWithNoIntentToExecuteRule>();
+            For<IEquityRulePlacingOrdersWithoutIntentToExecuteFactory>().Use<EquityRulePlacingOrdersWithoutIntentToExecuteFactory>();
+            For<IPlacingOrdersWithNoIntentToExecuteEquitySubscriber>().Use<PlacingOrdersWithNoIntentToExecuteEquitySubscriber>();
+
+            For<ILazyScheduledExecutioner>().Use<LazyScheduledExecutioner>();
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<ILazyTransientUniverseFactory>().Use<LazyTransientUniverseFactory>();
+            For<ITimeSeriesTrendClassifier>().Use<TimeSeriesTrendClassifier>();
+
+            For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<IOrderPriceImpactClassifier>().Use<OrderPriceImpactClassifier>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
+            For<IRampingAnalyser>().Use<RampingAnalyser>();
+
+            For<IQueueRuleCancellationSubscriber>().Use<QueueRuleCancellationSubscriber>();
+            For<IRuleCancellation>().Use<RuleCancellation>().Singleton();
         }
     }
 }

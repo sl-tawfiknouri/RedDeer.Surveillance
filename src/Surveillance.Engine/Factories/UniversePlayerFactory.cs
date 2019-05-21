@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -22,9 +23,9 @@ namespace Surveillance.Engine.Rules.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniversePlayer Build()
+        public IUniversePlayer Build(CancellationToken ct)
         {
-            return new UniversePlayer(_universeEventUnsubscriberFactory, _logger);
+            return new UniversePlayer(ct, _universeEventUnsubscriberFactory, _logger);
         }
     }
 }

@@ -1,38 +1,35 @@
-﻿using SAHB.GraphQLClient.Builder;
-using SAHB.GraphQLClient.QueryGenerator;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Surveillance.Api.Client.Infrastructure
 {
-    public class Node : NodeParent
+    public class Node<Z> : NodeBase where Z : class
     {
-        public NodeParent _parent { get; private set; }
-        internal List<Action<IGraphQLQueryFieldBuilder>> _actions = new List<Action<IGraphQLQueryFieldBuilder>>();
+        private readonly Parent _parent;
 
-        public Node(NodeParent parent) : base(parent)
+        public Node(Parent parent)
         {
             _parent = parent;
         }
 
-        public T Parent<T>() where T : NodeParent
+        public T Parent<T>() where T : Parent
         {
             return _parent as T;
         }
 
-        protected T AddArgument<T>(string name, object value, T child)
+        protected Z AddField(string name)
         {
-            var variable = Guid.NewGuid().ToString();
-            _actions.Add(graph => graph.Argument(name, "", variable));
-            _arguments.Add(new GraphQLQueryArgument(variable, value));
-            return child;
+            _fields[name] = null;
+            return this as Z;
         }
 
-        protected T AddField<T>(string name, T child)
+        protected T AddChild<T>(string name, T node) where T : Parent
         {
-            _actions.Add(x => x.Field(name));
-            return child;
+            _fields[name] = node;
+            return node;
         }
     }
 }

@@ -17,5 +17,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
         Task<IEnumerable<IClientAccount>> QueryClientAccount(Func<IQueryable<IOrdersAllocation>, IQueryable<IOrdersAllocation>> query);
         Task<IEnumerable<IFund>> QueryFund(Func<IQueryable<IOrdersAllocation>, IQueryable<IOrdersAllocation>> query);
         Task<IEnumerable<IStrategy>> QueryStrategy(Func<IQueryable<IOrdersAllocation>, IQueryable<IOrdersAllocation>> query);
+        Task<IEnumerable<IOrder>> Query(IOrderQueryOptions options);
+        Task<IEnumerable<IAggregation>> AggregationQuery(IOrderQueryOptions options);
     }
 }

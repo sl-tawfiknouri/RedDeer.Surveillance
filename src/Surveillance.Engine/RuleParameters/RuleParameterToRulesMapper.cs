@@ -231,6 +231,34 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
+        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(List<RampingRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"asked to map null or empty ramping dtos");
+                return null;
+            }
+
+            return
+                dtos
+                    .Select(dto =>
+                        new RampingRuleEquitiesParameters(
+                            dto.Id,
+                            dto.WindowSize,
+                            dto.AutoCorrelationCoefficient,
+                            dto.ThresholdOrdersExecutedInWindow,
+                            dto.ThresholdVolumePercentageWindow,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets),
+                            _ruleProjector.Project(dto.Funds),
+                            _ruleProjector.Project(dto.Strategies),
+                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                            dto.AggregateNonFactorableIntoOwnCategory))
+                    .ToList();
+        }
+
         public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
@@ -308,6 +336,32 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                         dto.AggregateNonFactorableIntoOwnCategory))
+                .ToList();
+        }
+
+        public IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"asked to map null or empty {nameof(PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters)}");
+                return null;
+            }
+
+            return dtos
+                .Select(_ =>
+                    new PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
+                        _.Id, 
+                        _.Sigma, 
+                        _.WindowSize, 
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors), 
+                        _.AggregateNonFactorableIntoOwnCategory, 
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies)))
                 .ToList();
         }
     }

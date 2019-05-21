@@ -21,13 +21,16 @@ namespace Surveillance.Api.DataAccess.Entities
 
         public int SecurityId { get; set; }
 
+        [ForeignKey("SecurityId")]
+        public FinancialInstrument FinancialInstrument { get; set; }
+
         public string ClientOrderId { get; set; }
 
         public string OrderVersion { get; set; }
         public string OrderVersionLinkId { get; set; }
         public string OrderGroupId { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime? PlacedDate { get; set; }
+        public DateTime PlacedDate { get; set; }
         public DateTime? BookedDate { get; set; }
         public DateTime? AmendedDate { get; set; }
         public DateTime? RejectedDate { get; set; }
@@ -196,6 +199,10 @@ namespace Surveillance.Api.DataAccess.Entities
         {
             get => SecurityId;
         }
+        IFinancialInstrument IOrder.FinancialInstrument
+        {
+            get => FinancialInstrument;
+        }
 
         string IOrder.SettlementCurrency
         {
@@ -225,6 +232,21 @@ namespace Surveillance.Api.DataAccess.Entities
         string IOrder.ClientAccount
         {
             get => ClientAccount;
+        }
+
+        string IOrder.OrderVersion
+        {
+            get => OrderVersion;
+        }
+
+        string IOrder.OrderVersionLinkId
+        {
+            get => OrderVersionLinkId;
+        }
+
+        string IOrder.OrderGroupId
+        {
+            get => OrderGroupId;
         }
 
         public object Clone()

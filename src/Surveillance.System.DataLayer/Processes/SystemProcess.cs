@@ -36,6 +36,8 @@ namespace Surveillance.Auditing.DataLayer.Processes
         /// </summary>
         public DateTime Heartbeat { get; set; }
 
+        public bool CancelRuleQueueDeletedFlag { get; set; }
+
         public string GenerateInstanceId()
         {
             // ReSharper disable once UseFormatSpecifierInInterpolation
@@ -44,7 +46,7 @@ namespace Surveillance.Auditing.DataLayer.Processes
 
         public override string ToString()
         {
-            return $"SystemProcess | Id {Id} | InstanceInitiated {InstanceInitiated} | MachineId {MachineId} | ProcessId {ProcessId} | SystemProcessType {SystemProcessType} | Heartbeat {Heartbeat} | InstanceId {GenerateInstanceId()}";
+            return $"SystemProcess | Id {Id} | InstanceInitiated {InstanceInitiated} | MachineId {MachineId} | ProcessId {ProcessId} | SystemProcessType {SystemProcessType} | Heartbeat {Heartbeat} | InstanceId {GenerateInstanceId()} | CancelQueueFlag {CancelRuleQueueDeletedFlag}";
         }
     }
 }

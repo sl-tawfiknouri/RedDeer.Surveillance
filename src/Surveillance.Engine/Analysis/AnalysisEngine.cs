@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,8 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
+using Surveillance.Engine.Rules.Rules.Cancellation;
+using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
@@ -40,6 +43,7 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IRuleParameterService _ruleParameterService;
         private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
         private readonly ILazyTransientUniverseFactory _universeFactory;
+        private readonly IRuleCancellation _ruleCancellation;
 
         private readonly ILogger<AnalysisEngine> _logger;
 
@@ -57,9 +61,9 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleParameterService ruleParameterService,
             IRuleParameterLeadingTimespanService leadingTimespanService,
             ILazyTransientUniverseFactory universeFactory,
+            IRuleCancellation ruleCancellation,
             ILogger<AnalysisEngine> logger)
         {
-
             _universePlayerFactory =
                 universePlayerFactory
                 ?? throw new ArgumentNullException(nameof(universePlayerFactory));
@@ -77,6 +81,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
             _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
             _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
+            _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -90,12 +95,16 @@ namespace Surveillance.Engine.Rules.Analysis
                 opCtx.EndEventWithError($"was executing a schedule that did not specify any rules to run");
                 return;
             }
-
+            
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+
+            var cts = new CancellationTokenSource();
+            var ruleCancellation = new CancellableRule(execution, cts);
+            _ruleCancellation.Subscribe(ruleCancellation);
 
             var ruleParameters = await _ruleParameterService.RuleParameters(execution);
             execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
-            var player = _universePlayerFactory.Build();
+            var player = _universePlayerFactory.Build(cts.Token);
 
             _universeCompletionLogger.InitiateTimeLogger(execution);
             player.Subscribe(_universeCompletionLogger);
@@ -117,6 +126,17 @@ namespace Surveillance.Engine.Rules.Analysis
             player.Play(lazyUniverse);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
+            if (cts.IsCancellationRequested)
+            {
+                opCtx.EndEventWithError("USER CANCELLED RUN");
+                _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
+
+                _ruleCancellation.Unsubscribe(ruleCancellation);
+                await RuleRunUpdateMessageSend(execution, ids);
+
+                return;
+            }
+
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
@@ -125,6 +145,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
 
             await RuleRunUpdateMessageSend(execution, ids);
+            _ruleCancellation.Unsubscribe(ruleCancellation);
         }
 
         private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)

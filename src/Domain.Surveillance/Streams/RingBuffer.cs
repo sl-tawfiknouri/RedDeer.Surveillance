@@ -47,5 +47,10 @@ namespace Domain.Surveillance.Streams
                 return null;
             }
         }
+
+        public T[] All()
+        {
+            return _queue.ToArray();
+        }
     }
 }

@@ -40,6 +40,7 @@ namespace Surveillance.DataLayer
     {
         public DataLayerRegistry()
         {
+            For<IAwsSnsClient>().Use<AwsSnsClient>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IMarketOpenCloseApiRepository>().Use<MarketOpenCloseApiRepository>();
             For<IMarketOpenCloseApiCachingDecoratorRepository>().Use<MarketOpenCloseApiCachingDecoratorRepository>();

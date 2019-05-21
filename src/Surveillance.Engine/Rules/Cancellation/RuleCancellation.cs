@@ -14,7 +14,7 @@ namespace Surveillance.Engine.Rules.Rules.Cancellation
     {
         private readonly object _lock = new object();
         private readonly RingBuffer<string> _cancellations;
-        private const int RingBufferLimit = 10;
+        private const int RingBufferLimit = 1000;
 
         private readonly ILogger<IRuleCancellation> _logger;
         private readonly HashSet<ICancellableRule> _cancellableRules;

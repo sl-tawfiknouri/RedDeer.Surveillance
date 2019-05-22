@@ -60,6 +60,9 @@
     <None Update="appspec.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="surveillanceapiservice.service">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="DeploymentScripts\AfterInstall.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

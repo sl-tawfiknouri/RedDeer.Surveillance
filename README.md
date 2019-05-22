@@ -23,6 +23,7 @@
 | CaseMessageQueueName | {env}-surveillance-{client}-casemessage|
 | TestRuleRunUpdateQueueName | {env}-surveillance-{client}-scheduledrule|
 | UploadCoordinatorQueueName | {env}-surveillance-{client}-uploadcoordinator |
+| ScheduleRuleCancellationQueueName | {env}-surveillance-{client}-rule-cancellation
 
 #### Database
 |Configuration Setting|Example value|

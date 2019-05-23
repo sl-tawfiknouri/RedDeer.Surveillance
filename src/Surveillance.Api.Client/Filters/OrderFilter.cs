@@ -15,6 +15,7 @@ namespace RedDeer.Surveillance.Api.Client.Filters
         public OrderFilter<T> ArgumentReddeerIds(List<string> reddeerIds) => AddArgument("reddeerIds", reddeerIds);
         public OrderFilter<T> ArgumentDirections(List<OrderDirection> directions) => AddArgument("directions", directions);
         public OrderFilter<T> ArgumentTypes(List<OrderType> types) => AddArgument("types", types);
+        public OrderFilter<T> ArgumentStatuses(List<OrderStatus> statuses) => AddArgument("statuses", statuses);
         public OrderFilter<T> ArgumentPlacedDateFrom(DateTime dateTime) => AddArgument("placedDateFrom", dateTime);
         public OrderFilter<T> ArgumentPlacedDateTo(DateTime dateTime) => AddArgument("placedDateTo", dateTime);
         public OrderFilter<T> ArgumentTake(int count) => AddArgument("take", count);

@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <RootNamespace>RedDeer.Surveillance.Api.Client</RootNamespace>
+    <PackageId>RedDeer.Surveillance.Api.Client</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

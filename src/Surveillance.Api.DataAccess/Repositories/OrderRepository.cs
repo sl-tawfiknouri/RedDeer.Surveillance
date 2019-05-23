@@ -4,6 +4,7 @@ using System.Data.Entity.Core.Objects;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Core.Trading.Orders;
 using Microsoft.EntityFrameworkCore;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
@@ -365,7 +366,7 @@ namespace Surveillance.Api.DataAccess.Repositories
                     continue;
                 }
 
-                var baseOrder = (Order)orderForAlloc.Clone();
+                var baseOrder = (Entities.Order)orderForAlloc.Clone();
                 baseOrder.FilledVolume = orderAlloc.OrderFilledVolume;
                 baseOrder.Fund = orderAlloc.Fund;
                 baseOrder.Strategy = orderAlloc.Strategy;
@@ -442,7 +443,7 @@ namespace Surveillance.Api.DataAccess.Repositories
                     }
 
                     var segmentAggregations = await query
-                        .GroupBy(x => x.PlacedDate.AddHours(segment.HourOffset).Date)
+                        .GroupBy(x => x.PlacedDate.Value.AddHours(segment.HourOffset).Date)
                         .Select(x => new Aggregation
                         {
                             Key = x.Key.ToString("yyyy-MM-dd"),
@@ -493,6 +494,61 @@ namespace Surveillance.Api.DataAccess.Repositories
             if (options.Types != null)
             {
                 query = query.Where(x => options.Types.Contains(x.OrderType));
+            }
+
+            if (options.Statuses != null)
+            {
+                var statuses = options.Statuses.Select(x => (OrderStatus)x).ToList();
+                query = query.Where(x =>
+                    (
+                        statuses.Contains(OrderStatus.Cancelled)
+                        && x.CancelledDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Rejected)
+                        && x.CancelledDate == null
+                        && x.RejectedDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Filled)
+                        && x.CancelledDate == null
+                        && x.RejectedDate == null
+                        && x.FilledDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Amended)
+                        && x.CancelledDate == null
+                        && x.RejectedDate == null
+                        && x.FilledDate == null
+                        && x.AmendedDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Booked)
+                        && x.CancelledDate == null
+                        && x.RejectedDate == null
+                        && x.FilledDate == null
+                        && x.AmendedDate == null
+                        && x.BookedDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Placed)
+                        && x.CancelledDate == null
+                        && x.RejectedDate == null
+                        && x.FilledDate == null
+                        && x.AmendedDate == null
+                        && x.BookedDate == null
+                        && x.PlacedDate != null
+                    )
+                    || (
+                        statuses.Contains(OrderStatus.Unknown)
+                        && x.CancelledDate == null
+                        && x.RejectedDate == null
+                        && x.FilledDate == null
+                        && x.AmendedDate == null
+                        && x.BookedDate == null
+                        && x.PlacedDate == null
+                    )
+                );
             }
 
             return query;

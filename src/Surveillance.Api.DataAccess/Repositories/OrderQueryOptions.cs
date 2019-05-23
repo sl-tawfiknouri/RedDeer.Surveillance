@@ -11,6 +11,7 @@ namespace Surveillance.Api.DataAccess.Repositories
         public int? Take { get; set; }
         public List<string> TraderIds { get; set; }
         public List<string> ReddeerIds { get; set; }
+        public List<int> Statuses { get; set; }
         public List<int> Directions { get; set; }
         public List<int> Types { get; set; }
         public string PlacedDateFrom { get; set; }

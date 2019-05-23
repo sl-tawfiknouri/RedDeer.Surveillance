@@ -35,7 +35,7 @@ namespace Surveillance.Api.App.Types.Trading
                     return loader.LoadAsync();
                 });
 
-            Field(i => i.SecurityId).Description("Security Id");
+            Field(i => i.SecurityId, nullable: true).Description("Security Id");
 
             Field<ListGraphType<FinancialInstrumentGraphType>>(
                 "financialInstrument",
@@ -66,11 +66,11 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.Currency).Description("Order currency values are denominated in");
             Field(i => i.SettlementCurrency).Description("Order settlement currency");
             Field(i => i.CleanDirty).Description("Order values quoted clean or dirty (fixed income with or without accrued interest)");
-            Field(i => i.AccumulatedInterest).Description("Accumulated interest");
-            Field(i => i.LimitPrice).Description("Order limit price (if applicable)");
-            Field(i => i.AverageFillPrice).Description("Order average fill price");
+            Field(i => i.AccumulatedInterest, nullable: true).Description("Accumulated interest");
+            Field(i => i.LimitPrice, nullable: true).Description("Order limit price (if applicable)");
+            Field(i => i.AverageFillPrice, nullable: true).Description("Order average fill price");
 
-            Field(i => i.OrderedVolume).Description("Order volume ordered");
+            Field(i => i.OrderedVolume, nullable: true).Description("Order volume ordered");
             Field(i => i.FilledVolume).Description("Order actual filled volume can be larger or smaller than ordered volume");
 
             Field<TraderGraphType>().Name("trader").Description("Trader handling the order salient properties");
@@ -78,12 +78,12 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.ClearingAgent).Description("Clearing agent used for the trade");
             Field(i => i.DealingInstructions).Description("Instructions for dealer");
 
-            Field(i => i.OptionStrikePrice).Description("The strike price of the option instrument");
+            Field(i => i.OptionStrikePrice, nullable: true).Description("The strike price of the option instrument");
             Field(i => i.OptionExpiration).Description("The expiration date of the option instrument");
             Field(i => i.OptionEuropeanAmerican).Description("The category of the option. European or American");
 
             Field(i => i.Created).Description("The date the system created the order on");
-            Field(i => i.LifeCycleStatus).Description("The order status within the life cycle");
+            Field(i => i.LifeCycleStatus, nullable: true).Description("The order status within the life cycle");
 
             Field(i => i.Live).Description("Order is live, therefore has corresponding order allocations");
             Field(i => i.Autoscheduled).Description("Order has been autoscheduled");

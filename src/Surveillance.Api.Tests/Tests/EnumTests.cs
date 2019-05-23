@@ -21,6 +21,12 @@ namespace Surveillance.Api.Tests.Tests
             TestEnumMatches<OrderDirection, Domain.Core.Trading.Orders.OrderDirections>();
         }
 
+        [Test]
+        public void OrderStatus_Matches()
+        {
+            TestEnumMatches<OrderStatus, Domain.Core.Trading.Orders.OrderStatus>();
+        }
+
         private void TestEnumMatches<A, B>()
         { 
             var valuesA = Enum.GetValues(typeof(A)).Cast<A>().ToList();

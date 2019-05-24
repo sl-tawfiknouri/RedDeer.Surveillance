@@ -96,11 +96,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 return null;
             }
 
+            var dtoWindow = true;
+            var dtoClose = true;
+
             return dtos
                 .Select(dto =>
                     new HighProfitsRuleEquitiesParameters(
                         dto.Id,
                         dto.WindowSize,
+                        dtoWindow,
+                        dtoClose,
                         dto.HighProfitPercentageThreshold,
                         dto.HighProfitAbsoluteThreshold,
                         dto.UseCurrencyConversions,

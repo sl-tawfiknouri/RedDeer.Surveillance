@@ -7,5 +7,7 @@
         public decimal? HighProfitAbsolute { get; set; }
         public bool HighProfitUseCurrencyConversions { get; set; }
         public string HighProfitCurrency { get; set; }
+        public bool PerformHighProfitWindowAnalysis { get; set; }
+        public bool PerformHighProfitDailyAnalysis { get; set; }
     }
 }

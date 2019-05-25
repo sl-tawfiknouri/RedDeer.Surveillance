@@ -38,8 +38,8 @@ Scenario: Buy Sell orders within the time window yields one alerts
 
 Scenario: Buy Sell orders next day but within the time window yields one alerts
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
-	| 25           |                      | 1000               | GBX                | true	                          |
+	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 25           |                      | 1000               | GBX                | true	                          | true  | false |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 10               | 1000           | 1000        |

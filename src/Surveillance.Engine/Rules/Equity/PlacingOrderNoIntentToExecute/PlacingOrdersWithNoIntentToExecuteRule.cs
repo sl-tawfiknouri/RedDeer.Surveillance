@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger) 
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                TimeSpan.FromHours(24),
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",

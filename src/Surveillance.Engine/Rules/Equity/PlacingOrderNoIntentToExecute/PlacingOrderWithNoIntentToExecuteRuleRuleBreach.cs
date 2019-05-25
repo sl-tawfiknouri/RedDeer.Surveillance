@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Core.Financial.Assets;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -16,7 +17,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             string ruleParameterId,
             string systemOperationId,
             string correlationId,
-            IFactorValue factorValue)
+            IFactorValue factorValue,
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters)
         {
             Window = window;
             Trades = trades;
@@ -27,6 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             SystemOperationId = systemOperationId;
             CorrelationId = correlationId;
             FactorValue = factorValue;
+            Parameters = parameters;
         }
 
         public TimeSpan Window { get; }
@@ -37,5 +40,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
     }
 }

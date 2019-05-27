@@ -7,7 +7,6 @@ using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -19,13 +18,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     {
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
-        private readonly ILogger<MarkingTheCloseRule> _logger;
+        private readonly ILogger<PlacingOrdersWithNoIntentToExecuteRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRulePlacingOrdersWithoutIntentToExecuteFactory(
             IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
-            ILogger<MarkingTheCloseRule> logger,
+            ILogger<PlacingOrdersWithNoIntentToExecuteRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));

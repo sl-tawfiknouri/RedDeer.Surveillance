@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -30,6 +31,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters _parameters;
 
@@ -40,6 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             IUniverseMarketCacheFactory marketCacheFactory,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IMarketTradingHoursService tradingHoursService,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger) 
@@ -60,6 +63,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
@@ -100,6 +104,17 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             var openingHours = _latestMarketClosure.MarketClose - _latestMarketClosure.MarketOpen;
             var benchmarkOrder = ordersToCheck.First();
 
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(benchmarkOrder.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"Request for trading hours was invalid. MIC - {benchmarkOrder.Market?.MarketIdentifierCode}");
+            }
+
+            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                benchmarkOrder.Market?.MarketIdentifierCode);
+
             var marketDataRequest = new MarketDataRequest(
                 benchmarkOrder.Market.MarketIdentifierCode,
                 benchmarkOrder.Instrument.Cfi,
@@ -108,7 +123,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 UniverseDateTime,
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
 
             if (dataResponse.HadMissingData
                 || dataResponse.Response == null

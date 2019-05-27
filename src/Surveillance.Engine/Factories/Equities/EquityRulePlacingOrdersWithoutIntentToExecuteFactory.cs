@@ -5,6 +5,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
@@ -18,12 +19,14 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     {
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILogger<PlacingOrdersWithNoIntentToExecuteRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRulePlacingOrdersWithoutIntentToExecuteFactory(
             IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
+            IMarketTradingHoursService tradingHoursService,
             ILogger<PlacingOrdersWithNoIntentToExecuteRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -31,6 +34,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
         }
 
         public IPlacingOrdersWithNoIntentToExecuteRule Build(
@@ -47,6 +51,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _factory,
                 alertStream,
                 dataRequestSubscriber,
+                _tradingHoursService,
                 runMode,
                 _logger,
                 _tradingHistoryLogger);

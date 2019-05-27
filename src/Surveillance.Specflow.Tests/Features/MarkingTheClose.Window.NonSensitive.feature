@@ -97,7 +97,7 @@ Scenario: Outside PercentageThresholdWindowVolume yields 0 alert
 		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
 		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
 		 When I run the marking the close rule
-		 Then I will have 0 marking the close alerts
+		 Then I will have 1 marking the close alerts
 
 Scenario: Same As PercentageThresholdWindowVolume yields 1 alert
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :

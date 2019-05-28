@@ -28,12 +28,12 @@ namespace Surveillance.Engine.Rules.Trades
             _trades.Add(item);
         }
 
-        public long TotalVolume()
+        public decimal TotalVolume()
         {
             return _trades.Sum(trad => trad?.OrderFilledVolume ?? 0);
         }
 
-        public long TotalVolumeOrderedOrFilled()
+        public decimal TotalVolumeOrderedOrFilled()
         {
             return _trades
                 .Where(trad => trad != null)
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Trades
                         : (trad.OrderFilledVolume.GetValueOrDefault(0)));
         }
 
-        public long VolumeInStatus(OrderStatus status)
+        public decimal VolumeInStatus(OrderStatus status)
         {
             return
                 _trades
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Trades
                 .Sum(trad => trad.OrderFilledVolume.GetValueOrDefault(0));
         }
 
-        public long VolumeNotInStatus(OrderStatus status)
+        public decimal VolumeNotInStatus(OrderStatus status)
         {
             return
                 _trades

@@ -128,7 +128,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             return summedCurrency;
         }
 
-        private long CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
+        private decimal CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -142,7 +142,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 .Sum();
         }
 
-        private long CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
+        private decimal CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {

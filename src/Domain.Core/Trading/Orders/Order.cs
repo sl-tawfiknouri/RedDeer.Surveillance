@@ -47,8 +47,8 @@ namespace Domain.Core.Trading.Orders
 
             Money? orderLimitPrice,
             Money? orderAverageFillPrice,
-            long? orderOrderedVolume,
-            long? orderFilledVolume,
+            decimal? orderOrderedVolume,
+            decimal? orderFilledVolume,
             string orderTraderId,
             string orderTraderName,
             string orderClearingAgent,
@@ -147,8 +147,8 @@ namespace Domain.Core.Trading.Orders
         public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
         
         // can be overridden by accounting allocations
-        public virtual long? OrderOrderedVolume { get; set; }
-        public virtual long? OrderFilledVolume { get; set; }
+        public virtual decimal? OrderOrderedVolume { get; set; }
+        public virtual decimal? OrderFilledVolume { get; set; }
         
         // Accounting allocation Properties
         public virtual string OrderFund { get; set; } = string.Empty;

@@ -11,6 +11,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces
         HighVolumeRuleBreach.BreachDetails WindowBreach { get; }
         HighVolumeRuleBreach.BreachDetails MarketCapBreach { get; }
 
-        long TotalOrdersTradedInWindow { get; }
+        decimal TotalOrdersTradedInWindow { get; }
     }
 }

@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     public class HighProfitStreamRule : BaseUniverseRule, IHighProfitStreamRule
     {
         protected readonly ILogger<HighProfitsRule> Logger;
-        private readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
+        protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         protected readonly IUniverseAlertStream _alertStream;
 

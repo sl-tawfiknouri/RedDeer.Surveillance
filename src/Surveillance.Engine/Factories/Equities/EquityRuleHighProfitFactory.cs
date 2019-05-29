@@ -91,7 +91,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _logger,
                 _tradingHistoryLogger);
                
-            return new HighProfitsRule(stream, marketClosure, _logger);
+            return new HighProfitsRule(equitiesParameters, stream, marketClosure, _logger);
         }
 
         public static string Version => Versioner.Version(3, 0);

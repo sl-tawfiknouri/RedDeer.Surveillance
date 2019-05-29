@@ -16,14 +16,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 return TimeSpan.Zero;
             }
 
-            var cancelledOrders = dto.CancelledOrders?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var highProfit = dto.HighProfits?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var markingTheClose = dto.MarkingTheCloses?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var spoofing = dto.Spoofings?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var layering = dto.Layerings?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var highVolume = dto.HighVolumes?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var washTrade = dto.WashTrades?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
-            var ramping = dto.Rampings?.Select(_ => _ as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
+            var cancelledOrders = dto.CancelledOrders?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var highProfit = dto.HighProfits?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var markingTheClose = dto.MarkingTheCloses?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var spoofing = dto.Spoofings?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var layering = dto.Layerings?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var highVolume = dto.HighVolumes?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var washTrade = dto.WashTrades?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var ramping = dto.Rampings?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
+            var placingOrders = dto.PlacingOrders?.OfType<IIdentifiableRule>().ToList() ?? new List<IIdentifiableRule>();
 
             var identifiableRuleList =
                 cancelledOrders
@@ -34,6 +35,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 .Concat(highVolume)
                 .Concat(washTrade)
                 .Concat(ramping)
+                .Concat(placingOrders)
                 .Where(x => x != null)
                 .ToList();
 

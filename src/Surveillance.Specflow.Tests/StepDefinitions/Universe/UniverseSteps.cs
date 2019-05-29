@@ -280,6 +280,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
                 ? new Money(orderParam.AverageFillPrice, orderParam.Currency)
                 : (Money?)null;
 
+            var orderType = orderParam.LimitPrice != null ? OrderTypes.LIMIT : OrderTypes.MARKET;
+
             var order = new Order(
                 security.Instrument,
                 security.Market,
@@ -295,7 +297,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
                 orderParam.RejectedDate,
                 orderParam.CancelledDate,
                 orderParam.FilledDate,
-                orderParam.Type,
+                orderType,
                 orderParam.Direction,
                 new Currency(orderParam.Currency),
                 null,

@@ -174,8 +174,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         {
             _logger.LogInformation($"placing orders without intent to execute flushing alerts");
             Analytics.PlacingOrdersAlertsAdjusted = _placingOrdersMessageSender.Flush();
-        }
-        
+        }       
         
         private void Ramping(IUniverseAlertEvent alert)
         {

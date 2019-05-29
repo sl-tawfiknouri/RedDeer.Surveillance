@@ -10,7 +10,7 @@ namespace Domain.Core.Trading.Orders
             string fund,
             string strategy,
             string clientAccountId,
-            long orderFilledVolume,
+            decimal orderFilledVolume,
             DateTime? createdDate)
         {
             Id = id ?? string.Empty;
@@ -45,7 +45,7 @@ namespace Domain.Core.Trading.Orders
         public string Fund { get; }
         public string Strategy { get; }
         public string ClientAccountId { get; }
-        public long OrderFilledVolume { get; }
+        public decimal OrderFilledVolume { get; }
         public DateTime? CreatedDate { get; }
 
         public bool IsValid()

@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
-            long totalOrdersTradedInWindow)
+            decimal totalOrdersTradedInWindow)
         {
             FactorValue = factorValue;
 
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         public BreachDetails WindowBreach { get; }
         public BreachDetails MarketCapBreach { get; }
 
-        public long TotalOrdersTradedInWindow { get; }
+        public decimal TotalOrdersTradedInWindow { get; }
 
         public bool IsBackTestRun { get; set; }
         public string RuleParameterId { get; set; }
@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
-                long breachThresholdAmount)
+                decimal breachThresholdAmount)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
-            public long BreachThresholdAmount { get; }
+            public decimal BreachThresholdAmount { get; }
             public Money BreachThresholdMoney { get; }
             public Money BreachTradedMoney { get; }
 

@@ -12,8 +12,8 @@ Feature: HighProfit Absolute Non Sensitive Parameters
 
 Background:
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
-	| 1           |                      | 100000             | GBX                | false                            |
+	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 1           |                      | 100000             | GBX                | false                            | true                            | false                          |
 
 
 Scenario: Empty Universe yields no alerts
@@ -39,8 +39,8 @@ Scenario: Buy Sell orders within window yields two alerts
 
 Scenario: Buy Sell orders next day within window yields two alerts
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
-	| 25           |                      | 100000             | GBX                | false                            |
+	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 25           |                      | 100000             | GBX                | false                            | true | false |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
@@ -50,8 +50,8 @@ Scenario: Buy Sell orders next day within window yields two alerts
 
 Scenario: Buy Sell orders next day within window and with currency shift yields two alerts
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
-	| 25           |                      | 100000             | USD                | true                            |
+	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |  PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 25           |                      | 100000             | USD                | true                            | true | false | 
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |

@@ -1141,8 +1141,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public decimal? OrderLimitPrice { get; set; }
             public int? CleanDirty { get; set; }
             public decimal? OrderAverageFillPrice { get; set; }
-            public long? OrderOrderedVolume { get; set; }
-            public long? OrderFilledVolume { get; set; }
+            public decimal? OrderOrderedVolume { get; set; }
+            public decimal? OrderFilledVolume { get; set; }
             public string OrderTraderId { get; set; }
             public string OrderTraderName { get; set; }
             public string OrderClearingAgent { get; set; }
@@ -1247,8 +1247,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             public decimal? LimitPrice { get; set; }
             public decimal? AverageFillPrice { get; set; }
-            public long? OrderedVolume { get; set; }
-            public long? FilledVolume { get; set; }
+            public decimal? OrderedVolume { get; set; }
+            public decimal? FilledVolume { get; set; }
 
             public decimal? OptionStrikePrice { get; set; }
             public DateTime? OptionExpirationDate { get; set; }

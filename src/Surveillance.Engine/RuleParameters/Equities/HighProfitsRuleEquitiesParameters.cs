@@ -11,6 +11,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public HighProfitsRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
+            bool performHighProfitWindowAnalysis,
+            bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
             bool useCurrencyConversions,
@@ -25,6 +27,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
             HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
+            PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -39,6 +43,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public HighProfitsRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
+            bool performHighProfitWindowAnalysis,
+            bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
             bool useCurrencyConversions,
@@ -58,6 +64,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
             HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
+            PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -72,6 +80,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string Id { get; }
 
         public TimeSpan WindowSize { get; }
+
+        public bool PerformHighProfitWindowAnalysis { get; }
+
+        public bool PerformHighProfitDailyAnalysis { get; }
 
         // Percentage
         public decimal? HighProfitPercentageThreshold { get; }

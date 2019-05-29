@@ -9,10 +9,10 @@ namespace Surveillance.Engine.Rules.Trades.Interfaces
         IList<Order> Get();
         void Add(Order item);
 
-        long TotalVolume();
-        long TotalVolumeOrderedOrFilled();
-        long VolumeInStatus(OrderStatus status);
-        long VolumeNotInStatus(OrderStatus status);
+        decimal TotalVolume();
+        decimal TotalVolumeOrderedOrFilled();
+        decimal VolumeInStatus(OrderStatus status);
+        decimal VolumeNotInStatus(OrderStatus status);
 
         bool PositionIsSubsetOf(ITradePosition position);
     }

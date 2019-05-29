@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             _alertStream.Add(message);
         }
 
-        private HighVolumeRuleBreach.BreachDetails CheckDailyVolume(Order mostRecentTrade, long tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails CheckDailyVolume(Order mostRecentTrade, decimal tradedVolume)
         {
             var dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
             if (_equitiesParameters.HighVolumePercentageDaily.HasValue)
@@ -135,7 +135,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return dailyBreach;
         }
 
-        private HighVolumeRuleBreach.BreachDetails CheckWindowVolume(Order mostRecentTrade, long tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails CheckWindowVolume(Order mostRecentTrade, decimal tradedVolume)
         {
             var windowBreach = HighVolumeRuleBreach.BreachDetails.None();
             if (_equitiesParameters.HighVolumePercentageWindow.HasValue)
@@ -167,7 +167,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                    && (!marketCapBreach?.HasBreach ?? true);
         }
 
-        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, long tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, decimal tradedVolume)
         {
             if (mostRecentTrade == null)
             {
@@ -221,7 +221,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, decimal tradedVolume)
         {
             var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)

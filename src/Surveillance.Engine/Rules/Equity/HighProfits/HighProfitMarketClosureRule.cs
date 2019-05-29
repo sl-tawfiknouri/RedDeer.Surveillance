@@ -85,10 +85,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return true;
             }
 
-            var position = new TradePosition(activeWindow.ToList());
-
-            var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
-            _alertStream.Add(message);
+            if (_equitiesParameters.PerformHighProfitWindowAnalysis)
+            {
+                var position = new TradePosition(activeWindow.ToList());
+                var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
+                _alertStream.Add(message);
+            }
 
             Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 

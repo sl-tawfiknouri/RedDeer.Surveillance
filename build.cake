@@ -31,7 +31,7 @@ var solutions = new []
 
 var testProjects = new [] 
 {
-	"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
+	"src/TestHarness/TestHarness.Tests/TestHarness.Tests.csproj" ,
 	"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
 	"src/Surveillance.Engine.DataCoordinator.Tests/Surveillance.Engine.DataCoordinator.Tests.csproj",
 	"src/Surveillance.Engine.RuleDistributor.Tests/Surveillance.Engine.RuleDistributor.Tests.csproj",
@@ -52,7 +52,7 @@ var publishProjects = new List<Tuple<string,string, string,string>>
 	new Tuple<string,string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App","DataSynchroniser.App.csproj" ,"DataSynchronizerService.zip","netcoreapp2.1" ),
     new Tuple<string,string,string,string> ("src/DataImport/App","DataImport.App.csproj", "DataImport.zip","netcoreapp2.0"),
 	new Tuple<string,string,string,string> ("src/Surveillance/App", "Surveillance.App.csproj","SurveillanceService.zip","netcoreapp2.0" ),
-    new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" ),
+    new Tuple<string,string,string,string> ("src/TestHarness/App", "","TestHarness.zip","netcoreapp2.0" ),
     new Tuple<string,string,string,string> ("src/Surveillance.Api.App", "Surveillance.Api.App.csproj","SurveillanceApi.zip","netcoreapp2.2" )
 };
 

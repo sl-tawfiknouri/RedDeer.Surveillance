@@ -84,7 +84,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             var ordersToCheck = 
                 history
                     .ActiveTradeHistory()
-                    .ToArray()
                     .Where(_ => _.OrderLimitPrice?.Value != null)
                     .Where(_ => _.OrderType == OrderTypes.LIMIT)
                     .Where(_ =>

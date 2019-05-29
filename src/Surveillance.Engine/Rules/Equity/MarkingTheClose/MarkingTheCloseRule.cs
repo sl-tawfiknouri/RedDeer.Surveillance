@@ -200,6 +200,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 return new VolumeBreach();
             }
 
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(securities.Peek().Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"Request for trading hours was invalid. MIC - {securities.Peek().Market?.MarketIdentifierCode}");
+                return new VolumeBreach();
+            }
+
+            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                securities.Peek().Market?.MarketIdentifierCode);
+
             var marketDataRequest =
                 new MarketDataRequest(
                     securities.Peek().Market.MarketIdentifierCode,
@@ -208,9 +220,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     _ruleCtx?.Id());
-
+            
             // marking the close should not have windows exceeding a few hours
-            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
             if (marketResult.HadMissingData)
             {
                 _hadMissingData = true;

@@ -34,8 +34,8 @@ namespace Domain.Core.Trading.Orders
             string dealerOrderGroupId,
             Money? limitPrice,
             Money? averageFillPrice,
-            long? orderedVolume,
-            long? filledVolume,
+            decimal? orderedVolume,
+            decimal? filledVolume,
             decimal? optionStrikePrice,
             DateTime? optionExpirationDate,
             OptionEuropeanAmerican tradeOptionEuropeanAmerican)
@@ -101,8 +101,8 @@ namespace Domain.Core.Trading.Orders
         
         public Money? LimitPrice { get; }
         public Money? AverageFillPrice { get; }
-        public long? OrderedVolume { get; }
-        public long? FilledVolume { get; }
+        public decimal? OrderedVolume { get; }
+        public decimal? FilledVolume { get; }
 
         public decimal? OptionStrikePrice { get; }
         public DateTime? OptionExpirationDate { get; }

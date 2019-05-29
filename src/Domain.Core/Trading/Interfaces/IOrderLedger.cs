@@ -9,8 +9,8 @@ namespace Domain.Core.Trading.Interfaces
         void Add(Order order);
         IReadOnlyCollection<Order> FullLedger();
         IReadOnlyCollection<Order> LedgerEntries(DateTime from, TimeSpan to);
-        long VolumeInLedger();
-        long VolumeInLedgerWithStatus(OrderStatus status);
+        decimal VolumeInLedger();
+        decimal VolumeInLedgerWithStatus(OrderStatus status);
         decimal PercentageInStatusByOrder(OrderStatus status);
         decimal PercentageInStatusByVolume(OrderStatus status);
     }

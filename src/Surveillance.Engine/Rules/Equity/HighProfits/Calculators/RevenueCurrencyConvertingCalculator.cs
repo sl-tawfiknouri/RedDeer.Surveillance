@@ -147,7 +147,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             return conversion;
         }
 
-        private long CalculateTotalPurchaseVolume(
+        private decimal CalculateTotalPurchaseVolume(
             IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
@@ -162,7 +162,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 .Sum();
         }
 
-        private long CalculateTotalSalesVolume(
+        private decimal CalculateTotalSalesVolume(
             IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)

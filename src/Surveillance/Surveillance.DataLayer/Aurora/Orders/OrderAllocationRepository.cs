@@ -240,7 +240,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string Fund { get; set; }
             public string Strategy { get; set; }
             public string ClientAccountId { get; set; }
-            public long OrderFilledVolume { get; set; }
+            public decimal OrderFilledVolume { get; set; }
             public DateTime? CreatedDate { get; set; }
         }
     }

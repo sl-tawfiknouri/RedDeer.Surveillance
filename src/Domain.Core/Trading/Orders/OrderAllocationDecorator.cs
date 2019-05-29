@@ -7,8 +7,8 @@ namespace Domain.Core.Trading.Orders
         private readonly OrderAllocation _orderAllocation;
         private readonly decimal _weighting;
 
-        private readonly long? _baseOrderFilledVolume;
-        private readonly long? _baseOrderOrderedVolume;
+        private readonly decimal? _baseOrderFilledVolume;
+        private readonly decimal? _baseOrderOrderedVolume;
 
         public OrderAllocationDecorator(
             Order order, 
@@ -71,13 +71,13 @@ namespace Domain.Core.Trading.Orders
             set { }
         }
 
-        public override long? OrderFilledVolume
+        public override decimal? OrderFilledVolume
         {
             get => _orderAllocation.OrderFilledVolume;
             set { }
         }
 
-        public override long? OrderOrderedVolume
+        public override decimal? OrderOrderedVolume
         {
             get => (long?)(_baseOrderOrderedVolume * _weighting);
             set { }

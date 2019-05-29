@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Tests.Trades
             var orders = OrderHelper.Orders(OrderStatus.Filled);
             orders.OrderFilledVolume = 100;
             orders.OrderOrderedVolume = 1000;
-            var fiftyPercentVolume = (long)(orders.OrderFilledVolume.GetValueOrDefault(0) * 0.5);
+            var fiftyPercentVolume = (decimal)(orders.OrderFilledVolume.GetValueOrDefault(0) * 0.5m);
 
             var allocations = new List<OrderAllocation>
             {

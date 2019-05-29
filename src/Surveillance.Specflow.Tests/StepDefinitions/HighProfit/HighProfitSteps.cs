@@ -141,6 +141,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _highProfitRuleEquitiesParameters = new HighProfitsRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
+                parameters.PerformHighProfitWindowAnalysis,
+                parameters.PerformHighProfitDailyAnalysis,
                 parameters.HighProfitPercentage,
                 parameters.HighProfitAbsolute,
                 parameters.HighProfitUseCurrencyConversions,

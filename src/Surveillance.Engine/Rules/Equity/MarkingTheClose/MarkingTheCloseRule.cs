@@ -251,7 +251,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
             decimal thresholdVolumeTraded,
-            long marketVolumeTraded)
+            decimal marketVolumeTraded)
         {
             if (securities == null
                 || !securities.Any())
@@ -294,7 +294,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             };
         }
 
-        private decimal? CalculateBuyBreach(long volumeTradedBuy, long marketVolume, bool hasBuyVolumeBreach)
+        private decimal? CalculateBuyBreach(decimal volumeTradedBuy, decimal marketVolume, bool hasBuyVolumeBreach)
         {
             return hasBuyVolumeBreach
                 && volumeTradedBuy > 0
@@ -305,7 +305,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     : null;
         }
 
-        private decimal? CalculateSellBreach(long volumeTradedSell, long marketVolume, bool hasSellDailyVolumeBreach)
+        private decimal? CalculateSellBreach(decimal volumeTradedSell, decimal marketVolume, bool hasSellDailyVolumeBreach)
         {
             return hasSellDailyVolumeBreach
                    && volumeTradedSell > 0

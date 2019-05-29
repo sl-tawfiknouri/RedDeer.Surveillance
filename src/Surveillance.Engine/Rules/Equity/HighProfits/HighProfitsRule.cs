@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -13,15 +14,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     /// </summary>
     public class HighProfitsRule : IHighProfitRule
     {
+        private readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         private readonly IHighProfitStreamRule _streamRule;
         private readonly IHighProfitMarketClosureRule _marketClosureRule;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitsRule(
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             IHighProfitStreamRule streamRule,
             IHighProfitMarketClosureRule marketClosureRule,
             ILogger<HighProfitsRule> logger)
         {
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
             _marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -49,8 +53,17 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             // if removing the market closure rule
             // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
-            _streamRule.OnNext(value);
-            _marketClosureRule.OnNext(value);
+            if (_equitiesParameters.PerformHighProfitWindowAnalysis)
+            {
+                _streamRule.OnNext(value);
+                _marketClosureRule.OnNext(value);
+            }
+
+            if (_equitiesParameters.PerformHighProfitDailyAnalysis
+                && !_equitiesParameters.PerformHighProfitWindowAnalysis)
+            {
+                _marketClosureRule.OnNext(value);
+            }
         }
 
         public Domain.Surveillance.Scheduling.Rules Rule { get; } = Domain.Surveillance.Scheduling.Rules.HighProfits;
@@ -59,6 +72,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var cloneRule = new HighProfitsRule(
+                _equitiesParameters,
                 (IHighProfitStreamRule)_streamRule.Clone(factor),
                 (IHighProfitMarketClosureRule)_marketClosureRule.Clone(factor),
                 _logger);
@@ -70,6 +84,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public object Clone()
         {
             var cloneRule = new HighProfitsRule(
+                _equitiesParameters,
                 (IHighProfitStreamRule)_streamRule.Clone(),
                 (IHighProfitMarketClosureRule)_marketClosureRule.Clone(),
                 _logger);

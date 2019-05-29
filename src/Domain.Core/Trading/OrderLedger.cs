@@ -42,12 +42,12 @@ namespace Domain.Core.Trading
             return orders;
         }
 
-        public long VolumeInLedger()
+        public decimal VolumeInLedger()
         {
             return _ledger.Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
         }
 
-        public long VolumeInLedgerWithStatus(OrderStatus orderStatus)
+        public decimal VolumeInLedgerWithStatus(OrderStatus orderStatus)
         {
             return _ledger.Where(i => i.OrderStatus() == orderStatus).Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
         }

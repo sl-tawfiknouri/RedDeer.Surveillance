@@ -21,7 +21,7 @@ namespace SharedKernel.Files.Allocations
 
         private OrderAllocation MapAllocation(AllocationFileContract contract)
         {
-            var orderFilledVolume = MapLong(contract.OrderFilledVolume);
+            var orderFilledVolume = MapDecimal(contract.OrderFilledVolume);
 
             var allocation = new OrderAllocation(
                 null,
@@ -35,14 +35,14 @@ namespace SharedKernel.Files.Allocations
             return allocation;
         }
 
-        private long? MapLong(string value)
+        private decimal? MapDecimal(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return null;
             }
 
-            var success = long.TryParse(value, out var result);
+            var success = decimal.TryParse(value, out var result);
 
             if (success)
                 return result;

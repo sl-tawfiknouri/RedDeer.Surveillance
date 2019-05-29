@@ -84,14 +84,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             var ordersToCheck = 
                 history
                     .ActiveTradeHistory()
-                    .Where(_ => _.OrderLimitPrice?.Value != null)
-                    .Where(_ => _.OrderType == OrderTypes.LIMIT)
                     .Where(_ =>
-                           _.OrderStatus() == OrderStatus.Placed
-                        || _.OrderStatus() == OrderStatus.Booked
-                        || _.OrderStatus() == OrderStatus.Amended
-                        || _.OrderStatus() == OrderStatus.Cancelled
-                        || _.OrderStatus() == OrderStatus.Rejected)
+                        _.OrderLimitPrice?.Value != null
+                        && _.OrderType == OrderTypes.LIMIT
+                        && (
+                                _.OrderStatus() == OrderStatus.Placed
+                                || _.OrderStatus() == OrderStatus.Booked
+                                || _.OrderStatus() == OrderStatus.Amended
+                                || _.OrderStatus() == OrderStatus.Cancelled
+                                || _.OrderStatus() == OrderStatus.Rejected))
                     .ToList();
 
             if (!ordersToCheck.Any())

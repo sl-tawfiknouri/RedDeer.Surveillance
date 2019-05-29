@@ -114,6 +114,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
+            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                lastTrade.Market?.MarketIdentifierCode);
+
             var marketDataRequest = new MarketDataRequest(
                 lastTrade.Market?.MarketIdentifierCode,
                 lastTrade.Instrument.Cfi,
@@ -122,7 +127,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var marketData = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+            var marketData = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
 
             if (marketData.HadMissingData)
             {

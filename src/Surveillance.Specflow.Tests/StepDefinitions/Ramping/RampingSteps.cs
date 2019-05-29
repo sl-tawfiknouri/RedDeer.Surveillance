@@ -1,7 +1,9 @@
 ﻿using System;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
+using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -51,33 +53,49 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Ramping
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _alertStream = A.Fake<IUniverseAlertStream>();
-            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
+
+            var repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+
+            A
+                .CallTo(() => repository.Get()).
+                Returns(new ExchangeDto[]
+                {
+                    new ExchangeDto
+                    {
+                        Code = "XLON",
+                        MarketOpenTime = TimeSpan.FromHours(8),
+                        MarketCloseTime = TimeSpan.FromHours(16),
+                        IsOpenOnMonday = true,
+                        IsOpenOnTuesday = true,
+                        IsOpenOnWednesday = true,
+                        IsOpenOnThursday = true,
+                        IsOpenOnFriday = true,
+                        IsOpenOnSaturday = true,
+                        IsOpenOnSunday = true,
+                    },
+
+                    new ExchangeDto
+                    {
+                        Code = "NASDAQ",
+                        MarketOpenTime = TimeSpan.FromHours(15),
+                        MarketCloseTime = TimeSpan.FromHours(23),
+                        IsOpenOnMonday = true,
+                        IsOpenOnTuesday = true,
+                        IsOpenOnWednesday = true,
+                        IsOpenOnThursday = true,
+                        IsOpenOnFriday = true,
+                        IsOpenOnSaturday = true,
+                        IsOpenOnSunday = true,
+                    }
+                });
+
+            _tradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());
             _rampingAnalyser =
                 new RampingAnalyser(
                     new TimeSeriesTrendClassifier(
                         new NullLogger<TimeSeriesTrendClassifier>()),
                     new OrderPriceImpactClassifier());
             _equityOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-
-            A
-                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("XLON"))
-                .Returns(new TradingHours
-                {
-                    IsValid = true,
-                    Mic = "XLON",
-                    OpenOffsetInUtc = TimeSpan.FromHours(8),
-                    CloseOffsetInUtc = TimeSpan.FromHours(16)
-                });
-
-            A
-                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("NASDAQ"))
-                .Returns(new TradingHours
-                {
-                    IsValid = true,
-                    Mic = "NASDAQ",
-                    OpenOffsetInUtc = TimeSpan.FromHours(16),
-                    CloseOffsetInUtc = TimeSpan.FromHours(23)
-                });
 
             var universeMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),

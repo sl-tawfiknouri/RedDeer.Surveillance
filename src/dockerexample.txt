@@ -1,0 +1,4 @@
+EXAMPLE of running the docker commands
+
+docker build --build-arg NEXUSAPIKEY=a6ab623c-1caz-3fc3-b9be-3236be4fdfb3 -t testharness .
+docker run -it testharness

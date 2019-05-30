@@ -42,7 +42,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 var apiResult = await _ruleParameterApiRepository.Get(id);
 
                 if (apiResult != null)
+                {
                     ruleDtos.Add(apiResult);
+                }
+                else
+                {
+                    _logger.LogError($"Subscribe Rules fetching rule dto for {id} returned null from api");
+                }
             }
 
             if (!ruleDtos.Any())
@@ -61,14 +67,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 return ruleDtos.First();
             }
 
-            var allCancelledOrders = ruleDtos.SelectMany(ru => ru.CancelledOrders).ToArray();
-            var allHighProfits = ruleDtos.SelectMany(ru => ru.HighProfits).ToArray();
-            var allMarkingTheClose = ruleDtos.SelectMany(ru => ru.MarkingTheCloses).ToArray();
-            var allSpoofings = ruleDtos.SelectMany(ru => ru.Spoofings).ToArray();
-            var allLayerings = ruleDtos.SelectMany(ru => ru.Layerings).ToArray();
-            var allHighVolumes = ruleDtos.SelectMany(ru => ru.HighVolumes).ToArray();
-            var allWashTrades = ruleDtos.SelectMany(ru => ru.WashTrades).ToArray();
-            var allRampings = ruleDtos.SelectMany(ru => ru.Rampings).ToArray();
+            var allCancelledOrders = ruleDtos.SelectMany(_ => _.CancelledOrders).ToArray();
+            var allHighProfits = ruleDtos.SelectMany(_ => _.HighProfits).ToArray();
+            var allMarkingTheClose = ruleDtos.SelectMany(_ => _.MarkingTheCloses).ToArray();
+            var allSpoofings = ruleDtos.SelectMany(_ => _.Spoofings).ToArray();
+            var allLayerings = ruleDtos.SelectMany(_ => _.Layerings).ToArray();
+            var allHighVolumes = ruleDtos.SelectMany(_ => _.HighVolumes).ToArray();
+            var allWashTrades = ruleDtos.SelectMany(_ => _.WashTrades).ToArray();
+            var allRampings = ruleDtos.SelectMany(_ => _.Rampings).ToArray();
+            var allPlacingOrders = ruleDtos.SelectMany(_ => _.PlacingOrders).ToArray();
 
             _logger.LogInformation($"has fetched the rule parameters");
 
@@ -81,7 +88,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 Layerings = allLayerings,
                 HighVolumes = allHighVolumes,
                 WashTrades = allWashTrades,
-                Rampings = allRampings
+                Rampings = allRampings,
+                PlacingOrders = allPlacingOrders
             };
         }
     }

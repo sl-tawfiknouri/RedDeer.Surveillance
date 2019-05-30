@@ -142,31 +142,36 @@ namespace Surveillance.Engine.Rules.Analysis
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
-            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
-
+ 
             await RuleRunUpdateMessageSend(execution, ids);
             _ruleCancellation.Unsubscribe(ruleCancellation);
+
+            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
         }
 
         private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
         {
-            if (ids == null)
-            {
-                return;
-            }
-
             if (execution == null)
             {
+                _logger.LogInformation($"execution was null not sending rule run update message");
                 return;
             }
 
             if (!execution.IsBackTest)
             {
+                _logger.LogInformation($"execution with correlation id {execution.CorrelationId} was not a back test not sending rule run update message");
+                return;
+            }
+
+            if (ids == null)
+            {
+                _logger.LogInformation($"no ids for rule run with correlation id {execution.CorrelationId} not submitting update message");
                 return;
             }
 
             foreach (var id in ids)
             {
+                _logger.LogInformation($"submitting rule update message for correlation id {execution.CorrelationId} and test parameter id {id}");
                 await _queueRuleUpdatePublisher.Send(id);
             }
         }

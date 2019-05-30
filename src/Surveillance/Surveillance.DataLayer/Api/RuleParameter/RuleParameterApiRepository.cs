@@ -55,10 +55,11 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                     try
                     {
                         deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
+                        _logger.LogInformation($"received get id for id {id} response {deserialisedResponse}");
                     }
                     catch (Exception)
                     {
-                        _logger.LogError($"Was not able to desiarialise {nameof(RuleParameterDto)} response: {jsonResponse}");
+                        _logger.LogError($"Was not able to deserialise {nameof(RuleParameterDto)} response: {jsonResponse}");
                         throw;
                     }
 
@@ -77,6 +78,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                 _logger.LogError("ruleParameterApiRepository: " + e.Message);
             }
 
+            _logger.LogError($"return empty dto");
             return new RuleParameterDto();
         }
 
@@ -102,6 +104,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
                     var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
+                    _logger.LogInformation($"received get response {deserialisedResponse}");
 
                     if (deserialisedResponse == null)
                     {
@@ -118,6 +121,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                 _logger.LogError("RuleParameterApiRepository: " + e.Message);
             }
 
+            _logger.LogError($"return empty dto");
             return new RuleParameterDto();
         }
 

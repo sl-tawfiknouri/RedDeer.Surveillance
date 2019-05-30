@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -205,6 +206,17 @@ namespace Surveillance.Engine.Rules.Universe
             }
 
             var ids = _idExtractor.ExtractIds(ruleParameters);
+
+            if (ids == null
+                || !ids.Any())
+            {
+                _logger.LogError($"did not have any ids successfully extracted from the rule parameters");
+
+                return ids;
+            }
+
+            var jointIds = ids.Aggregate((a, b) => $"{a} {b}");
+            _logger.LogInformation($"subscriber processed for the following ids {jointIds}");
 
             return ids;
 

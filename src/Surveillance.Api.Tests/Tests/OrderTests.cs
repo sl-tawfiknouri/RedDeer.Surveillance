@@ -175,13 +175,11 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(order.Trader.Id, Is.EqualTo("trader id"));
             Assert.That(order.Trader.Name, Is.EqualTo("trader name"));
 
-            Assert.That(order.Market, Has.Count.EqualTo(1));
-            Assert.That(order.Market[0].Id, Is.EqualTo(9));
-            Assert.That(order.Market[0].MarketId, Is.EqualTo("market id"));
-            Assert.That(order.Market[0].MarketName, Is.EqualTo("market name"));
+            Assert.That(order.Market.Id, Is.EqualTo(9));
+            Assert.That(order.Market.MarketId, Is.EqualTo("market id"));
+            Assert.That(order.Market.MarketName, Is.EqualTo("market name"));
 
-            Assert.That(order.FinancialInstrument, Has.Count.EqualTo(1));
-            var instrument = order.FinancialInstrument[0];
+            var instrument = order.FinancialInstrument;
             Assert.That(instrument.Id, Is.EqualTo(14));
             Assert.That(instrument.ClientIdentifier, Is.EqualTo("client identifier"));
             Assert.That(instrument.Sedol, Is.EqualTo("sedol value"));

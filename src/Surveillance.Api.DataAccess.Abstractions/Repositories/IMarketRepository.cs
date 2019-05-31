@@ -10,5 +10,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
     {
         Task<IEnumerable<IMarket>> GetAllDb();
         Task<IEnumerable<IMarket>> Query(Func<IQueryable<IMarket>, IQueryable<IMarket>> query);
+        Task<IMarket> GetById(int id);
     }
 }

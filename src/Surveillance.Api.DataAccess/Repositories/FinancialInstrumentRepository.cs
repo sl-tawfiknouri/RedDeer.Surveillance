@@ -31,5 +31,18 @@ namespace Surveillance.Api.DataAccess.Repositories
                 return financialInstruments;
             }
         }
+
+        public async Task<IFinancialInstrument> GetById(int id)
+        {
+            using (var dbContext = _factory.Build())
+            {
+                var financialInstrument = await dbContext
+                    .FinancialInstrument
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(s => s.Id == id);
+
+                return financialInstrument;
+            }
+        }
     }
 }

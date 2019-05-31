@@ -91,8 +91,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             }
             else
             {
-                _logger.LogError($"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set");
-                opCtx.EventError($"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set");
+                var errorMessage = $"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;

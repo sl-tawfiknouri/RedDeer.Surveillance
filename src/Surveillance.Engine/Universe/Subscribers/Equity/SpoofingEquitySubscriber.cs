@@ -94,8 +94,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             }
             else
             {
-                _logger.LogError("tried to schedule a spoofing rule execution with no parameters set");
-                opCtx.EventError("tried to schedule a spoofing rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a spoofing rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;

@@ -21,32 +21,28 @@ namespace Surveillance.Api.App.Types.Trading
 
             Field(i => i.Id).Description("Primary key");
 
-            Field<ListGraphType<MarketGraphType>>(
+            Field<MarketGraphType>(
                 "market",
                 description: "Market associated with the order",
                 resolve: context =>
                 {
-                    IQueryable<IMarket> IdQuery(IQueryable<IMarket> i) => i.Where(x => x.Id == context.Source.MarketId);
-
                     var loader = dataLoader.Context.GetOrAddLoader(
                         $"GetMarketById-{context.Source.MarketId}",
-                        () => marketRepository.Query(IdQuery));
+                        async () => await marketRepository.GetById(context.Source.MarketId));
 
                     return loader.LoadAsync();
                 });
 
             Field(i => i.SecurityId, nullable: true).Description("Security Id");
 
-            Field<ListGraphType<FinancialInstrumentGraphType>>(
+            Field<FinancialInstrumentGraphType>(
                 "financialInstrument",
                 description: "Instrument subject to trading in the order",
                 resolve: context =>
                 {
-                    IQueryable<IFinancialInstrument> IdQuery(IQueryable<IFinancialInstrument> i) => i.Where(x => x.Id == context.Source.SecurityId);
-
                     var loader = dataLoader.Context.GetOrAddLoader(
                         $"GetFinancialInstrumentById-{context.Source.SecurityId}",
-                        () => instrumentsRepository.Query(IdQuery));
+                        async () => context.Source.SecurityId.HasValue ? await instrumentsRepository.GetById(context.Source.SecurityId.Value) : null);
 
                     return loader.LoadAsync();
                 });

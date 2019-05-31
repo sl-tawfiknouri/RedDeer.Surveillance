@@ -9,5 +9,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
     public interface IFinancialInstrumentRepository
     {
         Task<IEnumerable<IFinancialInstrument>> Query(Func<IQueryable<IFinancialInstrument>, IQueryable<IFinancialInstrument>> query);
+        Task<IFinancialInstrument> GetById(int id);
     }
 }

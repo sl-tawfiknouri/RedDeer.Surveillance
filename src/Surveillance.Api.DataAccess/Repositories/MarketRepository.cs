@@ -37,5 +37,18 @@ namespace Surveillance.Api.DataAccess.Repositories
                 return markets;
             }
         }
+
+        public async Task<IMarket> GetById(int id)
+        {
+            using (var dbContext = _factory.Build())
+            {
+                var market = await dbContext
+                    .Market
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(s => s.Id == id);
+
+                return market;
+            }
+        }
     }
 }

@@ -31,8 +31,8 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
 
         public OrderDatesDto OrderDates { get; set; }
         public TraderDto Trader { get; set; }
-        public List<MarketDto> Market { get; set; }
-        public List<FinancialInstrumentDto> FinancialInstrument { get; set; }
+        public MarketDto Market { get; set; }
+        public FinancialInstrumentDto FinancialInstrument { get; set; }
 
         public DateTime? OptionExpirationDate => string.IsNullOrEmpty(OptionExpiration) ? (DateTime?)null : DateTime.Parse(OptionExpiration, CultureInfo.GetCultureInfo("en-GB"));
     }

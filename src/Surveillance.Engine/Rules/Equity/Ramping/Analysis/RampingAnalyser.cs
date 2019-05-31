@@ -59,10 +59,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
             var fromAdjusted = to - span;
 
             var weightedPriceImpact = ClassifyOrderPriceImpactByWeightedVolume(head, orderSegment, span, segment);
-            var segmentPriceTrendThirty = _trendClassifier.Classify(timeBars, head.Instrument, fromAdjusted, to, TimeSegment.ThirtyDay);
-            var dayThirtySummary = IdentifyRampingStrategy(weightedPriceImpact, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
+            var segmentPriceTrend = _trendClassifier.Classify(timeBars, head.Instrument, fromAdjusted, to, segment);
+            var timeSegmentSummary = IdentifyRampingStrategy(weightedPriceImpact, segmentPriceTrend, segment);
 
-            return dayThirtySummary;
+            return timeSegmentSummary;
         }
 
         public IRampingStrategySummary IdentifyRampingStrategy(

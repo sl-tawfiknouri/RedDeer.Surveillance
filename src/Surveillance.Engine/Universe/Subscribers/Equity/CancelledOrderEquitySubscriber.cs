@@ -81,20 +81,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in cancelledOrderParameters)
                 {
                     var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
-                    var broker = _brokerServiceFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-                    subscriptions.Add(broker);
+                    subscriptions.Add(baseSubscriber);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a cancelled order rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeParamToUniverse(
+        private IUniverseRule SubscribeParamToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -114,10 +114,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
+            var cancelledOrderOrgFactors = _brokerServiceFactory.Build(cancelledOrderRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
+            var cancelledOrderFiltered = DecorateWithFilter(opCtx, param, cancelledOrderOrgFactors);
 
+            return cancelledOrderFiltered;
+        }
+
+        private IUniverseRule DecorateWithFilter(
+            ISystemProcessOperationContext opCtx,
+            ICancelledOrderRuleEquitiesParameters param,
+            IUniverseRule cancelledOrderRule)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"CancelledOrderSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(cancelledOrderRule);
 

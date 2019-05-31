@@ -83,25 +83,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in markingTheCloseParameters)
                 {
                     var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param, dataRequestSubscriber);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a marking the close rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParams(
+        private IUniverseRule SubscribeToParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx, 
             IUniverseAlertStream alertStream,
@@ -122,10 +117,25 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var markingTheClose = _equityRuleMarkingTheCloseFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
+            var markingTheCloseOrgFactors =
+                _brokerServiceFactory.Build(
+                    markingTheClose,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
 
+            var filteredMarkingTheClose = DecorateWithFilters(opCtx, param, markingTheCloseOrgFactors);
+
+            return filteredMarkingTheClose;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IMarkingTheCloseEquitiesParameters param,
+            IUniverseRule markingTheClose)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"MarkingTheCloseSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(markingTheClose);

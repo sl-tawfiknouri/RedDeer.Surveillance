@@ -81,25 +81,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in highProfitParameters)
                 {
                     var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, dataRequestSubscriber, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            cloneableRule,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(cloneableRule);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a high profit rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeParameters(
+        private IUniverseRule SubscribeParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -131,10 +126,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.IsForceRerun);
 
             var highProfitsRule = _equityRuleHighProfitFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, dataRequestSubscriber, execution);
+            var highProfitsRuleOrgFactor =
+                _brokerServiceFactory.Build(
+                    highProfitsRule,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+            var decoratedHighProfits = DecorateWithFilter(opCtx, param, highProfitsRuleOrgFactor);
 
+            return decoratedHighProfits;
+        }
+
+        private IUniverseRule DecorateWithFilter(
+            ISystemProcessOperationContext opCtx,
+            IHighProfitsRuleEquitiesParameters param,
+            IUniverseRule highProfitsRule)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"HighProfitsSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(highProfitsRule);

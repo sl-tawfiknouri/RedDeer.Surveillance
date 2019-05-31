@@ -8,6 +8,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
@@ -19,14 +20,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
     public class UniverseFilterTests
     {
         private IUnsubscriberFactory<IUniverseEvent> _unsubscriber;
-        private IObserver<IUniverseEvent> _observer;
+        private IUniverseCloneableRule _observer;
         private ILogger<UniverseFilterService> _logger;
 
         [SetUp]
         public void Setup()
         {
             _unsubscriber = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
-            _observer = A.Fake<IObserver<IUniverseEvent>>();
+            _observer = A.Fake<IUniverseCloneableRule>();
             _logger = A.Fake<ILogger<UniverseFilterService>>();
         }
 

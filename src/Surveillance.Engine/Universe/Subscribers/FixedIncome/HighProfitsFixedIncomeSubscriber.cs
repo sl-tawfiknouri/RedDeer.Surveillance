@@ -85,30 +85,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError($"{nameof(HighProfitsFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set");
-                opCtx.EventError($"{nameof(HighProfitsFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set");
+                var errorMessage = $"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParams(
+        private IUniverseRule SubscribeToParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitsRuleFixedIncomeParameters param)
         {
             var ruleCtx = opCtx
@@ -125,10 +119,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var highProfits = _fixedIncomeRuleHighProfitsFactory.BuildRule(param, ruleCtx, alertStream, runMode);
+            var highProfitsOrgFactors =
+                _brokerServiceFactory.Build(
+                    highProfits,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+            var highProfitsFiltered = DecorateWithFilters(opCtx, param, highProfitsOrgFactors);
 
+            return highProfitsFiltered;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IHighProfitsRuleFixedIncomeParameters param,
+            IUniverseRule highProfits)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"{nameof(HighProfitsFixedIncomeSubscriber)} parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(highProfits);

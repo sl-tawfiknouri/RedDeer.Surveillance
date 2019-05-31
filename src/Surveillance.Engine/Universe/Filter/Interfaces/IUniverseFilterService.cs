@@ -4,6 +4,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
 {
-    public interface IUniverseFilterService : IObservable<IUniverseEvent>, IUniverseCloneableRule
-    { }
+    public interface IUniverseFilterService : IObservable<IUniverseEvent>, IUniverseRule
+    {
+    }
 }

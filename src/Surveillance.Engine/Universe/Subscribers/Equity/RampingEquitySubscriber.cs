@@ -82,20 +82,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in rampingParameters)
                 {
                     var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param, dataRequestSubscriber);
-                    var broker = _brokerServiceFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-                    subscriptions.Add(broker);
+                    subscriptions.Add(baseSubscriber);
                 }
             }
             else
             {
-                _logger.LogError("tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("tried to schedule a cancelled order rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a cancelled order rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeParamToUniverse(
+        private IUniverseRule SubscribeParamToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -116,7 +116,17 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
+            var rampingRuleOrgFactors = _brokerServiceFactory.Build(rampingRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
+            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors);
 
+            return rampingRuleFiltered;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IRampingRuleEquitiesParameters param,
+            IUniverseRule rampingRule)
+        {
             if (param.HasFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
@@ -125,8 +135,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
                 return filteredUniverse;
             }
-
-            return rampingRule;
+            else
+            {
+                return rampingRule;
+            }
         }
     }
 }

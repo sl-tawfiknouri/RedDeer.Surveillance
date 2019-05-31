@@ -47,10 +47,14 @@ namespace Surveillance.Engine.Rules.Queues
 
             try
             {
+                _logger.LogInformation($"sending {serialisedMessage} to {_awsConfiguration.TestRuleRunUpdateQueueName} for {ruleRunId}");
+
                 await _awsQueueClient.SendToQueue(
                     _awsConfiguration.TestRuleRunUpdateQueueName,
                     serialisedMessage,
                     messageBusCts.Token);
+
+                _logger.LogInformation($"sent {serialisedMessage} to {_awsConfiguration.TestRuleRunUpdateQueueName} for {ruleRunId}");
             }
             catch (Exception e)
             {

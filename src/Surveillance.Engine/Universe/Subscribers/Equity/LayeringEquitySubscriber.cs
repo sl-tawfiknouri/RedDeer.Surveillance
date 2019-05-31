@@ -83,25 +83,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in layeringParameters)
                 {
                     var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
-                    var brokers =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(brokers);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a layering rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParameters(
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -120,11 +115,27 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var layering = _equityRuleLayeringFactory.Build(param, ruleCtx, alertStream, runMode);
+            var layeringRule = _equityRuleLayeringFactory.Build(param, ruleCtx, alertStream, runMode);
 
+            var layeringRuleOrgFactors =
+                _brokerServiceFactory.Build(
+                    layeringRule,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+
+            var layeringRuleFiltered = DecorateWithFilter(opCtx, param, layeringRuleOrgFactors);
+
+            return layeringRuleFiltered;
+        }
+
+        private IUniverseRule DecorateWithFilter(
+            ISystemProcessOperationContext opCtx,
+            ILayeringRuleEquitiesParameters param,
+            IUniverseRule layering)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"LayeringSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(layering);
@@ -136,5 +147,6 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 return layering;
             }
         }
+
     }
 }

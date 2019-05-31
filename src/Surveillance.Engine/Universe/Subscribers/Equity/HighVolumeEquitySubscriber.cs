@@ -85,25 +85,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in highVolumeParameters)
                 {
                     var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a high volume rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParams(
+        private IUniverseRule SubscribeToParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -125,9 +120,25 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var highVolume = _equityRuleHighVolumeFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
 
+            var highVolumeOrgFactors =
+                _brokerServiceFactory.Build(
+                    highVolume,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+
+            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors);
+
+            return decoratedHighVolumeRule;
+        }
+
+        private IUniverseRule DecorateWithFilter(
+            ISystemProcessOperationContext opCtx,
+            IHighVolumeRuleEquitiesParameters param,
+            IUniverseRule highVolume)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"HighVolumeSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(highVolume);
@@ -139,5 +150,6 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 return highVolume;
             }
         }
+
     }
 }

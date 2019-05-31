@@ -90,25 +90,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in placingOrdersParameters)
                 {
                     var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param, dataRequestSubscriber);
-                    var brokers =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(brokers);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a placing orders with no intent to execute rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a placing orders with no intent to execute rule execution with no parameters set");
+                const string errorMessage = "tried to schedule a placing orders with no intent to execute rule execution with no parameters set";
+                _logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParameters(
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -129,7 +124,21 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var placingOrders = _equityRulePlacingOrdersFactory.Build(param, alertStream, ruleCtx, dataRequestSubscriber, runMode);
+            var placingOrdersOrgFactors =
+                _brokerServiceFactory.Build(
+                    placingOrders,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+            var filteredPlacingOrders = DecorateWithFilters(opCtx, param, placingOrdersOrgFactors);
 
+            return filteredPlacingOrders;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters param,
+            IUniverseRule placingOrders)
+        {
             if (param.HasFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");

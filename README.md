@@ -116,6 +116,9 @@ _via direct access to Surveillance Db and via queues_
 ### Dependencies
 #### No service dependencies
 
+#### Default Hosting
+Port 5000 or port 5001.
+
 #### Queues
 |Configuration Setting|Example value|
 |--|--|

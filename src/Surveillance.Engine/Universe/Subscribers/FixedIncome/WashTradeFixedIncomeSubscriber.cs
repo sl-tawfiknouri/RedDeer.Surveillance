@@ -82,25 +82,19 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                 foreach (var param in washTradeParameters)
                 {
                     var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError($"{nameof(WashTradeFixedIncomeSubscriber)} - tried to schedule a wash trade rule execution with no parameters set");
-                opCtx.EventError($"{nameof(WashTradeFixedIncomeSubscriber)} - tried to schedule a wash trade rule execution with no parameters set");
+                _logger.LogError($"tried to schedule a wash trade rule execution with no parameters set");
+                opCtx.EventError($"tried to schedule a wash trade rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParameters(
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -119,10 +113,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var washTrade = _fixedIncomeRuleWashTradeFactory.BuildRule(param, ctx, alertStream, runMode);
+            var washTradeOrgFactors =
+                _brokerServiceFactory.Build(
+                    washTrade,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+            var washTradeFilters = DecorateWithFilters(opCtx, param, washTradeOrgFactors);
 
+            return washTradeFilters;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IWashTradeRuleFixedIncomeParameters param,
+            IUniverseRule washTrade)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"{nameof(WashTradeFixedIncomeSubscriber)} parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(washTrade);

@@ -85,25 +85,19 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                 foreach (var param in highVolumeParameters)
                 {
                     var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
-                opCtx.EventError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
+                _logger.LogError($"tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
+                opCtx.EventError($"tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParams(
+        private IUniverseRule SubscribeToParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -124,10 +118,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var highVolume = _fixedIncomeRuleHighVolumeFactory.BuildRule(param, ruleCtx, alertStream, runMode);
+            var highVolumeOrgFactors =
+                _brokerServiceFactory.Build(
+                    highVolume,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
+            var highVolumeFilters = DecorateWithFilters(opCtx, param, highVolumeOrgFactors);
 
+            return highVolumeFilters;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            IHighVolumeIssuanceRuleFixedIncomeParameters param,
+            IUniverseRule highVolume)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"{nameof(HighVolumeFixedIncomeSubscriber)} parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(highVolume);

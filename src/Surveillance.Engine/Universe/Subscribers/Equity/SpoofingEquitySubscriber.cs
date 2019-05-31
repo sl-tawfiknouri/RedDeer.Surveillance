@@ -89,25 +89,19 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in spoofingParameters)
                 {
                     var paramSubscriptions = SubscribeForParams(execution, opCtx, alertStream, param);
-                    var broker =
-                        _brokerServiceFactory.Build(
-                            paramSubscriptions,
-                            param.Factors,
-                            param.AggregateNonFactorableIntoOwnCategory);
-
-                    subscriptions.Add(broker);
+                    subscriptions.Add(paramSubscriptions);
                 }
             }
             else
             {
-                _logger.LogError("Spoofing Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
-                opCtx.EventError("Spoofing Scheduler - tried to schedule a spoofing rule execution with no parameters set");
+                _logger.LogError("tried to schedule a spoofing rule execution with no parameters set");
+                opCtx.EventError("tried to schedule a spoofing rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeForParams(
+        private IUniverseRule SubscribeForParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
@@ -127,18 +121,35 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var spoofingRule = _equityRuleSpoofingFactory.Build(param, ruleCtx, alertStream, runMode);
+            var spoofingRuleOrgFactors =
+                _brokerServiceFactory.Build(
+                    spoofingRule,
+                    param.Factors,
+                    param.AggregateNonFactorableIntoOwnCategory);
 
+            var filteredSpoofingRule = DecorateWithFilters(opCtx, param, spoofingRuleOrgFactors);
+
+            return filteredSpoofingRule;
+        }
+
+        private IUniverseRule DecorateWithFilters(
+            ISystemProcessOperationContext opCtx,
+            ISpoofingRuleEquitiesParameters param,
+            IUniverseRule spoofingRule)
+        {
             if (param.HasFilters())
             {
-                _logger.LogInformation($"SpoofingSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(spoofingRule);
 
                 return filteredUniverse;
             }
-
-            return spoofingRule;
+            else
+            {
+                return spoofingRule;
+            }
         }
     }
 }

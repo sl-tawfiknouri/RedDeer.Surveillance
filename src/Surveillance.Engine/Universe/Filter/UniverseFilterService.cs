@@ -7,7 +7,6 @@ using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
@@ -49,7 +48,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
         public Domain.Surveillance.Scheduling.Rules Rule { get; } = Domain.Surveillance.Scheduling.Rules.UniverseFilter;
         public string Version { get; } = Versioner.Version(0, 0);
 
@@ -63,7 +61,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             return _universeUnsubscriberFactory.Create(_universeObservers, observer);
         }
-
+        
         public void OnCompleted()
         {
             _logger.LogInformation($"has received OnCompleted() from the stream. Forwarding to observers.");
@@ -268,27 +266,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             }
 
             return filterResult;
-        }
-
-        public IUniverseCloneableRule Clone(IFactorValue factor)
-        {
-            _logger.LogInformation($"Clone with organisational factors called; returning a memberwise clone");
-            // we will want to keep the same universe observers here
-
-            var newClone = (IUniverseCloneableRule) Clone();
-            newClone.OrganisationFactorValue = factor;
-
-            return newClone;
-        }
-
-        public object Clone()
-        {
-            _logger.LogInformation($"Clone called; returning a memberwise clone");
-            // we will want to keep the same universe observers here
-
-            var newClone = (IUniverseCloneableRule)this.MemberwiseClone();
-
-            return newClone;
         }
     }
 }

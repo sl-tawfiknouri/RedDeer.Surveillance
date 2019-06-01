@@ -1,5 +1,7 @@
 EXAMPLE of running the docker commands
 
+docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 mynet
+
 docker build -f dockerfile.th --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t testharness .
 docker run -it testharness
 

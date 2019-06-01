@@ -1,4 +1,8 @@
 EXAMPLE of running the docker commands
 
-docker build --build-arg NEXUSAPIKEY=a6ab623c-1caz-3fc3-b9be-3236be4fdfb3 -t testharness .
+docker build -f dockerfile.th --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t testharness .
 docker run -it testharness
+
+docker build -f dockerfile.ds --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t datasynchroniser.
+docker run -it datasynchroniser
+

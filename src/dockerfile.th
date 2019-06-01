@@ -5,11 +5,12 @@ ARG NEXUSAPIKEY
 WORKDIR /app
 
 # copy and publish app and libraries
-COPY TestHarness/. ./TestHarness/
-COPY SharedKernel.Files/. ./SharedKernel.Files/
-COPY Infrastructure.Network/. ./Infrastructure.Network/
-COPY Domain.Surveillance/. ./Domain.Surveillance/
-COPY Domain.Core/. ./Domain.Core/
+
+COPY /TestHarness/. ./TestHarness/
+COPY /SharedKernel.Files/. ./SharedKernel.Files/
+COPY /Infrastructure.Network/. ./Infrastructure.Network/
+COPY /Domain.Surveillance/. ./Domain.Surveillance/
+COPY /Domain.Core/. ./Domain.Core/
 
 WORKDIR /app/TestHarness/App
 CMD nuget setapikey $NEXUSAPIKEY -source http://nexus.reddeer.local/repository/nuget-hosted
@@ -18,8 +19,8 @@ RUN dotnet restore -s http://nexus.reddeer.local/repository/nuget-hosted -s http
 WORKDIR /app/TestHarness/App
 RUN dotnet publish -c Release -o out -r ubuntu-x64
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS runtime
-# FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
+# FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS runtime
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
 WORKDIR /app
 
 RUN apt-get update

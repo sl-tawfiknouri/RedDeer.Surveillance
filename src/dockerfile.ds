@@ -1,0 +1,52 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+
+ARG NEXUSAPIKEY
+
+WORKDIR /app
+
+# copy and publish app and libraries
+
+ COPY /ThirdPartySurveillanceDataSynchroniser/. ./ThirdPartySurveillanceDataSynchroniser/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Bmll/. ./DataSynchroniser.Bmll/
+ COPY /DataSynchroniser.Factset/. ./DataSynchroniser.Factset/
+ COPY /DataSynchroniser.Markit/. ./DataSynchroniser.Markit/
+ COPY /Surveillance.System.Auditing/. ./Surveillance.System.Auditing/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Api/. ./DataSynchroniser.Api/
+ COPY /Domain.Surveillance/. ./Domain.Surveillance/
+ COPY /Infrastructure.Network/. ./Infrastructure.Network/
+ COPY /PollyFacade/. ./PollyFacade/
+ COPY /Surveillance.System.DataLayer/. ./Surveillance.System.DataLayer/
+ COPY /SharedKernel.Contracts/. ./SharedKernel.Contracts/
+ COPY /Domain.Core/. ./Domain.Core/
+
+WORKDIR /app/ThirdPartySurveillanceDataSynchroniser/App
+
+CMD nuget setapikey $NEXUSAPIKEY -source http://nexus.reddeer.local/repository/nuget-hosted
+RUN dotnet restore -s http://nexus.reddeer.local/repository/nuget-hosted -s https://api.nuget.org/v3/index.json
+
+WORKDIR /app/ThirdPartySurveillanceDataSynchroniser/App
+
+RUN dotnet publish -c Release -o out -r ubuntu-x64
+
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
+WORKDIR /app
+
+RUN apt-get update
+
+RUN apt-get update && \
+    apt-get -qqy install \
+        curl \
+        unzip \
+        libunwind8 \
+        gettext \
+        sudo && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/ThirdPartySurveillanceDataSynchroniser/App/out ./
+RUN chmod 777 ./RedDeer.ThirdPartySurveillanceDataSynchroniser.App.dll
+
+CMD ["dotnet", "RedDeer.ThirdPartySurveillanceDataSynchroniser.App.dll"]
+

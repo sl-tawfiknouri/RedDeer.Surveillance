@@ -6,6 +6,11 @@ WORKDIR /app
 
 # copy and publish app and libraries
 
+ COPY /Surveillance.Engine.Interfaces/. ./Surveillance.Engine.Interfaces/
+ COPY /Surveillance.Engine/. ./Surveillance.Engine/
+ COPY /Surveillance.Engine.RuleDistributor/. ./Surveillance.Engine.RuleDistributor/
+ COPY /Surveillance.Engine.DataCoordinator/. ./Surveillance.Engine.DataCoordinator/
+ COPY /Surveillance/. ./Surveillance/
  COPY /Surveillance.Api.App/. ./Surveillance.Api.App/
  COPY /Surveillance.Api.DataAccess/. ./Surveillance.Api.DataAccess/
  COPY /Surveillance.Api.DataAccess.Abstractions/. ./Surveillance.Api.DataAccess.Abstractions/

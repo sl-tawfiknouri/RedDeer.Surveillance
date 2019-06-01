@@ -12,3 +12,6 @@ docker run -it dataimport
 docker build -f dockerfile.da --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t dataapi .
 docker run -it dataapi
 
+docker build -f dockerfile.en --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t ruleengine .
+docker run -it ruleengine
+

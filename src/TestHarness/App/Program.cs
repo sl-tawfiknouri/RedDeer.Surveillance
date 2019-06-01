@@ -20,6 +20,7 @@ namespace TestHarness.App
         private static Configuration.Configuration BuildConfiguration()
         {
             var configurationBuilder = new ConfigurationBuilder()
+                .AddEnvironmentVariables(string.Empty)
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 

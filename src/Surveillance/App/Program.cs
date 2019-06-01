@@ -51,6 +51,7 @@ namespace RedDeer.Surveillance.App
 
                 Container = new Container();
                 var configurationBuilder = new ConfigurationBuilder()
+                    .AddEnvironmentVariables(string.Empty)
                     .AddJsonFile("appsettings.json", true, true)
                     .Build();
 

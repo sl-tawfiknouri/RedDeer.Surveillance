@@ -68,6 +68,7 @@ namespace Surveillance.Api.App
         public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url, IStartupConfig startupConfig) =>
         WebHost
             .CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(i => i.AddEnvironmentVariables(string.Empty))
             .ConfigureAppConfiguration(i => i.AddInMemoryCollection(dynamoDbConfig))
             .ConfigureServices(services => services.AddScoped(x => startupConfig))
             .UseStartup<Startup>()

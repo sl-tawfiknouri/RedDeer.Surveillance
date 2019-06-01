@@ -6,3 +6,5 @@ docker run -it testharness
 docker build -f dockerfile.ds --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t datasynchroniser.
 docker run -it datasynchroniser
 
+docker build -f dockerfile.di --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t dataimport.
+docker run -it dataimport

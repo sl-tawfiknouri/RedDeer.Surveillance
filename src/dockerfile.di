@@ -6,6 +6,7 @@ WORKDIR /app
 
 # copy and publish app and libraries
 
+ COPY /DataImport/. ./DataImport/
  COPY /TestHarness/. ./TestHarness/
  COPY /SharedKernel.Files/. ./SharedKernel.Files/
  COPY /ThirdPartySurveillanceDataSynchroniser/. ./ThirdPartySurveillanceDataSynchroniser/
@@ -23,13 +24,11 @@ WORKDIR /app
  COPY /SharedKernel.Contracts/. ./SharedKernel.Contracts/
  COPY /Domain.Core/. ./Domain.Core/
 
-WORKDIR /app/ThirdPartySurveillanceDataSynchroniser/App
-
+WORKDIR /app/DataImport/App
 CMD nuget setapikey $NEXUSAPIKEY -source http://nexus.reddeer.local/repository/nuget-hosted
 RUN dotnet restore -s http://nexus.reddeer.local/repository/nuget-hosted -s https://api.nuget.org/v3/index.json
 
-WORKDIR /app/ThirdPartySurveillanceDataSynchroniser/App
-
+WORKDIR /app/DataImport/App
 RUN dotnet publish -c Release -o out -r ubuntu-x64
 
 FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
@@ -47,8 +46,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /app/ThirdPartySurveillanceDataSynchroniser/App/out ./
-RUN chmod 777 ./RedDeer.ThirdPartySurveillanceDataSynchroniser.App.dll
+COPY --from=build /app/DataImport/App/out ./
+RUN chmod 777 ./RedDeer.DataImport.DataImport.App.dll
 
-CMD ["dotnet", "RedDeer.ThirdPartySurveillanceDataSynchroniser.App.dll"]
+CMD ["dotnet", "RedDeer.DataImport.DataImport.App.dll"]
+
 

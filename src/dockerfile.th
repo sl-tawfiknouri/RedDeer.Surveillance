@@ -6,11 +6,23 @@ WORKDIR /app
 
 # copy and publish app and libraries
 
-COPY /TestHarness/. ./TestHarness/
-COPY /SharedKernel.Files/. ./SharedKernel.Files/
-COPY /Infrastructure.Network/. ./Infrastructure.Network/
-COPY /Domain.Surveillance/. ./Domain.Surveillance/
-COPY /Domain.Core/. ./Domain.Core/
+ COPY /TestHarness/. ./TestHarness/
+ COPY /SharedKernel.Files/. ./SharedKernel.Files/
+ COPY /ThirdPartySurveillanceDataSynchroniser/. ./ThirdPartySurveillanceDataSynchroniser/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Bmll/. ./DataSynchroniser.Bmll/
+ COPY /DataSynchroniser.Factset/. ./DataSynchroniser.Factset/
+ COPY /DataSynchroniser.Markit/. ./DataSynchroniser.Markit/
+ COPY /Surveillance.System.Auditing/. ./Surveillance.System.Auditing/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Api/. ./DataSynchroniser.Api/
+ COPY /Domain.Surveillance/. ./Domain.Surveillance/
+ COPY /Infrastructure.Network/. ./Infrastructure.Network/
+ COPY /PollyFacade/. ./PollyFacade/
+ COPY /Surveillance.System.DataLayer/. ./Surveillance.System.DataLayer/
+ COPY /SharedKernel.Contracts/. ./SharedKernel.Contracts/
+ COPY /Domain.Core/. ./Domain.Core/
+
 
 WORKDIR /app/TestHarness/App
 CMD nuget setapikey $NEXUSAPIKEY -source http://nexus.reddeer.local/repository/nuget-hosted
@@ -19,7 +31,6 @@ RUN dotnet restore -s http://nexus.reddeer.local/repository/nuget-hosted -s http
 WORKDIR /app/TestHarness/App
 RUN dotnet publish -c Release -o out -r ubuntu-x64
 
-# FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS runtime
 FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
 WORKDIR /app
 

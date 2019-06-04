@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
@@ -286,9 +287,26 @@ namespace SharedKernel.Files.Orders
         {
             propertyValue = propertyValue?.ToUpper() ?? string.Empty;
 
-            Enum.TryParse(propertyValue, out T result);
+            var success = Enum.TryParse(propertyValue, out T result);
 
-            return result;
+            if (success)
+                return result;
+
+            var textInfo = new CultureInfo("en-GB", false).TextInfo;
+
+            success = Enum.TryParse(propertyValue.ToLower(), out T result1);
+
+            if (success)
+                return result1;
+
+            success = Enum.TryParse(propertyValue.ToUpper(), out T result2);
+
+            if (success)
+                return result2;
+
+            Enum.TryParse(textInfo.ToTitleCase(propertyValue.ToLower()), out T result3);
+
+            return result3;
         }
 
         private DateTime? MapDate(string date)

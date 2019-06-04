@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using FluentValidation.Validators;
 
 namespace SharedKernel.Files.PropertyValidators
@@ -12,14 +13,35 @@ namespace SharedKernel.Files.PropertyValidators
         {
             var prop = context.PropertyValue as string;
 
-            if (!Enum.TryParse(prop, out T result))
+            if (prop == null)
             {
                 context.MessageFormatter.AppendArgument(context.PropertyName, typeof(T));
 
                 return false;
             }
 
-            return true;
+            var textInfo = new CultureInfo("en-GB", false).TextInfo;
+
+            if (Enum.TryParse(prop, out T result1))
+            {
+                return true;
+            }
+            else if ((Enum.TryParse(prop.ToLower(), out T result2)))
+            {
+                return true;
+            }
+            else if ((Enum.TryParse(prop.ToUpper(), out T result3)))
+            {
+                return true;
+            }
+            else if ((Enum.TryParse(textInfo.ToTitleCase(prop.ToLower()), out T result4)))
+            {
+                return true;
+            }
+
+            context.MessageFormatter.AppendArgument(context.PropertyName, typeof(T));
+
+            return false;
         }
     }
 }

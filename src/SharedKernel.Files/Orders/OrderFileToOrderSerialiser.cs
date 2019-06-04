@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using Domain.Core.Extensions;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;
@@ -282,11 +284,11 @@ namespace SharedKernel.Files.Orders
                 euroAmerican);
         }
 
-        private T MapToEnum<T>(string propertyValue) where T : struct, IConvertible
+        private T MapToEnum<T>(string propertyValue) where T : struct
         {
             propertyValue = propertyValue?.ToUpper() ?? string.Empty;
 
-            Enum.TryParse(propertyValue, out T result);
+            EnumExtensions.TryParsePermutations(propertyValue, out T result);
 
             return result;
         }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using Domain.Core.Extensions;
 using FluentValidation.Validators;
 
 namespace SharedKernel.Files.PropertyValidators
@@ -12,36 +12,16 @@ namespace SharedKernel.Files.PropertyValidators
         protected override bool IsValid(PropertyValidatorContext context)
         {
             var prop = context.PropertyValue as string;
+            var parseable = EnumExtensions.TryParsePermutations(prop, out T result);
 
-            if (prop == null)
+            if (!parseable)
             {
                 context.MessageFormatter.AppendArgument(context.PropertyName, typeof(T));
 
                 return false;
             }
 
-            var textInfo = new CultureInfo("en-GB", false).TextInfo;
-
-            if (Enum.TryParse(prop, out T result1))
-            {
-                return true;
-            }
-            else if ((Enum.TryParse(prop.ToLower(), out T result2)))
-            {
-                return true;
-            }
-            else if ((Enum.TryParse(prop.ToUpper(), out T result3)))
-            {
-                return true;
-            }
-            else if ((Enum.TryParse(textInfo.ToTitleCase(prop.ToLower()), out T result4)))
-            {
-                return true;
-            }
-
-            context.MessageFormatter.AppendArgument(context.PropertyName, typeof(T));
-
-            return false;
+            return true;
         }
     }
 }

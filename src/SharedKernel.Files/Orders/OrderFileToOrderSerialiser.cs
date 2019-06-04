@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Domain.Core.Extensions;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;
@@ -283,30 +284,13 @@ namespace SharedKernel.Files.Orders
                 euroAmerican);
         }
 
-        private T MapToEnum<T>(string propertyValue) where T : struct, IConvertible
+        private T MapToEnum<T>(string propertyValue) where T : struct
         {
             propertyValue = propertyValue?.ToUpper() ?? string.Empty;
 
-            var success = Enum.TryParse(propertyValue, out T result);
+            EnumExtensions.TryParsePermutations(propertyValue, out T result);
 
-            if (success)
-                return result;
-
-            var textInfo = new CultureInfo("en-GB", false).TextInfo;
-
-            success = Enum.TryParse(propertyValue.ToLower(), out T result1);
-
-            if (success)
-                return result1;
-
-            success = Enum.TryParse(propertyValue.ToUpper(), out T result2);
-
-            if (success)
-                return result2;
-
-            Enum.TryParse(textInfo.ToTitleCase(propertyValue.ToLower()), out T result3);
-
-            return result3;
+            return result;
         }
 
         private DateTime? MapDate(string date)

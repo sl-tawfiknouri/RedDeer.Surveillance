@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Extensions;
 using FluentValidation.Validators;
 
 namespace SharedKernel.Files.PropertyValidators
@@ -11,8 +12,9 @@ namespace SharedKernel.Files.PropertyValidators
         protected override bool IsValid(PropertyValidatorContext context)
         {
             var prop = context.PropertyValue as string;
+            var parseable = EnumExtensions.TryParsePermutations(prop, out T result);
 
-            if (!Enum.TryParse(prop, out T result))
+            if (!parseable)
             {
                 context.MessageFormatter.AppendArgument(context.PropertyName, typeof(T));
 

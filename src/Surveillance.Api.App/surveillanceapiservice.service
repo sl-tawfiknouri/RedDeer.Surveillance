@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/dotnet /reddeer/surveillanceapiservice/RedDeer.Surveillance.Api.App.dll --systemd-service
+ExecStart=/usr/bin/dotnet /reddeer/surveillanceapiservice/Surveillance.Api.App.dll --systemd-service
 Restart=on-failure
 RestartSec=5
 User=reddeer

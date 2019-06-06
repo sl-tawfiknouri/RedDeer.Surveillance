@@ -52,7 +52,8 @@ namespace Surveillance.Api.App.Configuration
                 }
 
                 var environment = GetTag("Environment");
-                var dynamoDbConfigKey = $"{environment}-surveillanceapi-{GetTag("Customer")}".ToLower();
+                var customer = GetTag("Customer");
+                var dynamoDbConfigKey = $"{environment}-surveillanceapi-{customer}".ToLower();
                 var json = GetJson(dynamoDbConfigKey);
 
                 _dynamoJsonConfig = json;
@@ -92,7 +93,8 @@ namespace Surveillance.Api.App.Configuration
                 if (_environmentService.IsEc2Instance())
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDbConfigKey = $"{environment}-surveillanceapi-{GetTag("Customer")}".ToLower();
+                    var customer = GetTag("Customer");
+                    var dynamoDbConfigKey = $"{environment}-surveillanceapi-{customer}".ToLower();
 
                     _dynamoConfig = FetchEc2Data(dynamoDbConfigKey);
                 }

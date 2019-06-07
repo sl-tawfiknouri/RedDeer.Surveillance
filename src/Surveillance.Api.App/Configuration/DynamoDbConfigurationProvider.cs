@@ -67,10 +67,14 @@ namespace Surveillance.Api.App.Configuration
         {
             try
             {
+                Logger.Log(NLog.LogLevel.Info, $"Loading configuration from {DynamoDbTable} table {environmentClientId}.");
+
                 var table = Amazon.DynamoDBv2.DocumentModel.Table.LoadTable(_client, DynamoDbTable);
                 var getItemResponse = table.GetItemAsync(new Amazon.DynamoDBv2.DocumentModel.Primitive(environmentClientId)).Result;
 
                 var jsonResult = getItemResponse.ToJson();
+
+                Logger.Log(NLog.LogLevel.Info, $"Loaded configuration from {DynamoDbTable} table {environmentClientId}. JSON length: {jsonResult?.Length}.");
                 return jsonResult;
             }
             catch (Exception e)

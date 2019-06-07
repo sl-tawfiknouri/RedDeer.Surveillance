@@ -9,7 +9,6 @@ using System.Threading;
 using Amazon.DynamoDBv2;
 using DasMulli.Win32.ServiceUtils;
 using NLog;
-using Surveillance.Api.App.Configuration;
 
 namespace Surveillance.Api.App
 {
@@ -40,21 +39,6 @@ namespace Surveillance.Api.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
-
-        private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
-        {
-            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-            {
-                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                ProxyCredentials = CredentialCache.DefaultCredentials
-            });
-            var environmentService = new EnvironmentService();
-            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
-
-            var config = new DynamoDbConfigurationProvider(environmentService, client, logger);
-
-            return config.Build();
         }
 
         private static void ProcessArguments(string[] args)

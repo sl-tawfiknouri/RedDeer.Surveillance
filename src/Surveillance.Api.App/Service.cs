@@ -35,7 +35,7 @@ namespace Surveillance.Api.App
             string url = null;
             string dynamoDbConfigJson = null;
 
-            if (StartupConfig.IsTest)
+            if (!StartupConfig.IsTest)
             {
                 // No need to spend time checking dynamo db if in test mode
                 dynamoDbConfigJson = DynamoDbConfigurationProviderFactory.Create().GetJson(); 

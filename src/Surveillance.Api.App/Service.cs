@@ -39,15 +39,21 @@ namespace Surveillance.Api.App
             {
                 // No need to spend time checking dynamo db if in test mode
                 dynamoDbConfigJson = DynamoDbConfigurationProviderFactory.Create().GetJson(); 
+                
+                if (!string.IsNullOrWhiteSpace(dynamoDbConfigJson))
+                {
+                    var builder = new ConfigurationBuilder();
 
-                var provider = new InMemoryFileProvider();
-                provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, "appsetting.dynamodb.json"));
+                    var provider = new InMemoryFileProvider();
+                    provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, "appsetting.dynamodb.json"));
+                    provider.EnsureFile("/appsetting.dynamodb.json");
 
-                var builder = new ConfigurationBuilder();
-                builder.AddJsonFile(provider, "appsetting.dynamodb.json", false, true);
-                var config = builder.Build();
+                    builder.AddJsonFile(provider, "/appsetting.dynamodb.json", false, false);
 
-                url = config.GetValue<string>("SurveillanceApiUrl");
+                    var config = builder.Build();
+
+                    url = config.GetValue<string>("SurveillanceApiUrl");
+                }
             }
 
             if (string.IsNullOrWhiteSpace(url))

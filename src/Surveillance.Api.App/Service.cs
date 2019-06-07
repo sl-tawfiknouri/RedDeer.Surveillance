@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading;
-using Amazon.DynamoDBv2;
+﻿using System.Threading;
 using DasMulli.Win32.ServiceUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -9,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
-using Surveillance.Api.App.Configuration;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
+using Dazinator.AspNet.Extensions.FileProviders;
+using Surveillance.Api.App.Configuration;
 
 namespace Surveillance.Api.App
 {
@@ -35,14 +32,30 @@ namespace Surveillance.Api.App
         {
             Logger.Log(NLog.LogLevel.Info, "Service Starting.");
 
-            var dynamoDbConfig = StartupConfig.IsTest ? null : GetDynamoDbConfig(); // No need to spend time checking dynamo db if in test mode
-            var url = dynamoDbConfig?.FirstOrDefault(i => string.Equals(i.Key, "SurveillanceApiUrl", System.StringComparison.OrdinalIgnoreCase)).Value;
+            string url = null;
+            string dynamoDbConfigJson = null;
+
+            if (StartupConfig.IsTest)
+            {
+                // No need to spend time checking dynamo db if in test mode
+                dynamoDbConfigJson = DynamoDbConfigurationProviderFactory.Create().GetJson(); 
+
+                var provider = new InMemoryFileProvider();
+                provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, "appsetting.dynamodb.json"));
+
+                var builder = new ConfigurationBuilder();
+                builder.AddJsonFile(provider, "appsetting.dynamodb.json", false, true);
+                var config = builder.Build();
+
+                url = config.GetValue<string>("SurveillanceApiUrl");
+            }
+
             if (string.IsNullOrWhiteSpace(url))
             {
                 url = "https://localhost:8888";
             }
-
-            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url, StartupConfig).Build();
+            
+            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfigJson, url, StartupConfig).Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
@@ -65,10 +78,19 @@ namespace Surveillance.Api.App
             Logger.Log(NLog.LogLevel.Info, "Service Started.");
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url, IStartupConfig startupConfig) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, string json, string url, IStartupConfig startupConfig) =>
         WebHost
             .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(i => i.AddInMemoryCollection(dynamoDbConfig))
+            .ConfigureAppConfiguration(i => 
+            {
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    var provider = new InMemoryFileProvider();
+                    provider.Directory.AddFile("/", new StringFileInfo(json, "appsettings.dynamodb.json"));
+
+                    i.AddJsonFile(provider, "appsettings.dynamodb.json", false, true);
+                }
+            })
             .ConfigureServices(services => services.AddScoped(x => startupConfig))
             .UseStartup<Startup>()
             .ConfigureLogging(logging =>
@@ -79,21 +101,6 @@ namespace Surveillance.Api.App
             .UseKestrel()
             .UseUrls(url)
             .UseNLog();
-
-        private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
-        {
-            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-            {
-                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                ProxyCredentials = CredentialCache.DefaultCredentials
-            });
-            var environmentService = new EnvironmentService();
-            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
-
-            var config = new DynamoDbConfigurationProvider(environmentService, client, logger);
-
-            return config.Build();
-        }
 
         public void Stop()
         {

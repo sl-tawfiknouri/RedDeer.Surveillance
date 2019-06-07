@@ -10,13 +10,9 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Content Remove="nlog.Release.config" />
-  </ItemGroup>
 
   <ItemGroup>
-    <None Include="nlog.Release.config" />
+    <Content Remove="nlog.Release.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,8 +50,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="nlog.config">
+      <TransformOnBuild Condition="'$(Configuration)' == 'Release'">true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Update="nlog.Release.config">
+      <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -78,6 +78,11 @@
     <Folder Include="Types\Trading\" />
     <Folder Include="Types\Rules\" />
     <Folder Include="Types\Organisation\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="nlog.Release.config">
+    </None>
   </ItemGroup>
 
 </Project>

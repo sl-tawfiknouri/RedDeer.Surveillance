@@ -17,6 +17,10 @@ namespace Surveillance.Api.App.Configuration
 
         private IDictionary<string, string> _dynamoConfig;
         private bool _hasAttemptedToFetchEc2Data;
+
+        private string _dynamoJsonConfig;
+        private bool _hasAttemptedToFetchDynamoJsonData = false;
+
         private readonly object _lock = new object();
         private readonly IEnvironmentService _environmentService;
         private readonly IAmazonDynamoDB _client;
@@ -33,6 +37,54 @@ namespace Surveillance.Api.App.Configuration
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public string GetJson()
+        {
+            lock (_lock)
+            {
+                if (_hasAttemptedToFetchDynamoJsonData)
+                {
+                    return _dynamoJsonConfig;
+                }
+
+                if (!_environmentService.IsEc2Instance())
+                {
+                    return null;
+                }
+
+                var environment = GetTag("Environment");
+                var customer = GetTag("Customer");
+                var dynamoDbConfigKey = $"{environment}-surveillanceapi-{customer}".ToLower();
+                var json = GetJson(dynamoDbConfigKey);
+
+                _dynamoJsonConfig = json;
+                _hasAttemptedToFetchDynamoJsonData = true;
+
+                return _dynamoJsonConfig;
+            }
+        }
+
+        private string GetJson(string environmentClientId)
+        {
+            try
+            {
+                Logger.Log(NLog.LogLevel.Info, $"Loading configuration from {DynamoDbTable} table {environmentClientId}.");
+
+                var table = Amazon.DynamoDBv2.DocumentModel.Table.LoadTable(_client, DynamoDbTable);
+                var getItemResponse = table.GetItemAsync(new Amazon.DynamoDBv2.DocumentModel.Primitive(environmentClientId)).Result;
+
+                var jsonResult = getItemResponse.ToJson();
+
+                Logger.Log(NLog.LogLevel.Info, $"Loaded configuration from {DynamoDbTable} table {environmentClientId}. JSON length: {jsonResult?.Length}.");
+                return jsonResult;
+            }
+            catch (Exception e)
+            {
+                _hasAttemptedToFetchDynamoJsonData = true;
+                Logger.Log(NLog.LogLevel.Error, $"Configuration encountered an exception on fetching from EC2 {e.Message} {e.InnerException?.Message}");
+                return null;
+            }
+        }
+
         public IEnumerable<KeyValuePair<string, string>> Build()
         {
             lock (_lock)
@@ -45,7 +97,9 @@ namespace Surveillance.Api.App.Configuration
                 if (_environmentService.IsEc2Instance())
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDbConfigKey = $"{environment}-surveillanceapi-{GetTag("Customer")}".ToLower();
+                    var customer = GetTag("Customer");
+                    var dynamoDbConfigKey = $"{environment}-surveillanceapi-{customer}".ToLower();
+
                     _dynamoConfig = FetchEc2Data(dynamoDbConfigKey);
                 }
 

@@ -69,10 +69,11 @@ namespace Surveillance.Api.App.Configuration
             {
                 Logger.Log(NLog.LogLevel.Info, $"Loading configuration from {DynamoDbTable} table {environmentClientId}.");
 
-                var table = Amazon.DynamoDBv2.DocumentModel.Table.LoadTable(_client, DynamoDbTable);
-                var getItemResponse = table.GetItemAsync(new Amazon.DynamoDBv2.DocumentModel.Primitive(environmentClientId)).Result;
+                var response = QueryData(environmentClientId);
 
-                var jsonResult = getItemResponse.ToJson();
+                var attributeKeyValuePairs = response.Items.Single();
+                var document = Amazon.DynamoDBv2.DocumentModel.Document.FromAttributeMap(attributeKeyValuePairs);
+                var jsonResult = document.ToJson();
 
                 Logger.Log(NLog.LogLevel.Info, $"Loaded configuration from {DynamoDbTable} table {environmentClientId}. JSON length: {jsonResult?.Length}.");
                 return jsonResult;
@@ -111,24 +112,9 @@ namespace Surveillance.Api.App.Configuration
 
         private IDictionary<string, string> FetchEc2Data(string environmentClientId)
         {
-            var query = new QueryRequest
-            {
-                TableName = DynamoDbTable,
-                KeyConditionExpression = "#NameAttribute = :NameValue",
-                ExpressionAttributeNames = new Dictionary<string, string>
-                {
-                    { "#NameAttribute", "name" }
-                },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    {":NameValue", new AttributeValue(environmentClientId)},
-                }
-            };
-
             try
             {
-                var response = _client.QueryAsync(query).Result;
-                response.HttpStatusCode.EnsureSuccessStatusCode();
+                var response = QueryData(environmentClientId);
 
                 var casedAttributes = new Dictionary<string, string>();
 
@@ -153,6 +139,28 @@ namespace Surveillance.Api.App.Configuration
                 Logger.Log(NLog.LogLevel.Error, $"Configuration encountered an exception on fetching from EC2 {e.Message} {e.InnerException?.Message}");
                 return new Dictionary<string, string>();
             }
+        }
+
+        private QueryResponse QueryData(string environmentClientId)
+        {
+            var query = new QueryRequest
+            {
+                TableName = DynamoDbTable,
+                KeyConditionExpression = "#NameAttribute = :NameValue",
+                ExpressionAttributeNames = new Dictionary<string, string>
+                {
+                    { "#NameAttribute", "name" }
+                },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    {":NameValue", new AttributeValue(environmentClientId)},
+                }
+            };
+
+            var response = _client.QueryAsync(query).Result;
+            response.HttpStatusCode.EnsureSuccessStatusCode();
+
+            return response;
         }
 
         private string GetTag(string name)

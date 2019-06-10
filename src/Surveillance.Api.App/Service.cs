@@ -9,6 +9,7 @@ using NLog.Web;
 using Microsoft.Extensions.Configuration;
 using Dazinator.AspNet.Extensions.FileProviders;
 using Surveillance.Api.App.Configuration;
+using System.IO;
 
 namespace Surveillance.Api.App
 {
@@ -44,11 +45,12 @@ namespace Surveillance.Api.App
                 {
                     var builder = new ConfigurationBuilder();
 
+                    var dynamoAppSettingsFileName = "appsettings.dynamodb.json";
                     var provider = new InMemoryFileProvider();
-                    provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, "appsetting.dynamodb.json"));
-                    provider.EnsureFile("/appsetting.dynamodb.json");
+                    provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, dynamoAppSettingsFileName));
+                    provider.EnsureFile($"/{dynamoAppSettingsFileName}");
 
-                    builder.AddJsonFile(provider, "/appsetting.dynamodb.json", false, false);
+                    builder.AddJsonFile(provider, $"/{dynamoAppSettingsFileName}", false, false);
 
                     var config = builder.Build();
 

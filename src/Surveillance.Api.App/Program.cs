@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Amazon.DynamoDBv2;
 using DasMulli.Win32.ServiceUtils;
 using NLog;
 

@@ -75,7 +75,6 @@
 
   <ItemGroup>
     <Folder Include="Types\Engine\" />
-    <Folder Include="Types\Trading\" />
     <Folder Include="Types\Rules\" />
     <Folder Include="Types\Organisation\" />
   </ItemGroup>

@@ -125,6 +125,19 @@ namespace Surveillance.Api.App.Types.Trading
 
                     return loader.LoadAsync();
                 });
+
+            Field<ListGraphType<OrderAllocationGraphType>>(
+                "orderAllocations",
+                resolve: context =>
+                {
+                    IQueryable<IOrdersAllocation> OrderAllocationsQuery(IQueryable<IOrdersAllocation> i) => i.Where(x => x.OrderId == context.Source.ClientOrderId);
+
+                    var loader = dataLoader.Context.GetOrAddLoader(
+                        $"GetOrderAllocationsByClientOrderId-{context.Source.ClientOrderId}",
+                        () => orderRepository.QueryAllocations(OrderAllocationsQuery));
+
+                    return loader.LoadAsync();
+                });
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Surveillance.Api.Tests.Tests
                 var a = valuesA[i];
                 var b = valuesB[i];
                 Assert.That(Convert.ToInt32(a), Is.EqualTo(Convert.ToInt32(b)));
-                Assert.That(a.ToString(), Is.EqualTo(b.ToString()));
+                Assert.That(a.ToString().ToLower(), Is.EqualTo(b.ToString().ToLower()));
             }
         }
     }

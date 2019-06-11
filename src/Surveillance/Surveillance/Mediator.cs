@@ -4,6 +4,7 @@ using Surveillance.Auditing.Utilities.Interfaces;
 using Surveillance.Engine.DataCoordinator.Interfaces;
 using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;
+using Surveillance.Engine.Scheduler.Interfaces;
 using Surveillance.Interfaces;
 
 namespace Surveillance
@@ -17,6 +18,7 @@ namespace Surveillance
         private readonly Engine.Interfaces.Mediator.IMediator _ruleDistributorMediator;
         private readonly Engine.Interfaces.Mediator.IMediator _ruleAnalysisMediator;
         private readonly Engine.Interfaces.Mediator.IMediator _coordinatorMediator;
+        private readonly Engine.Interfaces.Mediator.IMediator _schedulerMediator;
         private readonly IApplicationHeartbeatService _heartbeatService;
         private readonly ILogger<Mediator> _logger;
 
@@ -24,6 +26,7 @@ namespace Surveillance
             IRuleDistributorMediator ruleDistributorMediator,
             IRulesEngineMediator ruleEngineMediator,
             ICoordinatorMediator coordinatorMediator,
+            IRuleSchedulerMediator schedulerMediator,
             IApplicationHeartbeatService heartbeatService,
             ILogger<Mediator> logger)
         {
@@ -40,6 +43,10 @@ namespace Surveillance
                 coordinatorMediator
                 ?? throw new ArgumentNullException(nameof(coordinatorMediator));
 
+            _schedulerMediator =
+                schedulerMediator
+                ?? throw new ArgumentNullException(nameof(schedulerMediator));
+
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
@@ -53,6 +60,7 @@ namespace Surveillance
             _ruleDistributorMediator.Initiate();
             _ruleAnalysisMediator.Initiate();
             _coordinatorMediator.Initiate();
+            _schedulerMediator.Initiate();
             _heartbeatService.Initialise();
             _logger.LogInformation($"Mediator completed initiate");
         }
@@ -63,6 +71,7 @@ namespace Surveillance
             _ruleDistributorMediator.Terminate();
             _ruleAnalysisMediator.Terminate();
             _coordinatorMediator.Terminate();
+            _schedulerMediator.Terminate();
             _logger.LogInformation($"Mediator completed terminate");
         }
     }

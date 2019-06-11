@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Scheduler
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IRuleSchedulerMediator>().Use<Mediator>();
-            For<IQueueRuleSchedulerSubscriber>().Use<QueueRuleSchedulerSubscriber>();
+            For<IQueueDelayedRuleSchedulerSubscriber>().Use<QueueDelayedRuleSchedulerSubscriber>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Surveillance.Engine.Scheduler.Queues.Interfaces
 {
-    public interface IQueueRuleSchedulerSubscriber
+    public interface IQueueDelayedRuleSchedulerSubscriber
     {
         void Initiate();
         void Terminate();

@@ -30,7 +30,6 @@ namespace Surveillance
             IApplicationHeartbeatService heartbeatService,
             ILogger<Mediator> logger)
         {
-
             _ruleDistributorMediator = 
                 ruleDistributorMediator
                 ?? throw new ArgumentNullException(nameof(ruleDistributorMediator));

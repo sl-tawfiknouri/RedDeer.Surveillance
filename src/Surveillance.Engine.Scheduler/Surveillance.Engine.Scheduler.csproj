@@ -8,11 +8,15 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.6.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.1" />
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.36.0" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\Infrastructure.Network\Infrastructure.Network.csproj" />
     <ProjectReference Include="..\Surveillance.Engine.Interfaces\Surveillance.Engine.Interfaces.csproj" />
+    <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
   </ItemGroup>
 
 </Project>

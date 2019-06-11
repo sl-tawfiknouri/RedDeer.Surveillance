@@ -7,28 +7,28 @@ namespace Surveillance.Engine.Scheduler
 {
     public class Mediator : IRuleSchedulerMediator
     {
-        private readonly IQueueRuleSchedulerSubscriber _ruleSchedulerSubscriber;
+        private readonly IQueueDelayedRuleSchedulerSubscriber _delayedRuleSchedulerSubscriber;
         private readonly ILogger<Mediator> _logger;
 
         public Mediator(
-            IQueueRuleSchedulerSubscriber ruleSchedulerSubscriber,
+            IQueueDelayedRuleSchedulerSubscriber delayedRuleSchedulerSubscriber,
             ILogger<Mediator> logger)
         {
-            _ruleSchedulerSubscriber = ruleSchedulerSubscriber ?? throw new ArgumentNullException(nameof(ruleSchedulerSubscriber));
+            _delayedRuleSchedulerSubscriber = delayedRuleSchedulerSubscriber ?? throw new ArgumentNullException(nameof(delayedRuleSchedulerSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
             _logger.LogInformation($"initiating");
-            _ruleSchedulerSubscriber.Initiate();
+            _delayedRuleSchedulerSubscriber.Initiate();
             _logger.LogInformation($"completed initiation");
         }
 
         public void Terminate()
         {
             _logger.LogInformation($"terminating");
-            _ruleSchedulerSubscriber.Terminate();
+            _delayedRuleSchedulerSubscriber.Terminate();
             _logger.LogInformation($"completed termination");
         }
     }

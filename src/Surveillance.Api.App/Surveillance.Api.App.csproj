@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="nlog.Release.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="3.0.3" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.13" />
     <PackageReference Include="AWSSDK.EC2" Version="3.3.87" />
@@ -80,9 +84,5 @@
     <Folder Include="Types\Organisation\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="nlog.Release.config">
-    </None>
-  </ItemGroup>
-
+  
 </Project>

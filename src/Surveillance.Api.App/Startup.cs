@@ -23,6 +23,7 @@ using RedDeer.Security.Core.Services;
 using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
+using Surveillance.Api.App.Logging;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using Surveillance.Api.DataAccess.Abstractions.Services;
@@ -55,6 +56,8 @@ namespace Surveillance.Api.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRequestResponseLoggingMiddleware();
+
             services.AddResponseCompression();
 
             services.AddOptions();
@@ -240,7 +243,11 @@ namespace Surveillance.Api.App
                 }
             });
 
-            app.UseGraphQL<ISchema>("/graphql/surveillance");
+            app.UseWhen(x => x.Request.Path.Value.StartsWith("/graphql/surveillance"), (appBuilder) =>
+            {
+                appBuilder.UseRequestResponseLoggingMiddleware();
+                appBuilder.UseGraphQL<ISchema>("");
+            });
         }
     }
 }

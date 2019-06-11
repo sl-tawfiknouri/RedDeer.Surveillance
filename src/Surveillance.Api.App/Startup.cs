@@ -24,6 +24,7 @@ using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
 using Surveillance.Api.App.Logging;
+using Surveillance.Api.App.Middlewares;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using Surveillance.Api.DataAccess.Abstractions.Services;
@@ -235,19 +236,14 @@ namespace Surveillance.Api.App
             app.UseAuthentication();
 
             // Stopping execution when UnAuthenticated
-            app.Use(async (context, next) =>
-            {
-                if (context.Response.StatusCode != 401)
-                {
-                    await next.Invoke();
-                }
-            });
+            app.UseMiddleware<UnAuthenticatedMiddleware>();
 
-            app.UseWhen(x => x.Request.Path.Value.StartsWith("/graphql/surveillance"), (appBuilder) =>
-            {
-                appBuilder.UseRequestResponseLoggingMiddleware();
-                appBuilder.UseGraphQL<ISchema>("");
-            });
+            app.UseWhen(
+                x => x.Request.Path.Value.StartsWith("/graphql/surveillance"), 
+                (appBuilder) => appBuilder
+                    .UseRequestResponseLoggingMiddleware()
+                    .UseGraphQL<ISchema>("")
+            );
         }
     }
 }

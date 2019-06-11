@@ -9,7 +9,6 @@ using NLog.Web;
 using Microsoft.Extensions.Configuration;
 using Dazinator.AspNet.Extensions.FileProviders;
 using Surveillance.Api.App.Configuration;
-using System.IO;
 
 namespace Surveillance.Api.App
 {
@@ -89,26 +88,38 @@ namespace Surveillance.Api.App
         public static IWebHostBuilder CreateWebHostBuilder(string[] args, string json, string url, IStartupConfig startupConfig) =>
         WebHost
             .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(i => 
-            {
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    var provider = new InMemoryFileProvider();
-                    provider.Directory.AddFile("/", new StringFileInfo(json, "appsettings.dynamodb.json"));
-
-                    i.AddJsonFile(provider, "appsettings.dynamodb.json", false, true);
-                }
-            })
+            .ConfigureAppConfiguration(configurationBuilder => ConfigureAppConfiguration(configurationBuilder, json))
             .ConfigureServices(services => services.AddScoped(x => startupConfig))
             .UseStartup<Startup>()
-            .ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-            })
+            .ConfigureLogging(ConfigureLogging)
             .UseKestrel()
             .UseUrls(url)
             .UseNLog();
+
+        private static void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder, string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return;
+            }
+
+            var provider = new InMemoryFileProvider();
+            provider.Directory.AddFile("/", new StringFileInfo(json, "appsettings.dynamodb.json"));
+
+            configurationBuilder.AddJsonFile(provider, "appsettings.dynamodb.json", false, true);
+        }
+
+        private static void ConfigureLogging(WebHostBuilderContext context, ILoggingBuilder logging)
+        {
+            logging.ClearProviders();
+            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+
+            if (context.HostingEnvironment.IsDevelopment())
+            {
+                logging.AddConsole();
+                // logging.AddFilter<Microsoft.Extensions.Logging.Console.ConsoleLoggerProvider>(Microsoft.EntityFrameworkCore.DbLoggerCategory.Database.Command.Name, Microsoft.Extensions.Logging.LogLevel.Information);
+            }
+        }
 
         public void Stop()
         {

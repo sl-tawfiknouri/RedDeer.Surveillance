@@ -240,9 +240,15 @@ namespace Surveillance.Api.App
 
             app.UseWhen(
                 x => x.Request.Path.Value.StartsWith("/graphql/surveillance"), 
-                (appBuilder) => appBuilder
-                    .UseRequestResponseLoggingMiddleware()
-                    .UseGraphQL<ISchema>("")
+                (appBuilder) => {
+
+                    if (Configuration.GetValue<bool>("UseRequestResponseLoggingMiddleware"))
+                    {
+                        appBuilder.UseRequestResponseLoggingMiddleware();
+                    }
+
+                    appBuilder.UseGraphQL<ISchema>("");
+                }
             );
         }
     }

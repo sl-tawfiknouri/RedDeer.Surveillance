@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Scheduler.Scheduler
             try
             {
                 _logger?.LogInformation($"scanning delayed scheduler");
-                _delayedScheduler.ScheduleDueTasks();
+                _delayedScheduler.ScheduleDueTasks().Wait();
                 _logger?.LogInformation($"scanning delayed scheduler completed");
             }
             catch (Exception a)

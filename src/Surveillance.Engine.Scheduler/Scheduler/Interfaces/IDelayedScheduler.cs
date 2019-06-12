@@ -1,7 +1,9 @@
-﻿namespace Surveillance.Engine.Scheduler.Scheduler.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Surveillance.Engine.Scheduler.Scheduler.Interfaces
 {
     public interface IDelayedScheduler
     {
-        void ScheduleDueTasks();
+        Task ScheduleDueTasks();
     }
 }

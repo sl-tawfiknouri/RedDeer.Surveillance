@@ -8,7 +8,7 @@
         CaseMessage = 3,
         TestRuleRunUpdate = 4,
         UploadCoordinator = 5,
-        ScheduleRuleCancellation = 5,
-        DataImportS3Upload = 6,
+        ScheduleRuleCancellation = 6,
+        DataImportS3Upload = 7,
     }
 }

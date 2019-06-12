@@ -4,6 +4,8 @@ using StructureMap;
 using Surveillance.Engine.Scheduler.Interfaces;
 using Surveillance.Engine.Scheduler.Queues;
 using Surveillance.Engine.Scheduler.Queues.Interfaces;
+using Surveillance.Engine.Scheduler.Scheduler;
+using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
 
 namespace Surveillance.Engine.Scheduler
 {
@@ -17,6 +19,7 @@ namespace Surveillance.Engine.Scheduler
 
             For<IRuleSchedulerMediator>().Use<Mediator>();
             For<IQueueDelayedRuleSchedulerSubscriber>().Use<QueueDelayedRuleSchedulerSubscriber>();
+            For<IDelayedSchedulerScanner>().Use<DelayedSchedulerScanner>();
         }
     }
 }

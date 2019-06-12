@@ -78,6 +78,8 @@ namespace Surveillance.Engine.Scheduler.Queues
                     return;
                 }
 
+
+
                 opCtx.EndEvent();
                 _logger.LogInformation($"terminating processing of execute delayed rule message for {messageId}");
             }

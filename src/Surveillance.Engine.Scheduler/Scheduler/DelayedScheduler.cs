@@ -25,6 +25,21 @@ namespace Surveillance.Engine.Scheduler.Scheduler
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public void Save(AdHocScheduleRequest request)
+        {
+            if (request == null)
+            {
+                _logger.LogError($"save received a null ad hoc schedule request");
+                return;
+            }
+
+            _logger.LogInformation($"save received a request from {request.OriginatingService}");
+
+
+
+            _logger.LogInformation($"save completed a request from {request.OriginatingService}");
+        }
+
         /// <summary>
         /// Check for due tasks and schedules them
         /// </summary>

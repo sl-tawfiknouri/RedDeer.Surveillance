@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Scheduler.Queues.Interfaces;
+using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
 
 namespace Surveillance.Engine.Scheduler.Queues
 {
@@ -15,6 +16,7 @@ namespace Surveillance.Engine.Scheduler.Queues
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
+        private readonly IDelayedScheduler _delayedScheduler;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IMessageBusSerialiser _messageBusSerialiser;
         private readonly ILogger<QueueDelayedRuleSchedulerSubscriber> _logger;
@@ -25,12 +27,14 @@ namespace Surveillance.Engine.Scheduler.Queues
         public QueueDelayedRuleSchedulerSubscriber(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
+            IDelayedScheduler delayedScheduler,
             ISystemProcessContext systemProcessContext,
             IMessageBusSerialiser messageBusSerialiser,
             ILogger<QueueDelayedRuleSchedulerSubscriber> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            _delayedScheduler = delayedScheduler ?? throw new ArgumentNullException(nameof(delayedScheduler));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -78,7 +82,7 @@ namespace Surveillance.Engine.Scheduler.Queues
                     return;
                 }
 
-
+                _delayedScheduler.Save(request);
 
                 opCtx.EndEvent();
                 _logger.LogInformation($"terminating processing of execute delayed rule message for {messageId}");

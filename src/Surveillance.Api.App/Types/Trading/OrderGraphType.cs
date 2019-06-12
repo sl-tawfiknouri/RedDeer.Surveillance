@@ -67,7 +67,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.AverageFillPrice, nullable: true).Description("Order average fill price");
 
             Field(i => i.OrderedVolume, nullable: true).Description("Order volume ordered");
-            Field(i => i.FilledVolume).Description("Order actual filled volume can be larger or smaller than ordered volume");
+            Field(i => i.FilledVolume, nullable: true).Description("Order actual filled volume can be larger or smaller than ordered volume");
 
             Field<TraderGraphType>().Name("trader").Description("Trader handling the order salient properties");
 

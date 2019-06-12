@@ -92,6 +92,16 @@ Task("SetVersion")
 		ReplaceRegexInFiles(assemblyversionfile, "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))", release);
 	});
 
+Task("ValidateBranch")
+	.Does(()=>
+	{
+		var validBranchNames = new Regex(@"^(release|uat|master|origin|default|r[a-z]{1,3}?-[\d]{1,})");//RM-123, RDPB-12345
+		if (!validBranchNames.IsMatch(BranchName.ToLowerInvariant()))
+		{
+			throw new Exception($"Invalid branch name '{BranchName}'. Have you forgotten the Jira number prefix?");
+		}
+	});
+
 Task("Build")
 	.Does(() =>
     {
@@ -199,21 +209,25 @@ Task("Pack")
 	});
 
 Task("NoPublish")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test");
 
 Task("BuildOnly")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test");
 
 Task("PublishNoTests")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Publish");
 
 Task("Default")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test")

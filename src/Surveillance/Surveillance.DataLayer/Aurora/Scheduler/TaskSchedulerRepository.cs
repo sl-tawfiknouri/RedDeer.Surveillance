@@ -17,7 +17,7 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
         private readonly ILogger<TaskSchedulerRepository> _logger;
 
         private const string SaveTaskScheduler =
-            @"INSERT INTO AdHocScheduleRequest(ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed) VALUES(@ScheduleFor, @Queue, @JsonSqsMessage, @OriginatingService, @Processed);";
+            @"INSERT INTO AdHocScheduleRequest(ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed) VALUES(@ScheduleFor, @QueueId, @JsonSqsMessage, @OriginatingService, @Processed);";
 
         private const string ReadTaskScheduler = 
             @"SELECT Id, ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed FROM AdHocScheduleRequest WHERE Processed = 0 AND ScheduleFor < DueBy;";

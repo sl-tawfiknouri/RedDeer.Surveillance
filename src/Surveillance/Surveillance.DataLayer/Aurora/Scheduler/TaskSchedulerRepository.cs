@@ -20,7 +20,7 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             @"INSERT INTO AdHocScheduleRequest(ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed) VALUES(@ScheduleFor, @QueueId, @JsonSqsMessage, @OriginatingService, @Processed);";
 
         private const string ReadTaskScheduler = 
-            @"SELECT Id, ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed FROM AdHocScheduleRequest WHERE Processed = 0 AND ScheduleFor < DueBy;";
+            @"SELECT Id, ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed FROM AdHocScheduleRequest WHERE Processed = 0 AND ScheduleFor <= @DueBy;";
 
         private const string MarkTaskAsProcessed =
             @"UPDATE AdHocScheduleRequest SET Processed = 1 WHERE Id = @Id;";

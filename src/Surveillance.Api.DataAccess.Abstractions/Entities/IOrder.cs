@@ -16,7 +16,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string DealingInstructions { get;  }
         int Direction { get;  }
         OrderDirections OrderDirection { get; }
-        long FilledVolume { get;  }
+        long? FilledVolume { get;  }
         int Id { get;  }
         int? LifeCycleStatus { get;  }
         decimal? LimitPrice { get;  }

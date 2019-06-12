@@ -6,8 +6,8 @@ namespace RedDeer.Surveillance.Api.Client.Enums
 {
     public enum OrderType
     {
-        NONE,
-        MARKET,
-        LIMIT
+        None,
+        Market,
+        Limit
     }
 }

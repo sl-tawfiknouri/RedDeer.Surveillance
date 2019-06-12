@@ -148,8 +148,8 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(order.OrderVersion, Is.EqualTo("order version"));
             Assert.That(order.OrderVersionLinkId, Is.EqualTo("order version link id"));
             Assert.That(order.OrderGroupId, Is.EqualTo("order group id"));
-            Assert.That(order.OrderType, Is.EqualTo(OrderType.LIMIT));
-            Assert.That(order.Direction, Is.EqualTo(OrderDirection.SHORT));
+            Assert.That(order.OrderType, Is.EqualTo(OrderType.Limit));
+            Assert.That(order.Direction, Is.EqualTo(OrderDirection.Short));
             Assert.That(order.Currency, Is.EqualTo("GBP"));
             Assert.That(order.SettlementCurrency, Is.EqualTo("USD"));
             Assert.That(order.CleanDirty, Is.EqualTo("clean dirty"));
@@ -408,7 +408,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentDirections(new List<OrderDirection> { OrderDirection.COVER, OrderDirection.SELL })
+                    .ArgumentDirections(new List<OrderDirection> { OrderDirection.Cover, OrderDirection.Sell })
                     .Node
                         .FieldId();
 
@@ -449,7 +449,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentTypes(new List<OrderType> { OrderType.LIMIT, OrderType.NONE })
+                    .ArgumentTypes(new List<OrderType> { OrderType.Limit, OrderType.None })
                     .Node
                         .FieldId();
 

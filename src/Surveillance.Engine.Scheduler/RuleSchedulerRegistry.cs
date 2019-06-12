@@ -17,11 +17,12 @@ namespace Surveillance.Engine.Scheduler
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
+            For<IDelayedScheduler>().Use<DelayedScheduler>();
+            For<IDelayedSchedulerScanner>().Use<DelayedSchedulerScanner>();
             For<IRuleSchedulerMediator>().Use<Mediator>();
             For<IQueueDelayedRuleSchedulerSubscriber>().Use<QueueDelayedRuleSchedulerSubscriber>();
-            For<IDelayedSchedulerScanner>().Use<DelayedSchedulerScanner>();
             For<IQueueScheduledRulePublisher>().Use<QueueScheduledRulePublisher>();
-            For<IDelayedScheduler>().Use<DelayedScheduler>();
+            For<IQueueDelayedRuleDistributedPublisher>().Use<QueueDelayedRuleDistributedPublisher>();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Surveillance.Aws;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -11,13 +12,16 @@ namespace Surveillance.Engine.Scheduler.Scheduler
     public class DelayedScheduler : IDelayedScheduler
     {
         private readonly IQueueScheduledRulePublisher _scheduledRulePublisher;
+        private readonly IQueueDelayedRuleDistributedPublisher _distributedScheduledRulePublisher;
         private readonly ILogger<DelayedScheduler> _logger;
 
         public DelayedScheduler(
             IQueueScheduledRulePublisher scheduledRulePublisher,
+            IQueueDelayedRuleDistributedPublisher distributedScheduledRulePublisher,
             ILogger<DelayedScheduler> logger)
         {
             _scheduledRulePublisher = scheduledRulePublisher ?? throw new ArgumentNullException(nameof(scheduledRulePublisher));
+            _distributedScheduledRulePublisher = distributedScheduledRulePublisher ?? throw new ArgumentNullException(nameof(distributedScheduledRulePublisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -27,7 +31,14 @@ namespace Surveillance.Engine.Scheduler.Scheduler
         public void ScheduleDueTasks()
         {
             // fetch this from a database
+            _logger.LogInformation($"schedule due tasks scanning repository for due tasks");
             var req = new List<AdHocScheduleRequest>();
+
+            if (req == null || !req.Any())
+            {
+                _logger.LogInformation($"schedule due tasks scanning repository for due tasks found null or empty requests");
+                return;
+            }
 
             foreach (var request in req)
             {
@@ -36,6 +47,8 @@ namespace Surveillance.Engine.Scheduler.Scheduler
 
                 Schedule(request);
             }
+
+            _logger.LogInformation($"schedule due tasks scanning repository for due tasks found null or empty requests");
         }
 
         private void Schedule(AdHocScheduleRequest request)
@@ -43,22 +56,28 @@ namespace Surveillance.Engine.Scheduler.Scheduler
             switch (request.Queue)
             {
                 case SurveillanceSqsQueue.CaseMessage:
+                    _logger.LogError($"schedule due tasks found a case message reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DataImportS3Upload:
+                    _logger.LogError($"schedule due tasks found a data import s3 upload reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DataSynchroniserRequest:
+                    _logger.LogError($"schedule due tasks found a data synchroniser request reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DistributedRule:
                     RescheduleDistributedRule(request);
                     break;
                 case SurveillanceSqsQueue.ScheduleRuleCancellation:
+                    _logger.LogError($"schedule due tasks found schedule rule cancellation reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.ScheduledRule:
                     RescheduleScheduledRule(request);
                     break;
                 case SurveillanceSqsQueue.TestRuleRunUpdate:
+                    _logger.LogError($"schedule due tasks found a test rule run update reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.UploadCoordinator:
+                    _logger.LogError($"schedule due tasks found a upload coordinator reschedule which is not supported");
                     break;
             }
         }
@@ -70,7 +89,7 @@ namespace Surveillance.Engine.Scheduler.Scheduler
 
         private void RescheduleDistributedRule(AdHocScheduleRequest request)
         {
-
+            _distributedScheduledRulePublisher.Publish(request).Wait();
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Surveillance.Engine.Scheduler
             For<IDelayedScheduler>().Use<DelayedScheduler>();
             For<IDelayedSchedulerScanner>().Use<DelayedSchedulerScanner>();
             For<IRuleSchedulerMediator>().Use<Mediator>();
-            For<IQueueDelayedRuleSchedulerSubscriber>().Use<QueueDelayedRuleSchedulerSubscriber>();
             For<IQueueScheduledRulePublisher>().Use<QueueScheduledRulePublisher>();
             For<IQueueDelayedRuleDistributedPublisher>().Use<QueueDelayedRuleDistributedPublisher>();
         }

@@ -8,12 +8,16 @@ namespace Surveillance.Engine.Scheduler.Scheduler
     public class DelayedSchedulerScanner : IDelayedSchedulerScanner
     {
         private const int HeartbeatFrequency = 1000 * 60 * 15; // milliseconds (15 min)
+        private readonly IDelayedScheduler _delayedScheduler;
         private readonly ILogger<DelayedSchedulerScanner> _logger;
 
         private Timer _timer;
 
-        public DelayedSchedulerScanner(ILogger<DelayedSchedulerScanner> logger)
+        public DelayedSchedulerScanner(
+            IDelayedScheduler delayedScheduler,
+            ILogger<DelayedSchedulerScanner> logger)
         {
+            _delayedScheduler = delayedScheduler ?? throw new ArgumentNullException(nameof(delayedScheduler));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -36,8 +40,8 @@ namespace Surveillance.Engine.Scheduler.Scheduler
         public void Terminate()
         {
             _logger?.LogInformation($"terminating delayed scheduler");
-
             _timer?.Stop();
+            _timer = null;
         }
 
         private void Scan(object sender, ElapsedEventArgs e)
@@ -45,8 +49,8 @@ namespace Surveillance.Engine.Scheduler.Scheduler
             try
             {
                 _logger?.LogInformation($"scanning delayed scheduler");
-
-                
+                _delayedScheduler.ScheduleDueTasks();
+                _logger?.LogInformation($"scanning delayed scheduler completed");
             }
             catch (Exception a)
             {

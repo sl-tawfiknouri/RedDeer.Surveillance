@@ -17,10 +17,10 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
         private readonly ILogger<TaskSchedulerRepository> _logger;
 
         private const string SaveTaskScheduler =
-            @"INSERT INTO AdHocScheduleRequest(ScheduleFor, Queue, JsonSqsMessage, OriginatingService, Processed) VALUES(@ScheduleFor, @Queue, @JsonSqsMessage, @OriginatingService, @Processed);";
+            @"INSERT INTO AdHocScheduleRequest(ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed) VALUES(@ScheduleFor, @Queue, @JsonSqsMessage, @OriginatingService, @Processed);";
 
         private const string ReadTaskScheduler = 
-            @"SELECT Id, ScheduleFor, Queue, JsonSqsMessage, OriginatingService, Processed FROM AdHocScheduleRequest WHERE Processed = 0 AND ScheduleFor < DueBy;";
+            @"SELECT Id, ScheduleFor, QueueId, JsonSqsMessage, OriginatingService, Processed FROM AdHocScheduleRequest WHERE Processed = 0 AND ScheduleFor < DueBy;";
 
         private const string MarkTaskAsProcessed =
             @"UPDATE AdHocScheduleRequest SET Processed = 1 WHERE Id = @Id;";
@@ -145,14 +145,14 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             {
                 Id = request.Id;
                 ScheduleFor = request.ScheduleFor;
-                Queue = (int)request.Queue;
+                QueueId = (int)request.Queue;
                 JsonSqsMessage = request.JsonSqsMessage;
                 OriginatingService = request.OriginatingService;
             }
 
             public string Id { get; set; }
             public DateTime ScheduleFor { get; set; }
-            public int Queue { get; set; }
+            public int QueueId { get; set; }
             public string JsonSqsMessage { get; set; }
             public string OriginatingService { get; set; }
             public bool Processed { get; set; }
@@ -164,7 +164,7 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
                     Id = this.Id,
                     JsonSqsMessage = this.JsonSqsMessage,
                     OriginatingService = this.OriginatingService,
-                    Queue = (SurveillanceSqsQueue) this.Queue,
+                    Queue = (SurveillanceSqsQueue) this.QueueId,
                     ScheduleFor = this.ScheduleFor
                 };
             }

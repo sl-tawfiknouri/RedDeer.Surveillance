@@ -20,6 +20,7 @@ namespace Surveillance.Api.Tests.Infrastructure
         public DbSet<SystemProcessOperation> DbProcessOperations => _processOperation;
         public DbSet<Market> DbMarkets => _market;
         public DbSet<FinancialInstrument> DbDFinancialInstruments => _financialInstrument;
+        public DbSet<OrdersAllocation> DbOrderAllocations => _ordersAllocation;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

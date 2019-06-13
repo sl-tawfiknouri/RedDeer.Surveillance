@@ -22,6 +22,7 @@ namespace Surveillance.Api.Tests.Tests
             RemoveAll(_dbContext.DbOrders);
             RemoveAll(_dbContext.DbRuleRuns);
             RemoveAll(_dbContext.DbProcessOperations);
+            RemoveAll(_dbContext.DbOrderAllocations);
             await _dbContext.SaveChangesAsync();
         }
 

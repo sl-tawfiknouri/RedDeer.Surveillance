@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Surveillance.Api.DataAccess.DbContexts;
 using Surveillance.Api.DataAccess.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Surveillance.Api.Tests.Infrastructure
 {
@@ -20,6 +17,7 @@ namespace Surveillance.Api.Tests.Infrastructure
         public DbSet<SystemProcessOperation> DbProcessOperations => _processOperation;
         public DbSet<Market> DbMarkets => _market;
         public DbSet<FinancialInstrument> DbDFinancialInstruments => _financialInstrument;
+        public DbSet<OrdersAllocation> DbOrderAllocations => _ordersAllocation;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

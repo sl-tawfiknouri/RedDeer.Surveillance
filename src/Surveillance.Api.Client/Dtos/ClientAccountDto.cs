@@ -1,8 +1,7 @@
 ﻿namespace RedDeer.Surveillance.Api.Client.Dtos
 {
-    public class TraderDto
+    public class ClientAccountDto
     {
         public string Id { get; set; }
-        public string Name { get; set; }
     }
 }

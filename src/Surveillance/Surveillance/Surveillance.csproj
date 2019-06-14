@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.6.0" />
+    <PackageReference Include="NLog" Version="4.6.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.3" />
     <PackageReference Include="RedDeer.Common.Logging" Version="1.0.0" />
-    <PackageReference Include="StructureMap" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Surveillance.Engine.DataCoordinator\Surveillance.Engine.DataCoordinator.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine.RuleDistributor\Surveillance.Engine.RuleDistributor.csproj" />
+    <ProjectReference Include="..\..\Surveillance.Engine.Scheduler\Surveillance.Engine.Scheduler.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine\Surveillance.Engine.Rules.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />

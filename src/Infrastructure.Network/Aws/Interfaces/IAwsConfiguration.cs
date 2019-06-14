@@ -11,5 +11,6 @@
         string EmailServiceSendEmailQueueName { get; }
         string AuroraConnectionString { get; }
         string ScheduleRuleCancellationQueueName { get; }
+        string ScheduleDelayedRuleRunQueueName { get; }
     }
 }

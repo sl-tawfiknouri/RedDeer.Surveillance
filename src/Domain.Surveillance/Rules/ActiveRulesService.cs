@@ -10,16 +10,19 @@ namespace Domain.Surveillance.Rules
         private readonly IReadOnlyCollection<Scheduling.Rules> _enabledRules =
             new List<Scheduling.Rules>
             {
-                Scheduling.Rules.HighVolume,
+                Scheduling.Rules.Spoofing,
                 Scheduling.Rules.CancelledOrders,
                 Scheduling.Rules.HighProfits,
                 Scheduling.Rules.MarkingTheClose,
+                Scheduling.Rules.Layering,
+                Scheduling.Rules.HighVolume,
                 Scheduling.Rules.WashTrade,
-                Scheduling.Rules.Spoofing,
+                Scheduling.Rules.PaintingTheTape,
                 Scheduling.Rules.FixedIncomeWashTrades,
                 Scheduling.Rules.FixedIncomeHighProfits,
                 Scheduling.Rules.FixedIncomeHighVolumeIssuance,
-                Scheduling.Rules.Ramping
+                Scheduling.Rules.Ramping,
+                Scheduling.Rules.PlacingOrderWithNoIntentToExecute
             };
 
         public bool RuleIsEnabled(Scheduling.Rules rule)

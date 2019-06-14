@@ -16,7 +16,7 @@
     <PackageReference Include="MySql.Data" Version="8.0.12" />
     <PackageReference Include="NEST" Version="6.2.0" />
     <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.36.0" />
-    <PackageReference Include="StructureMap" Version="4.7.0" />
+    <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>

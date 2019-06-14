@@ -47,7 +47,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception sending message '{message}' to bus on queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
+                _logger.LogError($"Exception sending message '{message}' to queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
             }
         }
     }

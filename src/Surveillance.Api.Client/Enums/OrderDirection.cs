@@ -7,15 +7,10 @@ namespace RedDeer.Surveillance.Api.Client.Enums
 {
     public enum OrderDirection
     {
-        [Description("None")]
-        NONE,
-        [Description("Buy")]
-        BUY,
-        [Description("Sell")]
-        SELL,
-        [Description("Short")]
-        SHORT,
-        [Description("Cover")]
-        COVER
+        None,
+        Buy,
+        Sell,
+        Short,
+        Cover
     }
 }

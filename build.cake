@@ -13,7 +13,7 @@ var pullRequstId = EnvironmentVariable("ghprbPullId") ?? "none";
 var isReleaseBuild="false";
 string release ="";
 
-var BranchName = EnvironmentVariable("BRANCH") ?? "default value";
+var BranchName = EnvironmentVariable("GIT_BRANCH") ?? "default value";
 var BuildNumber = EnvironmentVariable("BUILD_NUMBER") ?? "0";
 if (pullRequstId=="none" && BranchName.ToLower().Contains("release"))
 {
@@ -90,6 +90,16 @@ Task("SetVersion")
 		ReplaceRegexInFiles(assemblyversionfile, "(?<=AssemblyVersion\\(\")(.+?)(?=\"\\))", release);
 		ReplaceRegexInFiles(assemblyversionfile, "(?<=AssemblyFileVersion\\(\")(.+?)(?=\"\\))", release);
 		ReplaceRegexInFiles(assemblyversionfile, "(?<=AssemblyInformationalVersion\\(\")(.+?)(?=\"\\))", release);
+	});
+
+Task("ValidateBranch")
+	.Does(()=>
+	{
+		var validBranchNames = new Regex(@"^(?:origin\/)?(?:reddeer\.surveillance\/)?(release|uat|master|default|r[a-z]{1,3}?-[\d]{1,})");//RM-123, RDPB-12345
+		if (!validBranchNames.IsMatch(BranchName.ToLowerInvariant()))
+		{
+			throw new Exception($"Invalid branch name '{BranchName}'. Have you forgotten the Jira number prefix?");
+		}
 	});
 
 Task("Build")
@@ -199,21 +209,25 @@ Task("Pack")
 	});
 
 Task("NoPublish")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test");
 
 Task("BuildOnly")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test");
 
 Task("PublishNoTests")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Publish");
 
 Task("Default")
+	.IsDependentOn("ValidateBranch")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test")

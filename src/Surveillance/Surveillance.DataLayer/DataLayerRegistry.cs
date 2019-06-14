@@ -33,6 +33,8 @@ using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Infrastructure.Network.HttpClient;
+using Surveillance.DataLayer.Aurora.Scheduler;
+using Surveillance.DataLayer.Aurora.Scheduler.Interfaces;
 
 namespace Surveillance.DataLayer
 {
@@ -65,6 +67,7 @@ namespace Surveillance.DataLayer
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
             For<IFileUploadOrdersRepository>().Use<FileUploadOrdersRepository>();
             For<IFileUploadOrderAllocationRepository>().Use<FileUploadOrderAllocationRepository>();
+            For<ITaskSchedulerRepository>().Use<TaskSchedulerRepository>();
             For<IPolicyFactory>().Use<PolicyFactory>();
             For<IHttpClientFactory>().Use<HttpClientFactory>();
         }

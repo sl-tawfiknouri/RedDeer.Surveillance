@@ -123,6 +123,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Tests", "TestHarness\TestHarness.Tests\TestHarness.Tests.csproj", "{91467EBB-B480-4169-BB04-BE1FDCEC5A74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.Scheduler", "Surveillance.Engine.Scheduler\Surveillance.Engine.Scheduler.csproj", "{4DE87049-A635-4F04-9B8B-27FFBAE199B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -321,6 +323,10 @@ Global
 		{91467EBB-B480-4169-BB04-BE1FDCEC5A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91467EBB-B480-4169-BB04-BE1FDCEC5A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91467EBB-B480-4169-BB04-BE1FDCEC5A74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE87049-A635-4F04-9B8B-27FFBAE199B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE87049-A635-4F04-9B8B-27FFBAE199B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE87049-A635-4F04-9B8B-27FFBAE199B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE87049-A635-4F04-9B8B-27FFBAE199B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -374,6 +380,7 @@ Global
 		{CB561C17-FB63-49EB-8198-C6523B426EF8} = {BD399509-342E-47C3-A2AE-DFF418E01CF7}
 		{F545FE04-0D93-4206-8F6B-0AD8E706EBF1} = {BD399509-342E-47C3-A2AE-DFF418E01CF7}
 		{91467EBB-B480-4169-BB04-BE1FDCEC5A74} = {BD399509-342E-47C3-A2AE-DFF418E01CF7}
+		{4DE87049-A635-4F04-9B8B-27FFBAE199B5} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

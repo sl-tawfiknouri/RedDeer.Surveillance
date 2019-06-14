@@ -52,7 +52,8 @@ namespace RedDeer.Surveillance.App.Configuration
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
                     BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder),
                     UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder),
-                    ScheduleRuleCancellationQueueName = GetValue($"ScheduleRuleCancellationQueueName", configurationBuilder)
+                    ScheduleRuleCancellationQueueName = GetValue($"ScheduleRuleCancellationQueueName", configurationBuilder),
+                    ScheduleDelayedRuleRunQueueName = GetValue($"ScheduleDelayedRuleRunQueueName", configurationBuilder)
                 };
 
                 return networkConfiguration;

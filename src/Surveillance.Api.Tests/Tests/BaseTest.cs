@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using RedDeer.Surveillance.Api.Client;
-using Surveillance.Api.Tests.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
@@ -23,6 +19,7 @@ namespace Surveillance.Api.Tests.Tests
             RemoveAll(_dbContext.DbRuleRuns);
             RemoveAll(_dbContext.DbProcessOperations);
             RemoveAll(_dbContext.DbOrderAllocations);
+            RemoveAll(_dbContext.DbMarkets);
             await _dbContext.SaveChangesAsync();
         }
 

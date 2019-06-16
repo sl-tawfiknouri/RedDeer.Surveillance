@@ -79,7 +79,7 @@ namespace RedDeer.DataImport.DataImport.App
         private static Configuration BuildConfiguration()
         {
             var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables(string.Empty)
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
@@ -91,7 +91,7 @@ namespace RedDeer.DataImport.DataImport.App
         private static IDataLayerConfiguration BuildDataLayerConfiguration()
         {
             var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables(string.Empty)
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 

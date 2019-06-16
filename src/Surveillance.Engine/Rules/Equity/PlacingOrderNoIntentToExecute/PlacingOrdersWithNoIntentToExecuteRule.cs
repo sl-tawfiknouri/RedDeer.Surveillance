@@ -206,7 +206,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 return bestSellPointDuringLiveDay >= order.Item2.OrderLimitPrice?.Value;
             }
 
-            return false;
+            throw new ArgumentOutOfRangeException(nameof(order.Item2.OrderDirection));
         }
 
         private Tuple<decimal, Order> ReferenceOrderSigma(Order order, decimal sd, decimal mean)

@@ -381,6 +381,33 @@ namespace Surveillance.Api.Tests.Tests
         }
 
         [Test]
+        public async Task NothingReturnsFrom_Orders_WithEmptyTraders()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "bob"
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .Filter
+                    .ArgumentTraderIds(new List<string>())
+                    .Node
+                        .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(0));
+        }
+
+        [Test]
         public async Task CanRequest_Orders_ByDirections()
         {
             // arrange

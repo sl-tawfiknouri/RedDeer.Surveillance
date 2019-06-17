@@ -1,6 +1,5 @@
 ﻿using RedDeer.Surveillance.Api.Client.Enums;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace RedDeer.Surveillance.Api.Client.Dtos
@@ -21,7 +20,7 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
         public decimal? LimitPrice { get; set; }
         public decimal? AverageFillPrice { get; set; }
         public long? OrderedVolume { get; set; }
-        public long FilledVolume { get; set; }
+        public long? FilledVolume { get; set; }
         public string ClearingAgent { get; set; }
         public string DealingInstructions { get; set; }
         public decimal? OptionStrikePrice { get; set; }

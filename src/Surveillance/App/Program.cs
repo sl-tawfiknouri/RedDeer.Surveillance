@@ -23,6 +23,7 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
+using Surveillance.Engine.Scheduler;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -51,6 +52,7 @@ namespace RedDeer.Surveillance.App
 
                 Container = new Container();
                 var configurationBuilder = new ConfigurationBuilder()
+                    .AddEnvironmentVariables()
                     .AddJsonFile("appsettings.json", true, true)
                     .Build();
 
@@ -72,6 +74,7 @@ namespace RedDeer.Surveillance.App
                     config.IncludeRegistry<DataCoordinatorRegistry>();
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
+                    config.IncludeRegistry<RuleSchedulerRegistry>();
                 });
 
                 Container.GetInstance<IScriptRunner>();

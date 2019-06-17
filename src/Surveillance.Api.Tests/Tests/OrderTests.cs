@@ -199,8 +199,8 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(order.OrderVersion, Is.EqualTo("order version"));
             Assert.That(order.OrderVersionLinkId, Is.EqualTo("order version link id"));
             Assert.That(order.OrderGroupId, Is.EqualTo("order group id"));
-            Assert.That(order.OrderType, Is.EqualTo(OrderType.LIMIT));
-            Assert.That(order.Direction, Is.EqualTo(OrderDirection.SHORT));
+            Assert.That(order.OrderType, Is.EqualTo(OrderType.Limit));
+            Assert.That(order.Direction, Is.EqualTo(OrderDirection.Short));
             Assert.That(order.Currency, Is.EqualTo("GBP"));
             Assert.That(order.SettlementCurrency, Is.EqualTo("USD"));
             Assert.That(order.CleanDirty, Is.EqualTo("clean dirty"));
@@ -452,6 +452,33 @@ namespace Surveillance.Api.Tests.Tests
         }
 
         [Test]
+        public async Task NothingReturnsFrom_Orders_WithEmptyTraders()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "bob"
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .Filter
+                    .ArgumentTraderIds(new List<string>())
+                    .Node
+                        .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(0));
+        }
+
+        [Test]
         public async Task CanRequest_Orders_ByDirections()
         {
             // arrange
@@ -479,7 +506,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentDirections(new List<OrderDirection> { OrderDirection.COVER, OrderDirection.SELL })
+                    .ArgumentDirections(new List<OrderDirection> { OrderDirection.Cover, OrderDirection.Sell })
                     .Node
                         .FieldId();
 
@@ -520,7 +547,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentTypes(new List<OrderType> { OrderType.LIMIT, OrderType.NONE })
+                    .ArgumentTypes(new List<OrderType> { OrderType.Limit, OrderType.None })
                     .Node
                         .FieldId();
 

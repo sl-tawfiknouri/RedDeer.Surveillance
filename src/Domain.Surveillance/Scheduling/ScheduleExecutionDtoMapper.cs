@@ -117,6 +117,8 @@ namespace Domain.Surveillance.Scheduling
                     return Rules.FixedIncomeWashTrades;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.Ramping:
                     return Rules.Ramping;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.PlacingOrdersWithNoIntentToExecute:
+                    return Rules.PlacingOrderWithNoIntentToExecute;
             }
 
             _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from contracts library");
@@ -164,6 +166,8 @@ namespace Domain.Surveillance.Scheduling
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.FixedIncomeWashTrades;
                 case Rules.Ramping:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.Ramping;
+                case Rules.PlacingOrderWithNoIntentToExecute:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.PlacingOrdersWithNoIntentToExecute;
             }
 
             _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from domain library");

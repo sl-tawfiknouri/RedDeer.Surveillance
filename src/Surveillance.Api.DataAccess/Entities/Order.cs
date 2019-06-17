@@ -46,7 +46,7 @@ namespace Surveillance.Api.DataAccess.Entities
         public decimal? LimitPrice { get; set; }
         public decimal? AverageFillPrice { get; set; }
         public long? OrderedVolume { get; set; }
-        public long FilledVolume { get; set; }
+        public long? FilledVolume { get; set; }
         public string TraderId { get; set; }
         public string TraderName { get; set; }
         public string ClearingAgent { get; set; }

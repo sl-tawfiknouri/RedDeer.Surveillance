@@ -46,9 +46,16 @@ namespace Surveillance.Api.Tests.Tests
             };
 
             // Backend api service
-            var service = new Service(null);
-            service.StartupConfig = startupConfig;
-            service.Start(new string[0], () => { });
+
+            var basePathUrl = "https://localhost:18888/";
+            var commandLineArgs = new string[] { $"SurveillanceApiUrl={basePathUrl}" };
+
+            var service = new Service(null)
+            {
+                StartupConfig = startupConfig
+            };
+
+            service.Start(commandLineArgs, () => { });
             _service = service;
 
             // ApiClient
@@ -63,8 +70,8 @@ namespace Surveillance.Api.Tests.Tests
             var secretKey = "fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F";
             var jwtTokenService = new JwtTokenService();
             var bearer = jwtTokenService.Generate(jwtToken, secretKey);
-            var url = "https://localhost:8888/graphql/surveillance";
 
+            var url = new UriBuilder(basePathUrl) { Path = "graphql/surveillance" }.ToString();
             var client = new ApiClient(url, bearer, new HttpClientHandler
             {
                 UseProxy = false

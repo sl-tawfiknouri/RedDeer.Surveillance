@@ -38,6 +38,33 @@ namespace Domain.Surveillance.Scheduling
         /// <summary>
         /// Set in memory; largest timespan for relevant rules
         /// </summary>
-        public TimeSpan LeadingTimespan { get; set; }
+        public TimeSpan? LeadingTimespan { get; set; }
+
+        /// <summary>
+        /// Set in memory; largest trailing timespan for relevant rules
+        /// </summary>
+        public TimeSpan? TrailingTimespan { get; set; }
+
+        /// <summary>
+        /// Time series initiation offsetted by the leading timespan
+        /// </summary>
+        public DateTimeOffset AdjustedTimeSeriesInitiation
+        {
+            get
+            {
+                return TimeSeriesInitiation - (LeadingTimespan ?? TimeSpan.Zero);
+            }
+        }
+
+        /// <summary>
+        /// Time series termination offsetted by the trailing timespan
+        /// </summary>
+        public DateTimeOffset AdjustedTimeSeriesTermination
+        {
+            get
+            {
+                return TimeSeriesTermination + (TrailingTimespan ?? TimeSpan.Zero); 
+            }
+        }
     }
 }

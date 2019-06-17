@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
                 return new Stack<ScheduledExecution>();
             }
 
-            var span = schedule.TimeSeriesTermination - schedule.TimeSeriesInitiation;
+            var span = schedule.AdjustedTimeSeriesTermination - schedule.AdjustedTimeSeriesInitiation;
             var response = new Stack<ScheduledExecution>();
 
             if (span.TotalDays < 8)
@@ -25,13 +25,13 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
                 return response;
             }
 
-            var initiation = schedule.TimeSeriesInitiation;
-            while (initiation < schedule.TimeSeriesTermination)
+            var initiation = schedule.AdjustedTimeSeriesInitiation;
+            while (initiation < schedule.AdjustedTimeSeriesTermination)
             {
                 var termination = initiation.AddDays(7);
-                if (schedule.TimeSeriesTermination < termination)
+                if (schedule.AdjustedTimeSeriesTermination < termination)
                 {
-                    termination = schedule.TimeSeriesTermination;
+                    termination = schedule.AdjustedTimeSeriesTermination;
                 }
 
                 var splitSchedule = new ScheduledExecution
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
                     IsForceRerun = schedule.IsForceRerun,
                     Rules = schedule.Rules,
                     TimeSeriesInitiation = initiation,
-                    TimeSeriesTermination = termination
+                    TimeSeriesTermination = termination,
                 };
 
                 response.Push(splitSchedule);

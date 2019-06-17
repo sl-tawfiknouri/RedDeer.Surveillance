@@ -1,0 +1,63 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+
+ARG NEXUSAPIKEY
+
+WORKDIR /app
+
+# copy and publish app and libraries
+
+ COPY /Surveillance.Engine.Interfaces/. ./Surveillance.Engine.Interfaces/
+ COPY /Surveillance.Engine/. ./Surveillance.Engine/
+ COPY /Surveillance.Engine.RuleDistributor/. ./Surveillance.Engine.RuleDistributor/
+ COPY /Surveillance.Engine.DataCoordinator/. ./Surveillance.Engine.DataCoordinator/
+ COPY /Surveillance/. ./Surveillance/
+ COPY /Surveillance.Api.App/. ./Surveillance.Api.App/
+ COPY /Surveillance.Api.DataAccess/. ./Surveillance.Api.DataAccess/
+ COPY /Surveillance.Api.DataAccess.Abstractions/. ./Surveillance.Api.DataAccess.Abstractions/
+ COPY /DataImport/. ./DataImport/
+ COPY /TestHarness/. ./TestHarness/
+ COPY /SharedKernel.Files/. ./SharedKernel.Files/
+ COPY /ThirdPartySurveillanceDataSynchroniser/. ./ThirdPartySurveillanceDataSynchroniser/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Bmll/. ./DataSynchroniser.Bmll/
+ COPY /DataSynchroniser.Factset/. ./DataSynchroniser.Factset/
+ COPY /DataSynchroniser.Markit/. ./DataSynchroniser.Markit/
+ COPY /Surveillance.System.Auditing/. ./Surveillance.System.Auditing/
+ COPY /Surveillance/Surveillance.DataLayer/. ./Surveillance/Surveillance.DataLayer/
+ COPY /DataSynchroniser.Api/. ./DataSynchroniser.Api/
+ COPY /Domain.Surveillance/. ./Domain.Surveillance/
+ COPY /Infrastructure.Network/. ./Infrastructure.Network/
+ COPY /PollyFacade/. ./PollyFacade/
+ COPY /Surveillance.System.DataLayer/. ./Surveillance.System.DataLayer/
+ COPY /SharedKernel.Contracts/. ./SharedKernel.Contracts/
+ COPY /Domain.Core/. ./Domain.Core/
+
+
+WORKDIR /app/TestHarness/App
+CMD nuget setapikey $NEXUSAPIKEY -source http://nexus.reddeer.local/repository/nuget-hosted
+RUN dotnet restore -s http://nexus.reddeer.local/repository/nuget-hosted -s https://api.nuget.org/v3/index.json
+
+WORKDIR /app/TestHarness/App
+RUN dotnet publish -c Release -o out -r ubuntu-x64
+
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
+WORKDIR /app
+
+RUN apt-get update
+
+RUN apt-get update && \
+    apt-get -qqy install \
+        curl \
+        unzip \
+        libunwind8 \
+        gettext \
+        sudo && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/TestHarness/App/out ./
+RUN chmod 777 ./TestHarness.App.dll
+
+CMD ["dotnet", "TestHarness.App.dll"]
+
+

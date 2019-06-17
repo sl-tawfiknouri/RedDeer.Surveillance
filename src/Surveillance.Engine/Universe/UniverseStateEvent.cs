@@ -29,5 +29,11 @@ namespace Surveillance.Engine.Rules.Universe
         ExchangeOpen, // A stock market has opened
         [Description("Exchange Close")]
         ExchangeClose, // a stock market has closed
+        [Description("Primordial Universe Epoch")]
+        EpochPrimordialUniverse, // the time before the real universe occured - allow back filling of events out of the scope of the orders under analysis
+        [Description("Real Universe Epoch")]
+        EpochRealUniverse, // the time that the rule run is primarily concerned with - orders must be sourced from the real universe timeline
+        [Description("Future Universe Epoch")]
+        EpochFutureUniverse, // the time after the real universe has ended - trades will not exist here but other types of events may
     }
 }

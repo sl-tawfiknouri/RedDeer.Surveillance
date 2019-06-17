@@ -1,5 +1,6 @@
 ﻿using RedDeer.Surveillance.Api.Client.Enums;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace RedDeer.Surveillance.Api.Client.Dtos

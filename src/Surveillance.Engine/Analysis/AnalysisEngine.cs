@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, dataRequestSubscriber, opCtx, ruleParameters);
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
-            await RuleRunUpdateMessageSend(execution, ids);
+            RuleRunUpdateMessageSend(execution, ids);
 
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
@@ -132,7 +132,10 @@ namespace Surveillance.Engine.Rules.Analysis
                 _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
 
                 _ruleCancellation.Unsubscribe(ruleCancellation);
-                await RuleRunUpdateMessageSend(execution, ids);
+
+                _logger.LogInformation($"calling rule run update message send");
+                RuleRunUpdateMessageSend(execution, ids);
+                _logger.LogInformation($"completed rule run update message send");
 
                 return;
             }
@@ -143,13 +146,15 @@ namespace Surveillance.Engine.Rules.Analysis
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
  
-            await RuleRunUpdateMessageSend(execution, ids);
-            _ruleCancellation.Unsubscribe(ruleCancellation);
+            _logger.LogInformation($"calling rule run update message send");
+            RuleRunUpdateMessageSend(execution, ids);
+            _logger.LogInformation($"completed rule run update message send");
 
+            _ruleCancellation.Unsubscribe(ruleCancellation);
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
         }
 
-        private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
+        private void RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
         {
             if (execution == null)
             {
@@ -172,7 +177,12 @@ namespace Surveillance.Engine.Rules.Analysis
             foreach (var id in ids)
             {
                 _logger.LogInformation($"submitting rule update message for correlation id {execution.CorrelationId} and test parameter id {id}");
-                await _queueRuleUpdatePublisher.Send(id);
+                _queueRuleUpdatePublisher.Send(id).Wait();
+            }
+
+            if (!ids.Any())
+            {
+                _logger.LogError($"could not submit rule update message for correlation id {execution.CorrelationId} as there were no ids");
             }
         }
 
@@ -182,10 +192,12 @@ namespace Surveillance.Engine.Rules.Analysis
         {
             if (!dataRequestSubscriber?.SubmitRequests ?? true)
             {
+                _logger.LogInformation($"ending operation context event");
                 opCtx.EndEvent();
                 return;
             }
 
+            _logger.LogInformation($"ending operating context event with missing data error");
             opCtx.EndEventWithMissingDataError();
         }
     }

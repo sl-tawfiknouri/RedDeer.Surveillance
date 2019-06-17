@@ -1,4 +1,19 @@
 EXAMPLE of running the docker commands
 
-docker build --build-arg NEXUSAPIKEY=a6ab623c-1caz-3fc3-b9be-3236be4fdfb3 -t testharness .
+docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 mynet
+
+docker build -f dockerfile.th --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t testharness .
 docker run -it testharness
+
+docker build -f dockerfile.ds --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t datasynchroniser .
+docker run -it datasynchroniser
+
+docker build -f dockerfile.di --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t dataimport .
+docker run -it dataimport
+
+docker build -f dockerfile.da --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t dataapi .
+docker run -it dataapi
+
+docker build -f dockerfile.en --build-arg NEXUSAPIKEY=a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2 -t ruleengine .
+docker run -it ruleengine
+

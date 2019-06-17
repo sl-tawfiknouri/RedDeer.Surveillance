@@ -48,14 +48,16 @@ namespace Surveillance.Engine.Rules.Universe
         /// </summary>
         public async Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
-            return await Summon(execution, opCtx, true, true);
+            return await Summon(execution, opCtx, true, true, execution.TimeSeriesInitiation, execution.TimeSeriesTermination);
         }
 
         public async Task<IUniverse> Summon(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             bool includeGenesis,
-            bool includeEschaton)
+            bool includeEschaton,
+            DateTimeOffset? realUniverseEpoch,
+            DateTimeOffset? futureUniverseEpoch)
         {
             if (execution == null)
             {
@@ -80,7 +82,17 @@ namespace Surveillance.Engine.Rules.Universe
             _logger.LogInformation($"completed fetching inter day for equities");
 
             _logger.LogInformation($"fetching universe event data");
-            var universe = await UniverseEvents(execution, projectedTradesAllocations, intradayEquityBars, interDayEquityBars, includeGenesis, includeEschaton);
+            var universe =
+                await UniverseEvents(
+                    execution,
+                    projectedTradesAllocations,
+                    intradayEquityBars,
+                    interDayEquityBars, 
+                    includeGenesis,
+                    includeEschaton,
+                    realUniverseEpoch,
+                    futureUniverseEpoch);
+
             _logger.LogInformation($"completed fetching universe event data");
 
             _logger.LogInformation($"returning a new universe");
@@ -106,7 +118,7 @@ namespace Surveillance.Engine.Rules.Universe
         {
             var equities =
                 await _auroraMarketRepository.GetEquityIntraday(
-                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan).Date,
+                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
@@ -119,7 +131,7 @@ namespace Surveillance.Engine.Rules.Universe
         {
             var equities =
                 await _auroraMarketRepository.GetEquityInterDay(
-                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan).Date,
+                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
@@ -132,7 +144,9 @@ namespace Surveillance.Engine.Rules.Universe
             IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
             IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
             bool includeGenesis,
-            bool includeEschaton)
+            bool includeEschaton,
+            DateTimeOffset? realUniverseEpoch,
+            DateTimeOffset? futureUniverseEpoch)
         {
             var tradeSubmittedEvents =
                 trades
@@ -185,7 +199,25 @@ namespace Surveillance.Engine.Rules.Universe
             if (includeGenesis)
             {
                 var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
+                var primordialEpoch = new UniverseEvent(UniverseStateEvent.EpochPrimordialUniverse, execution.TimeSeriesInitiation.DateTime, execution);
                 universeEvents.Add(genesis);
+                universeEvents.Add(primordialEpoch);
+            }
+
+            if (realUniverseEpoch != null 
+                && realUniverseEpoch >= execution.TimeSeriesInitiation 
+                && realUniverseEpoch <= execution.TimeSeriesTermination)
+            {
+                var realUniverseEpochEvent = new UniverseEvent(UniverseStateEvent.EpochRealUniverse, realUniverseEpoch.GetValueOrDefault().DateTime, execution);
+                universeEvents.Add(realUniverseEpochEvent);
+            }
+
+            if (futureUniverseEpoch != null
+                && futureUniverseEpoch >= execution.TimeSeriesInitiation
+                && futureUniverseEpoch <= execution.TimeSeriesTermination)
+            {
+                var futureUniverseEpochEvent = new UniverseEvent(UniverseStateEvent.EpochFutureUniverse, futureUniverseEpoch.GetValueOrDefault().DateTime, execution);
+                universeEvents.Add(futureUniverseEpochEvent);
             }
 
             universeEvents.AddRange(orderedIntraUniversalHistory);

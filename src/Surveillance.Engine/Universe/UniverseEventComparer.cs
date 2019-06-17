@@ -17,7 +17,10 @@ namespace Surveillance.Engine.Rules.Universe
                 { UniverseStateEvent.Order, 6 },
                 { UniverseStateEvent.OrderFilled, 7 },
                 { UniverseStateEvent.ExchangeClose, 8 },
-                { UniverseStateEvent.Eschaton, 9 },
+                { UniverseStateEvent.EpochPrimordialUniverse, 9 },
+                { UniverseStateEvent.EpochRealUniverse, 10 },
+                { UniverseStateEvent.EpochFutureUniverse, 11 },
+                { UniverseStateEvent.Eschaton, 12 },
             };
 
         /*

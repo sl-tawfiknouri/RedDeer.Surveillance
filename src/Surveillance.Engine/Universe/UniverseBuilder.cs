@@ -51,9 +51,6 @@ namespace Surveillance.Engine.Rules.Universe
             return await Summon(execution, opCtx, true, true);
         }
 
-        /// <summary>
-        /// Crack the cosmic egg and unscramble your reality
-        /// </summary>
         public async Task<IUniverse> Summon(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,

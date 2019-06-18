@@ -87,7 +87,10 @@ namespace Surveillance.Engine.Rules.Tests.Universe
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EpochPrimordialUniverse);
+            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EpochRealUniverse);
+            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.EpochFutureUniverse);
+            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
 
         [Test]
@@ -219,9 +222,11 @@ namespace Surveillance.Engine.Rules.Tests.Universe
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
             Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EpochPrimordialUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
+            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EpochRealUniverse);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
-            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.EpochFutureUniverse);
+            Assert.AreEqual(result.UniverseEvents.Skip(5).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
+            Assert.AreEqual(result.UniverseEvents.Skip(6).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
     }
 }

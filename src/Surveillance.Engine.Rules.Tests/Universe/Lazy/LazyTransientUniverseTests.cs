@@ -110,8 +110,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     true,
                     false,
-                    null,
-                    null))
+                    A<DateTimeOffset?>.Ignored,
+                    A<DateTimeOffset?>.Ignored))
 
                 .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl1)));
 
@@ -121,14 +121,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     false,
                     true,
-                    null,
-                    null))
+                    A<DateTimeOffset?>.Ignored,
+                    A<DateTimeOffset?>.Ignored))
 
                 .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl2)));
 
             var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
 
-            var tracker = 6;
+            var tracker = 5;
             foreach (var _ in lazyCollection)
             {
                 tracker--;
@@ -176,8 +176,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     true,
                     false,
-                    null,
-                    null))
+                    A<DateTimeOffset?>.Ignored,
+                    A<DateTimeOffset?>.Ignored))
                 .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl1)));
 
             A
@@ -186,8 +186,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     false,
                     false,
-                    null,
-                    null))
+                    A<DateTimeOffset?>.Ignored,
+                    A<DateTimeOffset?>.Ignored))
                 .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl3)));
 
             A
@@ -196,13 +196,13 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
                     A<ISystemProcessOperationContext>.Ignored,
                     false,
                     true,
-                    null,
-                    null))
+                    A<DateTimeOffset?>.Ignored,
+                    A<DateTimeOffset?>.Ignored))
                 .Returns(Task.FromResult((IUniverse)new Engine.Rules.Universe.Universe(universeEventColl2)));
 
             var lazyCollection = new LazyTransientUniverse(_lazyScheduledExecutioner, _universeBuilder, execution, _opCtx);
 
-            var tracker = 8;
+            var tracker = 7;
             foreach (var _ in lazyCollection)
             {
                 tracker--;

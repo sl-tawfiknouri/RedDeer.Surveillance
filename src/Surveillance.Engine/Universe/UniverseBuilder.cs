@@ -192,6 +192,7 @@ namespace Surveillance.Engine.Rules.Universe
             intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
             intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);
+            intraUniversalHistoryEvents = FilterOutTradesInFutureEpoch(intraUniversalHistoryEvents, futureUniverseEpoch);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe, _universeSorter).ToList();
 
             var universeEvents = new List<IUniverseEvent>();
@@ -238,6 +239,29 @@ namespace Surveillance.Engine.Rules.Universe
             universeEvents = universeEvents.OrderBy(ue => ue, _universeSorter).ToList();
 
             return universeEvents;
+        }
+
+        private List<IUniverseEvent> FilterOutTradesInFutureEpoch(
+            List<IUniverseEvent> events,
+            DateTimeOffset? futureUniverseEpoch)
+        {
+            if (events == null
+                || !events.Any())
+            {
+                return events;
+            }
+
+            if (futureUniverseEpoch == null)
+            {
+                return events;
+            }
+
+            var filteredEvents =
+                events
+                    .Where(_ => !_.StateChange.IsOrderType() || _.EventTime <= futureUniverseEpoch)
+                    .ToList();
+
+            return filteredEvents;
         }
     }
 }

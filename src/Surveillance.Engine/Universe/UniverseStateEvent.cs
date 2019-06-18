@@ -36,4 +36,14 @@ namespace Surveillance.Engine.Rules.Universe
         [Description("Future Universe Epoch")]
         EpochFutureUniverse, // the time after the real universe has ended - trades will not exist here but other types of events may
     }
+
+    public static class UniverseStateEventExtensions
+    {
+        public static bool IsOrderType(this UniverseStateEvent universeEvents)
+        {
+            return universeEvents == UniverseStateEvent.Order
+                   || universeEvents == UniverseStateEvent.OrderFilled
+                   || universeEvents == UniverseStateEvent.OrderPlaced;
+        }
+    }
 }

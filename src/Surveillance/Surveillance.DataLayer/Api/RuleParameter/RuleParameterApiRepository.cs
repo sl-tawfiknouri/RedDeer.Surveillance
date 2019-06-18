@@ -55,7 +55,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                     try
                     {
                         deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
-                        _logger.LogInformation($"received get id for id {id} response {deserialisedResponse}");
+                        _logger.LogInformation($"received get id for id {id} response {jsonResponse}");
                     }
                     catch (Exception)
                     {
@@ -104,7 +104,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
                     var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
-                    _logger.LogInformation($"received get response {deserialisedResponse}");
+                    _logger.LogInformation($"received get response {jsonResponse}");
 
                     if (deserialisedResponse == null)
                     {

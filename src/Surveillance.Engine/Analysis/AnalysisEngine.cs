@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
@@ -97,6 +98,9 @@ namespace Surveillance.Engine.Rules.Analysis
             }
             
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            var executionJson = JsonConvert.SerializeObject(execution);
+            var opCtxJson = JsonConvert.SerializeObject(opCtx);
+            _logger.LogInformation($"analysis execute received json {executionJson} for opCtx {opCtxJson}");
 
             var cts = new CancellationTokenSource();
             var ruleCancellation = new CancellableRule(execution, cts);

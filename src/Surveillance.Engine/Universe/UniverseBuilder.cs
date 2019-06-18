@@ -235,6 +235,8 @@ namespace Surveillance.Engine.Rules.Universe
                 universeEvents.Add(eschaton);
             }
 
+            universeEvents = universeEvents.OrderBy(ue => ue, _universeSorter).ToList();
+
             return universeEvents;
         }
     }

@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0", DataSource.AllIntraday);
 
             cache.Add(frame);
 
@@ -142,7 +142,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0", DataSource.AllIntraday);
 
             cache.Add(frame);
 
@@ -204,7 +204,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0", DataSource.AllIntraday);
             cache.Add(frame);
 
             var result = cache.GetMarkets(marketData).Response;
@@ -266,7 +266,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0", DataSource.AllIntraday);
 
             cache.Add(frame);
 

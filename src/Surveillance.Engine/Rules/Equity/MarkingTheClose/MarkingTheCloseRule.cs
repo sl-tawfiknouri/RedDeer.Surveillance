@@ -163,7 +163,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 securities.Peek().Instrument.Identifiers,
                 UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
-                _ruleCtx?.Id());
+                _ruleCtx?.Id(),
+                DataSource.AllInterday);
 
             var dataResponse = UniverseEquityInterdayCache.Get(marketDataRequest);
 
@@ -219,7 +220,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     securities.Peek().Instrument.Identifiers,
                     UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
-                    _ruleCtx?.Id());
+                    _ruleCtx?.Id(),
+                    DataSource.AllIntraday);
             
             // marking the close should not have windows exceeding a few hours
             var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);

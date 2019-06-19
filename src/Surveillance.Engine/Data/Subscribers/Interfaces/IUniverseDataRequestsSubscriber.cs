@@ -7,5 +7,6 @@ namespace Surveillance.Engine.Rules.Data.Subscribers.Interfaces
     {
         void SubmitRequest();
         bool SubmitRequests { get; }
+        void DispatchIfSubmitRequest();
     }
 }

@@ -75,7 +75,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                     activeFulfilledTradeOrders.FirstOrDefault()?.Market?.MarketIdentifierCode,
                     security.Identifiers,
                     universeDateTime,
-                    ctx);
+                    ctx,
+                    cacheStrategy.DataSource);
 
             if (marketDataRequest == null)
             {
@@ -181,7 +182,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             string mic,
             InstrumentIdentifiers identifiers,
             DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx)
+            ISystemProcessOperationRunRuleContext ctx,
+            DataSource dataSource)
         {
             var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
@@ -196,7 +198,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 identifiers,
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
-                ctx?.Id());
+                ctx?.Id(),
+                dataSource);
         }
     }
 }

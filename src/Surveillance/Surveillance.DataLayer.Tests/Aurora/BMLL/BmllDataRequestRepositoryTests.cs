@@ -41,7 +41,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(1),
                     "2",
-                    true);
+                    true,
+                    DataSource.Bmll);
 
             await repo.CreateDataRequest(marketDataRequest);
         }
@@ -72,7 +73,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(1),
                     "2",
-                    true);
+                    true,
+                    DataSource.Bmll);
 
             await repo.UpdateToCompleteWithDuplicates(new [] { marketDataRequest});
         }

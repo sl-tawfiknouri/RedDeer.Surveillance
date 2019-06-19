@@ -256,7 +256,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
-                    _ruleCtx?.Id());
+                    _ruleCtx?.Id(),
+                    DataSource.AllInterday);
             
             var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
@@ -301,7 +302,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,
-                    _ruleCtx?.Id());
+                    _ruleCtx?.Id(),
+                    DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
@@ -367,7 +369,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     startDate.Subtract(WindowSize),
                     endDate,
-                    _ruleCtx?.Id());
+                    _ruleCtx?.Id(),
+                    DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(

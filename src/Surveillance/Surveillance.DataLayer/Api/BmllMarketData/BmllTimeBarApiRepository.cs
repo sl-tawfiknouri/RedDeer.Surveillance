@@ -63,7 +63,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                     await policy.ExecuteAsync(async () =>
                     {
                         response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
-
+                        _logger.LogInformation($"RequestMinuteBars policy received post response or timed out");
                         return response;
                     });
 
@@ -120,7 +120,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                     await policy.ExecuteAsync(async () =>
                     {
                         response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
-
+                        _logger.LogInformation($"StatusMinuteBars policy received post response or timed out");
                         return response;
                     });
 
@@ -197,7 +197,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                     await policy.ExecuteAsync(async () =>
                     {
                         response = await httpClient.PostAsync(MinuteBarRoute, new StringContent(json, Encoding.UTF8, "application/json"));
-
+                        _logger.LogInformation($"GetMinuteBars policy received post response or timed out");
                         return response;
                     });
 

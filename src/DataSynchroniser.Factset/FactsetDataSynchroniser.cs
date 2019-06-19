@@ -59,7 +59,7 @@ namespace DataSynchroniser.Api.Factset
                 return;
             }
 
-            await _factsetDataRequestsManager.Submit(filteredMarketDataRequests);
+            await _factsetDataRequestsManager.Submit(filteredMarketDataRequests, systemProcessOperationId);
         }
     }
 }

@@ -123,7 +123,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Tests", "TestHarness\TestHarness.Tests\TestHarness.Tests.csproj", "{91467EBB-B480-4169-BB04-BE1FDCEC5A74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.Scheduler", "Surveillance.Engine.Scheduler\Surveillance.Engine.Scheduler.csproj", "{4DE87049-A635-4F04-9B8B-27FFBAE199B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Scheduler", "Surveillance.Engine.Scheduler\Surveillance.Engine.Scheduler.csproj", "{4DE87049-A635-4F04-9B8B-27FFBAE199B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -16,7 +16,8 @@ namespace SharedKernel.Contracts.Markets
             DateTime? universeEventTimeFrom,
             DateTime? universeEventTimeTo,
             string systemProcessOperationRuleRunId,
-            bool isCompleted)
+            bool isCompleted,
+            DataSource dataSource)
         {
             Id = id;
             MarketIdentifierCode = marketIdentifierCode ?? string.Empty;
@@ -26,6 +27,7 @@ namespace SharedKernel.Contracts.Markets
             UniverseEventTimeFrom = universeEventTimeFrom;
             SystemProcessOperationRuleRunId = systemProcessOperationRuleRunId ?? string.Empty;
             IsCompleted = isCompleted;
+            DataSource = dataSource;
         }
 
         public MarketDataRequest(
@@ -34,7 +36,8 @@ namespace SharedKernel.Contracts.Markets
             InstrumentIdentifiers identifiers,
             DateTime? universeEventTimeFrom,
             DateTime? universeEventTimeTo,
-            string systemProcessOperationRuleRunId):
+            string systemProcessOperationRuleRunId,
+            DataSource dataSource):
             this(
                 null, 
                 marketIdentifierCode,
@@ -43,7 +46,8 @@ namespace SharedKernel.Contracts.Markets
                 universeEventTimeFrom,
                 universeEventTimeTo,
                 systemProcessOperationRuleRunId,
-                false)
+                false,
+                dataSource)
         { }
 
         public string Id { get; }
@@ -52,7 +56,7 @@ namespace SharedKernel.Contracts.Markets
         public InstrumentIdentifiers Identifiers { get; }
         public DateTime? UniverseEventTimeTo { get; }
         public DateTime? UniverseEventTimeFrom { get; }
-
+        public DataSource DataSource { get; }
         public string SystemProcessOperationRuleRunId { get; }
 
         public bool IsCompleted { get; }

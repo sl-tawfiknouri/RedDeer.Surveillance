@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -43,7 +44,7 @@ namespace Surveillance.Engine.Rules.Trades
 
         private void MoveDelayedOrdersToHistory(DateTime currentTime)
         {
-            while (_delayedOrders.Peek().Dequeue <= currentTime)
+            while (_delayedOrders.Any() && _delayedOrders.Peek().Dequeue <= currentTime)
             {
                 var orderToTransfer = _delayedOrders.Dequeue();
                 _stack.Add(orderToTransfer.Order, orderToTransfer.Dequeue);

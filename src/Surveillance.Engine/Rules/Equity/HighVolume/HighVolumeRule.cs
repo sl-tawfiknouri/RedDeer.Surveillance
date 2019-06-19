@@ -186,7 +186,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                _ruleCtx?.Id()); 
+                _ruleCtx?.Id(),
+                DataSource.AllInterday);
 
             var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
@@ -241,7 +242,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                    _ruleCtx?.Id());
+                    _ruleCtx?.Id(),
+                    DataSource.AllIntraday);
 
             var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
 
@@ -297,7 +299,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
-                _ruleCtx?.Id());
+                _ruleCtx?.Id(),
+                DataSource.AllInterday);
 
             var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 

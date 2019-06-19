@@ -4,9 +4,11 @@
     {
         All = 0,
         None = 1,
-        Bmll = 2,
-        Factset = 3,
-        Markit = 4,
-        ThomsonReuters = 5
+        AllInterday = 2,
+        AllIntraday = 3,
+        Bmll = 4,
+        Factset = 5,
+        Markit = 6,
+        ThomsonReuters = 7
     }
 }

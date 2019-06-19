@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
@@ -97,6 +98,9 @@ namespace Surveillance.Engine.Rules.Analysis
             }
             
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            var executionJson = JsonConvert.SerializeObject(execution);
+            var opCtxJson = JsonConvert.SerializeObject(opCtx);
+            _logger.LogInformation($"analysis execute received json {executionJson} for opCtx {opCtxJson}");
 
             var cts = new CancellationTokenSource();
             var ruleCancellation = new CancellableRule(execution, cts);
@@ -116,7 +120,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, dataRequestSubscriber, opCtx, ruleParameters);
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
-            await RuleRunUpdateMessageSend(execution, ids);
+            RuleRunUpdateMessageSend(execution, ids);
 
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
@@ -132,7 +136,10 @@ namespace Surveillance.Engine.Rules.Analysis
                 _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
 
                 _ruleCancellation.Unsubscribe(ruleCancellation);
-                await RuleRunUpdateMessageSend(execution, ids);
+
+                _logger.LogInformation($"calling rule run update message send");
+                RuleRunUpdateMessageSend(execution, ids);
+                _logger.LogInformation($"completed rule run update message send");
 
                 return;
             }
@@ -143,13 +150,15 @@ namespace Surveillance.Engine.Rules.Analysis
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
  
-            await RuleRunUpdateMessageSend(execution, ids);
-            _ruleCancellation.Unsubscribe(ruleCancellation);
+            _logger.LogInformation($"calling rule run update message send");
+            RuleRunUpdateMessageSend(execution, ids);
+            _logger.LogInformation($"completed rule run update message send");
 
+            _ruleCancellation.Unsubscribe(ruleCancellation);
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
         }
 
-        private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
+        private void RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
         {
             if (execution == null)
             {
@@ -172,7 +181,12 @@ namespace Surveillance.Engine.Rules.Analysis
             foreach (var id in ids)
             {
                 _logger.LogInformation($"submitting rule update message for correlation id {execution.CorrelationId} and test parameter id {id}");
-                await _queueRuleUpdatePublisher.Send(id);
+                _queueRuleUpdatePublisher.Send(id).Wait();
+            }
+
+            if (!ids.Any())
+            {
+                _logger.LogError($"could not submit rule update message for correlation id {execution.CorrelationId} as there were no ids");
             }
         }
 
@@ -182,10 +196,12 @@ namespace Surveillance.Engine.Rules.Analysis
         {
             if (!dataRequestSubscriber?.SubmitRequests ?? true)
             {
+                _logger.LogInformation($"ending operation context event");
                 opCtx.EndEvent();
                 return;
             }
 
+            _logger.LogInformation($"ending operating context event with missing data error");
             opCtx.EndEventWithMissingDataError();
         }
     }

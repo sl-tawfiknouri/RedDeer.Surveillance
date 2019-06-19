@@ -39,7 +39,10 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                     _dataLayerConfiguration.ClientServiceUrl,
                     _dataLayerConfiguration.SurveillanceUserApiAccessToken))
                 {
+                    _logger.LogInformation($"httpclient making get request to {RouteV2}/{id}");
                     var response = await httpClient.GetAsync($"{RouteV2}/{id}");
+                    var responseJson = JsonConvert.SerializeObject(response);
+                    _logger.LogInformation($"httpclient received response {responseJson}");
 
                     if (response == null
                         || !response.IsSuccessStatusCode)
@@ -55,7 +58,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                     try
                     {
                         deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
-                        _logger.LogInformation($"received get id for id {id} response {deserialisedResponse}");
+                        _logger.LogInformation($"received get id for id {id} response {jsonResponse}");
                     }
                     catch (Exception)
                     {
@@ -92,7 +95,10 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                     _dataLayerConfiguration.ClientServiceUrl,
                     _dataLayerConfiguration.SurveillanceUserApiAccessToken))
                 {
+                    _logger.LogInformation($"httpclient making get request to {RouteV2}");
                     var response = await httpClient.GetAsync(RouteV2);
+                    var responseJson = JsonConvert.SerializeObject(response);
+                    _logger.LogInformation($"httpclient received response {responseJson}");
 
                     if (response == null
                         || !response.IsSuccessStatusCode)
@@ -104,7 +110,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
                     var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
-                    _logger.LogInformation($"received get response {deserialisedResponse}");
+                    _logger.LogInformation($"received get response {jsonResponse}");
 
                     if (deserialisedResponse == null)
                     {

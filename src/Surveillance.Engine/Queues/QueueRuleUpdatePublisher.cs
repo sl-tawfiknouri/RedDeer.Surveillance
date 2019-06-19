@@ -36,6 +36,8 @@ namespace Surveillance.Engine.Rules.Queues
                 return;
             }
 
+            _logger.LogInformation($"received request to send to rule update publisher for rule run {ruleRunId}");
+
             var messageBusCts = new CancellationTokenSource();
 
             var message = new TestRuleRunUpdateMessage

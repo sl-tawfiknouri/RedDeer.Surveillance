@@ -49,10 +49,9 @@ namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
         public void OnNext_Eschaton_And_Submit_Requests_Calls_DataRequestMessageSender()
         {
             var subscriber = new UniverseDataRequestsSubscriber(_operationContext, _queueDataSynchroniserRequestPublisher, _logger);
-            var events = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             subscriber.SubmitRequest();
-            subscriber.OnNext(events);
+            subscriber.DispatchIfSubmitRequest();
 
             A.CallTo(() => _queueDataSynchroniserRequestPublisher.Send(A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
@@ -61,23 +60,11 @@ namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
         public void OnNext_Eschaton_And_No_Submit_Does_Not_Requests_Calls_DataRequestMessageSender()
         {
             var subscriber = new UniverseDataRequestsSubscriber(_operationContext, _queueDataSynchroniserRequestPublisher, _logger);
-            var events = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
-
-            subscriber.OnNext(events);
-
-            A.CallTo(() => _queueDataSynchroniserRequestPublisher.Send(A<string>.Ignored)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void OnNext_Genesis_And_Submit_Does_Requests_Calls_DataRequestMessageSender()
-        {
-            var subscriber = new UniverseDataRequestsSubscriber(_operationContext, _queueDataSynchroniserRequestPublisher, _logger);
-            var events = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
-
-            subscriber.SubmitRequest();
-            subscriber.OnNext(events);
+            
+            subscriber.DispatchIfSubmitRequest();
 
             A.CallTo(() => _queueDataSynchroniserRequestPublisher.Send(A<string>.Ignored)).MustNotHaveHappened();
         }
+
     }
 }

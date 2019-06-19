@@ -95,6 +95,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
+            EvaluateHighProfits(history);
+        }
+
+        protected void EvaluateHighProfits(ITradingHistoryStack history)
+        {
             if (!RunRuleGuard(history))
             {
                 return;

@@ -57,6 +57,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.WindowSize ?? TimeSpan.FromHours(8),
+                TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.HighProfits,
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",

@@ -46,6 +46,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                   equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(30),
+                  TimeSpan.Zero,
                   Domain.Surveillance.Scheduling.Rules.Spoofing,
                   EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",

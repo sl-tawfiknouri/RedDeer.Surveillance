@@ -47,6 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Window ?? TimeSpan.FromMinutes(30),
+                TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
@@ -161,7 +162,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
+                UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -209,7 +210,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 securities.Peek().Market?.MarketIdentifierCode);
 
@@ -218,7 +219,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     securities.Peek().Market.MarketIdentifierCode,
                     securities.Peek().Instrument.Cfi,
                     securities.Peek().Instrument.Identifiers,
-                    UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
+                    UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);

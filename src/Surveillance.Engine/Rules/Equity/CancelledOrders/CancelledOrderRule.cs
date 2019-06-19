@@ -42,6 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
+                TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",

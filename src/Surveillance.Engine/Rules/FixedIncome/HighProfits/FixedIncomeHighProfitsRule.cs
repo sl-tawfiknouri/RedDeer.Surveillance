@@ -32,6 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",

@@ -22,13 +22,17 @@ namespace Surveillance.Engine.Rules.Rules
     public abstract class BaseUniverseRule : IUniverseRule
     {
         private readonly string _name;
-        protected readonly TimeSpan WindowSize;
+        protected readonly TimeSpan BackwardWindowSize;
+        protected readonly TimeSpan ForwardWindowSize;
 
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingFillsHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingFillsHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingInitialHistory;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
@@ -41,7 +45,8 @@ namespace Surveillance.Engine.Rules.Rules
         private readonly object _lock = new object();
 
         protected BaseUniverseRule(
-            TimeSpan windowSize,
+            TimeSpan backwardWindowSize,
+            TimeSpan forwardWindowSize,
             Domain.Surveillance.Scheduling.Rules rules,
             string version,
             string name,
@@ -51,12 +56,14 @@ namespace Surveillance.Engine.Rules.Rules
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
         {
-            WindowSize = windowSize;
+            BackwardWindowSize = backwardWindowSize;
+            ForwardWindowSize = forwardWindowSize;
+
             Rule = rules;
             Version = version ?? string.Empty;
 
             UniverseEquityIntradayCache =
-                factory?.BuildIntraday(windowSize, runMode)
+                factory?.BuildIntraday(backwardWindowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
             UniverseEquityInterdayCache =
@@ -66,6 +73,11 @@ namespace Surveillance.Engine.Rules.Rules
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+
+            DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
             RunMode = runMode;
@@ -191,9 +203,14 @@ namespace Surveillance.Engine.Rules.Rules
 
             UniverseDateTime = universeEvent.EventTime;
 
+
+
+
+
+
             if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.PlacedDate.GetValueOrDefault(), _tradingStackLogger);
+                var history = new TradingHistoryStack(BackwardWindowSize, i => i.PlacedDate.GetValueOrDefault(), _tradingStackLogger);
                 history.Add(value, value.PlacedDate.GetValueOrDefault());
                 TradingInitialHistory.TryAdd(value.Instrument.Identifiers, history);
             }
@@ -204,6 +221,10 @@ namespace Surveillance.Engine.Rules.Rules
                 history?.Add(value, value.PlacedDate.GetValueOrDefault());
                 history?.ArchiveExpiredActiveItems(value.PlacedDate.GetValueOrDefault());
             }
+
+
+
+
 
             TradingInitialHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);
 
@@ -223,7 +244,7 @@ namespace Surveillance.Engine.Rules.Rules
 
             if (!TradingHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.MostRecentDateEvent(), _tradingStackLogger);
+                var history = new TradingHistoryStack(BackwardWindowSize, i => i.MostRecentDateEvent(), _tradingStackLogger);
                 history.Add(value, value.MostRecentDateEvent());
                 TradingHistory.TryAdd(value.Instrument.Identifiers, history);
             }
@@ -260,7 +281,7 @@ namespace Surveillance.Engine.Rules.Rules
             if (!TradingFillsHistory.ContainsKey(value.Instrument.Identifiers))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                var history = new TradingHistoryStack(WindowSize, i => i.FilledDate.Value, _tradingStackLogger);
+                var history = new TradingHistoryStack(BackwardWindowSize, i => i.FilledDate.Value, _tradingStackLogger);
                 history.Add(value, value.FilledDate.Value);
                 TradingFillsHistory.TryAdd(value.Instrument.Identifiers, history);
             }
@@ -377,6 +398,7 @@ namespace Surveillance.Engine.Rules.Rules
         /// </summary>
         public abstract void RunOrderFilledEvent(ITradingHistoryStack history);
 
+
         protected abstract void Genesis();
         protected abstract void MarketOpen(MarketOpenClose exchange);
         protected abstract void MarketClose(MarketOpenClose exchange);
@@ -392,6 +414,9 @@ namespace Surveillance.Engine.Rules.Rules
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
             TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingFillsHistory);
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
+            DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingHistory);
+            DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingFillsHistory);
+            DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingInitialHistory);
         }
     }
 }

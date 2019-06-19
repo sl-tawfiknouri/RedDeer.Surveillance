@@ -37,11 +37,11 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
 
         public async Task<FactsetSecurityResponseDto> GetWithTransientFaultHandling(FactsetSecurityDailyRequest request)
         {
-            _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling has received a request to get daily bars from the client service");
+            _logger.LogInformation($"GetWithTransientFaultHandling has received a request to get daily bars from the client service");
 
             if (request == null)
             {
-                _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling received a null request. Returning an empty response");
+                _logger.LogInformation($"GetWithTransientFaultHandling received a null request. Returning an empty response");
 
                 return new FactsetSecurityResponseDto
                 {
@@ -69,7 +69,7 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
                 if (responseMessage == null
                     || !responseMessage.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
+                    _logger.LogError($"GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
                     return new FactsetSecurityResponseDto();
                 }
 
@@ -78,11 +78,11 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
 
                 if (deserialisedResponse == null)
                 {
-                    _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to deserialise the response");
+                    _logger.LogError($"GetWithTransientFaultHandling was unable to deserialise the response");
                     return new FactsetSecurityResponseDto();
                 }
 
-                _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling returning deserialised GET response");
+                _logger.LogInformation($"GetWithTransientFaultHandling returning deserialised GET response");
 
                 return deserialisedResponse;
             }
@@ -90,11 +90,11 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
 
         public async Task<FactsetSecurityResponseDto> Get(FactsetSecurityDailyRequest request)
         {
-            _logger.LogInformation($"FactsetDailyBarApiRepository has received a request to get daily bars from the client service");
+            _logger.LogInformation($"has received a request to get daily bars from the client service");
 
             if (request == null)
             {
-                _logger.LogInformation($"FactsetDailyBarApiRepository received a null request. Returning an empty response");
+                _logger.LogInformation($"received a null request. Returning an empty response");
 
                 return new FactsetSecurityResponseDto
                 {
@@ -116,7 +116,7 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
                     if (response == null
                         || !response.IsSuccessStatusCode)
                     {
-                        _logger.LogError($"FactsetDailyBarApiRepository Unsuccessful factset time bar api repository GET request. {response?.StatusCode}");
+                        _logger.LogError($"Unsuccessful factset time bar api repository GET request. {response?.StatusCode}");
 
                         return new FactsetSecurityResponseDto();
                     }
@@ -126,19 +126,19 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
 
                     if (deserialisedResponse == null)
                     {
-                        _logger.LogError($"FactsetDailyBarApiRepository was unable to deserialise the response");
+                        _logger.LogError($"was unable to deserialise the response");
                         return new FactsetSecurityResponseDto();
                     }
 
-                    _logger.LogInformation($"FactsetDailyBarApiRepository returning deserialised GET response");
+                    _logger.LogInformation($"returning deserialised GET response");
                     return deserialisedResponse;
                 }
             }
             catch (Exception e)
             {
-                _logger?.LogError($"FactsetDailyBarApiRepository Get encountered an exception: " + e.Message + " " + e.InnerException?.Message);
+                _logger?.LogError($"Get encountered an exception: " + e.Message + " " + e.InnerException?.Message);
             }
-            _logger?.LogInformation($"FactsetDailyBarApiRepository Get received a response from the client. Returning result.");
+            _logger?.LogInformation($"Get received a response from the client. Returning result.");
 
             return new FactsetSecurityResponseDto();
         }

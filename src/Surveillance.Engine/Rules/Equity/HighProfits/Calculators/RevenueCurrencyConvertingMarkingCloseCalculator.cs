@@ -26,7 +26,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             string mic,
             InstrumentIdentifiers identifiers,
             DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx)
+            ISystemProcessOperationRunRuleContext ctx,
+            DataSource dataSource)
         {
             var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
@@ -41,7 +42,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 identifiers,
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
                 tradingHours.ClosingInUtcForDay(universeDateTime),
-                ctx?.Id());
+                ctx?.Id(),
+                dataSource);
         }
     }
 }

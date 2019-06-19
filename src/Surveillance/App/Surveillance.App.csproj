@@ -73,7 +73,10 @@
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Migrations\35 - Add schedule task table.sql">
+    <None Update="Migrations\37 - Update data request tbl.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\36 - Add schedule task table.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\34 - Modify bigint volume cols to decimal.sql">

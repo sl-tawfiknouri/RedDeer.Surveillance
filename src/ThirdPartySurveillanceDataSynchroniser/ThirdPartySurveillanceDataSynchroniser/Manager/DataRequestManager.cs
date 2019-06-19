@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Interfaces;
@@ -7,6 +8,7 @@ using DataSynchroniser.Api.Markit.Interfaces;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Queues.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 
@@ -50,14 +52,23 @@ namespace DataSynchroniser.Manager
             _logger.LogInformation($"{nameof(DataRequestManager)} handling request with id {systemProcessOperationId}");
 
             var dataRequests = await _dataRequestRepository.DataRequestsForSystemOperation(systemProcessOperationId);
+            dataRequests = dataRequests ?? new List<MarketDataRequest>();
+            _logger.LogInformation($"handling request with id {systemProcessOperationId} had {dataRequests.Count} data requests to process across all data sources");
 
             try
             {
                 // Equity handling
-                await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
-                await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+                var factsetData = dataRequests.Where(_ => _.DataSource == DataSource.Factset || _.DataSource == DataSource.All).ToList();
+                _logger.LogInformation($"handling request with id {systemProcessOperationId} had {factsetData.Count} factset data requests to process");
+                await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, factsetData);
+
+                var bmllData = dataRequests.Where(_ => _.DataSource == DataSource.Bmll || _.DataSource == DataSource.All).ToList();
+                _logger.LogInformation($"handling request with id {systemProcessOperationId} had {bmllData.Count} bmll data requests to process");
+                await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, bmllData);
 
                 // Fixed income handling
+                var markitData = dataRequests.Where(_ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.All).ToList();
+                _logger.LogInformation($"handling request with id {systemProcessOperationId} had {markitData.Count} markit data requests to process");
                 await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
             }
             catch

@@ -60,16 +60,25 @@ namespace DataSynchroniser.Manager
                 // Equity handling
                 var factsetData = dataRequests.Where(_ => _.DataSource == DataSource.Factset || _.DataSource == DataSource.All || _.DataSource == DataSource.AllInterday).ToList();
                 _logger.LogInformation($"handling request with id {systemProcessOperationId} had {factsetData.Count} factset data requests to process");
-                await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, factsetData);
+                if (factsetData.Any())
+                {
+                    await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, factsetData);
+                }
 
                 var bmllData = dataRequests.Where(_ => _.DataSource == DataSource.Bmll || _.DataSource == DataSource.All || _.DataSource == DataSource.AllIntraday).ToList();
                 _logger.LogInformation($"handling request with id {systemProcessOperationId} had {bmllData.Count} bmll data requests to process");
-                await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, bmllData);
+                if (bmllData.Any())
+                {
+                    await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, bmllData);
+                }
 
                 // Fixed income handling
                 var markitData = dataRequests.Where(_ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.All || _.DataSource == DataSource.AllInterday || _.DataSource == DataSource.AllIntraday).ToList();
                 _logger.LogInformation($"handling request with id {systemProcessOperationId} had {markitData.Count} markit data requests to process");
-                await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+                if (markitData.Any())
+                {
+                    await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+                }
             }
             catch
             {

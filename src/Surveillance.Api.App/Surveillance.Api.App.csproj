@@ -34,6 +34,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.20">
       <PrivateAssets>all</PrivateAssets>
@@ -83,7 +84,6 @@
 
   <ItemGroup>
     <Folder Include="Types\Engine\" />
-    <Folder Include="Types\Trading\" />
     <Folder Include="Types\Rules\" />
     <Folder Include="Types\Organisation\" />
   </ItemGroup>

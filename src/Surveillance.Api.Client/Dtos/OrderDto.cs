@@ -1,5 +1,6 @@
 ﻿using RedDeer.Surveillance.Api.Client.Enums;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace RedDeer.Surveillance.Api.Client.Dtos
@@ -31,6 +32,8 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
         public TraderDto Trader { get; set; }
         public MarketDto Market { get; set; }
         public FinancialInstrumentDto FinancialInstrument { get; set; }
+
+        public List<OrderAllocationDto> OrderAllocations { get; set; }
 
         public DateTime? OptionExpirationDate => string.IsNullOrEmpty(OptionExpiration) ? (DateTime?)null : DateTime.Parse(OptionExpiration, CultureInfo.GetCultureInfo("en-GB"));
     }

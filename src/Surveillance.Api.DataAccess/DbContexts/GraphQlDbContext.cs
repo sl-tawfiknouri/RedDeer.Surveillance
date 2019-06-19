@@ -20,10 +20,10 @@ namespace Surveillance.Api.DataAccess.DbContexts
         public IQueryable<IOrder> Orders => _orders;
 
         protected virtual DbSet<OrdersAllocation> _ordersAllocation { get; set; }
-        public IQueryable<IRuleBreachOrder> RuleBreachOrders => _ruleBreachOrders;
+        public IQueryable<IOrdersAllocation> OrdersAllocation => _ordersAllocation;
 
         protected virtual DbSet<RuleBreachOrder> _ruleBreachOrders { get; set; }
-        public IQueryable<IOrdersAllocation> OrdersAllocation => _ordersAllocation;
+        public IQueryable<IRuleBreachOrder> RuleBreachOrders => _ruleBreachOrders;
 
         protected virtual DbSet<RuleBreach> _ruleBreach { get; set; }
         public IQueryable<IRuleBreach> RuleBreach => _ruleBreach;

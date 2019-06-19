@@ -5,7 +5,6 @@ using RedDeer.Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -77,6 +76,47 @@ namespace Surveillance.Api.Tests.Tests
                 IssuerIdentifier = "issuer identifier",
                 ReddeerId = "reddeer id"
             });
+
+            var expectedOrderAllocations = new List<OrdersAllocation>()
+            {
+                new OrdersAllocation
+                {
+                    Id = 1,
+                    OrderId = "order id",
+                    Fund = "fund 1", // Cannot return null for non-null type. Field: fund, Type: String!.
+                    Strategy = "strategy 1",
+                    Live = true,
+                    AutoScheduled = true,
+                    ClientAccountId = "client account id 1",
+                    CreatedDate = DateTime.UtcNow,
+                    OrderFilledVolume = 21213
+                }
+            };
+
+            var nonLiveOrderAllocations = new OrdersAllocation
+            {
+                Id = 2,
+                OrderId = "order id 2",
+                Fund = "fund 1",
+                Strategy = "strategy 1",
+                Live = false,
+            };
+
+            var nonRelatedOrderAllocations = new OrdersAllocation
+            {
+                Id = 2,
+                OrderId = "non related order id 2",
+                Fund = "fund 1",
+                Strategy = "strategy 1",
+                Live = true,
+            };
+
+            var allOrderAllocations = new List<OrdersAllocation>();
+            allOrderAllocations.AddRange(expectedOrderAllocations);
+            allOrderAllocations.Add(nonLiveOrderAllocations);
+
+            await _dbContext.DbOrderAllocations.AddRangeAsync(expectedOrderAllocations);
+
             await _dbContext.SaveChangesAsync();
 
             var query = new OrderQuery();
@@ -134,7 +174,18 @@ namespace Surveillance.Api.Tests.Tests
                             .FieldSecurityName()
                             .FieldCfi()
                             .FieldIssuerIdentifier()
-                            .FieldReddeerId();
+                            .FieldReddeerId()
+                            .Parent<OrderNode>()
+                        .FieldOrderAllocations()
+                            .FieldId()
+                            .FieldOrderId()
+                            .FieldFund()
+                            .FieldStrategy()
+                            .FieldClientAccountId()
+                            .FieldOrderFilledVolume()
+                            .FieldLive()
+                            .FieldAutoScheduled()
+                            .FieldCreatedDate();
         
             // act  
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -193,6 +244,26 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(instrument.Cfi, Is.EqualTo("cfi value"));
             Assert.That(instrument.IssuerIdentifier, Is.EqualTo("issuer identifier"));
             Assert.That(instrument.ReddeerId, Is.EqualTo("reddeer id"));
+
+            var orderAllocations = order.OrderAllocations;
+
+            Assert.That(orderAllocations, Is.Not.Null);
+            Assert.That(orderAllocations.Count, Is.EqualTo(expectedOrderAllocations.Count));
+
+            for (int i = 0; i < expectedOrderAllocations.Count; i++)
+            {
+                var actual = orderAllocations[i];
+                var expected = expectedOrderAllocations[i];
+
+                Assert.That(actual.Id, Is.EqualTo(expected.Id));
+                Assert.That(actual.OrderId, Is.EqualTo(expected.OrderId));
+                Assert.That(actual.Fund, Is.EqualTo(expected.Fund));
+                Assert.That(actual.Strategy, Is.EqualTo(expected.Strategy));
+                Assert.That(actual.ClientAccountId, Is.EqualTo(expected.ClientAccountId));
+                Assert.That(actual.OrderFilledVolume, Is.EqualTo(expected.OrderFilledVolume));
+                Assert.That(actual.Autoscheduled, Is.EqualTo(expected.AutoScheduled));
+                Assert.That(actual.CreatedDate, Is.EqualTo(expected.CreatedDate));
+            }
         }
 
         [Test]

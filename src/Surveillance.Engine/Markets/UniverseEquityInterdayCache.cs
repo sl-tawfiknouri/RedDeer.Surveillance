@@ -154,7 +154,8 @@ namespace Surveillance.Engine.Rules.Markets
                         i.Start,
                         i.End,
                         request.SystemProcessOperationRuleRunId,
-                        request.IsCompleted))
+                        request.IsCompleted,
+                        DataSource.AllInterday))
                 .ToList();
 
             var responseList = new List<MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>>();

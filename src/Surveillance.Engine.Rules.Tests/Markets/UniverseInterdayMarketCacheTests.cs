@@ -72,7 +72,8 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                 DateTime.UtcNow, 
                 DateTime.UtcNow.AddDays(1),
                 "1",
-                false);
+                false,
+                DataSource.AllInterday);
 
             _mdr2 = new MarketDataRequest(
                 "2",
@@ -82,7 +83,8 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                 DateTime.UtcNow.AddDays(-5),
                 DateTime.UtcNow.AddDays(-4),
                 "1",
-                false);
+                false,
+                DataSource.AllInterday);
 
             _interdayTimeBarCollectionNasdaq = new EquityInterDayTimeBarCollection(
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE), 

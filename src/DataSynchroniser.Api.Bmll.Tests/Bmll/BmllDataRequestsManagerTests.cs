@@ -90,7 +90,8 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
                     null),
                 DateTime.UtcNow, 
                 DateTime.UtcNow.AddMinutes(1),
-                "test-process");
+                "test-process",
+                DataSource.All);
         }
     }
 }

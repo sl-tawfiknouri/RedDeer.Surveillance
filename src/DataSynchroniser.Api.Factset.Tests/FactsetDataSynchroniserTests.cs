@@ -84,7 +84,7 @@ namespace DataSynchroniser.Api.Factset.Tests
 
         private MarketDataRequest BuildMarketDataRequest(string cfi)
         {
-            return new MarketDataRequest("a", "XLON", cfi, InstrumentIdentifiers.Null(), null, null, "1", true);
+            return new MarketDataRequest("a", "XLON", cfi, InstrumentIdentifiers.Null(), null, null, "1", true, DataSource.Factset);
         }
     }
 }

@@ -38,13 +38,12 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
 
         public void OnNext(IUniverseEvent value)
         {
-            if (value.StateChange != UniverseStateEvent.Eschaton)
-            {
-                return;
-            }
+        }
 
+        public void DispatchIfSubmitRequest()
+        {
             _logger?.LogInformation($"reached eschaton in its OnNext stream subscription and has a submit requests value of {SubmitRequests}");
-            
+
             if (SubmitRequests)
             {
                 var task = _queueDataSynchroniserRequestPublisher.Send(_operationContext.Id.ToString());

@@ -9,10 +9,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
             TimeSpan? futureWindowSize = null)
         {
             BackwardWindowSize = backwardWindowSize;
-            FutureWindowSize = futureWindowSize;
+            FutureWindowSize = futureWindowSize ?? TimeSpan.Zero;
         }
 
         public TimeSpan BackwardWindowSize { get; }
-        public TimeSpan? FutureWindowSize { get; }
+        public TimeSpan FutureWindowSize { get; }
     }
 }

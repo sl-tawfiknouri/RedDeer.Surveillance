@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             AmountOfPositionInTotal = amountOfPositionInTotal;
             ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
             PercentageTradeCountCancelled = percentageTradeCountCancelled;
-            Window = parameters.WindowSize;
+            Window = parameters.Windows.BackwardWindowSize;
             RuleParameterId = Parameters?.Id ?? string.Empty;
             SystemOperationId = ctx.Id.ToString();
             CorrelationId = correlationId;

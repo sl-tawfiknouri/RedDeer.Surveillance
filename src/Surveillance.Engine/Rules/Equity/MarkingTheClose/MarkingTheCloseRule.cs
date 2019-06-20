@@ -46,8 +46,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.Window ?? TimeSpan.FromMinutes(30),
-                TimeSpan.Zero,
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.FromMinutes(30),
                 Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
@@ -132,7 +132,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 OrganisationFactorValue,
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
-                _equitiesParameters.Window,
+                _equitiesParameters.Windows.BackwardWindowSize,
                 marketSecurities.FirstOrDefault()?.Instrument,
                 _latestMarketClosure,
                 position,

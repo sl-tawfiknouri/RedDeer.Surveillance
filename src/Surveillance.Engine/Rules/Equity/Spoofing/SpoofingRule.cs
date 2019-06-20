@@ -45,8 +45,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                  equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                  TimeSpan.Zero,
+                  equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                  equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                   Domain.Surveillance.Scheduling.Rules.Spoofing,
                   EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",
@@ -191,7 +191,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _equitiesParameters.WindowSize,
+                    _equitiesParameters.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
                     tradingPosition,
                     opposingPosition,
                     lastTrade.Instrument, 

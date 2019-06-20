@@ -53,8 +53,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
-                TimeSpan.Zero,
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
@@ -120,7 +120,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
-                    _equitiesParameters.WindowSize,
+                    _equitiesParameters.Windows.BackwardWindowSize,
                     OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),

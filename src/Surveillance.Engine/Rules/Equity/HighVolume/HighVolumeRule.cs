@@ -47,8 +47,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
-                TimeSpan.Zero,
+                equitiesParameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
@@ -111,7 +111,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _equitiesParameters.WindowSize, 
+                    _equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                     tradePosition,
                     mostRecentTrade?.Instrument,
                     _equitiesParameters,

@@ -1,9 +1,8 @@
 ﻿using System;
-using Surveillance.Api.DataAccess.Abstractions.Entities;
 
-namespace Surveillance.Api.DataAccess.Entities
+namespace RedDeer.Surveillance.Api.Client.Dtos
 {
-    public class OrdersAllocation : IOrdersAllocation
+    public class OrderAllocationDto
     {
         public int Id { get; set; }
         public string OrderId { get; set; }
@@ -13,6 +12,6 @@ namespace Surveillance.Api.DataAccess.Entities
         public long OrderFilledVolume { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool Live { get; set; }
-        public bool AutoScheduled { get; set; }
+        public bool Autoscheduled { get; set; }
     }
 }

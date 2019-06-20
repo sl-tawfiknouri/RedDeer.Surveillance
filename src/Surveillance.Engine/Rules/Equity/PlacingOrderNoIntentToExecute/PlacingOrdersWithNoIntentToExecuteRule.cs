@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -143,7 +144,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             var ruleBreaches = 
                 ordersToCheck
                     .Select(_ => ReferenceOrderSigma(_, sd, mean))
-                    .Where(_ => _.Item1 > 0 && _.Item1 > _parameters.Sigma) // filter out failures on sigma
+                    .Where(_ => _.Item1 > 0 && _.Item1 > _parameters.Sigma)
+                    .Where(_ => CheckIfOrderWouldNotOfExecuted(_, dataResponse.Response))
                     .ToList();
 
             if (!ruleBreaches.Any())
@@ -156,6 +158,56 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             var breach = new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(_parameters.WindowSize, position, benchmarkOrder.Instrument, OrganisationFactorValue, mean, sd, poe, _parameters, _ruleCtx);
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
+        }
+
+        private bool CheckIfOrderWouldNotOfExecuted(
+            Tuple<decimal, Order> order,
+            List<Domain.Core.Markets.Timebars.EquityInstrumentIntraDayTimeBar> timeBars)
+        {
+            if (order?.Item2 == null)
+            {
+                return true;
+            }
+
+            if (timeBars == null
+                || !timeBars.Any())
+            {
+                return true;
+            }
+
+            var init = order.Item2.PlacedDate;
+            var end = order.Item2.CancelledDate ?? order.Item2.RejectedDate;
+            var tbars = new List<Domain.Core.Markets.Timebars.EquityInstrumentIntraDayTimeBar>(timeBars);
+
+            if (init == null)
+            {
+                return true;
+            }
+
+            if (end != null)
+            {
+                tbars = tbars.Where(_ => _.TimeStamp <= end).ToList();
+            }
+
+            if (!tbars.Any())
+            {
+                return true;
+            }
+
+            if (order.Item2.OrderDirection == OrderDirections.BUY
+                || order.Item2.OrderDirection == OrderDirections.COVER)
+            {
+                var bestBuyPointDuringLiveDay = tbars.Min(_ => _.SpreadTimeBar.Price.Value);
+                return bestBuyPointDuringLiveDay <= order.Item2.OrderLimitPrice?.Value;
+            }
+            else if (order.Item2.OrderDirection == OrderDirections.SELL
+                  || order.Item2.OrderDirection == OrderDirections.SHORT)
+            {
+                var bestSellPointDuringLiveDay = tbars.Max(_ => _.SpreadTimeBar.Price.Value);
+                return bestSellPointDuringLiveDay >= order.Item2.OrderLimitPrice?.Value;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(order.Item2.OrderDirection));
         }
 
         private Tuple<decimal, Order> ReferenceOrderSigma(Order order, decimal sd, decimal mean)

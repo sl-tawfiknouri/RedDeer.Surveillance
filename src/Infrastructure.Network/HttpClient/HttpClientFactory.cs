@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Network.HttpClient
 {
@@ -39,10 +40,11 @@ namespace Infrastructure.Network.HttpClient
                 BaseAddress = new Uri(clientServiceUrl)
             };
 
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue(ApiAuthHeader, apiAccessToken);
-
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(ApiAuthHeader, apiAccessToken);
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var httpClientData = JsonConvert.SerializeObject(httpClient);
+            _logger.LogInformation($"http client created with details {httpClientData}");
 
             return httpClient;
         }
@@ -70,6 +72,9 @@ namespace Infrastructure.Network.HttpClient
             };
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var httpClientData = JsonConvert.SerializeObject(httpClient);
+            _logger.LogInformation($"http client created with details {httpClientData}");
 
             return httpClient;
         }

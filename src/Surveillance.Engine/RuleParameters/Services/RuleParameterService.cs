@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
@@ -33,6 +34,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 return await _ruleParameterApiRepository.Get();
             }
 
+            var executionJson = JsonConvert.SerializeObject(execution);
+            _logger.LogInformation($"about to select rule ids from {executionJson}");
             var ids = execution.Rules.SelectMany(ru => ru.Ids).ToList();
 
             var ruleDtos = new List<RuleParameterDto>();

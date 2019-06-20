@@ -81,6 +81,7 @@ namespace DataSynchroniser.App
         private static Config BuildConfiguration()
         {
             var configurationBuilder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 

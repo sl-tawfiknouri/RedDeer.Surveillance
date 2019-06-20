@@ -35,6 +35,9 @@ namespace Surveillance.Api.App
             string url = null;
             string dynamoDbConfigJson = null;
 
+            var builder = new ConfigurationBuilder();
+            builder.AddCommandLine(startupArguments);
+
             if (!StartupConfig.IsTest)
             {
                 // No need to spend time checking dynamo db if in test mode
@@ -42,20 +45,17 @@ namespace Surveillance.Api.App
                 
                 if (!string.IsNullOrWhiteSpace(dynamoDbConfigJson))
                 {
-                    var builder = new ConfigurationBuilder();
-
                     var dynamoAppSettingsFileName = "appsettings.dynamodb.json";
                     var provider = new InMemoryFileProvider();
                     provider.Directory.AddFile("/", new StringFileInfo(dynamoDbConfigJson, dynamoAppSettingsFileName));
                     provider.EnsureFile($"/{dynamoAppSettingsFileName}");
 
                     builder.AddJsonFile(provider, $"/{dynamoAppSettingsFileName}", false, false);
-
-                    var config = builder.Build();
-
-                    url = config.GetValue<string>("SurveillanceApiUrl");
                 }
             }
+
+            var config = builder.Build();
+            url = config.GetValue<string>("SurveillanceApiUrl");
 
             if (string.IsNullOrWhiteSpace(url))
             {

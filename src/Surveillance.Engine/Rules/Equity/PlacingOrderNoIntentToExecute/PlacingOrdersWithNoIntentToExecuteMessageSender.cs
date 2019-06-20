@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
@@ -44,11 +45,40 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
         private string BuildDescription(IPlacingOrdersWithNoIntentToExecuteRuleBreach ruleBreach)
         {
-            var probabilityOfExecution = ruleBreach?.ProbabilityForOrders?.Any() ?? false ? ruleBreach?.ProbabilityForOrders?.Aggregate(string.Empty, (a, b) => $"{a}, {b}") : string.Empty;
+            var sdBreakdown = 
+                ruleBreach
+                    ?.ProbabilityForOrders
+                    ?.Select(_ => _.Sd)
+                    .GroupBy(_ => (int) _)
+                    .Select(_ => new StandardDeviationCount(_.Count(), _.Key))
+                    .ToList()
+                ?? new List<StandardDeviationCount>();
 
-            var description = $"Placing Orders With No Intent To Execute Rule Breach. Traded {ruleBreach.Security?.Identifiers} with {ruleBreach.Trades.Get().Count} trades separately over configured sigma {ruleBreach.Parameters.Sigma} probability of reaching their limit price. The standard deviation for the trading day was {ruleBreach.StandardDeviationPrice} and the mean price was {ruleBreach.MeanPrice}. {probabilityOfExecution}";
+            var sdBreakdownText =
+                !sdBreakdown.Any()
+                    ? string.Empty 
+                    : sdBreakdown.Aggregate(string.Empty, (a,b) => $"{a} SD-{b.StandardDeviation} Trades-{b.Count}");
+
+            var fullSdText = 
+                !sdBreakdown.Any() 
+                    ? string.Empty 
+                    : $"The distribution of trades by standard deviation from the mean was {sdBreakdownText}.";
+
+            var description = $"Placing Orders With No Intent To Execute Rule Breach. Traded {ruleBreach.Trades.Get().Count} trades separately over configured sigma {ruleBreach.Parameters.Sigma} probability of reaching their limit price. The standard deviation for the trading day was {ruleBreach.StandardDeviationPrice} and the mean price was {ruleBreach.MeanPrice}. {fullSdText}";
             
             return description;
+        }
+
+        private class StandardDeviationCount
+        {
+            public StandardDeviationCount(int count, decimal standardDeviation)
+            {
+                Count = count;
+                StandardDeviation = standardDeviation;
+            }
+
+            public int Count { get; }
+            public decimal StandardDeviation { get; }
         }
     }
 }

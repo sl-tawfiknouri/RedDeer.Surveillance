@@ -319,6 +319,35 @@ namespace Surveillance.Api.DataAccess.Repositories
             return new Fund(fund);
         }
 
+        public async Task<IEnumerable<IOrdersAllocation>> QueryAllocations(Func<IQueryable<IOrdersAllocation>, IQueryable<IOrdersAllocation>> query)
+        {
+            using (var dbContext = _factory.Build())
+            {
+                var orderAllocations = await query(dbContext.OrdersAllocation)
+                                        .Where(a => a.Live)
+                                        .AsNoTracking()
+                                        .ToListAsync();
+
+                var projectedOrderAllocations =
+                    orderAllocations
+                        .Select(s => new OrdersAllocation
+                        {
+                            Id = s.Id,
+                            OrderId = s.OrderId,
+                            Fund = s.Fund,
+                            Strategy = s.Strategy,
+                            ClientAccountId = s.ClientAccountId,
+                            OrderFilledVolume = s.OrderFilledVolume,
+                            Live = s.Live,
+                            AutoScheduled = s.AutoScheduled,
+                            CreatedDate = s.CreatedDate
+                        })
+                        .ToList();
+
+                return projectedOrderAllocations;
+            }
+        }
+
         public async Task<IEnumerable<IStrategy>> QueryStrategy(Func<IQueryable<IOrdersAllocation>, IQueryable<IOrdersAllocation>> query)
         {
             using (var dbContext = _factory.Build())

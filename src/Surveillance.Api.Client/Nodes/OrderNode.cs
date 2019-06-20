@@ -34,5 +34,6 @@ namespace RedDeer.Surveillance.Api.Client.Nodes
         public TraderNode FieldTrader() => AddChild("trader", new TraderNode(this));
         public MarketNode FieldMarket() => AddChild("market", new MarketNode(this));
         public FinancialInstrumentNode FieldFinancialInstrument() => AddChild("financialInstrument", new FinancialInstrumentNode(this));
+        public OrderAllocationNode FieldOrderAllocations() => AddChild("orderAllocations", new OrderAllocationNode(this));
     }
 }

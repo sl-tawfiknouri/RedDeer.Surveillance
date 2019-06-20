@@ -12,8 +12,8 @@ Feature: HighProfit Absolute Non Sensitive Currency Parameters
 
 Background:
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
-	| 1           |                      | 100000             | GBX                | true                             | true                            | false                          |
+	| WindowHours | FutureHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 1           |				|                      | 100000             | GBX                | true                             | true                            | false                          |
 
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

@@ -12,8 +12,8 @@ Feature: HighProfit Percentage Non Sensitive Parameters
 
 Background:
 	Given I have the high profit rule parameter values
-	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
-	| 1           | 0.1                  |                    |                    |                                  | true                            | false                          |
+	| WindowHours | FutureHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions | PerformHighProfitWindowAnalysis | PerformHighProfitDailyAnalysis |
+	| 1           |				| 0.1                  |                    |                    |                                  | true                            | false                          |
 
 
 Scenario: Empty Universe yields no alerts

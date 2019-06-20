@@ -27,6 +27,13 @@ namespace Surveillance.Engine.Rules.Rules
 
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
+
+        /// <summary>
+        /// These are paid up with the delayed trading histories to create the illusion of future data analysis
+        /// whilst maintaining a singular set of abstractions around the backward aspect of analysis
+        /// </summary>
+        protected IUniverseEquityIntradayCache FutureUniverseEquityIntradayCache;
+
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingFillsHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
@@ -65,6 +72,10 @@ namespace Surveillance.Engine.Rules.Rules
 
             UniverseEquityIntradayCache =
                 factory?.BuildIntraday(backwardWindowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(factory));
+
+            FutureUniverseEquityIntradayCache =
+                factory?.BuildIntraday(forwardWindowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
             UniverseEquityInterdayCache =
@@ -123,6 +134,7 @@ namespace Surveillance.Engine.Rules.Rules
                         break;
                     case UniverseStateEvent.EquityIntradayTick:
                         EquityIntraDay(value);
+                        FutureEquityIntraDay(value);
                         break;
                     case UniverseStateEvent.EquityInterDayTick:
                         EquityInterDay(value);
@@ -186,6 +198,19 @@ namespace Surveillance.Engine.Rules.Rules
             UniverseEquityIntradayCache.Add(value);
         }
 
+        private void FutureEquityIntraDay(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is EquityIntraDayTimeBarCollection value))
+            {
+                return;
+            }
+
+            _logger?.LogInformation($"Equity intra day event (future) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+
+            UniverseDateTime = universeEvent.EventTime;
+            FutureUniverseEquityIntradayCache.Add(value);
+        }
+
         private void EquityInterDay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is EquityInterDayTimeBarCollection value))
@@ -198,6 +223,7 @@ namespace Surveillance.Engine.Rules.Rules
             UniverseDateTime = universeEvent.EventTime;
             UniverseEquityInterdayCache.Add(value);
         }
+
 
         private void TradeSubmitted(IUniverseEvent universeEvent)
         {

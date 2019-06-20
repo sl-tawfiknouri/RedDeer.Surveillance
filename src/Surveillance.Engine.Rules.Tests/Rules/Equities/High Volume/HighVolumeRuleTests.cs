@@ -119,7 +119,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         public void DailyParameter_NoThresholdBreach_DoesNotRaiseAlert()
         {
             A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
-            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.Windows.BackwardWindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();
@@ -169,7 +169,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         public void DailyParameter_ThresholdBreach_RaisesAlert()
         {
             A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
-            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.Windows.BackwardWindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();
@@ -216,7 +216,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         public void WindowParameter_ThresholdBreach_RaisesAlert()
         {
             A.CallTo(() => _equitiesParameters.HighVolumePercentageWindow).Returns(0.1m);
-            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.Windows.BackwardWindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();

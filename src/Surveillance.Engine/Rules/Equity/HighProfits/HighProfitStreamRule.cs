@@ -99,6 +99,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             EvaluateHighProfits(history);
         }
 
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            EvaluateHighProfits(history);
+        }
+
         protected void EvaluateHighProfits(ITradingHistoryStack history)
         {
             if (!RunRuleGuard(history))
@@ -271,11 +276,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }

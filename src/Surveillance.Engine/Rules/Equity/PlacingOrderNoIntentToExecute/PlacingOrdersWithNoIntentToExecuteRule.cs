@@ -122,7 +122,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 benchmarkOrder.Instrument.Identifiers,
                 UniverseDateTime.Subtract(openingHours), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
-                _ruleCtx?.Id());
+                _ruleCtx?.Id(),
+                DataSource.AllIntraday);
 
             var dataResponse = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
 

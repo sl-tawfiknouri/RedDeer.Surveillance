@@ -54,7 +54,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         {
             var requestsManager = BuildDataRequestsManager();
 
-            Assert.DoesNotThrowAsync(async () => await requestsManager.Submit(null));
+            Assert.DoesNotThrowAsync(async () => await requestsManager.Submit(null, "systemProcessOperationId"));
 
             A
                 .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
@@ -67,7 +67,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
             var requestsManager = BuildDataRequestsManager();
             var factsetRequests = new List<MarketDataRequest> {BuildMarketDataRequests(true)};
 
-            await requestsManager.Submit(factsetRequests);
+            await requestsManager.Submit(factsetRequests, "systemProcessOperationId");
 
             A
                 .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
@@ -80,7 +80,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
             var requestsManager = BuildDataRequestsManager();
             var factsetRequests = new List<MarketDataRequest> { BuildMarketDataRequests(false) };
 
-            await requestsManager.Submit(factsetRequests);
+            await requestsManager.Submit(factsetRequests, "systemProcessOperationId");
 
             A
                 .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
@@ -93,7 +93,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
 
         private MarketDataRequest BuildMarketDataRequests(bool completed)
         {
-            return new MarketDataRequest("a", "XLON", "e", InstrumentIdentifiers.Null(), null, null, "1", completed);
+            return new MarketDataRequest("a", "XLON", "e", InstrumentIdentifiers.Null(), null, null, "1", completed, DataSource.Factset);
         }
 
         private FactsetDataRequestsManager BuildDataRequestsManager()

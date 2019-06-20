@@ -24,7 +24,8 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
                     },
                     new DateTime(2018, 01, 01),
                     new DateTime(2018, 01, 06),
-                    "1"),
+                    "1",
+                    DataSource.All),
                 new MarketDataRequest(
                     "XLON",
                     "ENTSPB",
@@ -34,7 +35,8 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
                     },
                     new DateTime(2018, 01, 01),
                     new DateTime(2018, 01, 06),
-                    "1"),
+                    "1",
+                    DataSource.All),
             };
 
             var keyProjector = new MarketDataRequestToMinuteBarRequestKeyDtoProjector();

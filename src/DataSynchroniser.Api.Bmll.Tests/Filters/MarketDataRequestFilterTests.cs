@@ -23,7 +23,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         {
             var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
-            var emptyCfiRequest = new MarketDataRequest("id", "XLON", null, instrument, null, null, null, false);
+            var emptyCfiRequest = new MarketDataRequest("id", "XLON", null, instrument, null, null, null, false, DataSource.All);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 
@@ -47,7 +47,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         {
             var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
-            var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
+            var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false, DataSource.All);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 
@@ -69,7 +69,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         {
             var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
-            var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
+            var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false, DataSource.All);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 

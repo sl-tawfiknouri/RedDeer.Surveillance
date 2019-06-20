@@ -18,5 +18,7 @@ namespace Surveillance.Engine.Rules.Markets
             var rawResponse = _cache.Get(request);
             return new InterdayMarketDataResponse(rawResponse);
         }
+
+        public DataSource DataSource { get; } = DataSource.AllInterday;
     }
 }

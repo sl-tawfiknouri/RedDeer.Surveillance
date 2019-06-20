@@ -1,7 +1,4 @@
 ﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-using RedDeer.Surveillance.Api.Client.Queries;
-using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +7,7 @@ namespace RedDeer.Surveillance.Api.Client
 {
     public class ApiClient
     {
-        private Request _request;
+        private readonly Request _request;
 
         public ApiClient(string url, string bearer, HttpMessageHandler httpMessageHandler = null)
         {

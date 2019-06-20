@@ -18,7 +18,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public string Id { get; }
-        public TimeSpan WindowSize { get; }
+        public TimeWindows Windows { get; }
         public decimal CancellationThreshold { get; }
         public decimal RelativeSizeMultipleForSpoofExceedingReal { get; }
         public RuleFilter Accounts { get; set; }

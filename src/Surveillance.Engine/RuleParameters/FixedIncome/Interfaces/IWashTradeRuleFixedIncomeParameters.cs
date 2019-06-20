@@ -5,6 +5,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces
 {
     public interface IWashTradeRuleFixedIncomeParameters : IFilterableRule, IOrganisationalFactorable, IWashTradeRuleParameters
     {
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
     }
 }

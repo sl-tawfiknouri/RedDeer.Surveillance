@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public string Id { get; }
 
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; }
 
         // Enabled analysis settings
         public bool PerformAveragePositionAnalysis { get; }

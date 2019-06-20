@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
@@ -31,7 +31,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         }
 
         public string Id { get; }
-        public TimeSpan WindowSize { get; }
+        public TimeWindows Windows { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }

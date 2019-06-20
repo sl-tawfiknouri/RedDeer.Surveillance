@@ -10,7 +10,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
     {
         public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
             bool performHighProfitWindowAnalysis,
             bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
@@ -21,8 +22,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-
-            WindowSize = windowSize;
+            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
@@ -42,7 +42,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
             bool performHighProfitWindowAnalysis,
             bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
@@ -58,8 +59,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-
-            WindowSize = windowSize;
+            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
@@ -78,9 +78,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public string Id { get; }
-
-        public TimeSpan WindowSize { get; }
-
+        public TimeWindows Windows { get; }
         public bool PerformHighProfitWindowAnalysis { get; }
 
         public bool PerformHighProfitDailyAnalysis { get; }

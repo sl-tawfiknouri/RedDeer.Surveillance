@@ -5,6 +5,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
     public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IWashTradeRuleParameters
     {
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
     }
 }

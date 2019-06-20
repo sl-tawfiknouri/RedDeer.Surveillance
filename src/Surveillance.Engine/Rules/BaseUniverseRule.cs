@@ -527,6 +527,38 @@ namespace Surveillance.Engine.Rules.Rules
             }
         }
 
+        protected void RunRuleForAllDelayedTradingHistoriesInMarket(MarketOpenClose closeOpen, DateTime? currentTimeInUniverse = null)
+        {
+            lock (_lock)
+            {
+                if (closeOpen == null)
+                {
+                    return;
+                }
+
+                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all delayed trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
+
+                var filteredTradingHistories =
+                    DelayedTradingHistory
+                        .Where(th =>
+                            string.Equals(
+                                th.Value?.Exchange()?.MarketIdentifierCode,
+                                closeOpen.MarketId,
+                                StringComparison.InvariantCultureIgnoreCase))
+                        .ToList();
+
+                foreach (var history in filteredTradingHistories)
+                {
+                    if (currentTimeInUniverse != null)
+                    {
+                        history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
+                    }
+
+                    RunPostOrderEventDelayed(history.Value);
+                }
+            }
+        }
+
         /// <summary>
         /// Run the rule with a trading history within the time window for that security.
         /// This is done on the basis of status changed on i.e. the last state and the time of

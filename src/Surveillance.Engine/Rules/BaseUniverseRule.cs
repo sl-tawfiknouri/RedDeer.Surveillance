@@ -37,6 +37,7 @@ namespace Surveillance.Engine.Rules.Rules
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
+        protected bool HasReachedFutureUniverseEpoch;
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
         protected readonly RuleRunMode RunMode;
 
@@ -151,6 +152,9 @@ namespace Surveillance.Engine.Rules.Rules
                         _logger?.LogWarning($"Universe rule {_name} received an unknown event");
                         RuleCtx.EventException($"Universe rule {_name} received an unknown event");
                         break;
+                    case UniverseStateEvent.EpochFutureUniverse:
+                        HasReachedFutureUniverseEpoch = true;
+                        break;
                 }
             }
         }
@@ -201,6 +205,9 @@ namespace Surveillance.Engine.Rules.Rules
             {
                 return;
             }
+
+            if (HasReachedFutureUniverseEpoch)
+                return;
 
             _logger?.LogTrace($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
 
@@ -278,6 +285,9 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
+            if (HasReachedFutureUniverseEpoch)
+                return;
+
             _logger?.LogTrace($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
@@ -337,6 +347,9 @@ namespace Surveillance.Engine.Rules.Rules
             {
                 return;
             }
+
+            if (HasReachedFutureUniverseEpoch)
+                return;
 
             if (value.FilledDate == null)
             {

@@ -362,6 +362,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected override void MarketClose(MarketOpenClose exchange)
         {
             Logger.LogInformation($"Trading closed for exchange {exchange.MarketId}. Running market closure virtual profits check.");
+
+            RunRuleForAllDelayedTradingHistoriesInMarket(exchange, UniverseDateTime);
         }
 
         protected override void EndOfUniverse()

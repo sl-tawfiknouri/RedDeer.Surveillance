@@ -142,7 +142,7 @@ Scenario: Cover just cover orders within the time window yields two alerts
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| Vodafone     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
 	When I run the high profit rule
-	Then I will have 3 high profit alerts
+	Then I will have 4 high profit alerts
 
 Scenario: Sell just sell orders within the time window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

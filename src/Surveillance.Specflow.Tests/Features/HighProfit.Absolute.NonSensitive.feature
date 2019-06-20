@@ -46,7 +46,7 @@ Scenario: Buy Sell orders next day within window yields two alerts
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
 	| Vodafone     | 1       | 01/02/2018 09:45:00 |            |             |              |               | 01/02/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders next day within window and with currency shift yields two alerts
 	Given I have the high profit rule parameter values
@@ -85,7 +85,7 @@ Scenario: Buy Sell orders just before market open within window yields two alert
 	| Vodafone     | 0       | 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
 	| Vodafone     | 1       | 01/01/2018 06:45:00 |            |             |              |               | 01/01/2018 06:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders just after market close within window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -93,7 +93,7 @@ Scenario: Buy Sell orders just after market close within window yields two alert
 	| Vodafone     | 0       | 01/01/2018 19:30:00 |            |             |              |               | 01/01/2018 19:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
 	| Vodafone     | 1       | 01/01/2018 19:45:00 |            |             |              |               | 01/01/2018 19:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders with losses within window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -109,7 +109,7 @@ Scenario: Buy Sell orders that are partially filled within window yields two ale
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000000       | 100000       |
 	| Vodafone     | 1       | 01/01/2018 09:45:00 |            |             |              |               | 01/01/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 1000000       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders that are not filled within window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -137,7 +137,7 @@ Scenario: Buy Sell orders different exchange within window yields two alerts
 	| Nvidia     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 100              | 100000	       | 100000       |
 	| Nvidia     | 1       | 01/01/2018 09:45:00 |            |             |              |               | 01/01/2018 09:45:00 | MARKET | SELL      | USD      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts	   
+	Then I will have 3 high profit alerts	   
 
 Scenario: Buy Sell orders at exact window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -145,7 +145,7 @@ Scenario: Buy Sell orders at exact window yields two alerts
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
 	| Vodafone     | 1       | 01/01/2018 10:30:00 |            |             |              |               | 01/01/2018 10:30:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders but outside of window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -213,7 +213,7 @@ Scenario: Buy Sell orders at exact threshold yields two alerts
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000     | 100000	    |
 	| Vodafone     | 1       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL      | GBX      |            | 101              | 100000     | 100000	    |
 	When I run the high profit rule
-	Then I will have 4 high profit alerts
+	Then I will have 3 high profit alerts
 
 Scenario: Buy Sell orders at just below threshold yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

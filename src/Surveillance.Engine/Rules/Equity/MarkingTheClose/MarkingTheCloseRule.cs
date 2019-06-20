@@ -145,12 +145,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             _alertStream.Add(alertEvent);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }

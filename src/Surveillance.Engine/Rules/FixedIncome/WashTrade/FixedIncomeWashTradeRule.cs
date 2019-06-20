@@ -258,7 +258,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             return liveTrades;
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             _logger.LogInformation($"RunInitialSubmissionRule called at {UniverseDateTime}");
 
@@ -273,6 +273,21 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
 
             _logger.LogInformation($"RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

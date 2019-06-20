@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -507,6 +507,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on fills in the layering rule
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

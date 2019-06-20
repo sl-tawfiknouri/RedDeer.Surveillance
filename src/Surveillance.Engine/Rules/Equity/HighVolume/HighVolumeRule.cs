@@ -345,11 +345,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         { }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         { }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
 
         protected override void Genesis()
         {

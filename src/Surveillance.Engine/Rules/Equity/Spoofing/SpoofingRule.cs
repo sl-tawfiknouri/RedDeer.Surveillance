@@ -72,7 +72,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             var activeTrades = history?.ActiveTradeHistory();
             var portfolio = _portfolioFactory.Build();
@@ -210,6 +210,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // spoofing rule does not monitor by filled orders
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

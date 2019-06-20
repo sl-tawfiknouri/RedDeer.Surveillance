@@ -187,6 +187,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _alertStream.Add(message);
         }
 
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         public decimal RampingPrevalence(List<IRampingStrategySummaryPanel> panels)
         {
             if (panels == null
@@ -291,7 +306,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             // we don't use post order event in ramping rule
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // we don't use post order event in ramping rule
         }

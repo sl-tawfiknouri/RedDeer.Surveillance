@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 var windowPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100);
                 var windowBreachPercentage = Math.Ceiling(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
                 
-                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by trading {windowBreachPercentage}% of window volume within the window of {ruleBreach.EquitiesParameters.WindowSize.TotalMinutes} minutes. {ruleBreach.TotalOrdersTradedInWindow} volume was ordered against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
+                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by trading {windowBreachPercentage}% of window volume within the window of {ruleBreach.EquitiesParameters.Windows.BackwardWindowSize.TotalMinutes} minutes. {ruleBreach.TotalOrdersTradedInWindow} volume was ordered against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
             }
 
             if (ruleBreach.MarketCapBreach.HasBreach)

@@ -31,8 +31,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                TimeSpan.Zero,
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighVolumeIssuance,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",

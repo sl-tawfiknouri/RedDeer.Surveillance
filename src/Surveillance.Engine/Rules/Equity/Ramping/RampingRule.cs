@@ -55,8 +55,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                rampingParameters?.WindowSize ?? TimeSpan.FromDays(7),
-                TimeSpan.Zero,
+                rampingParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(7),
+                rampingParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.Ramping,
                 EquityRuleRampingFactory.Version,
                 "Ramping Rule",

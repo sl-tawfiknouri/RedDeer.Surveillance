@@ -101,7 +101,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     new HighProfitsRuleEquitiesParameters(
                         dto.Id,
                         dto.WindowSize,
-                        dto.ForwardWindow,
+                        //dto.ForwardWindow,
+                        dto.WindowSize,
                         dto.PerformHighProfitWindowAnalysis,
                         dto.PerformHighProfitDailyAnalysis,
                         dto.HighProfitPercentageThreshold,

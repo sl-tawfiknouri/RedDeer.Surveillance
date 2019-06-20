@@ -48,5 +48,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
 
             return date;
         }
+
+        public TimeSpan TrailingTimeSpan(RuleParameterDto dto)
+        {
+            var forwardWindows = dto?.HighProfits?.Select(_ => _.ForwardWindow)?.ToList() ?? new List<TimeSpan>();
+
+            if (!forwardWindows.Any())
+            {
+                return TimeSpan.Zero;
+            }
+
+            return forwardWindows.Max(_ => _);
+        }
     }
 }

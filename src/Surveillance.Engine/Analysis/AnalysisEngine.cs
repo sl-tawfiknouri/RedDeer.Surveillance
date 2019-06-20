@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
         private readonly IRuleParameterService _ruleParameterService;
-        private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
+        private readonly IRuleParameterLeadingTimespanService _timespanService;
         private readonly ILazyTransientUniverseFactory _universeFactory;
         private readonly IRuleCancellation _ruleCancellation;
 
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
             _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
-            _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
+            _timespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
             _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
             _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
 
@@ -107,7 +107,8 @@ namespace Surveillance.Engine.Rules.Analysis
             _ruleCancellation.Subscribe(ruleCancellation);
 
             var ruleParameters = await _ruleParameterService.RuleParameters(execution);
-            execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
+            execution.LeadingTimespan = _timespanService.LeadingTimespan(ruleParameters);
+            execution.TrailingTimespan = _timespanService.TrailingTimeSpan(ruleParameters);
             var player = _universePlayerFactory.Build(cts.Token);
 
             _universeCompletionLogger.InitiateTimeLogger(execution);

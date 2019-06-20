@@ -96,15 +96,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            EvaluateHighProfits(history);
+            EvaluateHighProfits(history, UniverseEquityIntradayCache);
         }
 
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
-            EvaluateHighProfits(history);
+            EvaluateHighProfits(history, FutureUniverseEquityIntradayCache);
         }
 
-        protected void EvaluateHighProfits(ITradingHistoryStack history)
+        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
         {
             if (!RunRuleGuard(history))
             {
@@ -138,7 +138,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             var marketCache =
                 MarketClosureRule
                     ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)
-                    : _marketDataCacheFactory.IntradayStrategy(UniverseEquityIntradayCache);
+                    : _marketDataCacheFactory.IntradayStrategy(intradayCache);
 
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
             var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, marketCache);

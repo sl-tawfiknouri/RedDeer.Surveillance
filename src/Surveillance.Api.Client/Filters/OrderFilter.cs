@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using RedDeer.Surveillance.Api.Client.Enums;
 using RedDeer.Surveillance.Api.Client.Infrastructure;
 
@@ -11,7 +10,8 @@ namespace RedDeer.Surveillance.Api.Client.Filters
         public OrderFilter(T node) : base(node) { }
 
         public OrderFilter<T> ArgumentIds(List<int> ids) => AddArgument("ids", ids);
-        public OrderFilter<T> ArgumentTraderIds(List<string> traderIds) => AddArgument("traderIds", traderIds);
+        public OrderFilter<T> ArgumentTraderIds(HashSet<string> traderIds) => AddArgument("traderIds", traderIds);
+        public OrderFilter<T> ArgumentNotTraderIds(HashSet<string> notTraderIds) => AddArgument("notTraderIds", notTraderIds);
         public OrderFilter<T> ArgumentReddeerIds(List<string> reddeerIds) => AddArgument("reddeerIds", reddeerIds);
         public OrderFilter<T> ArgumentDirections(List<OrderDirection> directions) => AddArgument("directions", directions);
         public OrderFilter<T> ArgumentTypes(List<OrderType> types) => AddArgument("types", types);

@@ -1,9 +1,6 @@
 ﻿using GraphQL.Common.Request;
-using RedDeer.Surveillance.Api.Client.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

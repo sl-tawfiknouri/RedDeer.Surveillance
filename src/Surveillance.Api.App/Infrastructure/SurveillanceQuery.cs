@@ -15,8 +15,6 @@ using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
-using System;
-using System.Globalization;
 using Surveillance.Api.App.Types.Aggregation;
 using Surveillance.Api.DataAccess.Repositories;
 
@@ -184,6 +182,7 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<IntGraphType> { Name = "take" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "notTraderIds" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "statuses" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
@@ -197,7 +196,8 @@ namespace Surveillance.Api.App.Infrastructure
                     {
                         Ids = context.GetArgument<List<int>>("ids"),
                         Take = context.GetArgument<int?>("take"),
-                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
+                        NotTraderIds = context.GetArgument<List<string>>("notTraderIds")?.ToHashSet(),
                         ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
                         Statuses = context.GetArgument<List<int>>("statuses"),
                         Directions = context.GetArgument<List<int>>("directions"),
@@ -214,6 +214,7 @@ namespace Surveillance.Api.App.Infrastructure
                 arguments: new QueryArguments(
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "notTraderIds" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "reddeerIds" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "statuses" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
@@ -227,7 +228,8 @@ namespace Surveillance.Api.App.Infrastructure
                     var options = new OrderQueryOptions
                     {
                         Ids = context.GetArgument<List<int>>("ids"),
-                        TraderIds = context.GetArgument<List<string>>("traderIds"),
+                        TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
+                        NotTraderIds = context.GetArgument<List<string>>("notTraderIds")?.ToHashSet(),
                         ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
                         Statuses = context.GetArgument<List<int>>("statuses"),
                         Directions = context.GetArgument<List<int>>("directions"),

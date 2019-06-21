@@ -369,7 +369,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                    .ArgumentTraderIds(new HashSet<string> { "vic", "bob", "bob" })
                     .Node
                         .FieldId();
 
@@ -379,6 +379,53 @@ namespace Surveillance.Api.Tests.Tests
             // assert
             Assert.That(orders, Has.Count.EqualTo(2));
             Assert.That(orders[0].Id, Is.EqualTo(6));
+            Assert.That(orders[1].Id, Is.EqualTo(4));
+        }
+
+        [Test]
+        public async Task CanRequest_Orders_ByNotTraderIds()
+        {
+            // arrange
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 3,
+                PlacedDate = new DateTime(2019, 05, 10, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "bob"
+            });
+            _dbContext.DbOrders.Add(new Order 
+            {
+                Id = 4,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 04, DateTimeKind.Utc),
+                TraderId = "sam"
+            });
+            _dbContext.DbOrders.Add(new Order
+            {
+                Id = 5,
+                PlacedDate = new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "ben"
+            });
+            _dbContext.DbOrders.Add(new Order // not to be found
+            {
+                Id = 6,
+                PlacedDate = new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc),
+                TraderId = "vic"
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var query = new OrderQuery();
+            query
+                .Filter
+                    .ArgumentNotTraderIds(new HashSet<string> { "vic", "bob", "bob" })
+                    .Node
+                        .FieldId();
+
+            // act
+            var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
+
+            // assert
+            Assert.That(orders, Has.Count.EqualTo(2));
+            Assert.That(orders[0].Id, Is.EqualTo(5));
             Assert.That(orders[1].Id, Is.EqualTo(4));
         }
 
@@ -467,7 +514,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentTraderIds(new List<string>())
+                    .ArgumentTraderIds(new HashSet<string>())
                     .Node
                         .FieldId();
 

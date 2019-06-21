@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
         private readonly IRuleParameterService _ruleParameterService;
-        private readonly IRuleParameterLeadingTimespanService _timespanService;
+        private readonly IRuleParameterAdjustedTimespanService _timespanService;
         private readonly ILazyTransientUniverseFactory _universeFactory;
         private readonly IRuleCancellation _ruleCancellation;
 
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleAnalyticsAlertsRepository alertsRepository,
             IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
             IRuleParameterService ruleParameterService,
-            IRuleParameterLeadingTimespanService leadingTimespanService,
+            IRuleParameterAdjustedTimespanService adjustedTimespanService,
             ILazyTransientUniverseFactory universeFactory,
             IRuleCancellation ruleCancellation,
             ILogger<AnalysisEngine> logger)
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
             _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
-            _timespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
+            _timespanService = adjustedTimespanService ?? throw new ArgumentNullException(nameof(adjustedTimespanService));
             _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
             _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
 

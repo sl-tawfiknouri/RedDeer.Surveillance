@@ -7,7 +7,7 @@ using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Services
 {
-    public class RuleParameterLeadingTimespanService : IRuleParameterLeadingTimespanService
+    public class RuleParameterAdjustedTimespanService : IRuleParameterAdjustedTimespanService
     {
         public TimeSpan LeadingTimespan(RuleParameterDto dto)
         {

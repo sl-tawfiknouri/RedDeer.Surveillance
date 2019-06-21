@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
@@ -15,6 +13,33 @@ namespace RedDeer.Surveillance.Api.Client.Infrastructure
         public Filter(TNode node)
         {
             Node = node;
+        }
+
+        protected TSelf AddArgument<TValues>(string name, HashSet<TValues> value) 
+        {
+            if (value == null)
+            {
+                _arguments[name] = value;
+                return this as TSelf;
+            }
+
+            if (!_arguments.ContainsKey(name))
+            {
+                _arguments[name] = value;
+                return this as TSelf;
+            }
+
+            if (!(_arguments[name] is IEnumerable<TValues> existingValue))
+            {
+                _arguments[name] = value;
+                return this as TSelf;
+            }
+
+            var newValue = new HashSet<TValues>(value);
+            newValue.UnionWith(existingValue);
+
+            _arguments[name] = value;
+            return this as TSelf;
         }
 
         protected TSelf AddArgument(string name, object value)

@@ -242,7 +242,7 @@ namespace Surveillance.Engine.Rules
 
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
             For<IRuleParameterService>().Use<RuleParameterService>();
-            For<IRuleParameterLeadingTimespanService>().Use<RuleParameterLeadingTimespanService>();
+            For<IRuleParameterAdjustedTimespanService>().Use<RuleParameterAdjustedTimespanService>();
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();

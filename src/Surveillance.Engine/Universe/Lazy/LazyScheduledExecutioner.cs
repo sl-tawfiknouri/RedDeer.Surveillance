@@ -21,7 +21,17 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
 
             if (span.TotalDays < 8)
             {
-                response.Push(schedule);
+                var splitSchedule = new ScheduledExecution
+                {
+                    CorrelationId = schedule.CorrelationId,
+                    IsBackTest = schedule.IsBackTest,
+                    IsForceRerun = schedule.IsForceRerun,
+                    Rules = schedule.Rules,
+                    TimeSeriesInitiation = schedule.AdjustedTimeSeriesInitiation,
+                    TimeSeriesTermination = schedule.AdjustedTimeSeriesTermination,
+                };
+
+                response.Push(splitSchedule);
                 return response;
             }
 

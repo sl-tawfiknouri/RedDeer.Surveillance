@@ -90,6 +90,12 @@ namespace Domain.Core.Markets.Timebars
             }
 
             // ReSharper disable once InconsistentlySynchronizedField
+            if (_activeStack?.Any() ?? true)
+            {
+                return null;
+            }
+
+            // ReSharper disable once InconsistentlySynchronizedField
             _market = _activeStack?.Peek()?.Exchange;
 
             return _market;

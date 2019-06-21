@@ -75,7 +75,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             var filteredOrders =
                 FilterByClientAccount(
-                    history.ActiveTradeHistory().Peek(),
+                    history.ActiveTradeHistory().Any() ? history.ActiveTradeHistory().Peek() : null,
                     history.ActiveTradeHistory().ToList());
 
             var clusteringAnalysis = ClusteringAnalysis(filteredOrders);

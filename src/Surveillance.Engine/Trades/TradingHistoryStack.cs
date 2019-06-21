@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -104,7 +105,13 @@ namespace Surveillance.Engine.Rules.Trades
             {
                 return _market;
             }
-            
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_activeStack?.Any() ?? true)
+            {
+                return null;
+            }
+
             // ReSharper disable once InconsistentlySynchronizedField
             _market = _activeStack?.Peek()?.Market;
 

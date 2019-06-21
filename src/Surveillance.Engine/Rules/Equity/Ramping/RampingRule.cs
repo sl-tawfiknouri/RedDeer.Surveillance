@@ -100,14 +100,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            if (!ExceedsTradingVolumeInWindowThreshold(tradeWindow.ToList(), tradeWindow.Peek()))
+            if (!ExceedsTradingVolumeInWindowThreshold(tradeWindow.ToList(), tradeWindow.Any() ? tradeWindow.Peek() : null))
             {
                 // LOG THEN EXIT
                 _logger.LogInformation($"Trading Volume of {_rampingParameters.ThresholdVolumePercentageWindow} was not exceeded. Returning.");
                 return;
             }
 
-            var lastTrade = tradeWindow.Peek();
+            var lastTrade = tradeWindow.Any() ? tradeWindow.Peek() : null;
             var tradingHours = _tradingHoursService.GetTradingHoursForMic(lastTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
@@ -145,7 +145,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             while (rampingOrders.Any())
             {
                 var rampingOrderList = rampingOrders.ToList();
-                var rootOrder = rampingOrders.Peek();
+                var rootOrder = rampingOrders.Any() ? rampingOrders.Peek() : null;
                 var marketDataSubset = marketData.Response.Where(_ => _.TimeStamp <= rootOrder.FilledDate).ToList();
                 var rampingAnalysisResult = _rampingAnalyser.Analyse(rampingOrderList, marketDataSubset);
                 rampingAnalysisResults.Add(rampingAnalysisResult);

@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var portfolio = _portfolioFactory.Build();
             portfolio.Add(activeTrades);
 
-            var lastTrade = history?.ActiveTradeHistory()?.Peek();
+            var lastTrade = (history?.ActiveTradeHistory()?.Any() ?? false) ? history?.ActiveTradeHistory()?.Peek() : null;
             if (lastTrade == null)
             {
                 return;

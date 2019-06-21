@@ -173,6 +173,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities)
         {
+            if (!securities.Any())
+            {
+                return new VolumeBreach();
+            }
+
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,

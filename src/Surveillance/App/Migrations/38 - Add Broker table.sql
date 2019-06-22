@@ -4,13 +4,14 @@
 START TRANSACTION;
 
     INSERT INTO Migrations 
-		VALUES(38, "Add Broker table", now());
+		VALUES(38, "Add Broker table", UTC_TIMESTAMP());
 	
 	CREATE TABLE Brokers
 	( 
 		Id INT NOT NULL AUTO_INCREMENT,
 		ExternalId NVARCHAR(64) NULL,
 		Name NVARCHAR(1024) NULL,
+		CreatedOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		PRIMARY KEY (Id)
 	);
 		

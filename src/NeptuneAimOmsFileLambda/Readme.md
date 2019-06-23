@@ -40,12 +40,12 @@ If already installed check if new version is available.
 
 Execute unit tests
 ```
-    cd "NeptuneAimOmsFileLambda/test/NeptuneAimOmsFileLambda.Tests"
+    cd "AimOmsFileLambda/test/AimOmsFileLambda.Tests"
     dotnet test
 ```
 
 Deploy function to AWS Lambda
 ```
-    cd "NeptuneAimOmsFileLambda/src/NeptuneAimOmsFileLambda"
+    cd "AimOmsFileLambda/src/AimOmsFileLambda"
     dotnet lambda deploy-function
 ```

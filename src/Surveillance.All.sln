@@ -125,7 +125,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Tests", "TestHa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Scheduler", "Surveillance.Engine.Scheduler\Surveillance.Engine.Scheduler.csproj", "{4DE87049-A635-4F04-9B8B-27FFBAE199B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeptuneAimOmsFileLambda", "NeptuneAimOmsFileLambda\NeptuneAimOmsFileLambda.csproj", "{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AimOmsFileHeaderTrimmerLambda", "NeptuneAimOmsFileLambda\AimOmsFileHeaderTrimmerLambda.csproj", "{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

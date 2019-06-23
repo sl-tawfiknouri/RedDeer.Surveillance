@@ -14,7 +14,7 @@ using Amazon.Lambda.Core;
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
     [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace NeptuneAimOmsFileLambda
+namespace AimOmsFileHeaderTrimmerLambda
 {
     public class Function
     {
@@ -42,26 +42,28 @@ namespace NeptuneAimOmsFileLambda
         /// <summary>
         /// This method is called for every Lambda invocation. This method takes in an S3 event object and can be used 
         /// to respond to S3 notifications.
+        ///
+        /// This was initially developed for neptune but is useful for any AIM OMS file that needs two header rows removed
         /// </summary>
         /// <param name="evnt"></param>
         /// <param name="context"></param>
         /// <returns></returns>
         public async Task<string> FunctionHandler(S3Event evnt, ILambdaContext context)
         {
-            LambdaLogger.Log($"FUNCTION HANDLER FOR NEPTUNE AIM OMS FILE LAMBDA INVOKED InvokedFunctionARN - {context.InvokedFunctionArn}");
-            LambdaLogger.Log($"FUNCTION INVOKED FOR EVENT {evnt.Records.FirstOrDefault().EventName} {evnt.Records.FirstOrDefault().EventSource}");
-            var neptuneAimOmsDirectory = Environment.GetEnvironmentVariable("NeptuneAimOmsWriteDirectory");
+            LambdaLogger.Log($"Function handler for aim oms file lambda invoked. Invoked function arn - {context.InvokedFunctionArn}");
+            LambdaLogger.Log($"Function invoked for event {evnt.Records.FirstOrDefault().EventName} {evnt.Records.FirstOrDefault().EventSource}");
+            var aimOmsDirectory = Environment.GetEnvironmentVariable("AimOmsWriteDirectory");
 
-            if (string.IsNullOrWhiteSpace(neptuneAimOmsDirectory))
+            if (string.IsNullOrWhiteSpace(aimOmsDirectory))
             {
-                LambdaLogger.Log($"DID NOT RECOGNISE {neptuneAimOmsDirectory}");
-                throw new ArgumentOutOfRangeException(nameof(neptuneAimOmsDirectory));
+                LambdaLogger.Log($"Did not recognise {aimOmsDirectory}");
+                throw new ArgumentOutOfRangeException(nameof(aimOmsDirectory));
             }
 
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
             {
-                LambdaLogger.Log($"S3 EVENT WAS NULL");
+                LambdaLogger.Log($"S3 event was null");
                 return null;
             }
 
@@ -76,33 +78,33 @@ namespace NeptuneAimOmsFileLambda
 
             if (!validEventTypes.Contains(evnt.Records.FirstOrDefault()?.EventName))
             {
-                LambdaLogger.Log($"S3 EVENT WAS WRONG TYPE {evnt.Records.FirstOrDefault().EventName.Value}");
+                LambdaLogger.Log($"S3 event was the wrong type {evnt.Records.FirstOrDefault().EventName.Value}");
                 return null;
             }
 
             try
             {
-                LambdaLogger.Log($"S3 EVENT GET OBJECT REQUEST BUILT {s3Event.Bucket.Name} TARGET");
+                LambdaLogger.Log($"S3 event get object request built {s3Event.Bucket.Name} target");
                 var getObjectRequest = new GetObjectRequest() { BucketName = s3Event.Bucket.Name, Key = s3Event.Object.Key };
-                LambdaLogger.Log($"S3 EVENT GET OBJECT REQUEST START {s3Event.Bucket.Name} TARGET");
+                LambdaLogger.Log($"S3 event get object request start {s3Event.Bucket.Name} target");
                 var s3Object = await this.S3Client.GetObjectAsync(getObjectRequest);
-                LambdaLogger.Log($"S3 EVENT GET OBJECT REQUEST END {s3Event.Bucket.Name} TARGET");
+                LambdaLogger.Log($"S3 event get object request end {s3Event.Bucket.Name} target");
 
                 var memStream = new MemoryStream();
                 using (var str = s3Object.ResponseStream)
                 {
-                    LambdaLogger.Log($"S3 EVENT GET OBJECT REQUEST COPY TO MEM STREAM");
+                    LambdaLogger.Log($"S3 event get object copying bytes to memory stream");
                     await str.CopyToAsync(memStream);
                 }
 
-                LambdaLogger.Log($"S3 EVENT GET OBJECT REQUEST COPY TO MEM STREAM COMPLETE {memStream.Length} length");
+                LambdaLogger.Log($"S3 event get object response bytes written to a memory stream {memStream.Length} length");
                 memStream.Position = 0;
                 var sr = new StreamReader(memStream);
                 LambdaLogger.Log($"{memStream.Position} position");
-                var redData = sr.ReadLine();
-                LambdaLogger.Log($"{memStream.Position} position - read {redData}");
-                var readData = sr.ReadLine();
-                LambdaLogger.Log($"{memStream.Position} position - read {readData}");
+                var readDataLineOne = sr.ReadLine();
+                LambdaLogger.Log($"{memStream.Position} position - read {readDataLineOne}");
+                var readDataLineTwo = sr.ReadLine();
+                LambdaLogger.Log($"{memStream.Position} position - read {readDataLineTwo}");
                 var clientData = await sr.ReadToEndAsync();
                 LambdaLogger.Log($"{memStream.Position} position");
 
@@ -110,27 +112,24 @@ namespace NeptuneAimOmsFileLambda
                 var swriter = new StreamWriter(wStream);
                 swriter.Write(clientData);
 
-                LambdaLogger.Log($"S3 READ TWO LINES FROM MEM STREAM VIA STREAM READER");
                 var putObjectRequest = new PutObjectRequest()
                 {
                     AutoCloseStream = true,
                     AutoResetStreamPosition = true,
-                    BucketName = neptuneAimOmsDirectory,
+                    BucketName = aimOmsDirectory,
                     Key = $"trimmed-header-{s3Event.Object.Key}",
                     InputStream = wStream,
                 };
 
-                LambdaLogger.Log($"S3 WRITING PUT OBJECT REQUEST");
-                await this.S3Client.PutObjectAsync(putObjectRequest);
-                LambdaLogger.Log($"S3 FINISHED WRITING PUT OBJECT REQUEST");
+                LambdaLogger.Log($"S3 about to send put object request.");
+                var putObjectResponse = await this.S3Client.PutObjectAsync(putObjectRequest);
+                LambdaLogger.Log($"S3 finished the put object request. Had status code {putObjectResponse.HttpStatusCode}");
 
                 return null;
             }
             catch(Exception e)
             {
-                context.Logger.LogLine($"Error getting object {s3Event.Object.Key} from bucket {s3Event.Bucket.Name}. Make sure they exist and your bucket is in the same region as this function.");
-                context.Logger.LogLine(e.Message);
-                context.Logger.LogLine(e.StackTrace);
+                context.Logger.LogLine($"Error getting object {s3Event.Object.Key} from bucket {s3Event.Bucket.Name}. Make sure they exist and your bucket is in the same region as this function. Message {e.Message}. Stacktrace {e.StackTrace}");
                 throw;
             }
         }

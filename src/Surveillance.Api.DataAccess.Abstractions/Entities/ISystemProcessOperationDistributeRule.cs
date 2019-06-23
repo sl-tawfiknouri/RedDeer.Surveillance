@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Api.DataAccess.Abstractions.Entities
+﻿using System;
+
+namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
     public interface ISystemProcessOperationDistributeRule
     {
@@ -6,7 +8,7 @@
         string RulesDistributed { get; set; }
         int SystemProcessOperationId { get; set; }
 
-        string InitialStart { get; }
-        string InitialEnd { get; }
+        DateTime ScheduleRuleInitialStart { get; set; }
+        DateTime? ScheduleRuleInitialEnd { get; set; }
     }
 }

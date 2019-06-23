@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 using Domain.Core.Trading.Orders;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 
@@ -51,7 +50,6 @@ namespace Surveillance.Api.DataAccess.Entities
         public string TraderName { get; set; }
         public string ClearingAgent { get; set; }
         public string DealingInstructions { get; set; }
-        public string OptionExpiration { get; set; }
         public decimal? OptionStrikePrice { get; set; }
         public DateTime? OptionExpirationDate { get; set; }
         public string OptionEuropeanAmerican { get; set; }
@@ -83,17 +81,6 @@ namespace Surveillance.Api.DataAccess.Entities
         public string Strategy { get; set; }
         [NotMapped]
         public string ClientAccount { get; set; }
-
-        string IOrder.Created
-        {
-            get => CreatedDate.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        }
-
-        [NotMapped]
-        string IOrder.OptionExpiration
-        {
-            get => OptionExpirationDate?.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        }
 
         IOrderDates IOrder.OrderDates
         {

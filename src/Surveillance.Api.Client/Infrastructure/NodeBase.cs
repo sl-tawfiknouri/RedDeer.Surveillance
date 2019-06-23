@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+using System.Linq;
 
 namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
@@ -12,19 +10,9 @@ namespace RedDeer.Surveillance.Api.Client.Infrastructure
 
         internal override string Build(string name, Dictionary<string, object> argumentsDictionary)
         {
-            var arguments = new List<string>();
-            if (argumentsDictionary != null)
-            {
-                foreach (var argument in argumentsDictionary)
-                {
-                    var value = argument.Value;
-                    if (argument.Value is DateTime dateTime)
-                    {
-                        value = dateTime.ToString(CultureInfo.GetCultureInfo("en-GB"));
-                    }
-                    arguments.Add($"{argument.Key}: {JsonConvert.SerializeObject(value)}");
-                }
-            }
+            var arguments = argumentsDictionary
+                ?.Select(argument => $"{argument.Key}: {JsonConvert.SerializeObject(argument.Value)}")
+                ?.ToList() ?? new List<string>();
 
             var fields = new List<string>();
             foreach (var field in _fields)

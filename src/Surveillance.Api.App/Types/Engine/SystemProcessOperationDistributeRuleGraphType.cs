@@ -26,8 +26,8 @@ namespace Surveillance.Api.App.Types.Engine
                 return loader.LoadAsync();
             });
 
-            Field(i => i.InitialStart).Description("Scheduled rule start before distribution");
-            Field(i => i.InitialEnd).Description("Scheduled rule end before distribution");
+            Field(i => i.ScheduleRuleInitialStart).Type(new DateTimeGraphType()).Description("Scheduled rule start before distribution");
+            Field(i => i.ScheduleRuleInitialEnd, nullable: true).Type(new DateTimeGraphType()).Description("Scheduled rule end before distribution");
             Field(i => i.RulesDistributed).Description("Rules distributed by the disassemble operation");
         }
     }

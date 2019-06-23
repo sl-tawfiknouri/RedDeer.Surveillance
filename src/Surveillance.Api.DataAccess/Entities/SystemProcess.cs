@@ -19,7 +19,5 @@ namespace Surveillance.Api.DataAccess.Entities
         public string MachineId { get; set; }
         public string ProcessId { get; set; }
         public int SystemProcessTypeId { get; set; }
-        public string Initiated => InstanceInitiated?.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        public string Heartbeats => Heartbeat?.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
     }
 }

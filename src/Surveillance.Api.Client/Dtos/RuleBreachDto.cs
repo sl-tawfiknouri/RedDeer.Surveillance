@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 
 namespace RedDeer.Surveillance.Api.Client.Dtos
 {
@@ -11,9 +9,6 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
         public string RuleId { get; set; }
         public string CorrelationId { get; set; }
         public bool IsBackTest { get; set; }
-        public string Created { get; set; }
-        public string StartOfRuleBreachPeriod { get; set; }
-        public string EndOfRuleBreachPeriod { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Venue { get; set; }
@@ -22,8 +17,8 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
         public int SystemOperationId { get; set; }
         public List<OrderDto> Orders { get; set; }
 
-        public DateTime StartOfPeriodUnderInvestigation => DateTime.Parse(StartOfRuleBreachPeriod, CultureInfo.GetCultureInfo("en-GB"));
-        public DateTime EndOfPeriodUnderInvestigation => DateTime.Parse(EndOfRuleBreachPeriod, CultureInfo.GetCultureInfo("en-GB"));
-        public DateTime CreatedOn => DateTime.Parse(Created, CultureInfo.GetCultureInfo("en-GB"));
+        public DateTime StartOfPeriodUnderInvestigation { get; set; }
+        public DateTime EndOfPeriodUnderInvestigation { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

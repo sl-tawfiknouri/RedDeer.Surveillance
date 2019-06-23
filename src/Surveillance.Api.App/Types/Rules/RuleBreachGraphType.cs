@@ -21,12 +21,12 @@ namespace Surveillance.Api.App.Types.Rules
             Field(t => t.Id).Description("Primary Key");
             Field(t => t.CorrelationId).Description("Correlation identifier for rule runs");
             Field(t => t.IsBackTest).Description("Was the rule run part of a back test?");
-            Field(t => t.Created).Description("Rule breach created by the rule engine");
+            Field(t => t.CreatedOn).Type(new DateTimeGraphType()).Description("Rule breach created by the rule engine");
             Field(t => t.Title).Description("Title description of the rule breach");
             Field(t => t.Description).Description("Detailed explanation of why the rule was breached");
             Field(t => t.Venue).Description("Name of the market that the rule breach occurred on");
-            Field(t => t.StartOfRuleBreachPeriod).Description("Oldest order in the rule breach orders");
-            Field(t => t.EndOfRuleBreachPeriod).Description("Youngest order in the rule breach orders");
+            Field(t => t.StartOfPeriodUnderInvestigation).Type(new DateTimeGraphType()).Description("Oldest order in the rule breach orders");
+            Field(t => t.EndOfPeriodUnderInvestigation).Type(new DateTimeGraphType()).Description("Youngest order in the rule breach orders");
             Field(t => t.AssetCfi).Description("Asset CFI code. Six letters to categorise the type of asset such as E for equities or D for debt instruments");
             Field(t => t.ReddeerEnrichmentId).Description("Identifier for the financial instrument in the security master list");
             Field(t => t.RuleId).Description("Rule run id");

@@ -215,13 +215,13 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(order.OptionExpirationDate, Is.EqualTo(new DateTime(2019, 05, 09, 14, 42, 11, DateTimeKind.Utc)));
             Assert.That(order.OptionEuropeanAmerican, Is.EqualTo("european american"));
 
-            Assert.That(order.OrderDates.Placed, Is.EqualTo(new DateTime(2019, 05, 09, 01, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Booked, Is.EqualTo(new DateTime(2019, 05, 09, 02, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Amended, Is.EqualTo(new DateTime(2019, 05, 09, 03, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Rejected, Is.EqualTo(new DateTime(2019, 05, 09, 04, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Cancelled, Is.EqualTo(new DateTime(2019, 05, 09, 05, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Filled, Is.EqualTo(new DateTime(2019, 05, 09, 06, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.StatusChanged, Is.EqualTo(new DateTime(2019, 05, 09, 07, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.PlacedDate, Is.EqualTo(new DateTime(2019, 05, 09, 01, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.BookedDate, Is.EqualTo(new DateTime(2019, 05, 09, 02, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.AmendedDate, Is.EqualTo(new DateTime(2019, 05, 09, 03, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.RejectedDate, Is.EqualTo(new DateTime(2019, 05, 09, 04, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.CancelledDate, Is.EqualTo(new DateTime(2019, 05, 09, 05, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.FilledDate, Is.EqualTo(new DateTime(2019, 05, 09, 06, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.StatusChangedDate, Is.EqualTo(new DateTime(2019, 05, 09, 07, 00, 00, DateTimeKind.Utc)));
 
             Assert.That(order.Trader.Id, Is.EqualTo("trader id"));
             Assert.That(order.Trader.Name, Is.EqualTo("trader name"));

@@ -27,7 +27,7 @@ namespace RedDeer.Surveillance.Api.Client.Nodes
         public OrderNode FieldClearingAgent() => AddField("clearingAgent");
         public OrderNode FieldDealingInstructions() => AddField("dealingInstructions");
         public OrderNode FieldOptionStrikePrice() => AddField("optionStrikePrice");
-        public OrderNode FieldOptionExpirationDate() => AddField("optionExpiration");
+        public OrderNode FieldOptionExpirationDate() => AddField("optionExpirationDate");
         public OrderNode FieldOptionEuropeanAmerican() => AddField("optionEuropeanAmerican");
 
         public OrderDatesNode FieldOrderDates() => AddChild("orderDates", new OrderDatesNode(this));

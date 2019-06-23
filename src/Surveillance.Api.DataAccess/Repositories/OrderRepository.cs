@@ -413,15 +413,14 @@ namespace Surveillance.Api.DataAccess.Repositories
             {
                 var query = SetOrderQueryOptions(dbContext.Orders, options);
 
-                if (options.PlacedDateFrom != null)
+                if (options.PlacedDateFrom.HasValue)
                 {
-                    var dateTime = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
-                    query = query.Where(x => x.PlacedDate >= dateTime);
+                    query = query.Where(x => x.PlacedDate >= options.PlacedDateFrom.Value);
                 }
-                if (options.PlacedDateTo != null)
+
+                if (options.PlacedDateTo.HasValue)
                 {
-                    var dateTime = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
-                    query = query.Where(x => x.PlacedDate <= dateTime);
+                    query = query.Where(x => x.PlacedDate <= options.PlacedDateTo.Value);
                 }
 
                 query = query.OrderByDescending(x => x.PlacedDate); // apply Order before Take
@@ -445,8 +444,9 @@ namespace Surveillance.Api.DataAccess.Repositories
             {
                 var aggregations = new Dictionary<string, int>();
 
-                var from = DateTime.Parse(options.PlacedDateFrom, CultureInfo.GetCultureInfo("en-GB"));
-                var to = DateTime.Parse(options.PlacedDateTo, CultureInfo.GetCultureInfo("en-GB"));
+                var from = options.PlacedDateFrom ?? throw new ArgumentNullException($"{options.PlacedDateFrom}");
+                var to = options.PlacedDateTo ?? throw new ArgumentNullException($"{options.PlacedDateTo}");
+
                 var segments = _timeZoneService.GetOffsetSegments(from, to, options.TzName);
 
                 foreach (var segment in segments)

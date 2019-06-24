@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Analysis
             var projectedExecution = new AdHocScheduleRequest
             {
                 OriginatingService = "Surveillance Engine",
-                ScheduleFor = DateTime.UtcNow.AddDays(-1), // re-run this tomorrow
+                ScheduleFor = DateTime.UtcNow.AddDays(1), // re-run this tomorrow
                 Queue = SurveillanceSqsQueue.DistributedRule, // avoids being re-distributed through the distributor
                 JsonSqsMessage = sqsMessage // message to rerun - must be what the json deserialiser is expecting!
             };

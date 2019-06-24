@@ -199,13 +199,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 || order.Item2.OrderDirection == OrderDirections.COVER)
             {
                 var bestBuyPointDuringLiveDay = tbars.Min(_ => _.SpreadTimeBar.Price.Value);
-                return bestBuyPointDuringLiveDay <= order.Item2.OrderLimitPrice?.Value;
+                return bestBuyPointDuringLiveDay >= order.Item2.OrderLimitPrice?.Value;
             }
             else if (order.Item2.OrderDirection == OrderDirections.SELL
                   || order.Item2.OrderDirection == OrderDirections.SHORT)
             {
                 var bestSellPointDuringLiveDay = tbars.Max(_ => _.SpreadTimeBar.Price.Value);
-                return bestSellPointDuringLiveDay >= order.Item2.OrderLimitPrice?.Value;
+                return bestSellPointDuringLiveDay <= order.Item2.OrderLimitPrice?.Value;
             }
 
             throw new ArgumentOutOfRangeException(nameof(order.Item2.OrderDirection));

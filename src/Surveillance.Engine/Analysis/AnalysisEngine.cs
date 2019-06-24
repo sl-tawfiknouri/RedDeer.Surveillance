@@ -167,7 +167,7 @@ namespace Surveillance.Engine.Rules.Analysis
             if (!execution.IsBackTest)
                 return false;
 
-            return execution.AdjustedTimeSeriesTermination.Date > DateTime.UtcNow.Date.Subtract(TimeSpan.FromDays(1));
+            return execution.AdjustedTimeSeriesTermination.Date > DateTime.UtcNow.Date;
         }
 
         private void SetFailedBackTestDueToFutureExecution(
@@ -176,7 +176,7 @@ namespace Surveillance.Engine.Rules.Analysis
             CancellableRule ruleCancellation,
             IReadOnlyCollection<string> ids)
         {
-            opCtx.EndEventWithError("Set back test to end today or some time in the future");
+            opCtx.EndEventWithError("Set back test to end some time in the future");
             _logger.LogInformation($"End of universe execution for {execution.CorrelationId} - back test had illegal future dates");
 
             _ruleCancellation.Unsubscribe(ruleCancellation);

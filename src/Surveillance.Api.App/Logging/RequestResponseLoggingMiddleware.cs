@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,6 +53,7 @@ namespace Surveillance.Api.App.Logging
         {
             var sb = new StringBuilder()
                 .AppendLine($"Http Response Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, StatusCode: {context.Response.StatusCode}, Elapsed: {elapsed},")
+                .AppendLine(FormatHeaders(context.Response.Headers))
                 .AppendLine($"Response Body: {ReadStreamInChunks(newResponseBody)}");
 
             return sb.ToString();
@@ -64,6 +66,7 @@ namespace Surveillance.Api.App.Logging
         {
             var sb = new StringBuilder()
                 .AppendLine($"Http Request Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, ContentType: {context.Request.ContentType}")
+                .AppendLine(FormatHeaders(context.Request.Headers))
                 .AppendLine($"Request Body: {await GetRequestBody(context.Request)}");
 
             return sb.ToString();
@@ -81,6 +84,9 @@ namespace Surveillance.Api.App.Logging
                 return ReadStreamInChunks(requestStream);
             }
         }
+
+        private static string FormatHeaders(IHeaderDictionary headers)
+            => headers?.Count > 0 ? $"Headers: {string.Join(",", headers?.Select(s => $"'{s.Key}': '{s.Value.ToString()}'"))}" : null;
 
         private static string ReadStreamInChunks(Stream stream)
         {

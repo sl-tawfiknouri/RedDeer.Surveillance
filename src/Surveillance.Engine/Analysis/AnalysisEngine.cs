@@ -45,6 +45,7 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IRuleParameterAdjustedTimespanService _timespanService;
         private readonly ILazyTransientUniverseFactory _universeFactory;
         private readonly IRuleCancellation _ruleCancellation;
+        private readonly ITaskReSchedulerService _reschedulerService;
 
         private readonly ILogger<AnalysisEngine> _logger;
 
@@ -63,6 +64,7 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleParameterAdjustedTimespanService adjustedTimespanService,
             ILazyTransientUniverseFactory universeFactory,
             IRuleCancellation ruleCancellation,
+            ITaskReSchedulerService reschedulerService,
             ILogger<AnalysisEngine> logger)
         {
             _universePlayerFactory =
@@ -83,6 +85,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _timespanService = adjustedTimespanService ?? throw new ArgumentNullException(nameof(adjustedTimespanService));
             _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
             _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
+            _reschedulerService = reschedulerService ?? throw new ArgumentNullException(nameof(reschedulerService));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -128,6 +131,11 @@ namespace Surveillance.Engine.Rules.Analysis
             {
                 SetFailedBackTestDueToFutureExecution(opCtx, execution, ruleCancellation, ids);
                 return;
+            }
+
+            if (execution.AdjustedTimeSeriesTermination.Date >= DateTime.UtcNow.Date)
+            {
+                await _reschedulerService.RescheduleFutureExecution(execution);
             }
 
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);

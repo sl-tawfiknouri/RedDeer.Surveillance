@@ -266,6 +266,8 @@ namespace Surveillance.Engine.Rules
 
             For<IQueueRuleCancellationSubscriber>().Use<QueueRuleCancellationSubscriber>();
             For<IRuleCancellation>().Use<RuleCancellation>().Singleton();
+
+            For<ITaskReSchedulerService>().Use<TaskReSchedulerService>();
         }
     }
 }

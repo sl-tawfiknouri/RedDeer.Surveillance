@@ -73,6 +73,9 @@
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\38 - Add Broker table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\37 - Update data request tbl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -44,8 +44,8 @@ Scenario: No placing orders in range yields no alerts
 Scenario: placing orders with one in sigma range yields one alerts
 		Given I have the orders for a universe from 01/01/2018 to 01/01/2018 :
          | SecurityName | OrderId | PlacedDate | CancelledDate   | Type   | Direction | Currency | LimitPrice    | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 130           |                  | 100           |              |
-         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 100           |                  | 100           |              |
+         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 130           |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 100           |                  | 100           |              |
 		And With the intraday market data :
 		| SecurityName | Epoch				 | Bid	  | Ask | Price | Currency | Volume |
 		| Barclays     | 01/01/2018  10:30:00| 1	  | 20  | 100    | GBX      | 5000  |
@@ -67,8 +67,8 @@ Scenario: placing orders with one in sigma range yields one alerts
 Scenario: placing orders with one in sigma below range yields one alerts
 		Given I have the orders for a universe from 01/01/2018 to 01/01/2018 :
          | SecurityName | OrderId | PlacedDate | CancelledDate   | Type   | Direction | Currency | LimitPrice    | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 98           |                  | 100           |              |
-         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 80           |                  | 100           |              |
+         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 98           |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 80           |                  | 100           |              |
 		And With the intraday market data :
 		| SecurityName | Epoch				 | Bid	  | Ask | Price | Currency | Volume |
 		| Barclays     | 01/01/2018  10:30:00| 1	  | 20  | 100    | GBX      | 5000  |
@@ -89,8 +89,8 @@ Scenario: placing orders with one in sigma below range yields one alerts
 Scenario: placing orders with two in sigma range yields one alerts
 		Given I have the orders for a universe from 01/01/2018 to 01/01/2018 :
          | SecurityName | OrderId | PlacedDate | CancelledDate   | Type   | Direction | Currency | LimitPrice    | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 130           |                  | 100           |              |
-         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 80           |                  | 100           |              |
+         | Barclays     | 1       | 01/01/2018 09:30:00 |               | Limit | Sell       | GBX      | 130           |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2018 09:30:00 |               | Limit | Buy       | GBX      | 80           |                  | 100           |              |
 		And With the intraday market data :
 		| SecurityName | Epoch				 | Bid	  | Ask | Price | Currency | Volume |
 		| Barclays     | 01/01/2018  10:30:00| 1	  | 20  | 100    | GBX      | 5000  |

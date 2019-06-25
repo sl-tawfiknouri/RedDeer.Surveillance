@@ -77,7 +77,7 @@ namespace DataSynchroniser.Manager
                 _logger.LogInformation($"handling request with id {systemProcessOperationId} had {markitData.Count} markit data requests to process");
                 if (markitData.Any())
                 {
-                    await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+                    await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, markitData);
                 }
             }
             catch

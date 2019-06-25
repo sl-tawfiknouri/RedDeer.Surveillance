@@ -14,6 +14,7 @@ namespace Surveillance.Api.App.Types.Trading
         public OrderGraphType(
             IFinancialInstrumentRepository instrumentsRepository,
             IMarketRepository marketRepository,
+            IBrokerRepository brokerRepository,
             IOrderRepository orderRepository,
             IDataLoaderContextAccessor dataLoader)
         {
@@ -29,6 +30,18 @@ namespace Surveillance.Api.App.Types.Trading
                     var loader = dataLoader.Context.GetOrAddLoader(
                         $"GetMarketById-{context.Source.MarketId}",
                         async () => await marketRepository.GetById(context.Source.MarketId));
+
+                    return loader.LoadAsync();
+                });
+
+            Field<BrokerGraphType>(
+                name: "broker", 
+                description: "Broker",
+                resolve: context => 
+                {
+                    var loader = dataLoader.Context.GetOrAddLoader(
+                        $"GetBrokerById-{context.Source.BrokerId}",
+                        async () => await brokerRepository.GetById(context.Source.BrokerId));
 
                     return loader.LoadAsync();
                 });

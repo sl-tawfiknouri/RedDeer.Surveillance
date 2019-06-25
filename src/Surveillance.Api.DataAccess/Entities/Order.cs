@@ -82,6 +82,8 @@ namespace Surveillance.Api.DataAccess.Entities
         [NotMapped]
         public string ClientAccount { get; set; }
 
+        public int? BrokerId { get; set; }
+
         IOrderDates IOrder.OrderDates
         {
             get => OrderDates;

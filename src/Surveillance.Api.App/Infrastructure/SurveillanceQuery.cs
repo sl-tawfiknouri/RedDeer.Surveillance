@@ -15,10 +15,9 @@ using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
-using System;
-using System.Globalization;
 using Surveillance.Api.App.Types.Aggregation;
 using Surveillance.Api.DataAccess.Repositories;
+using System;
 
 namespace Surveillance.Api.App.Infrastructure
 {

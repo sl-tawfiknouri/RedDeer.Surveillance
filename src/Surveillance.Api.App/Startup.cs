@@ -79,6 +79,7 @@ namespace Surveillance.Api.App
             services.AddScoped<ITimeZoneService, TimeZoneService>();
 
             services.AddScoped<IMarketRepository, MarketRepository>();
+            services.AddScoped<IBrokerRepository, BrokerRepository>();
             services.AddScoped<IRuleBreachRepository, RuleBreachRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<ISystemProcessOperationRuleRunRepository, SystemProcessOperationRuleRunRepository>();

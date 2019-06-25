@@ -56,5 +56,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         DateTime? RejectedDate { get; }
         DateTime? CancelledDate { get; }
         DateTime? FilledDate { get; }
+
+        int? BrokerId { get; }
     }
 }

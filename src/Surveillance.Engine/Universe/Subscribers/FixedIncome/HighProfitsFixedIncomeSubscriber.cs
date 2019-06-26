@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highProfitParameters = _ruleParameterMapper.Map(dtos);
+            var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
 
             return subscriptions;

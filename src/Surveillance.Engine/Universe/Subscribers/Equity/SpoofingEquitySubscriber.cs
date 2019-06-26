@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var spoofingParameters = _ruleParameterMapper.Map(dtos);
+            var spoofingParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptionRequests = SubscribeToUniverse(execution, opCtx, alertStream, spoofingParameters);
 
             return subscriptionRequests;

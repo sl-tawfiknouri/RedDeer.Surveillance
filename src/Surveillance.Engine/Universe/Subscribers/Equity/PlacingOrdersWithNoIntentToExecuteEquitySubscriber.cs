@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var placingOrderParameters = _ruleParameterMapper.Map(dtos);
+            var placingOrderParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, placingOrderParameters, dataRequestSubscriber);
 
             return subscriptions;

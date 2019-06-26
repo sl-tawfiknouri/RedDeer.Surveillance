@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     .Where(wt => filteredParameters.Contains(wt.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var fixedIncomeWashTradeParameters = _ruleParameterMapper.Map(dtos);
+            var fixedIncomeWashTradeParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, fixedIncomeWashTradeParameters);
 
             return subscriptions;

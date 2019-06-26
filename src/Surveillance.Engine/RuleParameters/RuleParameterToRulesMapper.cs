@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
@@ -33,7 +34,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(List<SpoofingRuleParameterDto> dtos)
+        public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(ScheduledExecution execution, List<SpoofingRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -59,7 +60,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Map(List<CancelledOrderRuleParameterDto> dtos)
+        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Map(ScheduledExecution execution, List<CancelledOrderRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -87,7 +88,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> Map(List<HighProfitsRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> Map(ScheduledExecution execution, List<HighProfitsRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -117,7 +118,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos)
+        public IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> Map(ScheduledExecution execution, List<MarkingTheCloseRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -144,7 +145,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(List<LayeringRuleParameterDto> dtos)
+        public IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(ScheduledExecution execution, List<LayeringRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -172,7 +173,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(ScheduledExecution execution, List<HighVolumeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -200,7 +201,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(ScheduledExecution execution, List<WashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -233,7 +234,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(List<RampingRuleParameterDto> dtos)
+        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(ScheduledExecution execution, List<RampingRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -261,7 +262,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -293,7 +294,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeHighProfitRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -317,7 +318,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -342,6 +343,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
         }
 
         public IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            ScheduledExecution execution,
             List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
         {
             if (dtos == null

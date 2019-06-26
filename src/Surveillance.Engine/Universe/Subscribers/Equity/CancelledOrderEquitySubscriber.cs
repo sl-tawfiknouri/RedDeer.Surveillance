@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(co => filteredParameters.Contains(co.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
+            var cancelledOrderParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, cancelledOrderParameters);
         }

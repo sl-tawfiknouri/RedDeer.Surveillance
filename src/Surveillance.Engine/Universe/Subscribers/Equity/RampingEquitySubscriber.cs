@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
-            var rampingParameters = _ruleParameterMapper.Map(dtos);
+            var rampingParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters, dataRequestSubscriber);
         }

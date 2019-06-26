@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(hp => filteredParameters.Contains(hp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highProfitParameters = _ruleParameterMapper.Map(dtos);
+            var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
         }

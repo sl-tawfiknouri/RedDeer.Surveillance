@@ -512,6 +512,10 @@ namespace Surveillance.Api.DataAccess.Repositories
             {
                 query = query.Where(x => options.TraderIds.Contains(x.TraderId));
             }
+            if (options.ExcludeTraderIds != null)
+            {
+                query = query.Where(x => !options.ExcludeTraderIds.Contains(x.TraderId));
+            }
             if (options.ReddeerIds != null)
             {
                 query = query.Where(x => options.ReddeerIds.Contains(x.FinancialInstrument.ReddeerId));

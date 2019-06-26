@@ -144,6 +144,9 @@
     <None Update="Migrations\3 - Market.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\38 - Add Broker table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

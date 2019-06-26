@@ -1,4 +1,5 @@
 ﻿using Surveillance.Api.DataAccess.Abstractions.Repositories;
+using System;
 using System.Collections.Generic;
 
 namespace Surveillance.Api.DataAccess.Repositories

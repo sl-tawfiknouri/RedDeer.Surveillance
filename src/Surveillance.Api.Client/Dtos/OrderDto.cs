@@ -29,6 +29,8 @@ namespace RedDeer.Surveillance.Api.Client.Dtos
         public OrderDatesDto OrderDates { get; set; }
         public TraderDto Trader { get; set; }
         public MarketDto Market { get; set; }
+        public BrokerDto Broker { get; set; }
+
         public FinancialInstrumentDto FinancialInstrument { get; set; }
 
         public List<OrderAllocationDto> OrderAllocations { get; set; }

@@ -2,9 +2,7 @@
 using RedDeer.Surveillance.Api.Client.Filters;
 using RedDeer.Surveillance.Api.Client.Infrastructure;
 using RedDeer.Surveillance.Api.Client.Nodes;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

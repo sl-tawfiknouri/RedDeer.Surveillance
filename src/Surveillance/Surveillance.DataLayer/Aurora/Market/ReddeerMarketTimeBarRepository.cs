@@ -145,7 +145,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Currency = null;
 
                 VolumeTraded = dto.ExecutionVolume;
-                MarketPrice = dto.ExecutionClosePrice;
+                MarketPrice = dto.ExecutionClosePrice; // nulls filtered out in storage manager
 
                 BidPrice = dto.BestBidClosePrice;
                 AskPrice = dto.BestAskClosePrice;

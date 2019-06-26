@@ -42,7 +42,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
         private List<MinuteBarDto> Deduplicate(IReadOnlyCollection<IGetTimeBarPair> timeBarPairs)
         {
-            var selectMany = timeBarPairs.SelectMany(x => x.Response.MinuteBars).ToList();
+            var selectMany = timeBarPairs.SelectMany(x => x.Response.MinuteBars).Where(_ => _.ExecutionClosePrice != null).ToList();
             var figiGroups = selectMany.GroupBy(o => o.Figi);
 
             var deduplicatedBars = new List<MinuteBarDto>();

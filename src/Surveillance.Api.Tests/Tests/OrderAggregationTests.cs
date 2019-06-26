@@ -190,7 +190,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderAggregationQuery();
             query
                 .Filter
-                    .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                    .ArgumentTraderIds(new HashSet<string> { "vic", "bob" })
                     .ArgumentPlacedDateFrom(new DateTime(2019, 01, 01, 00, 00, 00, DateTimeKind.Utc))
                     .ArgumentPlacedDateTo(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc))
                     .ArgumentTzName("Europe/Paris")

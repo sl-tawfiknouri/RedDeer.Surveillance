@@ -14,6 +14,7 @@ namespace Surveillance.Api.App.Types.Trading
         public OrderGraphType(
             IFinancialInstrumentRepository instrumentsRepository,
             IMarketRepository marketRepository,
+            IBrokerRepository brokerRepository,
             IOrderRepository orderRepository,
             IDataLoaderContextAccessor dataLoader)
         {
@@ -29,6 +30,18 @@ namespace Surveillance.Api.App.Types.Trading
                     var loader = dataLoader.Context.GetOrAddLoader(
                         $"GetMarketById-{context.Source.MarketId}",
                         async () => await marketRepository.GetById(context.Source.MarketId));
+
+                    return loader.LoadAsync();
+                });
+
+            Field<BrokerGraphType>(
+                name: "broker", 
+                description: "Broker",
+                resolve: context => 
+                {
+                    var loader = dataLoader.Context.GetOrAddLoader(
+                        $"GetBrokerById-{context.Source.BrokerId}",
+                        async () => await brokerRepository.GetById(context.Source.BrokerId));
 
                     return loader.LoadAsync();
                 });
@@ -75,10 +88,10 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.DealingInstructions).Description("Instructions for dealer");
 
             Field(i => i.OptionStrikePrice, nullable: true).Description("The strike price of the option instrument");
-            Field(i => i.OptionExpiration).Description("The expiration date of the option instrument");
+            Field(i => i.OptionExpirationDate, nullable: true).Type(new DateTimeGraphType()).Description("The expiration date of the option instrument");
             Field(i => i.OptionEuropeanAmerican).Description("The category of the option. European or American");
 
-            Field(i => i.Created).Description("The date the system created the order on");
+            Field(i => i.CreatedDate).Type(new DateTimeGraphType()).Description("The date the system created the order on");
             Field(i => i.LifeCycleStatus, nullable: true).Description("The order status within the life cycle");
 
             Field(i => i.Live).Description("Order is live, therefore has corresponding order allocations");

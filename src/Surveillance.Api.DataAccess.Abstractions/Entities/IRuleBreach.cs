@@ -1,4 +1,5 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using System;
 
 namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
@@ -6,9 +7,9 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
     {
         string AssetCfi { get; set; }
         string CorrelationId { get; set; }
-        string Created { get; }
-        string StartOfRuleBreachPeriod { get; }
-        string EndOfRuleBreachPeriod { get; }
+        DateTime CreatedOn { get; }
+        DateTime StartOfPeriodUnderInvestigation { get; }
+        DateTime EndOfPeriodUnderInvestigation { get; }
 
         int SystemOperationId { get; set; }
 

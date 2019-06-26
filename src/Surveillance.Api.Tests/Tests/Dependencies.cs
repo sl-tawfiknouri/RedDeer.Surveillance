@@ -1,8 +1,5 @@
 ﻿using RedDeer.Surveillance.Api.Client;
 using Surveillance.Api.Tests.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Surveillance.Api.Tests.Tests
 {

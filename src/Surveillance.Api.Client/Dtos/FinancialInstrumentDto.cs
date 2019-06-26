@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
-namespace RedDeer.Surveillance.Api.Client.Dtos
+﻿namespace RedDeer.Surveillance.Api.Client.Dtos
 {
     public class FinancialInstrumentDto
     {

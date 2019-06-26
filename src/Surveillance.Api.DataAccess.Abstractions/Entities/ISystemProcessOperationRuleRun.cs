@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Api.DataAccess.Abstractions.Entities
+﻿using System;
+
+namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
     public interface ISystemProcessOperationRuleRun
     {
@@ -11,7 +13,7 @@
         int RuleTypeId { get; set; } // there is a rule type but we need to extract abstractions from domain.surveillance for this
         string RuleVersion { get; set; }
         int SystemProcessOperationId { get; set; }
-        string End { get; }
-        string Start { get; }
+        DateTime ScheduleRuleEnd { get; }
+        DateTime ScheduleRuleStart { get; }
     }
 }

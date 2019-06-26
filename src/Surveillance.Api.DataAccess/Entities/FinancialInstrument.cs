@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 using Domain.Core.Financial.Assets;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 
@@ -28,9 +27,6 @@ namespace Surveillance.Api.DataAccess.Entities
         public string SecurityCurrency { get; set; }
         public string ReddeerId { get; set; }
         public DateTime? Enrichment { get; set; }
-
-        [NotMapped]
-        public string EnrichmentDate => Enrichment?.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
 
         public int InstrumentType { get; set; }
 

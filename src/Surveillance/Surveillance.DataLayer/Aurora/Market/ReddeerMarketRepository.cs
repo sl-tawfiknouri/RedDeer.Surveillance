@@ -430,7 +430,6 @@ namespace Surveillance.DataLayer.Aurora.Market
                     var response = (await conn)?.ToList() ?? new List<MarketStockExchangeSecuritiesDto>();
 
                     _logger.LogInformation($"ReddeerMarketRepository get query for {start} and {end} received {response?.Count() ?? 0} results");
-
                     var groupedByExchange =
                         response
                             .GroupBy(rep =>
@@ -450,7 +449,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                     new EquityIntraDayTimeBarCollection(
                                         market,
                                         i.Key3,
-                                        i.Result.Select(o => ProjectToSecurity(o, market)).ToList());
+                                        i.Result.Select(o => ProjectToSecurity(o, market)).Where(_ => _.SpreadTimeBar.Price.Value > 0).ToList());
 
                                     return frame;
                                 });

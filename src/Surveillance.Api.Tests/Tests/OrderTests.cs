@@ -383,7 +383,7 @@ namespace Surveillance.Api.Tests.Tests
         }
 
         [Test]
-        public async Task CanRequest_Orders_ByNotTraderIds()
+        public async Task CanRequest_Orders_ByExcludeTraderIds()
         {
             // arrange
             _dbContext.DbOrders.Add(new Order // not to be found
@@ -416,7 +416,7 @@ namespace Surveillance.Api.Tests.Tests
             var query = new OrderQuery();
             query
                 .Filter
-                    .ArgumentNotTraderIds(new HashSet<string> { "vic", "bob", "bob" })
+                    .ArgumentExcludeTraderIds(new HashSet<string> { "vic", "bob", "bob" })
                     .Node
                         .FieldId();
 

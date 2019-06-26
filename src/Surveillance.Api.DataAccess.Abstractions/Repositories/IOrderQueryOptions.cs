@@ -7,7 +7,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
         List<int> Ids { get; }
         int? Take { get; }
         HashSet<string> TraderIds { get; }
-        HashSet<string> NotTraderIds { get; }
+        HashSet<string> ExcludeTraderIds { get; }
         List<string> ReddeerIds { get; }
         List<int> Statuses { get; set; }
         List<int> Directions { get; set; }

@@ -8,7 +8,7 @@ namespace Surveillance.Api.DataAccess.Repositories
         public List<int> Ids { get; set; }
         public int? Take { get; set; }
         public HashSet<string> TraderIds { get; set; }
-        public HashSet<string> NotTraderIds { get; set; }
+        public HashSet<string> ExcludeTraderIds { get; set; }
         public List<string> ReddeerIds { get; set; }
         public List<int> Statuses { get; set; }
         public List<int> Directions { get; set; }

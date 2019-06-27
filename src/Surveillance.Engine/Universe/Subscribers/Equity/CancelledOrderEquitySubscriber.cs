@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class CancelledOrderEquitySubscriber : ICancelledOrderEquitySubscriber
     {
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<CancelledOrderEquitySubscriber> _logger;
 
         public CancelledOrderEquitySubscriber(
             IEquityRuleCancelledOrderFactory equityRuleCancelledOrderFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<CancelledOrderEquitySubscriber> logger)

@@ -25,14 +25,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
     public class HighProfitsFixedIncomeSubscriber : IHighProfitsFixedIncomeSubscriber
     {
         private readonly IFixedIncomeHighProfitFactory _fixedIncomeRuleHighProfitsFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<HighVolumeFixedIncomeSubscriber> _logger;
 
         public HighProfitsFixedIncomeSubscriber(
             IFixedIncomeHighProfitFactory fixedIncomeRuleHighVolumeFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeFixedIncomeSubscriber> logger)

@@ -23,6 +23,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<SpoofingRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -30,6 +35,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<CancelledOrderRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -37,6 +47,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<HighProfitsRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -44,6 +59,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<MarkingTheCloseRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -51,6 +71,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<LayeringRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -58,6 +83,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<HighVolumeRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -65,6 +95,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<WashTradeRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -72,6 +107,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<RampingRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -79,6 +119,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -86,6 +131,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -93,6 +143,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeHighProfitRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
 
@@ -100,6 +155,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
         {
+            if (!execution?.IsBackTest ?? true)
+            {
+                return _mapper.Map(execution, dtos);
+            }
+
             return _mapper.Map(execution, dtos);
         }
     }

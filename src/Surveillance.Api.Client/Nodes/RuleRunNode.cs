@@ -1,7 +1,4 @@
 ﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RedDeer.Surveillance.Api.Client.Nodes
 {
@@ -13,8 +10,8 @@ namespace RedDeer.Surveillance.Api.Client.Nodes
         public RuleRunNode FieldCorrelationId() => AddField("correlationId");
         public RuleRunNode FieldRuleDescription() => AddField("ruleDescription");
         public RuleRunNode FieldRuleVersion() => AddField("ruleVersion");
-        public RuleRunNode FieldScheduleRuleStart() => AddField("start");
-        public RuleRunNode FieldScheduleRuleEnd() => AddField("end");
+        public RuleRunNode FieldScheduleRuleStart() => AddField("scheduleRuleStart");
+        public RuleRunNode FieldScheduleRuleEnd() => AddField("scheduleRuleEnd");
         public ProcessOperationNode FieldProcessOperation() => AddChild("processOperation", new ProcessOperationNode(this));
 
     }

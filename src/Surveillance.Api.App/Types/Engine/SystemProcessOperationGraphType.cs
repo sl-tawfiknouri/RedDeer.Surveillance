@@ -29,8 +29,8 @@ namespace Surveillance.Api.App.Types.Engine
             });
 
             Field(i => i.OperationState).Description("The last state of the operation");
-            Field(i => i.Start).Description("The time the operation started at in the real world (UTC)");
-            Field(i => i.End).Description("The time the operation ended at in the real world (UTC)");
+            Field(i => i.OperationStart).Type(new DateTimeGraphType()).Description("The time the operation started at in the real world (UTC)");
+            Field(i => i.OperationEnd, nullable: true).Type(new DateTimeGraphType()).Description("The time the operation ended at in the real world (UTC)");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
 namespace Surveillance.Api.DataAccess.Abstractions.Repositories
 {
@@ -12,8 +13,8 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
         List<int> Statuses { get; set; }
         List<int> Directions { get; set; }
         List<int> Types { get; set; }
-        string PlacedDateFrom { get; }
-        string PlacedDateTo { get; }
+        DateTime? PlacedDateFrom { get; }
+        DateTime? PlacedDateTo { get; }
         string TzName { get; }
     }
 }

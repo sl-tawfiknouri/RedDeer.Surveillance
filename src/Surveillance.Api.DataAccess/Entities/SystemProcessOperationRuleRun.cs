@@ -23,8 +23,5 @@ namespace Surveillance.Api.DataAccess.Entities
         public int RuleTypeId { get; set; }
         public bool IsBackTest { get; set; }
         public bool IsForceRun { get; set; }
-
-        public string Start => ScheduleRuleStart.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        public string End => ScheduleRuleEnd.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
     }
 }

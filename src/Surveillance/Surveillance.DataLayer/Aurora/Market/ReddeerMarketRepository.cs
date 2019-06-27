@@ -53,6 +53,10 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
              MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
              MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
+             MSES.SectorCode as SectorCode,
+             MSES.IndustryCode as IndustryCode,
+             MSES.RegionCode as RegionCode,
+             MSES.CountryCode as CountryCode,
              MSEP.Epoch as Epoch,
              MSEP.BidPrice as BidPrice,
              MSEP.AskPrice as AskPrice,
@@ -105,6 +109,10 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
              MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
              MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
+             MSES.SectorCode as SectorCode,
+             MSES.IndustryCode as IndustryCode,
+             MSES.RegionCode as RegionCode,
+             MSES.CountryCode as CountryCode,
              IEDS.Epoch as Epoch,
              IEDS.OpenPrice as OpenPrice,
              IEDS.ClosePrice as ClosePrice,
@@ -137,7 +145,11 @@ namespace Surveillance.DataLayer.Aurora.Market
               sec.ExchangeSymbol As ExchangeSymbol,
               sec.Cusip As Cusip,
               sec.Lei As Lei,
-              sec.BloombergTicker As BloombergTicker
+              sec.BloombergTicker As BloombergTicker,
+              sec.SectorCode As SectorCode,
+              sec.IndustryCode As IndustryCode,
+              sec.RegionCode As RegionCode,
+              sec.CountryCode As CountryCode
               FROM FinancialInstruments as sec
               left join Market as mse
               on sec.MarketId = mse.Id
@@ -159,6 +171,10 @@ namespace Surveillance.DataLayer.Aurora.Market
               Lei = @Lei,
               BloombergTicker = @BloombergTicker,
               InstrumentType = @InstrumentType,
+              SectorCode = @SectorCode,
+              IndustryCode = @IndustryCode,
+              RegionCode = @RegionCode,
+              CountryCode = @CountryCode,
               Enrichment = (SELECT UTC_TIMESTAMP())
               WHERE Id = @Id;";
 
@@ -200,9 +216,13 @@ namespace Surveillance.DataLayer.Aurora.Market
                 UnderlyingLei,
                 UnderlyingExchangeSymbol,
                 UnderlyingBloombergTicker,
-                UnderlyingClientIdentifier)
+                UnderlyingClientIdentifier,
+                SectorCode,
+                IndustryCode,
+                RegionCode,
+                CountryCode)
             SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
-                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier
+                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
             FROM DUAL
             WHERE NOT EXISTS(
 	            SELECT 1
@@ -239,9 +259,13 @@ namespace Surveillance.DataLayer.Aurora.Market
                 UnderlyingLei,
                 UnderlyingExchangeSymbol,
                 UnderlyingBloombergTicker,
-                UnderlyingClientIdentifier)
+                UnderlyingClientIdentifier,
+                SectorCode,
+                IndustryCode,
+                RegionCode,
+                CountryCode)
             SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
-                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier
+                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
             FROM DUAL
             WHERE NOT EXISTS(
 	            SELECT 1
@@ -673,7 +697,14 @@ namespace Surveillance.DataLayer.Aurora.Market
                     dto.SecurityName,
                     dto.Cfi,
                     dto.SecurityCurrency,
-                    dto.IssuerIdentifier);
+                    dto.IssuerIdentifier,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    dto.SectorCode,
+                    dto.IndustryCode,
+                    dto.RegionCode,
+                    dto.CountryCode);
 
             var spread =
                 new SpreadTimeBar(
@@ -733,7 +764,14 @@ namespace Surveillance.DataLayer.Aurora.Market
                     dto.SecurityName,
                     dto.Cfi,
                     dto.SecurityCurrency,
-                    dto.IssuerIdentifier);
+                    dto.IssuerIdentifier,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    dto.SectorCode,
+                    dto.IndustryCode,
+                    dto.RegionCode,
+                    dto.CountryCode);
 
             var intradayPrices =
                 new IntradayPrices(
@@ -846,6 +884,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                 UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
                 UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
                 UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+
+                SectorCode = entity?.Security?.SectorCode;
+                IndustryCode = entity?.Security?.IndustryCode;
+                RegionCode = entity?.Security?.RegionCode;
+                CountryCode = entity?.Security?.CountryCode;
             }
 
             public string Id { get; set; }
@@ -891,6 +934,11 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string UnderlyingExchangeSymbol { get; set; }
             public string UnderlyingBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
+
+            public string SectorCode { get; set; }
+            public string IndustryCode { get; set; }
+            public string RegionCode { get; set; }
+            public string CountryCode { get; set; }
 
 
             public DateTime Epoch { get; set; }
@@ -986,6 +1034,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                 UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
                 UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
                 UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+
+                SectorCode = entity?.Security?.SectorCode;
+                IndustryCode = entity?.Security?.IndustryCode;
+                RegionCode = entity?.Security?.RegionCode;
+                CountryCode = entity?.Security?.CountryCode;
             }
 
             public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
@@ -1018,6 +1071,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                 UnderlyingExchangeSymbol = security.Identifiers.UnderlyingExchangeSymbol;
                 UnderlyingBloombergTicker = security.Identifiers.UnderlyingBloombergTicker;
                 UnderlyingClientIdentifier = security.Identifiers.UnderlyingClientIdentifier;
+
+                SectorCode = security.SectorCode;
+                IndustryCode = security.IndustryCode;
+                RegionCode = security.RegionCode;
+                CountryCode = security.CountryCode;
             }
 
             public string MarketIdPrimaryKey { get; set; }
@@ -1064,6 +1122,11 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string UnderlyingExchangeSymbol { get; set; }
             public string UnderlyingBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
+
+            public string SectorCode { get; set; }
+            public string IndustryCode { get; set; }
+            public string RegionCode { get; set; }
+            public string CountryCode { get; set; }
 
             public string FinancialInstrumentId { get; set; }
 
@@ -1131,6 +1194,10 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Lei = dto.Lei;
                 BloombergTicker = dto.BloombergTicker;
                 InstrumentType = (int)cfiMapper.MapCfi(dto.Cfi);
+                SectorCode = dto.SectorCode;
+                IndustryCode = dto.IndustryCode;
+                RegionCode = dto.RegionCode;
+                CountryCode = dto.CountryCode;
             }
 
             public string Id { get; set; }
@@ -1149,6 +1216,10 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string Lei { get; set; }
             public string BloombergTicker { get; set; }
             public int InstrumentType { get; set; }
+            public string SectorCode { get; set; }
+            public string IndustryCode { get; set; }
+            public string RegionCode { get; set; }
+            public string CountryCode { get; set; }
         }
     }
 }

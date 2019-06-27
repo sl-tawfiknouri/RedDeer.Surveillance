@@ -388,7 +388,11 @@ namespace SharedKernel.Files.Orders
                 contract.InstrumentIssuerIdentifier ?? string.Empty,
                 contract.InstrumentUnderlyingName ?? string.Empty,
                 contract.InstrumentUnderlyingCfi ?? string.Empty,
-                contract.InstrumentUnderlyingIssuerIdentifier ?? string.Empty);
+                contract.InstrumentUnderlyingIssuerIdentifier ?? string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty);
         }
 
         /// <summary>

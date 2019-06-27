@@ -274,6 +274,10 @@ namespace Surveillance.DataLayer.Aurora.Orders
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.SectorCode As SectorCode,
+                fi.IndustryCode As IndustryCode,
+                fi.RegionCode As RegionCode,
+                fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
@@ -339,6 +343,10 @@ namespace Surveillance.DataLayer.Aurora.Orders
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.SectorCode As SectorCode,
+                fi.IndustryCode As IndustryCode,
+                fi.RegionCode As RegionCode,
+                fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
@@ -427,6 +435,10 @@ namespace Surveillance.DataLayer.Aurora.Orders
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.SectorCode As SectorCode,
+                fi.IndustryCode As IndustryCode,
+                fi.RegionCode As RegionCode,
+                fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
@@ -491,6 +503,10 @@ namespace Surveillance.DataLayer.Aurora.Orders
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.SectorCode As SectorCode,
+                fi.IndustryCode As IndustryCode,
+                fi.RegionCode As RegionCode,
+                fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
@@ -845,7 +861,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
                     dto.SecurityIssuerIdentifier,
                     dto.UnderlyingSecurityName,
                     dto.UnderlyingSecurityCfi,
-                    dto.UnderlyingSecurityIssuerIdentifier);
+                    dto.UnderlyingSecurityIssuerIdentifier,
+                    dto.SectorCode,
+                    dto.IndustryCode,
+                    dto.RegionCode,
+                    dto.CountryCode);
 
             Enum.TryParse(dto.MarketType?.ToString() ?? string.Empty, out MarketTypes result);
             var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
@@ -1025,6 +1045,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
                 UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
 
+                SectorCode = order?.Instrument.SectorCode;
+                IndustryCode = order?.Instrument.IndustryCode;
+                RegionCode = order?.Instrument.RegionCode;
+                CountryCode = order?.Instrument.CountryCode;
+
                 OrderVersion = order?.OrderVersion;
                 OrderVersionLinkId = order?.OrderVersionLinkId;
                 OrderGroupId = order?.OrderGroupId;
@@ -1115,6 +1140,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string UnderlyingSecurityLei { get; set; }
             public string UnderlyingSecurityBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
+
+            public string SectorCode { get; set; }
+            public string IndustryCode { get; set; }
+            public string RegionCode { get; set; }
+            public string CountryCode { get; set; }
 
 
             public int? ReddeerOrderId { get; set; } // primary key

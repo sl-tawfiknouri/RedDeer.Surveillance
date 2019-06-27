@@ -68,12 +68,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public string Id { get; }
-        public TimeSpan WindowSize { get; }
-        public decimal? CancelledOrderPercentagePositionThreshold { get; }
-        public decimal? CancelledOrderCountPercentageThreshold { get; }
-        public int MinimumNumberOfTradesToApplyRuleTo { get; }
-        public int? MaximumNumberOfTradesToApplyRuleTo { get; }
+        public string Id { get; private set; }
+        public TimeSpan WindowSize { get; private set; }
+        public decimal? CancelledOrderPercentagePositionThreshold { get; private set; }
+        public decimal? CancelledOrderCountPercentageThreshold { get; private set; }
+        public int MinimumNumberOfTradesToApplyRuleTo { get; private set; }
+        public int? MaximumNumberOfTradesToApplyRuleTo { get; private set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }

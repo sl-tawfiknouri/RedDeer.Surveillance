@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Surveillance.Api.DataAccess.Abstractions.Repositories
 {
@@ -8,13 +7,14 @@ namespace Surveillance.Api.DataAccess.Abstractions.Repositories
     {
         List<int> Ids { get; }
         int? Take { get; }
-        List<string> TraderIds { get; }
+        HashSet<string> TraderIds { get; }
+        HashSet<string> ExcludeTraderIds { get; }
         List<string> ReddeerIds { get; }
         List<int> Statuses { get; set; }
         List<int> Directions { get; set; }
         List<int> Types { get; set; }
-        string PlacedDateFrom { get; }
-        string PlacedDateTo { get; }
+        DateTime? PlacedDateFrom { get; }
+        DateTime? PlacedDateTo { get; }
         string TzName { get; }
     }
 }

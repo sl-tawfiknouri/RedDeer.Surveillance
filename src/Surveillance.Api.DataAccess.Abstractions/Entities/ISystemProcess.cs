@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Api.DataAccess.Abstractions.Entities
+﻿using System;
+
+namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
     public interface ISystemProcess
     {
@@ -6,7 +8,7 @@
         string MachineId { get; set; }
         string ProcessId { get; set; }
         int SystemProcessTypeId { get; set; }
-        string Initiated { get; }
-        string Heartbeats { get; }
+        DateTime? InstanceInitiated { get; set; }
+        DateTime? Heartbeat { get; set; }
     }
 }

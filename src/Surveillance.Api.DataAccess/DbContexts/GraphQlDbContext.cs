@@ -16,6 +16,9 @@ namespace Surveillance.Api.DataAccess.DbContexts
         protected virtual DbSet<Market> _market { get; set; }
         public IQueryable<IMarket> Market => _market;
 
+        protected virtual DbSet<Broker> _broker { get; set; }
+        public IQueryable<IBroker> Broker => _broker;
+
         protected virtual DbSet<Order> _orders { get; set; }
         public IQueryable<IOrder> Orders => _orders;
 
@@ -52,6 +55,7 @@ namespace Surveillance.Api.DataAccess.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Market>().ToTable("Market");
+            modelBuilder.Entity<Broker>().ToTable("Brokers");
             modelBuilder.Entity<Order>().ToTable("Orders");
             modelBuilder.Entity<OrdersAllocation>().ToTable("OrdersAllocation");
             modelBuilder.Entity<RuleBreach>().ToTable("RuleBreach");

@@ -11,7 +11,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string CleanDirty { get;  }
         string ClearingAgent { get;  }
         string ClientOrderId { get;  }
-        string Created { get;  }
+        DateTime CreatedDate { get;  }
         string Currency { get;  }
         string DealingInstructions { get;  }
         int Direction { get;  }
@@ -28,7 +28,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         /// </summary>
         IOrderManagementSystem Oms { get;  }
         string OptionEuropeanAmerican { get;  }
-        string OptionExpiration { get;  }
+        DateTime? OptionExpirationDate { get;  }
         decimal? OptionStrikePrice { get;  }
         IOrderDates OrderDates { get;  }
         long? OrderedVolume { get;  }
@@ -56,5 +56,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         DateTime? RejectedDate { get; }
         DateTime? CancelledDate { get; }
         DateTime? FilledDate { get; }
+
+        int? BrokerId { get; }
     }
 }

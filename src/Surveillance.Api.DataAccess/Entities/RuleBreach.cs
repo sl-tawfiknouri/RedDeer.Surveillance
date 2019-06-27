@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
@@ -29,10 +28,5 @@ namespace Surveillance.Api.DataAccess.Entities
         public int OrganisationalFactorType { get; set; }
         public OrganisationalFactors OrganisationFactor => (OrganisationalFactors)OrganisationalFactorType;
         public string OrganisationalFactorValue { get; set; }
-
-
-        public string Created => CreatedOn.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        public string StartOfRuleBreachPeriod => StartOfPeriodUnderInvestigation.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
-        public string EndOfRuleBreachPeriod => EndOfPeriodUnderInvestigation.ToString(CultureInfo.GetCultureInfo("en-GB")) ?? string.Empty;
     }
 }

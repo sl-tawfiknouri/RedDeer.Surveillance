@@ -22,7 +22,6 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string SecurityCurrency { get; set; }
         string ReddeerId { get; set; }
         DateTime? Enrichment { get; set; }
-        string EnrichmentDate { get; }
         int InstrumentType { get; set; }
         InstrumentTypes InstrumentTypes { get; set; }
     }

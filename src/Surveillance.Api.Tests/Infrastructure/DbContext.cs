@@ -16,6 +16,7 @@ namespace Surveillance.Api.Tests.Infrastructure
         public DbSet<SystemProcessOperationRuleRun> DbRuleRuns => _ruleRun;
         public DbSet<SystemProcessOperation> DbProcessOperations => _processOperation;
         public DbSet<Market> DbMarkets => _market;
+        public DbSet<Broker> DbBrokers => _broker;
         public DbSet<FinancialInstrument> DbDFinancialInstruments => _financialInstrument;
         public DbSet<OrdersAllocation> DbOrderAllocations => _ordersAllocation;
 

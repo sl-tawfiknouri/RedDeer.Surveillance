@@ -1,7 +1,4 @@
 ﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RedDeer.Surveillance.Api.Client.Nodes
 {
@@ -27,12 +24,14 @@ namespace RedDeer.Surveillance.Api.Client.Nodes
         public OrderNode FieldClearingAgent() => AddField("clearingAgent");
         public OrderNode FieldDealingInstructions() => AddField("dealingInstructions");
         public OrderNode FieldOptionStrikePrice() => AddField("optionStrikePrice");
-        public OrderNode FieldOptionExpirationDate() => AddField("optionExpiration");
+        public OrderNode FieldOptionExpirationDate() => AddField("optionExpirationDate");
         public OrderNode FieldOptionEuropeanAmerican() => AddField("optionEuropeanAmerican");
 
         public OrderDatesNode FieldOrderDates() => AddChild("orderDates", new OrderDatesNode(this));
         public TraderNode FieldTrader() => AddChild("trader", new TraderNode(this));
         public MarketNode FieldMarket() => AddChild("market", new MarketNode(this));
+        public BrokerNode FieldBroker() => AddChild("broker", new BrokerNode(this));
+
         public FinancialInstrumentNode FieldFinancialInstrument() => AddChild("financialInstrument", new FinancialInstrumentNode(this));
         public OrderAllocationNode FieldOrderAllocations() => AddChild("orderAllocations", new OrderAllocationNode(this));
     }

@@ -20,6 +20,7 @@ namespace Surveillance.Api.Tests.Tests
             RemoveAll(_dbContext.DbProcessOperations);
             RemoveAll(_dbContext.DbOrderAllocations);
             RemoveAll(_dbContext.DbMarkets);
+            RemoveAll(_dbContext.DbBrokers);
             await _dbContext.SaveChangesAsync();
         }
 

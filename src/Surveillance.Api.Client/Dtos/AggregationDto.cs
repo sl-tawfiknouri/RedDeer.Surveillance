@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RedDeer.Surveillance.Api.Client.Dtos
+﻿namespace RedDeer.Surveillance.Api.Client.Dtos
 {
     public class AggregationDto
     {

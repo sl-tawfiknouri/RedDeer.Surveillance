@@ -17,6 +17,7 @@ using Surveillance.Api.DataAccess.Abstractions.Repositories;
 using System.Collections.Generic;
 using Surveillance.Api.App.Types.Aggregation;
 using Surveillance.Api.DataAccess.Repositories;
+using System;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -187,8 +188,8 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "statuses" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
-                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
-                    new QueryArgument<StringGraphType> { Name = "placedDateTo" }
+                    new QueryArgument<DateTimeGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<DateTimeGraphType> { Name = "placedDateTo" }
                     ),
                 resolve: context =>
                 {
@@ -202,8 +203,8 @@ namespace Surveillance.Api.App.Infrastructure
                         Statuses = context.GetArgument<List<int>>("statuses"),
                         Directions = context.GetArgument<List<int>>("directions"),
                         Types = context.GetArgument<List<int>>("types"),
-                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
-                        PlacedDateTo = context.GetArgument<string>("placedDateTo")
+                        PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo")
                     };
                     return orderRepository.Query(options);
                 });
@@ -219,8 +220,8 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "statuses" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
-                    new QueryArgument<StringGraphType> { Name = "placedDateFrom" },
-                    new QueryArgument<StringGraphType> { Name = "placedDateTo" },
+                    new QueryArgument<DateTimeGraphType> { Name = "placedDateFrom" },
+                    new QueryArgument<DateTimeGraphType> { Name = "placedDateTo" },
                     new QueryArgument<StringGraphType> { Name = "tzName" }
                     ),
                 resolve: context =>
@@ -234,8 +235,8 @@ namespace Surveillance.Api.App.Infrastructure
                         Statuses = context.GetArgument<List<int>>("statuses"),
                         Directions = context.GetArgument<List<int>>("directions"),
                         Types = context.GetArgument<List<int>>("types"),
-                        PlacedDateFrom = context.GetArgument<string>("placedDateFrom"),
-                        PlacedDateTo = context.GetArgument<string>("placedDateTo"),
+                        PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
+                        PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo"),
                         TzName = context.GetArgument<string>("tzName")
                     };
                     return orderRepository.AggregationQuery(options);

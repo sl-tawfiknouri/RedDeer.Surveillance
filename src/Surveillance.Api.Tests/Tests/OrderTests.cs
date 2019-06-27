@@ -5,6 +5,7 @@ using RedDeer.Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,13 +53,22 @@ namespace Surveillance.Api.Tests.Tests
 
                 MarketId = 9,
 
-                SecurityId = 14
+                SecurityId = 14,
+
+                BrokerId = 3
             });
             _dbContext.DbMarkets.Add(new Market
             {
                 Id = 9,
                 MarketId = "market id",
                 MarketName = "market name"
+            });
+            _dbContext.DbBrokers.Add(new Broker
+            {
+                Id = 3,
+                ExternalId = "ExternalBrokerId-3",
+                Name = "Broker name",
+                CreatedOn = DateTime.UtcNow
             });
             _dbContext.DbDFinancialInstruments.Add(new FinancialInstrument
             {
@@ -185,8 +195,14 @@ namespace Surveillance.Api.Tests.Tests
                             .FieldOrderFilledVolume()
                             .FieldLive()
                             .FieldAutoScheduled()
-                            .FieldCreatedDate();
-        
+                            .FieldCreatedDate()
+                            .Parent<OrderNode>()
+                        .FieldBroker()
+                            .FieldId()
+                            .FieldExternalId()
+                            .FieldName()
+                            .FieldCreatedOn();
+
             // act  
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
 
@@ -215,13 +231,13 @@ namespace Surveillance.Api.Tests.Tests
             Assert.That(order.OptionExpirationDate, Is.EqualTo(new DateTime(2019, 05, 09, 14, 42, 11, DateTimeKind.Utc)));
             Assert.That(order.OptionEuropeanAmerican, Is.EqualTo("european american"));
 
-            Assert.That(order.OrderDates.Placed, Is.EqualTo(new DateTime(2019, 05, 09, 01, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Booked, Is.EqualTo(new DateTime(2019, 05, 09, 02, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Amended, Is.EqualTo(new DateTime(2019, 05, 09, 03, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Rejected, Is.EqualTo(new DateTime(2019, 05, 09, 04, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Cancelled, Is.EqualTo(new DateTime(2019, 05, 09, 05, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.Filled, Is.EqualTo(new DateTime(2019, 05, 09, 06, 00, 00, DateTimeKind.Utc)));
-            Assert.That(order.OrderDates.StatusChanged, Is.EqualTo(new DateTime(2019, 05, 09, 07, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.PlacedDate, Is.EqualTo(new DateTime(2019, 05, 09, 01, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.BookedDate, Is.EqualTo(new DateTime(2019, 05, 09, 02, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.AmendedDate, Is.EqualTo(new DateTime(2019, 05, 09, 03, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.RejectedDate, Is.EqualTo(new DateTime(2019, 05, 09, 04, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.CancelledDate, Is.EqualTo(new DateTime(2019, 05, 09, 05, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.FilledDate, Is.EqualTo(new DateTime(2019, 05, 09, 06, 00, 00, DateTimeKind.Utc)));
+            Assert.That(order.OrderDates.StatusChangedDate, Is.EqualTo(new DateTime(2019, 05, 09, 07, 00, 00, DateTimeKind.Utc)));
 
             Assert.That(order.Trader.Id, Is.EqualTo("trader id"));
             Assert.That(order.Trader.Name, Is.EqualTo("trader name"));
@@ -264,6 +280,14 @@ namespace Surveillance.Api.Tests.Tests
                 Assert.That(actual.Autoscheduled, Is.EqualTo(expected.AutoScheduled));
                 Assert.That(actual.CreatedDate, Is.EqualTo(expected.CreatedDate));
             }
+
+            var expectedBroker = _dbContext.DbBrokers.Single();
+
+            Assert.That(order.Broker, Is.Not.Null);
+            Assert.That(order.Broker.Id, Is.EqualTo(expectedBroker.Id));
+            Assert.That(order.Broker.Name, Is.EqualTo(expectedBroker.Name));
+            Assert.That(order.Broker.ExternalId, Is.EqualTo(expectedBroker.ExternalId));
+            Assert.That(order.Broker.CreatedOn, Is.EqualTo(expectedBroker.CreatedOn));
         }
 
         [Test]

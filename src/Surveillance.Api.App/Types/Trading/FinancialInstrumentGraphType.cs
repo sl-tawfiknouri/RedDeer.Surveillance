@@ -45,7 +45,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.IssuerIdentifier).Description("Issuer identifier");
             Field(i => i.SecurityCurrency).Description("The currency the security is traded in");
             Field(i => i.ReddeerId).Description("The reddeer id (security master list) for the instrument");
-            Field(i => i.EnrichmentDate).Description("The date the security was enriched on in UTC and in UK time format");
+            Field(i => i.Enrichment, nullable: true).Type(new DateTimeGraphType()).Description("The date the security was enriched on in UTC and in UK time format");
 
             Field<InstrumentTypeGraphType>("instrumentType", description: "The type of the instrument");
 

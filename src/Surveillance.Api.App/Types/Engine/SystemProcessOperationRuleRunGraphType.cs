@@ -21,8 +21,8 @@ namespace Surveillance.Api.App.Types.Engine
             Field(i => i.RuleParameterId).Description("Rule id");
             Field(i => i.RuleTypeId).Description("Rule category id");
             Field(i => i.RuleVersion).Description("The version of the rule ran");
-            Field(i => i.Start).Description("The start date for the rule run. The actual data for the rule run is pushed out by the rule time window");
-            Field(i => i.End).Description("The end date for the rule run. This is the date in the data, not in the real world");
+            Field(i => i.ScheduleRuleStart).Type(new DateTimeGraphType()).Description("The start date for the rule run. The actual data for the rule run is pushed out by the rule time window");
+            Field(i => i.ScheduleRuleEnd).Type(new DateTimeGraphType()).Description("The end date for the rule run. This is the date in the data, not in the real world");
 
             Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
             {

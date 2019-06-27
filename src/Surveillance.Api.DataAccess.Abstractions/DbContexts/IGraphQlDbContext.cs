@@ -7,6 +7,7 @@ namespace Surveillance.Api.DataAccess.Abstractions.DbContexts
     public interface IGraphQlDbContext : IDisposable
     {
         IQueryable<IMarket> Market { get; }
+        IQueryable<IBroker> Broker { get; }
         IQueryable<IOrder> Orders { get; }
         IQueryable<IRuleBreachOrder> RuleBreachOrders { get; }
         IQueryable<IOrdersAllocation> OrdersAllocation { get; }

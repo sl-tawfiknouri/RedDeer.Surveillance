@@ -25,6 +25,14 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                 return new List<T>();
             }
 
+            var hasSerializable = parameters.GetType().IsDefined(typeof(SerializableAttribute), true);
+
+            if (!hasSerializable)
+            {
+                _logger.LogInformation($"type {typeof(T)} was passed to the rule parameter tuner without a serializable attribute defined");
+                return new List<T>();
+            }
+
             var props = parameters.GetType().GetProperties() ?? new PropertyInfo[0];
             var idField = props.FirstOrDefault(_ => Attribute.IsDefined(_, typeof(TuneableIdParameter)));
 

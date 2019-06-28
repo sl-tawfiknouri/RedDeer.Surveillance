@@ -25,9 +25,24 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 RuleFilter traders,
                 RuleFilter markets,
                 RuleFilter funds,
-                RuleFilter strategies)
+                RuleFilter strategies,
+                RuleFilter sectors,
+                RuleFilter industries,
+                RuleFilter regions,
+                RuleFilter countries)
         {
-            return new UniverseFilterService(_unsubscriberFactory, accounts, traders, markets, funds, strategies, _logger);
+            return new UniverseFilterService(
+                _unsubscriberFactory,
+                accounts,
+                traders,
+                markets,
+                funds,
+                strategies,
+                sectors,
+                industries,
+                regions,
+                countries,
+                _logger);
         }
     }
 }

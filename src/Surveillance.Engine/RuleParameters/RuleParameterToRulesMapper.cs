@@ -54,6 +54,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     _ruleProjector.Project(dto.Markets),
                     _ruleProjector.Project(dto.Funds),
                     _ruleProjector.Project(dto.Strategies),
+                    _ruleProjector.Project(dto.Sectors),
+                    _ruleProjector.Project(dto.Industries),
+                    _ruleProjector.Project(dto.Regions),
+                    _ruleProjector.Project(dto.Countries),
                     _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                     dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
@@ -82,6 +86,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Markets),
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
+                        _ruleProjector.Project(dto.Sectors),
+                        _ruleProjector.Project(dto.Industries),
+                        _ruleProjector.Project(dto.Regions),
+                        _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                         dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
@@ -112,6 +120,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Markets),
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
+                        _ruleProjector.Project(dto.Sectors),
+                        _ruleProjector.Project(dto.Industries),
+                        _ruleProjector.Project(dto.Regions),
+                        _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                         dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
@@ -139,6 +151,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Markets),
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
+                        _ruleProjector.Project(dto.Sectors),
+                        _ruleProjector.Project(dto.Industries),
+                        _ruleProjector.Project(dto.Regions),
+                        _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                         dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
@@ -167,6 +183,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Markets),
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
+                            _ruleProjector.Project(dto.Sectors),
+                            _ruleProjector.Project(dto.Industries),
+                            _ruleProjector.Project(dto.Regions),
+                            _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                             dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
@@ -195,6 +215,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Markets),
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
+                            _ruleProjector.Project(dto.Sectors),
+                            _ruleProjector.Project(dto.Industries),
+                            _ruleProjector.Project(dto.Regions),
+                            _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                             dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
@@ -228,6 +252,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Markets),
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
+                            _ruleProjector.Project(dto.Sectors),
+                            _ruleProjector.Project(dto.Industries),
+                            _ruleProjector.Project(dto.Regions),
+                            _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                             dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
@@ -256,6 +284,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Markets),
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
+                            _ruleProjector.Project(dto.Sectors),
+                            _ruleProjector.Project(dto.Industries),
+                            _ruleProjector.Project(dto.Regions),
+                            _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                             dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
@@ -363,7 +395,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(_.Traders),
                         _ruleProjector.Project(_.Markets),
                         _ruleProjector.Project(_.Funds),
-                        _ruleProjector.Project(_.Strategies)))
+                        _ruleProjector.Project(_.Strategies),
+                        _ruleProjector.Project(_.Sectors),
+                        _ruleProjector.Project(_.Industries),
+                        _ruleProjector.Project(_.Regions),
+                        _ruleProjector.Project(_.Countries)))
                 .ToList();
         }
     }

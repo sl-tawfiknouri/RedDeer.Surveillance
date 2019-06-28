@@ -28,6 +28,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Markets = RuleFilter.None();
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
+
+            Sectors = RuleFilter.None();
+            Industries = RuleFilter.None();
+            Regions = RuleFilter.None();
+            Countries = RuleFilter.None();
         }
 
         public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
@@ -40,7 +45,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter traders,
             RuleFilter markets,
             RuleFilter funds,
-            RuleFilter strategies)
+            RuleFilter strategies,
+            RuleFilter sectors,
+            RuleFilter industries,
+            RuleFilter regions,
+            RuleFilter countries)
         {
             Id = id ?? string.Empty;
 
@@ -54,6 +63,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Markets = markets ?? RuleFilter.None();
             Funds = funds ?? RuleFilter.None();
             Strategies = strategies ?? RuleFilter.None();
+
+            Sectors = sectors ?? RuleFilter.None();
+            Industries = industries ?? RuleFilter.None();
+            Regions = regions ?? RuleFilter.None();
+            Countries = countries ?? RuleFilter.None();
         }
 
         public string Id { get; }
@@ -69,7 +83,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Funds { get; set; }
         public RuleFilter Strategies { get; set; }
 
-        public bool HasFilters()
+        public RuleFilter Sectors { get; set; }
+        public RuleFilter Industries { get; set; }
+        public RuleFilter Regions { get; set; }
+        public RuleFilter Countries { get; set; }
+
+        public bool HasInternalFilters()
         {
             return
                 Accounts?.Type != RuleFilterType.None
@@ -77,6 +96,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
         }
     }
 }

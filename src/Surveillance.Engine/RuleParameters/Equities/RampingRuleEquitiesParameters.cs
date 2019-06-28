@@ -19,6 +19,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter markets,
             RuleFilter funds,
             RuleFilter strategy,
+            RuleFilter sectors,
+            RuleFilter industries,
+            RuleFilter regions,
+            RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
@@ -34,6 +38,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Markets = markets ?? RuleFilter.None();
             Funds = funds ?? RuleFilter.None();
             Strategies = strategy ?? RuleFilter.None();
+
+            Sectors = sectors ?? RuleFilter.None();
+            Industries = industries ?? RuleFilter.None();
+            Regions = regions ?? RuleFilter.None();
+            Countries = countries ?? RuleFilter.None();
 
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
@@ -61,6 +70,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
 
+            Sectors = RuleFilter.None();
+            Industries = RuleFilter.None();
+            Regions = RuleFilter.None();
+            Countries = RuleFilter.None();
+
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
@@ -82,7 +96,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Funds { get; set; }
         public RuleFilter Strategies { get; set; }
 
-        public bool HasFilters()
+        public RuleFilter Sectors { get; set; }
+        public RuleFilter Industries { get; set; }
+        public RuleFilter Regions { get; set; }
+        public RuleFilter Countries { get; set; }
+
+        public bool HasInternalFilters()
         {
             return
                 Accounts?.Type != RuleFilterType.None
@@ -90,6 +109,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
         }
     }
 }

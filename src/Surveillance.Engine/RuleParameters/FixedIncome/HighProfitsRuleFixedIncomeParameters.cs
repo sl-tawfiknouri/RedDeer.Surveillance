@@ -7,6 +7,7 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
+    [Serializable]
     public class HighProfitsRuleFixedIncomeParameters : IHighProfitsRuleFixedIncomeParameters
     {
         public HighProfitsRuleFixedIncomeParameters(

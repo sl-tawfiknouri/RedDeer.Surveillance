@@ -7,6 +7,7 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class MarkingTheCloseEquitiesParameters : IMarkingTheCloseEquitiesParameters
     {
         public MarkingTheCloseEquitiesParameters(

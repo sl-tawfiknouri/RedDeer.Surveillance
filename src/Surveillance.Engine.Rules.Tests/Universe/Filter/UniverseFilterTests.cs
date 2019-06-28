@@ -390,7 +390,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, strategy, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -418,7 +418,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, strategy, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 

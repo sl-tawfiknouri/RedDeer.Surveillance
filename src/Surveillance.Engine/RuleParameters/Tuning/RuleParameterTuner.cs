@@ -1,117 +1,144 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Accord.IO;
-using Surveillance.Engine.Rules.RuleParameters.Equities;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Microsoft.Extensions.Logging;
+using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Tuning
 {
-    public class RuleParameterTuner
+    public class RuleParameterTuner : IRuleParameterTuner
     {
-        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Parameters(
-            ICancelledOrderRuleEquitiesParameters parameters)
+        private readonly ILogger<RuleParameterTuner> _logger;
+
+        public RuleParameterTuner(ILogger<RuleParameterTuner> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public IReadOnlyCollection<T> ParametersFramework<T>(T parameters) where T : class
         {
             if (parameters == null)
             {
-                return new List<ICancelledOrderRuleEquitiesParameters>();
+                _logger.LogInformation($"Received a null parameters argument. Returning");
+                return new List<T>();
             }
 
-            var cancelledOrderCountPercentageTuning =
-                PermutateDecimal(
-                    parameters.CancelledOrderCountPercentageThreshold,
-                    nameof(parameters.CancelledOrderCountPercentageThreshold));
+            var props = parameters.GetType().GetProperties() ?? new PropertyInfo[0];
+            var idField = props.FirstOrDefault(_ => Attribute.IsDefined(_, typeof(TuneableIdParameter)));
 
-            var cancelledOrderCountPercentageTuningProjections =
-                cancelledOrderCountPercentageTuning
-                    .Select((_, x) =>
-                    {
-                        var clone = (CancelledOrderRuleEquitiesParameters)parameters.DeepClone();
-                        clone.Id = TunedId(parameters.Id, nameof(parameters.CancelledOrderCountPercentageThreshold), x);
-                        clone.CancelledOrderCountPercentageThreshold = _.TunedValue;
+            if (idField == null)
+            {
+                _logger.LogError($"Could not identify an id field on {nameof(parameters)}");
+                return new List<T>();
+            }
 
-                        return clone;
-                    })
+            var decimalAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableDecimalParameter))).ToList();
+            var integerAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableIntegerParameter))).ToList();
+            var timespanAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableTimespanParameter))).ToList();
+
+            var decimalPermutations =
+                 decimalAttributes
+                     .Select(_ => PermutateDecimalAttribute(_, parameters.DeepClone(), idField) as T)
+                     .ToList();
+
+            var integerPermutations =
+                integerAttributes
+                    .Select(_ => PermutateIntegerAttribute(_, parameters.DeepClone(), idField) as T)
                     .ToList();
 
-            var cancelledOrderPositionPercentageTuning =
-                PermutateDecimal(
-                    parameters.CancelledOrderPercentagePositionThreshold,
-                    nameof(parameters.CancelledOrderPercentagePositionThreshold));
-
-            var cancelledOrderPositionPercentageTuningProjections =
-                cancelledOrderPositionPercentageTuning
-                    .Select((_,x) =>
-                    {
-                        var clone = (CancelledOrderRuleEquitiesParameters)parameters.DeepClone();
-                        clone.Id = TunedId(parameters.Id, nameof(parameters.CancelledOrderCountPercentageThreshold), x);
-                        clone.CancelledOrderPercentagePositionThreshold = _.TunedValue;
-
-                        return clone;
-                    })
-                    .ToList();
-
-            var cancelledOrderWindowTuning =
-                PermutateTimeWindows(
-                    parameters.WindowSize,
-                    nameof(parameters.WindowSize));
-
-            var cancelledOrderWindowTuningProjections =
-                cancelledOrderWindowTuning
-                    .Select((_, x) =>
-                    {
-                        var clone = (CancelledOrderRuleEquitiesParameters)parameters.DeepClone();
-                        clone.Id = TunedId(parameters.Id, nameof(parameters.WindowSize), x);
-                        clone.WindowSize = _.TunedValue;
-
-                        return clone;
-                    })
-                    .ToList();
-
-            var cancelledOrderMinimumTradesProjections =
-                PermutateInteger(
-                    parameters.MinimumNumberOfTradesToApplyRuleTo,
-                    nameof(parameters.MinimumNumberOfTradesToApplyRuleTo),
-                    2);
-
-            var cancelledOrderMinimumTradesTuningProjections =
-                cancelledOrderMinimumTradesProjections
-                    .Select((_, x) =>
-                    {
-                        var clone = (CancelledOrderRuleEquitiesParameters)parameters.DeepClone();
-                        clone.Id = TunedId(parameters.Id, nameof(parameters.MinimumNumberOfTradesToApplyRuleTo), x);
-                        clone.MinimumNumberOfTradesToApplyRuleTo = _.TunedValue;
-
-                        return clone;
-                    })
-                    .ToList();
-
-            var cancelledOrderMaximumTradesProjections =
-                PermutateInteger(
-                    parameters.MaximumNumberOfTradesToApplyRuleTo,
-                    nameof(parameters.MaximumNumberOfTradesToApplyRuleTo),
-                    4);
-
-            var cancelledOrderMaximumTradesTuningProjections =
-                cancelledOrderMaximumTradesProjections
-                    .Select((_, x) =>
-                    {
-                        var clone = (CancelledOrderRuleEquitiesParameters)parameters.DeepClone();
-                        clone.Id = TunedId(parameters.Id, nameof(parameters.MaximumNumberOfTradesToApplyRuleTo), x);
-                        clone.MaximumNumberOfTradesToApplyRuleTo = _.TunedValue;
-
-                        return clone;
-                    })
+            var timespanPermutations =
+                timespanAttributes
+                    .Select(_ => PermutateTimespanAttribute(_, parameters.DeepClone(), idField) as T)
                     .ToList();
 
             return
-                new List<ICancelledOrderRuleEquitiesParameters>()
-                    .Concat(cancelledOrderCountPercentageTuningProjections)
-                    .Concat(cancelledOrderPositionPercentageTuningProjections)
-                    .Concat(cancelledOrderWindowTuningProjections)
-                    .Concat(cancelledOrderMinimumTradesTuningProjections)
-                    .Concat(cancelledOrderMaximumTradesTuningProjections)
+                decimalPermutations
+                    .Concat(integerPermutations)
+                    .Concat(timespanPermutations)
                     .ToList();
+        }
+
+        private List<object> PermutateDecimalAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        {
+            if (!pInfo.CanWrite)
+            {
+                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                return null;
+            }
+
+            var baseId = idInfo.GetMethod.Invoke(target, new object[0]) as string;
+            var baseDecimalValue = pInfo.GetMethod.Invoke(target, new object[0]) as decimal?;
+            var tuningPermutations = PermutateDecimal(baseDecimalValue, pInfo.Name);
+
+            var projectedTunedParameters =
+                tuningPermutations
+                    .Select((_, x) =>
+                    {
+                        var clone = target.DeepClone();
+                        var tuningId = TunedId(baseId, pInfo.Name, x);
+                        idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
+                        pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        return clone;
+                    })
+                    .ToList();
+
+            return projectedTunedParameters;
+        }
+
+        private List<object> PermutateIntegerAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        {
+            if (!pInfo.CanWrite)
+            {
+                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                return null;
+            }
+
+            var baseId = idInfo.GetMethod.Invoke(target, new object[0]) as string;
+            var baseIntegerValue = pInfo.GetMethod.Invoke(target, new object[0]) as int?;
+            var tuningPermutations = PermutateInteger(baseIntegerValue, pInfo.Name, null);
+
+            var projectedTunedParameters =
+                tuningPermutations
+                    .Select((_, x) =>
+                    {
+                        var clone = target.DeepClone();
+                        var tuningId = TunedId(baseId, pInfo.Name, x);
+                        idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
+                        pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        return clone;
+                    })
+                    .ToList();
+
+            return projectedTunedParameters;
+        }
+
+        private List<object> PermutateTimespanAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        {
+            if (!pInfo.CanWrite)
+            {
+                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                return null;
+            }
+
+            var baseId = idInfo.GetMethod.Invoke(target, new object[0]) as string;
+            var baseTimespanValue = pInfo.GetMethod.Invoke(target, new object[0]) as TimeSpan?;
+            var tuningPermutations = PermutateTimeWindows(baseTimespanValue, pInfo.Name);
+
+            var projectedTunedParameters =
+                tuningPermutations
+                    .Select((_, x) =>
+                    {
+                        var clone = target.DeepClone();
+                        var tuningId = TunedId(baseId, pInfo.Name, x);
+                        idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
+                        pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        return clone;
+                    })
+                    .ToList();
+
+            return projectedTunedParameters;
         }
 
         private string TunedId(string raw, string property, int id)
@@ -189,27 +216,34 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return new[] { positiveOffset, negativeOffset };
         }
 
-        private IReadOnlyCollection<TunedParameter<TimeSpan>> PermutateTimeWindows(TimeSpan input, string name)
+        private IReadOnlyCollection<TunedParameter<TimeSpan>> PermutateTimeWindows(TimeSpan? input, string name)
         {
+            if (input == null)
+            {
+                return new TunedParameter<TimeSpan>[0];
+            }
+
+            var timeSpan = input.GetValueOrDefault();
+
             var smallOffset = 0.1m;
             var mediumOffset = 1.5m;
             var largeOffset = 3m;
 
-            var appliedSmallOffset = TimeSpan.FromTicks((long)(input.Ticks * smallOffset));
-            var appliedMediumOffset = TimeSpan.FromTicks((long)(input.Ticks * mediumOffset));
-            var appliedLargeOffset = TimeSpan.FromTicks((long)(input.Ticks * largeOffset));
+            var appliedSmallOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * smallOffset));
+            var appliedMediumOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * mediumOffset));
+            var appliedLargeOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * largeOffset));
 
-            var smallOffsets = ApplyTimeSpanOffset(input, appliedSmallOffset, name);
-            var mediumOffsets = ApplyTimeSpanOffset(input, appliedMediumOffset, name);
-            var largeOffsets = ApplyTimeSpanOffset(input, appliedLargeOffset, name);
+            var smallOffsets = ApplyTimeSpanOffset(timeSpan, appliedSmallOffset, name);
+            var mediumOffsets = ApplyTimeSpanOffset(timeSpan, appliedMediumOffset, name);
+            var largeOffsets = ApplyTimeSpanOffset(timeSpan, appliedLargeOffset, name);
 
             return (new[]
             {
-                new TunedParameter<TimeSpan>(input, TimeSpan.FromHours(1), name),
-                new TunedParameter<TimeSpan>(input, TimeSpan.FromDays(1), name),
-                new TunedParameter<TimeSpan>(input, TimeSpan.FromDays(7), name),
-                new TunedParameter<TimeSpan>(input, TimeSpan.FromDays(14), name),
-                new TunedParameter<TimeSpan>(input, TimeSpan.FromDays(28), name)
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromHours(1), name),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(1), name),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(7), name),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(14), name),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(28), name)
             })
                 .Concat(smallOffsets)
                 .Concat(mediumOffsets)

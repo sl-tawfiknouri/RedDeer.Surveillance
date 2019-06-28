@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class CancelledOrderRuleEquitiesParameters : ICancelledOrderRuleEquitiesParameters
     {
         public CancelledOrderRuleEquitiesParameters(
@@ -68,11 +70,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; set; }
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; set; }
+        [TuneableDecimalParameter]
         public decimal? CancelledOrderPercentagePositionThreshold { get; set; }
+        [TuneableDecimalParameter]
         public decimal? CancelledOrderCountPercentageThreshold { get; set; }
+        [TuneableIntegerParameter]
         public int MinimumNumberOfTradesToApplyRuleTo { get; set; }
+        [TuneableIntegerParameter]
         public int? MaximumNumberOfTradesToApplyRuleTo { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }

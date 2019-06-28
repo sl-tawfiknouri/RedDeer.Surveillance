@@ -16,16 +16,16 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters
 {
-    public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
+    public class RuleParameterDtoToRuleParameterMapper : IRuleParameterToRulesMapper
     {
         private readonly IRuleProjector _ruleProjector;
         private readonly IClientOrganisationalFactorMapper _organisationalFactorMapper;
-        private readonly ILogger<RuleParameterToRulesMapper> _logger;
+        private readonly ILogger<RuleParameterDtoToRuleParameterMapper> _logger;
 
-        public RuleParameterToRulesMapper(
+        public RuleParameterDtoToRuleParameterMapper(
             IRuleProjector ruleProjector,
             IClientOrganisationalFactorMapper organisationalFactorMapper,
-            ILogger<RuleParameterToRulesMapper> logger)
+            ILogger<RuleParameterDtoToRuleParameterMapper> logger)
         {
             _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
             _organisationalFactorMapper =

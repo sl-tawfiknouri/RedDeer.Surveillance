@@ -9,10 +9,13 @@ namespace Surveillance.Engine.Rules.Universe
             new Dictionary<UniverseStateEvent, int>
             {
                 { UniverseStateEvent.Unknown, 0 },
-                { UniverseStateEvent.Genesis, 1 },
+                { UniverseStateEvent.Genesis, 0 },
+                { UniverseStateEvent.EpochPrimordialUniverse, 1 },
+                { UniverseStateEvent.EpochRealUniverse, 1 },
                 { UniverseStateEvent.ExchangeOpen, 2 },
                 { UniverseStateEvent.EquityIntradayTick, 3 },
                 { UniverseStateEvent.EquityInterDayTick, 4 },
+                { UniverseStateEvent.EpochFutureUniverse, 4 },
                 { UniverseStateEvent.OrderPlaced, 5 },
                 { UniverseStateEvent.Order, 6 },
                 { UniverseStateEvent.OrderFilled, 7 },

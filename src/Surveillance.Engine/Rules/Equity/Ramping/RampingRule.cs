@@ -55,7 +55,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                rampingParameters?.WindowSize ?? TimeSpan.FromDays(7),
+                rampingParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(7),
+                rampingParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.Ramping,
                 EquityRuleRampingFactory.Version,
                 "Ramping Rule",
@@ -99,14 +100,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            if (!ExceedsTradingVolumeInWindowThreshold(tradeWindow.ToList(), tradeWindow.Peek()))
+            if (!ExceedsTradingVolumeInWindowThreshold(tradeWindow.ToList(), tradeWindow.Any() ? tradeWindow.Peek() : null))
             {
                 // LOG THEN EXIT
                 _logger.LogInformation($"Trading Volume of {_rampingParameters.ThresholdVolumePercentageWindow} was not exceeded. Returning.");
                 return;
             }
 
-            var lastTrade = tradeWindow.Peek();
+            var lastTrade = tradeWindow.Any() ? tradeWindow.Peek() : null;
             var tradingHours = _tradingHoursService.GetTradingHoursForMic(lastTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
@@ -115,7 +116,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 lastTrade.Market?.MarketIdentifierCode);
 
@@ -123,7 +124,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 lastTrade.Market?.MarketIdentifierCode,
                 lastTrade.Instrument.Cfi,
                 lastTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllIntraday);
@@ -144,7 +145,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             while (rampingOrders.Any())
             {
                 var rampingOrderList = rampingOrders.ToList();
-                var rootOrder = rampingOrders.Peek();
+                var rootOrder = rampingOrders.Any() ? rampingOrders.Peek() : null;
                 var marketDataSubset = marketData.Response.Where(_ => _.TimeStamp <= rootOrder.FilledDate).ToList();
                 var rampingAnalysisResult = _rampingAnalyser.Analyse(rampingOrderList, marketDataSubset);
                 rampingAnalysisResults.Add(rampingAnalysisResult);
@@ -172,7 +173,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
             var breach =
                 new RampingRuleBreach(
-                    WindowSize,
+                    BackwardWindowSize,
                     tradePosition,
                     lastTrade.Instrument,
                     _rampingParameters.Id,
@@ -184,6 +185,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
             var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Ramping, breach, _ruleCtx);
             _alertStream.Add(message);
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         public decimal RampingPrevalence(List<IRampingStrategySummaryPanel> panels)
@@ -240,7 +256,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
 
@@ -249,7 +265,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
@@ -290,7 +306,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             // we don't use post order event in ramping rule
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // we don't use post order event in ramping rule
         }

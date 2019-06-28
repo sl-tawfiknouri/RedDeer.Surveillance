@@ -56,7 +56,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromHours(8),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromHours(8),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.HighProfits,
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
@@ -95,6 +96,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
+            EvaluateHighProfits(history, UniverseEquityIntradayCache);
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            EvaluateHighProfits(history, FutureUniverseEquityIntradayCache);
+        }
+
+        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
+        {
             if (!RunRuleGuard(history))
             {
                 return;
@@ -127,7 +138,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             var marketCache =
                 MarketClosureRule
                     ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)
-                    : _marketDataCacheFactory.IntradayStrategy(UniverseEquityIntradayCache);
+                    : _marketDataCacheFactory.IntradayStrategy(intradayCache);
 
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
             var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, marketCache);
@@ -259,12 +270,22 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return currencyConvertingCalculator;
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
@@ -341,6 +362,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected override void MarketClose(MarketOpenClose exchange)
         {
             Logger.LogInformation($"Trading closed for exchange {exchange.MarketId}. Running market closure virtual profits check.");
+
+            RunRuleForAllDelayedTradingHistoriesInMarket(exchange, UniverseDateTime);
         }
 
         protected override void EndOfUniverse()

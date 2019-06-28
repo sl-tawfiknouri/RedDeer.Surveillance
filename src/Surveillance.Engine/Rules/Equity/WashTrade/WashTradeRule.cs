@@ -53,7 +53,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
@@ -119,7 +120,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
-                    _equitiesParameters.WindowSize,
+                    _equitiesParameters.Windows.BackwardWindowSize,
                     OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),
@@ -306,12 +307,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             return new WashTradeRuleBreach.WashTradeClusteringPositionBreach(true, breachingClusters.Count, centroids);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {           
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

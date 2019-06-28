@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Core.Markets.Collections;
 using Domain.Core.Markets.Interfaces;
 
@@ -84,6 +85,12 @@ namespace Domain.Core.Markets.Timebars
             if (_market != null)
             {
                 return _market;
+            }
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (!_activeStack?.Any() ?? true)
+            {
+                return null;
             }
 
             // ReSharper disable once InconsistentlySynchronizedField

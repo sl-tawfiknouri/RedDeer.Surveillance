@@ -45,7 +45,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                  equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(30),
+                  equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                  equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                   Domain.Surveillance.Scheduling.Rules.Spoofing,
                   EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",
@@ -71,13 +72,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             var activeTrades = history?.ActiveTradeHistory();
             var portfolio = _portfolioFactory.Build();
             portfolio.Add(activeTrades);
 
-            var lastTrade = history?.ActiveTradeHistory()?.Peek();
+            var lastTrade = (history?.ActiveTradeHistory()?.Any() ?? false) ? history?.ActiveTradeHistory()?.Peek() : null;
             if (lastTrade == null)
             {
                 return;
@@ -190,7 +191,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _equitiesParameters.WindowSize,
+                    _equitiesParameters.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
                     tradingPosition,
                     opposingPosition,
                     lastTrade.Instrument, 
@@ -209,6 +210,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // spoofing rule does not monitor by filled orders
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

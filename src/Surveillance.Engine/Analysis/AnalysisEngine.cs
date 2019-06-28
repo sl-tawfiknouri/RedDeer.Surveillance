@@ -42,9 +42,10 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
         private readonly IRuleParameterService _ruleParameterService;
-        private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
+        private readonly IRuleParameterAdjustedTimespanService _timespanService;
         private readonly ILazyTransientUniverseFactory _universeFactory;
         private readonly IRuleCancellation _ruleCancellation;
+        private readonly ITaskReSchedulerService _reschedulerService;
 
         private readonly ILogger<AnalysisEngine> _logger;
 
@@ -60,9 +61,10 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleAnalyticsAlertsRepository alertsRepository,
             IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
             IRuleParameterService ruleParameterService,
-            IRuleParameterLeadingTimespanService leadingTimespanService,
+            IRuleParameterAdjustedTimespanService adjustedTimespanService,
             ILazyTransientUniverseFactory universeFactory,
             IRuleCancellation ruleCancellation,
+            ITaskReSchedulerService reschedulerService,
             ILogger<AnalysisEngine> logger)
         {
             _universePlayerFactory =
@@ -80,9 +82,10 @@ namespace Surveillance.Engine.Rules.Analysis
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
             _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
-            _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
+            _timespanService = adjustedTimespanService ?? throw new ArgumentNullException(nameof(adjustedTimespanService));
             _universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
             _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
+            _reschedulerService = reschedulerService ?? throw new ArgumentNullException(nameof(reschedulerService));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -107,7 +110,9 @@ namespace Surveillance.Engine.Rules.Analysis
             _ruleCancellation.Subscribe(ruleCancellation);
 
             var ruleParameters = await _ruleParameterService.RuleParameters(execution);
-            execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
+            execution.LeadingTimespan = _timespanService.LeadingTimespan(ruleParameters);
+            execution.TrailingTimespan = _timespanService.TrailingTimeSpan(ruleParameters);
+
             var player = _universePlayerFactory.Build(cts.Token);
 
             _universeCompletionLogger.InitiateTimeLogger(execution);
@@ -122,6 +127,17 @@ namespace Surveillance.Engine.Rules.Analysis
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
             RuleRunUpdateMessageSend(execution, ids);
 
+            if (GuardForBackTestIntoFutureExecution(execution))
+            {
+                SetFailedBackTestDueToFutureExecution(opCtx, execution, ruleCancellation, ids);
+                return;
+            }
+
+            if (execution.AdjustedTimeSeriesTermination.Date >= DateTime.UtcNow.Date)
+            {
+                await _reschedulerService.RescheduleFutureExecution(execution);
+            }
+
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
 
@@ -132,15 +148,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             if (cts.IsCancellationRequested)
             {
-                opCtx.EndEventWithError("USER CANCELLED RUN");
-                _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
-
-                _ruleCancellation.Unsubscribe(ruleCancellation);
-
-                _logger.LogInformation($"calling rule run update message send");
-                RuleRunUpdateMessageSend(execution, ids);
-                _logger.LogInformation($"completed rule run update message send");
-
+                SetRuleCancelledState(opCtx, execution, ruleCancellation, ids);
                 return;
             }
 
@@ -157,6 +165,49 @@ namespace Surveillance.Engine.Rules.Analysis
 
             _ruleCancellation.Unsubscribe(ruleCancellation);
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+        }
+
+        private bool GuardForBackTestIntoFutureExecution(ScheduledExecution execution)
+        {
+            if (execution == null)
+                return false;
+
+            if (!execution.IsBackTest)
+                return false;
+
+            return execution.AdjustedTimeSeriesTermination.Date > DateTime.UtcNow.Date;
+        }
+
+        private void SetFailedBackTestDueToFutureExecution(
+            ISystemProcessOperationContext opCtx,
+            ScheduledExecution execution,
+            CancellableRule ruleCancellation,
+            IReadOnlyCollection<string> ids)
+        {
+            opCtx.EndEventWithError("Set back test to end some time in the future");
+            _logger.LogInformation($"End of universe execution for {execution.CorrelationId} - back test had illegal future dates");
+
+            _ruleCancellation.Unsubscribe(ruleCancellation);
+
+            _logger.LogInformation($"calling rule run update message send");
+            RuleRunUpdateMessageSend(execution, ids);
+            _logger.LogInformation($"completed rule run update message send");
+        }
+
+        private void SetRuleCancelledState(
+            ISystemProcessOperationContext opCtx,
+            ScheduledExecution execution,
+            CancellableRule ruleCancellation,
+            IReadOnlyCollection<string> ids)
+        {
+            opCtx.EndEventWithError("USER CANCELLED RUN");
+            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
+
+            _ruleCancellation.Unsubscribe(ruleCancellation);
+
+            _logger.LogInformation($"calling rule run update message send");
+            RuleRunUpdateMessageSend(execution, ids);
+            _logger.LogInformation($"completed rule run update message send");
         }
 
         private void RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)

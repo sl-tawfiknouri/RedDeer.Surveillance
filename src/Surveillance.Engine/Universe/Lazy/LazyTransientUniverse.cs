@@ -74,8 +74,9 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
             while (_executions.Any())
             {
                 var exe = _executions.Pop();
-                var fetchEschaton = exe.TimeSeriesTermination >= _scheduledExecution.TimeSeriesTermination;
-                var universe = _universeBuilder.Summon(exe, _opCtx, fetchGenesis, fetchEschaton).Result;
+                // the stack has simpler executions which already account for the leading/trailing edge of the universe
+                var fetchEschaton = exe.TimeSeriesTermination >= _scheduledExecution.AdjustedTimeSeriesTermination;
+                var universe = _universeBuilder.Summon(exe, _opCtx, fetchGenesis, fetchEschaton, _scheduledExecution.TimeSeriesInitiation, _scheduledExecution.TimeSeriesTermination).Result;
 
                 foreach (var bufferedItem in universe.UniverseEvents)
                 {

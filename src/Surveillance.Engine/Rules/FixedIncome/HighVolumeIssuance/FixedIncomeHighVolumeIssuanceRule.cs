@@ -31,7 +31,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighVolumeIssuance,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",
@@ -63,7 +64,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunRule completed for {UniverseDateTime}");
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunInitialSubmissionRule called at {UniverseDateTime}");
 
@@ -77,6 +78,21 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
 
 
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

@@ -41,7 +41,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(60),
+                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
@@ -165,12 +166,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 cancellationRatioByOrderCount);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }

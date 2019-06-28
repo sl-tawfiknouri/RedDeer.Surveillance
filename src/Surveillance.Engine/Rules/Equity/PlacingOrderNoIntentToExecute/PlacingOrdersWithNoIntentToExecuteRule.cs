@@ -49,6 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             ILogger<TradingHistoryStack> tradingStackLogger) 
             : base(
                 TimeSpan.FromHours(24),
+                TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",
@@ -112,7 +113,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 benchmarkOrder.Market?.MarketIdentifierCode);
 
@@ -155,7 +156,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
             var position = new TradePosition(ruleBreaches.Select(_ => _.Item2).ToList());
             var poe = ruleBreaches.Select(_ => ExecutionUnderNormalDistribution(_.Item2, mean, sd, _.Item1)).ToList();
-            var breach = new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(_parameters.WindowSize, position, benchmarkOrder.Instrument, OrganisationFactorValue, mean, sd, poe, _parameters, _ruleCtx);
+            var breach = new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(_parameters.Windows.BackwardWindowSize, position, benchmarkOrder.Instrument, OrganisationFactorValue, mean, sd, poe, _parameters, _ruleCtx);
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
@@ -277,7 +278,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             }
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // placing order with no intent to execute will not use this
         }
@@ -285,6 +286,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // placing order with no intent to execute will not use this
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

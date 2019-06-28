@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
@@ -30,7 +31,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -43,10 +46,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             return
                 Accounts?.Type != RuleFilterType.None
                 || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None;
+                || Markets?.Type != RuleFilterType.None
+                || Funds?.Type != RuleFilterType.None
+                || Strategies?.Type != RuleFilterType.None;
         }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id);
+        }
     }
 }

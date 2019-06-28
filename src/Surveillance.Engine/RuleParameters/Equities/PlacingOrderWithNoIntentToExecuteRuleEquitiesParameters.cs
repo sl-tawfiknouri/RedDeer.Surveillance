@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -56,8 +57,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Strategies = strategies ?? RuleFilter.None();
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
+        [TuneableDecimalParameter]
         public decimal Sigma { get; }
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
@@ -77,6 +81,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                   && Sigma > 0;
         }
     }
 }

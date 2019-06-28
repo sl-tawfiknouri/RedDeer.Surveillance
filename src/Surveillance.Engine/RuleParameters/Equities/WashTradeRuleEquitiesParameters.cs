@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -91,8 +92,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
 
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; set; }
 
         // Enabled analysis settings
@@ -101,13 +104,18 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
 
         // Averaging parameters
+        [TuneableIntegerParameter]
         public int? AveragePositionMinimumNumberOfTrades { get; }
+        [TuneableDecimalParameter]
         public decimal? AveragePositionMaximumPositionValueChange { get; }
+        [TuneableDecimalParameter]
         public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
         public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
-        
+
         // Clustering (k-means) parameters
+        [TuneableIntegerParameter]
         public int? ClusteringPositionMinimumNumberOfTrades { get; }
+        [TuneableDecimalParameter]
         public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
 
 
@@ -127,6 +135,21 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+               && (AveragePositionMinimumNumberOfTrades == null
+                   || (AveragePositionMinimumNumberOfTrades.GetValueOrDefault() >= 0))
+                && (AveragePositionMaximumPositionValueChange == null
+                    || AveragePositionMaximumPositionValueChange >= 0
+                && (AveragePositionMaximumAbsoluteValueChangeAmount == null
+                    || AveragePositionMaximumAbsoluteValueChangeAmount >= 0))
+                && (ClusteringPositionMinimumNumberOfTrades == null
+                    || ClusteringPositionMinimumNumberOfTrades >= 0)
+                && (ClusteringPercentageValueDifferenceThreshold == null
+                    || ClusteringPercentageValueDifferenceThreshold >= 0);
         }
     }
 }

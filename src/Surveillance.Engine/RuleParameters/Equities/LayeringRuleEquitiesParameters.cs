@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -65,10 +66,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
+        [TuneableDecimalParameter]
         public decimal? PercentageOfMarketDailyVolume { get; }
+        [TuneableDecimalParameter]
         public decimal? PercentageOfMarketWindowVolume { get; }
+        [TuneableBoolParameter]
         public bool? CheckForCorrespondingPriceMovement { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -86,6 +92,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                   && (PercentageOfMarketDailyVolume == null
+                       || (PercentageOfMarketDailyVolume.GetValueOrDefault() >= 0
+                           && PercentageOfMarketDailyVolume.GetValueOrDefault() <= 1))
+                   && (PercentageOfMarketWindowVolume == null
+                       || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
+                           && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
         }
     }
 }

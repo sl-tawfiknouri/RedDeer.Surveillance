@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
@@ -49,18 +50,25 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
         
         public bool PerformAveragePositionAnalysis { get; }
         public bool PerformClusteringPositionAnalysis { get; }
-
+        
+        [TuneableIntegerParameter]
         public int? AveragePositionMinimumNumberOfTrades { get; }
+        [TuneableDecimalParameter]
         public decimal? AveragePositionMaximumPositionValueChange { get; }
+        [TuneableDecimalParameter]
         public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
         public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
 
+        [TuneableIntegerParameter]
         public int? ClusteringPositionMinimumNumberOfTrades { get; }
+        [TuneableDecimalParameter]
         public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
 
         public RuleFilter Accounts { get; set; }
@@ -80,8 +88,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
-
-
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+               && (AveragePositionMinimumNumberOfTrades == null
+                   || AveragePositionMinimumNumberOfTrades >= 0)
+                && (AveragePositionMaximumPositionValueChange == null
+                || AveragePositionMaximumPositionValueChange >= 0)
+                && (AveragePositionMaximumAbsoluteValueChangeAmount == null
+                    || AveragePositionMaximumAbsoluteValueChangeAmount >= 0)
+                && (ClusteringPositionMinimumNumberOfTrades == null
+                    || ClusteringPositionMinimumNumberOfTrades >= 0)
+                && (ClusteringPercentageValueDifferenceThreshold == null
+                    || ClusteringPercentageValueDifferenceThreshold >= 0);
+        }
 
         // Removing from wash trade parameter interface soon
         public bool PerformPairingPositionAnalysis => false;

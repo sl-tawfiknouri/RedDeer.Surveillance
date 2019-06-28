@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
@@ -65,22 +66,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
+
+        [TuneableTimespanParameter]
         public TimeSpan Window { get; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%
         /// </summary>
+        [TuneableDecimalParameter]
         public decimal? PercentageThresholdDailyVolume { get; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%
         /// </summary>
+        [TuneableDecimalParameter]
         public decimal? PercentageThresholdWindowVolume { get; }
 
         /// <summary>
         /// A fractional percentage for how far from touch e.g. % away from bid for a buy; % away from ask for a sell
         /// </summary>
+        [TuneableDecimalParameter]
         public decimal? PercentThresholdOffTouch { get; }
 
         public RuleFilter Accounts { get; set; }
@@ -100,6 +107,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                && (PercentageThresholdDailyVolume == null
+                    || (PercentageThresholdDailyVolume.GetValueOrDefault() >= 0
+                        && PercentageThresholdDailyVolume.GetValueOrDefault() <= 1))
+               && (PercentageThresholdWindowVolume == null
+                   || (PercentageThresholdWindowVolume.GetValueOrDefault() >= 0
+                       && PercentageThresholdWindowVolume.GetValueOrDefault() <= 1))
+               && (PercentThresholdOffTouch == null
+                   || (PercentThresholdOffTouch.GetValueOrDefault() >= 0
+                       && PercentThresholdOffTouch.GetValueOrDefault() <= 1));
         }
     }
 }

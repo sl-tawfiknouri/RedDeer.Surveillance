@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -77,8 +78,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        [TuneableIdParameter]
         public string Id { get; }
 
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
 
         public bool PerformHighProfitWindowAnalysis { get; }
@@ -86,9 +89,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public bool PerformHighProfitDailyAnalysis { get; }
 
         // Percentage
+        [TuneableDecimalParameter]
         public decimal? HighProfitPercentageThreshold { get; }
 
         // Absolute level
+        [TuneableDecimalParameter]
         public decimal? HighProfitAbsoluteThreshold { get; }
 
         /// <summary>
@@ -119,6 +124,16 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                && (HighProfitPercentageThreshold == null
+                    || (HighProfitPercentageThreshold.GetValueOrDefault() >= 0
+                        && HighProfitPercentageThreshold.GetValueOrDefault() <= 1))
+                && (HighProfitAbsoluteThreshold == null
+                    || (HighProfitAbsoluteThreshold.GetValueOrDefault() >= 0));
         }
     }
 }

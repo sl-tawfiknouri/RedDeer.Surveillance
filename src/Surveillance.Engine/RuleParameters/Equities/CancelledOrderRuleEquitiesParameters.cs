@@ -99,5 +99,19 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
         }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                   && (CancelledOrderPercentagePositionThreshold == null
+                       || (CancelledOrderPercentagePositionThreshold.Value <= 1
+                           && CancelledOrderPercentagePositionThreshold.Value >= 0))
+                   && (CancelledOrderCountPercentageThreshold == null
+                       || (CancelledOrderCountPercentageThreshold.Value >= 0
+                           && CancelledOrderCountPercentageThreshold <= 1))
+                && MinimumNumberOfTradesToApplyRuleTo >= 2
+                && (MaximumNumberOfTradesToApplyRuleTo == null
+                    || MaximumNumberOfTradesToApplyRuleTo.GetValueOrDefault() >= MinimumNumberOfTradesToApplyRuleTo);
+        }
     }
 }

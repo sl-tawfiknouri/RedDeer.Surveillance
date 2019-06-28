@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -65,12 +66,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-
+        [TuneableIdParameter]
         public string Id { get; }
-
+        [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; }
-        public decimal AutoCorrelationCoefficient { get; }
+        [TuneableIntegerParameter]
         public int? ThresholdOrdersExecutedInWindow { get; }
+        [TuneableDecimalParameter]
+        public decimal AutoCorrelationCoefficient { get; }
+        [TuneableDecimalParameter]
         public decimal? ThresholdVolumePercentageWindow { get; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
@@ -90,6 +94,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Markets?.Type != RuleFilterType.None
                 || Funds?.Type != RuleFilterType.None
                 || Strategies?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                && (ThresholdOrdersExecutedInWindow == null
+                    || ThresholdOrdersExecutedInWindow.GetValueOrDefault() > 0)
+                && AutoCorrelationCoefficient >= 0
+                && (ThresholdVolumePercentageWindow == null
+                    || (ThresholdVolumePercentageWindow > 0
+                        && ThresholdVolumePercentageWindow <= 1));
         }
     }
 }

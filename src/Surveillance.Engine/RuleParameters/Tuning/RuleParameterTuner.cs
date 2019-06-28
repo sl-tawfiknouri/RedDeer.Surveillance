@@ -79,7 +79,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
         {
             if (!pInfo.CanWrite)
             {
-                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                _logger.LogInformation($"Received a unwritable property parameters argument {pInfo.Name}. Returning");
                 return null;
             }
 
@@ -106,7 +106,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
         {
             if (!pInfo.CanWrite)
             {
-                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                _logger.LogInformation($"Received a unwritable property parameters argument {pInfo.Name}. Returning");
                 return null;
             }
 
@@ -133,7 +133,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
         {
             if (!pInfo.CanWrite)
             {
-                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                _logger.LogInformation($"Received a unwritable property parameters argument {pInfo.Name}. Returning");
                 return null;
             }
 
@@ -160,7 +160,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
         {
             if (!pInfo.CanWrite)
             {
-                _logger.LogInformation($"Received a unwritable property parameters argument. Returning");
+                _logger.LogInformation($"Received a unwritable property parameters argument {pInfo.Name}. Returning");
                 return null;
             }
 
@@ -239,9 +239,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var mediumOffset = 1.5;
             var largeOffset = 3;
 
-            var appliedSmallOffset = (int)Math.Max(input.Value * smallOffset, min.GetValueOrDefault());
-            var appliedMediumOffset = (int)(input.Value * mediumOffset);
-            var appliedLargeOffset = (int)(input.Value * largeOffset);
+            var appliedSmallOffset = Math.Max((int)Math.Max(input.Value * smallOffset, min.GetValueOrDefault()), 1);
+            var appliedMediumOffset = Math.Max((int)(input.Value * mediumOffset), 2);
+            var appliedLargeOffset = Math.Max((int)(input.Value * largeOffset), 3);
             
             var smallOffsets = ApplyIntegerOffset(input.Value, appliedSmallOffset, name, min);
             var mediumOffsets = ApplyIntegerOffset(input.Value, appliedMediumOffset, name, min);

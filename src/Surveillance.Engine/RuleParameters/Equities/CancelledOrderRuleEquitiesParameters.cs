@@ -113,5 +113,36 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && (MaximumNumberOfTradesToApplyRuleTo == null
                     || MaximumNumberOfTradesToApplyRuleTo.GetValueOrDefault() >= MinimumNumberOfTradesToApplyRuleTo);
         }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+                   * CancelledOrderPercentagePositionThreshold.GetHashCode()
+                   * CancelledOrderCountPercentageThreshold.GetHashCode()
+                   * MinimumNumberOfTradesToApplyRuleTo.GetHashCode()
+                   * MaximumNumberOfTradesToApplyRuleTo.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as CancelledOrderRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return
+                this.WindowSize == castObj.WindowSize
+                && this.CancelledOrderPercentagePositionThreshold == castObj.CancelledOrderPercentagePositionThreshold
+                && this.CancelledOrderCountPercentageThreshold == castObj.CancelledOrderCountPercentageThreshold
+                && this.MinimumNumberOfTradesToApplyRuleTo == castObj.MinimumNumberOfTradesToApplyRuleTo
+                && this.MaximumNumberOfTradesToApplyRuleTo == castObj.MaximumNumberOfTradesToApplyRuleTo;
+        }
     }
 }

@@ -68,15 +68,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
         [TuneableDecimalParameter]
-        public decimal? HighVolumePercentageDaily { get; }
+        public decimal? HighVolumePercentageDaily { get; set; }
         [TuneableDecimalParameter]
-        public decimal? HighVolumePercentageWindow { get; }
+        public decimal? HighVolumePercentageWindow { get; set; }
         [TuneableDecimalParameter]
-        public decimal? HighVolumePercentageMarketCap { get; }
+        public decimal? HighVolumePercentageMarketCap { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -107,6 +107,36 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && (HighVolumePercentageMarketCap == null
                        || (HighVolumePercentageMarketCap.GetValueOrDefault() >= 0
                            && HighVolumePercentageMarketCap.GetValueOrDefault() <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return 
+                this.WindowSize.GetHashCode()
+                * this.HighVolumePercentageDaily.GetHashCode()
+                * this.HighVolumePercentageWindow.GetHashCode()
+                * this.HighVolumePercentageMarketCap.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighVolumeRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return
+                this.WindowSize == castObj.WindowSize
+                && this.HighVolumePercentageDaily == castObj.HighVolumePercentageDaily
+                && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
+                && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
         }
     }
 }

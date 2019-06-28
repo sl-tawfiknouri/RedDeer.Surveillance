@@ -68,15 +68,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
         [TuneableIntegerParameter]
-        public int? ThresholdOrdersExecutedInWindow { get; }
+        public int? ThresholdOrdersExecutedInWindow { get; set; }
         [TuneableDecimalParameter]
-        public decimal AutoCorrelationCoefficient { get; }
+        public decimal AutoCorrelationCoefficient { get; set; }
         [TuneableDecimalParameter]
-        public decimal? ThresholdVolumePercentageWindow { get; }
+        public decimal? ThresholdVolumePercentageWindow { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
@@ -106,6 +106,34 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && (ThresholdVolumePercentageWindow == null
                     || (ThresholdVolumePercentageWindow >= 0
                         && ThresholdVolumePercentageWindow <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+               * ThresholdOrdersExecutedInWindow.GetHashCode()
+               * AutoCorrelationCoefficient.GetHashCode()
+               * ThresholdVolumePercentageWindow.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as RampingRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return WindowSize == castObj.WindowSize
+                   && ThresholdOrdersExecutedInWindow == castObj.ThresholdOrdersExecutedInWindow
+                   && AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
+                   && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
         }
     }
 }

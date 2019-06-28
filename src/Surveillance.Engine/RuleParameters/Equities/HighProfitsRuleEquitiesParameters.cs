@@ -80,33 +80,33 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
 
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
 
-        public bool PerformHighProfitWindowAnalysis { get; }
+        public bool PerformHighProfitWindowAnalysis { get; set; }
 
-        public bool PerformHighProfitDailyAnalysis { get; }
+        public bool PerformHighProfitDailyAnalysis { get; set; }
 
         // Percentage
         [TuneableDecimalParameter]
-        public decimal? HighProfitPercentageThreshold { get; }
+        public decimal? HighProfitPercentageThreshold { get; set; }
 
         // Absolute level
         [TuneableDecimalParameter]
-        public decimal? HighProfitAbsoluteThreshold { get; }
+        public decimal? HighProfitAbsoluteThreshold { get; set; }
 
         /// <summary>
         /// If true we will use the target currency provided.
         /// Using absolute profits is implicitly always a yes on use currency conversions
         /// </summary>
-        public bool UseCurrencyConversions { get; }
+        public bool UseCurrencyConversions { get; set; }
 
         /// <summary>
         /// Target currency if using currency conversions and also used for high profit absolute threshold
         /// </summary>
-        public string HighProfitCurrencyConversionTargetCurrency { get; }
+        public string HighProfitCurrencyConversionTargetCurrency { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -135,6 +135,34 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                         && HighProfitPercentageThreshold.GetValueOrDefault() <= 1))
                 && (HighProfitAbsoluteThreshold == null
                     || (HighProfitAbsoluteThreshold.GetValueOrDefault() >= 0));
+        }
+
+        public override int GetHashCode()
+        {
+            return 
+                this.WindowSize.GetHashCode()  
+               * this.HighProfitPercentageThreshold.GetHashCode()
+               * this.HighProfitAbsoluteThreshold.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighProfitsRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return 
+                 this.WindowSize == castObj.WindowSize          
+               && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
+               && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }
     }
 }

@@ -68,15 +68,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketDailyVolume { get; }
+        public decimal? PercentageOfMarketDailyVolume { get; set; }
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketWindowVolume { get; }
+        public decimal? PercentageOfMarketWindowVolume { get; set; }
         [TuneableBoolParameter]
-        public bool? CheckForCorrespondingPriceMovement { get; }
+        public bool? CheckForCorrespondingPriceMovement { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -104,6 +104,34 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && (PercentageOfMarketWindowVolume == null
                        || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
                            && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+               * PercentageOfMarketDailyVolume.GetHashCode()
+               * PercentageOfMarketWindowVolume.GetHashCode()
+                * CheckForCorrespondingPriceMovement.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as LayeringRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return this.WindowSize == castObj.WindowSize
+                   && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
+                   && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
+                   && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
         }
     }
 }

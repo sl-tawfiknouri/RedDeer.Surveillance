@@ -68,28 +68,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
 
         [TuneableTimespanParameter]
-        public TimeSpan Window { get; }
+        public TimeSpan Window { get; set; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%
         /// </summary>
         [TuneableDecimalParameter]
-        public decimal? PercentageThresholdDailyVolume { get; }
+        public decimal? PercentageThresholdDailyVolume { get; set; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%
         /// </summary>
         [TuneableDecimalParameter]
-        public decimal? PercentageThresholdWindowVolume { get; }
+        public decimal? PercentageThresholdWindowVolume { get; set; }
 
         /// <summary>
         /// A fractional percentage for how far from touch e.g. % away from bid for a buy; % away from ask for a sell
         /// </summary>
         [TuneableDecimalParameter]
-        public decimal? PercentThresholdOffTouch { get; }
+        public decimal? PercentThresholdOffTouch { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -122,6 +122,36 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                && (PercentThresholdOffTouch == null
                    || (PercentThresholdOffTouch.GetValueOrDefault() >= 0
                        && PercentThresholdOffTouch.GetValueOrDefault() <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return 
+                Window.GetHashCode()
+                    * PercentageThresholdDailyVolume.GetHashCode()
+                    * PercentageThresholdWindowVolume.GetHashCode()
+                    * PercentThresholdOffTouch.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as MarkingTheCloseEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return
+                Window == castObj.Window
+                && PercentageThresholdDailyVolume == castObj.PercentageThresholdDailyVolume
+                && PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
+                && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
         }
     }
 }

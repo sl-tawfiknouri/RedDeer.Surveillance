@@ -33,9 +33,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -58,6 +58,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighProfitsRuleFixedIncomeParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return WindowSize == castObj.WindowSize;
         }
     }
 }

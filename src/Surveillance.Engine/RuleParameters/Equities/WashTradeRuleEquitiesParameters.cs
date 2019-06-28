@@ -94,30 +94,30 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
 
         [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; set; }
 
         // Enabled analysis settings
-        public bool PerformAveragePositionAnalysis { get; }
-        public bool PerformClusteringPositionAnalysis { get; }
+        public bool PerformAveragePositionAnalysis { get; set; }
+        public bool PerformClusteringPositionAnalysis { get; set; }
 
 
         // Averaging parameters
         [TuneableIntegerParameter]
-        public int? AveragePositionMinimumNumberOfTrades { get; }
+        public int? AveragePositionMinimumNumberOfTrades { get; set; }
         [TuneableDecimalParameter]
-        public decimal? AveragePositionMaximumPositionValueChange { get; }
+        public decimal? AveragePositionMaximumPositionValueChange { get; set; }
         [TuneableDecimalParameter]
-        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
-        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
+        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; set; }
+        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; set; }
 
         // Clustering (k-means) parameters
         [TuneableIntegerParameter]
-        public int? ClusteringPositionMinimumNumberOfTrades { get; }
+        public int? ClusteringPositionMinimumNumberOfTrades { get; set; }
         [TuneableDecimalParameter]
-        public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+        public decimal? ClusteringPercentageValueDifferenceThreshold { get; set; }
 
 
         public RuleFilter Accounts { get; set; }
@@ -151,6 +151,38 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                     || ClusteringPositionMinimumNumberOfTrades >= 0)
                 && (ClusteringPercentageValueDifferenceThreshold == null
                     || ClusteringPercentageValueDifferenceThreshold >= 0);
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+               * AveragePositionMinimumNumberOfTrades.GetHashCode()
+               * AveragePositionMaximumPositionValueChange.GetHashCode()
+               * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
+               * ClusteringPositionMinimumNumberOfTrades.GetHashCode()
+               * ClusteringPercentageValueDifferenceThreshold.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as WashTradeRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return WindowSize == castObj.WindowSize
+                   && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
+                   && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
+                   && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount
+                   && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
+                   && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
         }
     }
 }

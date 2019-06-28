@@ -64,13 +64,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
         [TuneableDecimalParameter]
-        public decimal CancellationThreshold { get; }
+        public decimal CancellationThreshold { get; set; }
         [TuneableDecimalParameter]
-        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; }
+        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -97,6 +97,33 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                && CancellationThreshold >= 0
                && CancellationThreshold <= 1
                && RelativeSizeMultipleForSpoofExceedingReal >= 0;
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+               * CancellationThreshold.GetHashCode()
+               * RelativeSizeMultipleForSpoofExceedingReal.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as SpoofingRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return WindowSize == castObj.WindowSize
+                   && CancellationThreshold == castObj.CancellationThreshold
+                   && RelativeSizeMultipleForSpoofExceedingReal == castObj.RelativeSizeMultipleForSpoofExceedingReal;
+
         }
     }
 }

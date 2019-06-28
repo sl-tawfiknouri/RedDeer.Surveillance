@@ -59,11 +59,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         [TuneableIdParameter]
-        public string Id { get; }
+        public string Id { get; set; }
         [TuneableDecimalParameter]
-        public decimal Sigma { get; }
+        public decimal Sigma { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; }
+        public TimeSpan WindowSize { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
@@ -88,6 +88,30 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             return !string.IsNullOrWhiteSpace(Id)
                    && Sigma >= 0;
+        }
+
+        public override int GetHashCode()
+        {
+            return WindowSize.GetHashCode()
+               * Sigma.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return WindowSize == castObj.WindowSize
+                   && Sigma == castObj.Sigma;
         }
     }
 }

@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && Sigma > 0;
+                   && Sigma >= 0;
         }
     }
 }

@@ -100,10 +100,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             return !string.IsNullOrWhiteSpace(Id)
                 && (ThresholdOrdersExecutedInWindow == null
-                    || ThresholdOrdersExecutedInWindow.GetValueOrDefault() > 0)
+                    || ThresholdOrdersExecutedInWindow.GetValueOrDefault() >= 0)
                 && AutoCorrelationCoefficient >= 0
                 && (ThresholdVolumePercentageWindow == null
-                    || (ThresholdVolumePercentageWindow > 0
+                    || (ThresholdVolumePercentageWindow >= 0
                         && ThresholdVolumePercentageWindow <= 1));
         }
     }

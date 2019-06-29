@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
 
             AutoCorrelationCoefficient = autoCorrelationCoefficient;
             ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
 
             AutoCorrelationCoefficient = autoCorrelationCoefficient;
             ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;

@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
     {
         public MarkingTheCloseEquitiesParameters(
             string id,
-            TimeSpan window,
+            TimeSpan windowSize,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
             decimal? percentThresholdOffTouch,
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Window = window;
+            Windows = new TimeWindows(windowSize);
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
             PercentThresholdOffTouch = percentThresholdOffTouch;
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public MarkingTheCloseEquitiesParameters(
             string id,
-            TimeSpan window,
+            TimeSpan windowSize,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
             decimal? percentThresholdOffTouch,
@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Window = window;
+            Windows = new TimeWindows(windowSize);
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
             PercentThresholdOffTouch = percentThresholdOffTouch;

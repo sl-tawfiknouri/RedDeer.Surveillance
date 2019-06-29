@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Trading.Factories;
 using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@ using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
@@ -45,7 +43,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
@@ -76,7 +75,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             var filteredOrders =
                 FilterByClientAccount(
-                    history.ActiveTradeHistory().Peek(),
+                    history.ActiveTradeHistory().Any() ? history.ActiveTradeHistory().Peek() : null,
                     history.ActiveTradeHistory().ToList());
 
             var clusteringAnalysis = ClusteringAnalysis(filteredOrders);
@@ -93,7 +92,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
-                    _parameters.WindowSize,
+                    _parameters.Windows.BackwardWindowSize,
                     OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),
@@ -257,7 +256,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             return liveTrades;
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             _logger.LogInformation($"RunInitialSubmissionRule called at {UniverseDateTime}");
 
@@ -272,6 +271,21 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
 
             _logger.LogInformation($"RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

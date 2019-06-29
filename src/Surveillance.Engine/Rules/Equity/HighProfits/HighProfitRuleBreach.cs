@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IExchangeRateProfitBreakdown profitBreakdown)
         {
             FactorValue = factorValue;
-            Window = equitiesParameters.WindowSize;
+            Window = equitiesParameters.Windows.BackwardWindowSize;
             EquitiesParameters = equitiesParameters;
             AbsoluteProfits = absoluteProfits;
             AbsoluteProfitCurrency = absoluteProfitCurrency;

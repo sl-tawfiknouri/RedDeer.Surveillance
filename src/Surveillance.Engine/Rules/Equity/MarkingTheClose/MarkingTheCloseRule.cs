@@ -46,7 +46,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.Window ?? TimeSpan.FromMinutes(30),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.FromMinutes(30),
                 Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
@@ -131,7 +132,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 OrganisationFactorValue,
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
-                _equitiesParameters.Window,
+                _equitiesParameters.Windows.BackwardWindowSize,
                 marketSecurities.FirstOrDefault()?.Instrument,
                 _latestMarketClosure,
                 position,
@@ -144,7 +145,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             _alertStream.Add(alertEvent);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
@@ -154,14 +155,34 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             // do nothing
         }
 
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities)
         {
+            if (!securities.Any())
+            {
+                return new VolumeBreach();
+            }
+
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
+                UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -209,7 +230,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 securities.Peek().Market?.MarketIdentifierCode);
 
@@ -218,7 +239,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     securities.Peek().Market.MarketIdentifierCode,
                     securities.Peek().Instrument.Cfi,
                     securities.Peek().Instrument.Identifiers,
-                    UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
+                    UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);

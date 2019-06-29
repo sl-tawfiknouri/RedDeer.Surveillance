@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Sigma = sigma;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Sigma = sigma;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
@@ -64,7 +64,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public decimal Sigma { get; set; }
         [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; set; }
-
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 

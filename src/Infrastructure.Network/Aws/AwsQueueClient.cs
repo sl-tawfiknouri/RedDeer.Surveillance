@@ -61,7 +61,7 @@ namespace Infrastructure.Network.Aws
                 };
 
                 var getQueueUrlResponse = await _sqsClient.GetQueueUrlAsync(getQueueUrlRequest, cancellationToken);
-                _logger?.LogInformation($"Got Queue Url (Name: {name}, Url: {getQueueUrlResponse.QueueUrl}).");
+                _logger?.LogInformation($"Got Queue Url (Name: {name}, Url: {getQueueUrlResponse?.QueueUrl}).");
 
                 return getQueueUrlResponse.QueueUrl;
             }
@@ -77,13 +77,12 @@ namespace Infrastructure.Network.Aws
 
                 if (result.HttpStatusCode != HttpStatusCode.OK)
                 {
-                    _logger?.LogError($"AwsQueueClient tried to create new queue for {name} but failed with {result.HttpStatusCode}");
+                    _logger?.LogError($"AwsQueueClient tried to create new queue for {name} but failed with {result?.HttpStatusCode}");
                     throw;
                 }
 
                 return await GetQueueUrlAsync(name, cancellationToken, false);
             }
-
         }
 
         public async Task SendToQueue(string name, string message, CancellationToken cancellationToken)
@@ -97,7 +96,8 @@ namespace Infrastructure.Network.Aws
             };
 
             var sendMessageResponse = await _sqsClient.SendMessageAsync(sendMessageRequest, cancellationToken);
-            _logger?.LogInformation($"Sent Message To Queue (Name: {name}, Size: {message.Length}, HttpCode: {sendMessageResponse.HttpStatusCode.ToString()}).");
+
+            _logger?.LogInformation($"Sent Message To Queue (Name: {name}, Size: {message?.Length}, HttpCode: {sendMessageResponse?.HttpStatusCode.ToString()}).");
         }
 
         public async Task<int> QueueMessageCount(string name, CancellationToken cancellationToken)
@@ -119,10 +119,9 @@ namespace Infrastructure.Network.Aws
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogError("AwsQueueClient: " + ex.Message + " " + ex.InnerException?.Message);
+                    _logger?.LogError("AwsQueueClient: " + ex?.Message + " " + ex?.InnerException?.Message);
                 }
             }
-
             return 0;
         }
 
@@ -147,13 +146,14 @@ namespace Infrastructure.Network.Aws
                     var result = await _sqsClient.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
                     foreach (var message in result.Messages)
                     {
-                        _logger?.LogInformation($"Received Message (Queue: {name}, MessageId: {message.MessageId}, Size: {message.Body.Length}).");
+                        var messageId = message?.MessageId ?? string.Empty;
+                        _logger?.LogInformation($"Received Message (Queue: {name}, MessageId: {messageId})");
 
                         await action(message.MessageId, message.Body);
 
                         if (reusableToken?.Cancel == true)
                         {
-                            _logger?.LogInformation($"Cancelling Processing for Message (Queue: {name}, MessageId: {message.MessageId}, Size: {message.Body.Length})");
+                            _logger?.LogInformation($"Cancelling Processing for Message (Queue: {name}, MessageId: {messageId})");
                             reusableToken.Cancel = false;
                             continue;
                         }

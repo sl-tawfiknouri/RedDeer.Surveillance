@@ -12,7 +12,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
     {
         public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
             bool performHighProfitWindowAnalysis,
             bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
@@ -23,8 +24,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-
-            WindowSize = windowSize;
+            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
@@ -44,7 +44,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
             bool performHighProfitWindowAnalysis,
             bool performHighProfitDailyAnalysis,
             decimal? highProfitPercentageThreshold,
@@ -60,8 +61,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-
-            WindowSize = windowSize;
+            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
@@ -81,10 +81,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         [TuneableIdParameter]
         public string Id { get; set; }
-
         [TuneableTimespanParameter]
         public TimeSpan WindowSize { get; set; }
-
         public bool PerformHighProfitWindowAnalysis { get; set; }
 
         public bool PerformHighProfitDailyAnalysis { get; set; }

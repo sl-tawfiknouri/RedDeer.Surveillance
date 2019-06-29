@@ -47,7 +47,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
@@ -110,7 +111,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _equitiesParameters.WindowSize, 
+                    _equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                     tradePosition,
                     mostRecentTrade?.Instrument,
                     _equitiesParameters,
@@ -184,7 +185,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -231,7 +232,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
 
@@ -240,7 +241,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
@@ -297,7 +298,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -344,11 +345,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         { }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         { }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
 
         protected override void Genesis()
         {

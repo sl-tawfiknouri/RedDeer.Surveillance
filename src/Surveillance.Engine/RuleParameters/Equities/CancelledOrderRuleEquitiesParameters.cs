@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
         public decimal? CancelledOrderPercentagePositionThreshold { get; set; }
         [TuneableDecimalParameter]
@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                    * CancelledOrderPercentagePositionThreshold.GetHashCode()
                    * CancelledOrderCountPercentageThreshold.GetHashCode()
                    * MinimumNumberOfTradesToApplyRuleTo.GetHashCode()
@@ -138,7 +138,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             }
 
             return
-                this.WindowSize == castObj.WindowSize
+                this.Windows == castObj.Windows
                 && this.CancelledOrderPercentagePositionThreshold == castObj.CancelledOrderPercentagePositionThreshold
                 && this.CancelledOrderCountPercentageThreshold == castObj.CancelledOrderCountPercentageThreshold
                 && this.MinimumNumberOfTradesToApplyRuleTo == castObj.MinimumNumberOfTradesToApplyRuleTo

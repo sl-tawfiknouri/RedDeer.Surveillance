@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
         public decimal? PercentageOfMarketDailyVolume { get; set; }
         [TuneableDecimalParameter]
@@ -108,7 +108,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                * PercentageOfMarketDailyVolume.GetHashCode()
                * PercentageOfMarketWindowVolume.GetHashCode()
                 * CheckForCorrespondingPriceMovement.GetHashCode();
@@ -128,7 +128,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            return this.WindowSize == castObj.WindowSize
+            return this.Windows == castObj.Windows
                    && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
                    && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
                    && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;

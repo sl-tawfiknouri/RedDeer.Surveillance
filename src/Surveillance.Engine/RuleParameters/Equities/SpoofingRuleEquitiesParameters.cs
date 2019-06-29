@@ -66,7 +66,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
         public decimal CancellationThreshold { get; set; }
         [TuneableDecimalParameter]
@@ -101,7 +101,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                * CancellationThreshold.GetHashCode()
                * RelativeSizeMultipleForSpoofExceedingReal.GetHashCode();
         }
@@ -120,7 +120,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            return WindowSize == castObj.WindowSize
+            return Windows == castObj.Windows
                    && CancellationThreshold == castObj.CancellationThreshold
                    && RelativeSizeMultipleForSpoofExceedingReal == castObj.RelativeSizeMultipleForSpoofExceedingReal;
 

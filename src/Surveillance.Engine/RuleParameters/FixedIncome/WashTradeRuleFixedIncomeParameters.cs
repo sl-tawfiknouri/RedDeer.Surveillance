@@ -54,7 +54,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
 
         public bool PerformAveragePositionAnalysis { get; set; }
         public bool PerformClusteringPositionAnalysis { get; set; }
@@ -106,7 +106,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                * AveragePositionMinimumNumberOfTrades.GetHashCode()
                * AveragePositionMaximumPositionValueChange.GetHashCode()
                * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
@@ -128,7 +128,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
                 return false;
             }
 
-            return WindowSize == castObj.WindowSize
+            return Windows == castObj.Windows
                    && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
                    && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
                    && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount

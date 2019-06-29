@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
         public decimal? HighVolumePercentageDaily { get; set; }
         [TuneableDecimalParameter]
@@ -112,7 +112,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public override int GetHashCode()
         {
             return 
-                this.WindowSize.GetHashCode()
+                this.Windows.GetHashCode()
                 * this.HighVolumePercentageDaily.GetHashCode()
                 * this.HighVolumePercentageWindow.GetHashCode()
                 * this.HighVolumePercentageMarketCap.GetHashCode();
@@ -133,7 +133,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             }
 
             return
-                this.WindowSize == castObj.WindowSize
+                this.Windows == castObj.Windows
                 && this.HighVolumePercentageDaily == castObj.HighVolumePercentageDaily
                 && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
                 && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;

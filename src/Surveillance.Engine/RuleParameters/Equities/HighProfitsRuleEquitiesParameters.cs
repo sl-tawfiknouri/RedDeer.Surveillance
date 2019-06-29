@@ -82,7 +82,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         public bool PerformHighProfitWindowAnalysis { get; set; }
 
         public bool PerformHighProfitDailyAnalysis { get; set; }
@@ -138,7 +138,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public override int GetHashCode()
         {
             return 
-                this.WindowSize.GetHashCode()  
+                this.Windows.GetHashCode()  
                * this.HighProfitPercentageThreshold.GetHashCode()
                * this.HighProfitAbsoluteThreshold.GetHashCode();
         }
@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             }
 
             return 
-                 this.WindowSize == castObj.WindowSize          
+                 this.Windows == castObj.Windows          
                && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
                && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }

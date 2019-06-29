@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableDecimalParameter]
         public decimal Sigma { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
@@ -91,7 +91,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                * Sigma.GetHashCode();
         }
 
@@ -109,7 +109,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            return WindowSize == castObj.WindowSize
+            return Windows == castObj.Windows
                    && Sigma == castObj.Sigma;
         }
     }

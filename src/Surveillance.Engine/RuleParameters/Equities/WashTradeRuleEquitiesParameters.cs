@@ -155,7 +155,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode()
+            return Windows.GetHashCode()
                * AveragePositionMinimumNumberOfTrades.GetHashCode()
                * AveragePositionMaximumPositionValueChange.GetHashCode()
                * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
@@ -177,7 +177,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            return WindowSize == castObj.WindowSize
+            return Windows == castObj.Windows
                    && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
                    && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
                    && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount

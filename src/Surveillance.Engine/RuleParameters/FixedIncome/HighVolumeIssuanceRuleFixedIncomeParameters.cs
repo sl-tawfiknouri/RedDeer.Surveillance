@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         [TuneableIdParameter]
         public string Id { get; set; }
         [TuneableTimespanParameter]
-        public TimeSpan WindowSize { get; set; }
+        public TimeWindows Windows { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public override int GetHashCode()
         {
-            return WindowSize.GetHashCode();
+            return Windows.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
                 return false;
             }
 
-            return castObj.WindowSize == WindowSize;
+            return castObj.Windows == Windows;
         }
     }
 }

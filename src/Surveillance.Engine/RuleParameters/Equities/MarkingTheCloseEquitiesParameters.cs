@@ -71,7 +71,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string Id { get; set; }
 
         [TuneableTimespanParameter]
-        public TimeSpan Window { get; set; }
+        public TimeWindows Windows { get; set; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%
@@ -127,7 +127,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public override int GetHashCode()
         {
             return 
-                Window.GetHashCode()
+                Windows.GetHashCode()
                     * PercentageThresholdDailyVolume.GetHashCode()
                     * PercentageThresholdWindowVolume.GetHashCode()
                     * PercentThresholdOffTouch.GetHashCode();
@@ -148,7 +148,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             }
 
             return
-                Window == castObj.Window
+                Windows == castObj.Windows
                 && PercentageThresholdDailyVolume == castObj.PercentageThresholdDailyVolume
                 && PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
                 && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;

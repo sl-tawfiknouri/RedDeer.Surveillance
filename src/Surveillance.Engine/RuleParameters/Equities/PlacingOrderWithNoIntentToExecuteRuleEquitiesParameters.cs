@@ -113,8 +113,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && Sigma == castObj.Sigma;
         }
 
-        public bool IsTuned { get; set; }
-
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

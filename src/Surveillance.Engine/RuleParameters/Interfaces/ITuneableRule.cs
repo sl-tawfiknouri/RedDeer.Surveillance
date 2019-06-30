@@ -4,7 +4,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
     public interface ITuneableRule
     {
-        bool IsTuned { get; set; }
         TunedParameter<string> TunedParam { get; set; }
     }
 }

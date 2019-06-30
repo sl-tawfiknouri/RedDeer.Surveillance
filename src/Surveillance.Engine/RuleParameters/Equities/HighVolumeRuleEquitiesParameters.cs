@@ -139,7 +139,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
         }
 
-        public bool IsTuned { get; set; }
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

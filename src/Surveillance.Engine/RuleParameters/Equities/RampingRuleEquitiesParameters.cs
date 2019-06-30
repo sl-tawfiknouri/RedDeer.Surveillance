@@ -136,8 +136,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
         }
 
-        public bool IsTuned { get; set; }
-
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

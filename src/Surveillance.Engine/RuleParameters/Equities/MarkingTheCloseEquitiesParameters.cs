@@ -154,8 +154,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
         }
 
-        public bool IsTuned { get; set; }
-
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

@@ -133,8 +133,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
                    && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
         }
-
-        public bool IsTuned { get; set; }
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

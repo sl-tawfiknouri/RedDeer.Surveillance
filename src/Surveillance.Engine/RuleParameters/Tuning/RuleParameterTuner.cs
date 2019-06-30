@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Accord.IO;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Tuning

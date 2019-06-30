@@ -163,7 +163,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }
 
-        public bool IsTuned { get; set; }
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

@@ -162,5 +162,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
                && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

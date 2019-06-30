@@ -112,5 +112,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             return Windows == castObj.Windows
                    && Sigma == castObj.Sigma;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

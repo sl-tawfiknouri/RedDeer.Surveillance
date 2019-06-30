@@ -138,5 +138,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
                 && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

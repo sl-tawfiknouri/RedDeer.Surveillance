@@ -125,5 +125,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && RelativeSizeMultipleForSpoofExceedingReal == castObj.RelativeSizeMultipleForSpoofExceedingReal;
 
         }
+
+        public bool IsTuned { get; set; }
     }
 }

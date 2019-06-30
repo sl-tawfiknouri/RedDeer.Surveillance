@@ -82,5 +82,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
             return castObj.Windows == Windows;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

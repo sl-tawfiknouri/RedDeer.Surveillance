@@ -153,5 +153,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
                 && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

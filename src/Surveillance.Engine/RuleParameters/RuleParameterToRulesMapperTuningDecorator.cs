@@ -37,6 +37,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -51,6 +54,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -67,6 +73,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+            
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -81,6 +90,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -97,6 +109,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -111,6 +126,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -127,6 +145,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -141,6 +162,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -157,6 +181,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -171,6 +198,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -187,6 +217,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
 
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
+
             return mappedDtos.Concat(tunedDtos).ToList();
         }
 
@@ -201,6 +234,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            foreach (var tune in tunedDtos)
+                tune.IsTuned = true;
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }

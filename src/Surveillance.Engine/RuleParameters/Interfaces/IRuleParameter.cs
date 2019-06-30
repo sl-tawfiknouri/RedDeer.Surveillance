@@ -1,6 +1,6 @@
 ﻿namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
-    public interface IRuleParameter : IValidatable
+    public interface IRuleParameter : IValidatable, ITuneableRule
     {
         string Id { get; }
     }

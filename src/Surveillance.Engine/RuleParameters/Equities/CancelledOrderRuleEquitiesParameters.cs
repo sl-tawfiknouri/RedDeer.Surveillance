@@ -144,5 +144,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && this.MinimumNumberOfTradesToApplyRuleTo == castObj.MinimumNumberOfTradesToApplyRuleTo
                 && this.MaximumNumberOfTradesToApplyRuleTo == castObj.MaximumNumberOfTradesToApplyRuleTo;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

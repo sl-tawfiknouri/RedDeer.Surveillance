@@ -184,5 +184,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
                    && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

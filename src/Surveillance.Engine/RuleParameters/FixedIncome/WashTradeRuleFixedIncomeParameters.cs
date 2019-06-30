@@ -149,5 +149,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public decimal? PairingPositionMaximumAbsoluteMoney => null;
 
         public string PairingPositionMaximumAbsoluteCurrency => null;
+        public bool IsTuned { get; set; }
     }
 }

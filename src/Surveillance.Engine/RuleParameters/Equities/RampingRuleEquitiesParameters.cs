@@ -135,5 +135,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
                    && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
         }
+
+        public bool IsTuned { get; set; }
     }
 }

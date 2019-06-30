@@ -6,6 +6,9 @@
         T TunedValue { get; set; }
 
         string ParameterName { get; set; }
+
+        TuningDirection TuningDirection { get; set; }
+        TuningStrength TuningStrength { get; set; }
         TunedParameter<string> MapToString();
     }
 }

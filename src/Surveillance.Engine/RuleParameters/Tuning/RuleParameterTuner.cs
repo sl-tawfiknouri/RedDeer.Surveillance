@@ -270,17 +270,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var appliedMediumOffset = input.GetValueOrDefault() * mediumOffset;
             var appliedLargeOffset = input.GetValueOrDefault() * largeOffset;
 
-            var smallOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedSmallOffset, name);
-            var mediumOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedMediumOffset, name);
-            var largeOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedLargeOffset, name);
+            var smallOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedSmallOffset, name, TuningStrength.Small);
+            var mediumOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedMediumOffset, name, TuningStrength.Medium);
+            var largeOffsets = ApplyDecimalOffset(input.GetValueOrDefault(), appliedLargeOffset, name, TuningStrength.Large);
 
             return smallOffsets.Concat(mediumOffsets).Concat(largeOffsets).Distinct().ToList();
         }
 
-        private TunedParameter<decimal>[] ApplyDecimalOffset(decimal value, decimal offset, string name)
+        private TunedParameter<decimal>[] ApplyDecimalOffset(decimal value, decimal offset, string name, TuningStrength strength)
         {
-            var positiveOffset = new TunedParameter<decimal>(value, Math.Min(value + offset, 1), name);
-            var negativeOffset = new TunedParameter<decimal>(value, Math.Max(value - offset, 0), name);
+            var positiveOffset = new TunedParameter<decimal>(value, Math.Min(value + offset, 1), name, TuningDirection.Positive, strength);
+            var negativeOffset = new TunedParameter<decimal>(value, Math.Max(value - offset, 0), name, TuningDirection.Negative, strength);
 
             return new[] { positiveOffset, negativeOffset };
         }
@@ -305,17 +305,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var appliedMediumOffset = Math.Max((int)(input.Value * mediumOffset), 2);
             var appliedLargeOffset = Math.Max((int)(input.Value * largeOffset), 3);
             
-            var smallOffsets = ApplyIntegerOffset(input.Value, appliedSmallOffset, name, min);
-            var mediumOffsets = ApplyIntegerOffset(input.Value, appliedMediumOffset, name, min);
-            var largeOffsets = ApplyIntegerOffset(input.Value, appliedLargeOffset, name, min);
+            var smallOffsets = ApplyIntegerOffset(input.Value, appliedSmallOffset, name, min, TuningStrength.Small);
+            var mediumOffsets = ApplyIntegerOffset(input.Value, appliedMediumOffset, name, min, TuningStrength.Medium);
+            var largeOffsets = ApplyIntegerOffset(input.Value, appliedLargeOffset, name, min, TuningStrength.Large);
 
             return smallOffsets.Concat(mediumOffsets).Concat(largeOffsets).Distinct().ToList();
         }
 
-        private TunedParameter<int>[] ApplyIntegerOffset(int value, int offset, string name, int? min)
+        private TunedParameter<int>[] ApplyIntegerOffset(int value, int offset, string name, int? min, TuningStrength strength)
         {
-            var positiveOffset = new TunedParameter<int>(value, value + offset, name);
-            var negativeOffset = new TunedParameter<int>(value, Math.Max(value - offset, min.GetValueOrDefault(0)), name);
+            var positiveOffset = new TunedParameter<int>(value, value + offset, name, TuningDirection.Positive, strength);
+            var negativeOffset = new TunedParameter<int>(value, Math.Max(value - offset, min.GetValueOrDefault(0)), name, TuningDirection.Negative, strength);
 
             return new[] { positiveOffset, negativeOffset };
         }
@@ -331,7 +331,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
 
             return new List<TunedParameter<bool>>
             {
-                new TunedParameter<bool>(boolVal, !boolVal, name)
+                new TunedParameter<bool>(boolVal, !boolVal, name, !boolVal ? TuningDirection.Positive : TuningDirection.Negative, TuningStrength.Small)
             };
         }
 
@@ -352,17 +352,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var appliedMediumOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * mediumOffset));
             var appliedLargeOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * largeOffset));
 
-            var smallOffsets = ApplyTimeSpanOffset(timeSpan, appliedSmallOffset, name);
-            var mediumOffsets = ApplyTimeSpanOffset(timeSpan, appliedMediumOffset, name);
-            var largeOffsets = ApplyTimeSpanOffset(timeSpan, appliedLargeOffset, name);
+            var smallOffsets = ApplyTimeSpanOffset(timeSpan, appliedSmallOffset, name, TuningStrength.Small);
+            var mediumOffsets = ApplyTimeSpanOffset(timeSpan, appliedMediumOffset, name, TuningStrength.Medium);
+            var largeOffsets = ApplyTimeSpanOffset(timeSpan, appliedLargeOffset, name, TuningStrength.Large);
 
             return (new[]
             {
-                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromHours(1), name),
-                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(1), name),
-                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(7), name),
-                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(14), name),
-                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(28), name)
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromHours(1), name, CheckDirection(timeSpan, TimeSpan.FromHours(1)), TuningStrength.Custom),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(1), name, CheckDirection(timeSpan, TimeSpan.FromDays(1)),TuningStrength.Custom),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(7), name, CheckDirection(timeSpan, TimeSpan.FromDays(7)),TuningStrength.Custom),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(14), name, CheckDirection(timeSpan, TimeSpan.FromDays(14)),TuningStrength.Custom),
+                new TunedParameter<TimeSpan>(timeSpan, TimeSpan.FromDays(28), name, CheckDirection(timeSpan, TimeSpan.FromDays(28)),TuningStrength.Custom)
             })
                 .Concat(smallOffsets)
                 .Concat(mediumOffsets)
@@ -373,15 +373,32 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                 .ToList();
         }
 
-        private TunedParameter<TimeSpan>[] ApplyTimeSpanOffset(TimeSpan value, TimeSpan offset, string name)
+        private TuningDirection CheckDirection(TimeSpan span, TimeSpan tuneSpan)
         {
-            var positiveOffset = new TunedParameter<TimeSpan>(value, value + offset, name);
+            if (span == tuneSpan)
+            {
+                return TuningDirection.None;
+            }
+
+            if (span > tuneSpan)
+            {
+                return TuningDirection.Negative;
+            }
+            else
+            {
+                return TuningDirection.Positive;
+            }
+        }
+
+        private TunedParameter<TimeSpan>[] ApplyTimeSpanOffset(TimeSpan value, TimeSpan offset, string name, TuningStrength strength)
+        {
+            var positiveOffset = new TunedParameter<TimeSpan>(value, value + offset, name, TuningDirection.Positive, strength);
             if (value < offset)
             {
                 return new[] { positiveOffset };
             }
 
-            var negativeOffset = new TunedParameter<TimeSpan>(value, value - offset, name);
+            var negativeOffset = new TunedParameter<TimeSpan>(value, value - offset, name, TuningDirection.Negative, strength);
 
             return new[] { positiveOffset, negativeOffset };
         }

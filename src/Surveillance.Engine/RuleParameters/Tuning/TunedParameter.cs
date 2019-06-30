@@ -3,6 +3,7 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Tuning
 {
+    [Serializable]
     public class TunedParameter<T> : ITunedParameter<T> where T : IEquatable<T>
     {
         public TunedParameter(T baseValue, T tunedValue, string parameterName)
@@ -35,6 +36,14 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                 string.Equals(ParameterName, castedObj.ParameterName, StringComparison.OrdinalIgnoreCase)
                 && BaseValue.Equals(castedObj.BaseValue)
                 && TunedValue.Equals(castedObj.TunedValue);
+        }
+
+        public TunedParameter<string> MapToString()
+        {
+            return new TunedParameter<string>(
+                BaseValue?.ToString() ?? string.Empty,
+                TunedValue?.ToString() ?? string.Empty,
+                ParameterName ?? string.Empty);
         }
     }
 }

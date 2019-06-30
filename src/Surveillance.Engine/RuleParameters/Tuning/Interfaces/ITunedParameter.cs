@@ -6,5 +6,6 @@
         T TunedValue { get; set; }
 
         string ParameterName { get; set; }
+        TunedParameter<string> MapToString();
     }
 }

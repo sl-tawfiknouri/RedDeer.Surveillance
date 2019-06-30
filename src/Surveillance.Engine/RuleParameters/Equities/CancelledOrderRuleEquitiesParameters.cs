@@ -146,5 +146,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public bool IsTuned { get; set; }
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Accord.IO;
 using Microsoft.Extensions.Logging;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Tuning
@@ -47,38 +48,39 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var integerAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableIntegerParameter))).ToList();
             var timespanAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableTimespanParameter))).ToList();
             var timeWindowAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableTimeWindowParameter))).ToList();
+            var tunedParamAttributes = props.FirstOrDefault(_ => Attribute.IsDefined(_, typeof(TunedParam)));
 
             var boolPermutations =
                 boolAttributes
-                    .Select(_ => PermutateBoolAttribute(_, parameters.DeepClone(), idField))
+                    .Select(_ => PermutateBoolAttribute(_, parameters.DeepClone(), idField, tunedParamAttributes))
                     .SelectMany(_ => _)
                     .Select(_ => _ as T)
                     .ToList();
 
             var decimalPermutations =
                  decimalAttributes
-                     .Select(_ => PermutateDecimalAttribute(_, parameters.DeepClone(), idField))
+                     .Select(_ => PermutateDecimalAttribute(_, parameters.DeepClone(), idField, tunedParamAttributes))
                      .SelectMany(_ => _)
                      .Select(_ => _ as T)
                      .ToList();
 
             var integerPermutations =
                 integerAttributes
-                    .Select(_ => PermutateIntegerAttribute(_, parameters.DeepClone(), idField))
+                    .Select(_ => PermutateIntegerAttribute(_, parameters.DeepClone(), idField, tunedParamAttributes))
                     .SelectMany(_ => _)
                     .Select(_ => _ as T)
                     .ToList();
 
             var timespanPermutations =
                 timespanAttributes
-                    .Select(_ => PermutateTimespanAttribute(_, parameters.DeepClone(), idField))
+                    .Select(_ => PermutateTimespanAttribute(_, parameters.DeepClone(), idField, tunedParamAttributes))
                     .SelectMany(_ => _)
                     .Select(_ => _ as T)
                     .ToList();
 
             var timeWindowPermutations =
                 timeWindowAttributes
-                    .Select(_ => PermutateTimeWindowAttribute(_, parameters.DeepClone()))
+                    .Select(_ => PermutateTimeWindowAttribute(_, parameters.DeepClone(), tunedParamAttributes))
                     .SelectMany(_ => _)
                     .Select(_ => _ as T)
                     .ToList();
@@ -93,7 +95,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     .ToList();
         }
 
-        private List<object> PermutateDecimalAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        private List<object> PermutateDecimalAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo, PropertyInfo tunableRule)
         {
             if (!pInfo.CanWrite)
             {
@@ -113,6 +115,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                         var tuningId = TunedId(baseId, pInfo.Name, x);
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        if (tunableRule != null)
+                            tunableRule.SetMethod.Invoke(clone, new[] { (object)_.MapToString() });
                         return clone;
                     })
                     .ToList();
@@ -120,7 +124,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return projectedTunedParameters;
         }
 
-        private List<object> PermutateIntegerAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        private List<object> PermutateIntegerAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo, PropertyInfo tunableRule)
         {
             if (!pInfo.CanWrite)
             {
@@ -140,6 +144,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                         var tuningId = TunedId(baseId, pInfo.Name, x);
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        if (tunableRule != null)
+                            tunableRule.SetMethod.Invoke(clone, new[] { (object)_.MapToString() });
                         return clone;
                     })
                     .ToList();
@@ -147,7 +153,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return projectedTunedParameters;
         }
 
-        private List<object> PermutateTimespanAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        private List<object> PermutateTimespanAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo, PropertyInfo tunableRule)
         {
             if (!pInfo.CanWrite)
             {
@@ -167,6 +173,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                         var tuningId = TunedId(baseId, pInfo.Name, x);
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        if (tunableRule != null)
+                            tunableRule.SetMethod.Invoke(clone, new[] { (object)_.MapToString() });
                         return clone;
                     })
                     .ToList();
@@ -174,7 +182,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return projectedTunedParameters;
         }
 
-        private List<object> PermutateTimeWindowAttribute(PropertyInfo pInfo, object target)
+        private List<object> PermutateTimeWindowAttribute(PropertyInfo pInfo, object target, PropertyInfo tunableRule)
         {
             if (!pInfo.CanWrite)
             {
@@ -185,20 +193,31 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var timeWindowObj = pInfo.GetMethod.Invoke(target, new object[0]) as TimeWindows;
             var tunedWindow = ParametersFramework(timeWindowObj);
 
-            var tunedTimeWindows = tunedWindow.Select(_ => ApplyTimeWindow(pInfo, target, _)).ToList();
+            var tunedTimeWindows = tunedWindow.Select(_ => ApplyTimeWindow(pInfo, target, _, tunableRule)).ToList();
 
             return tunedTimeWindows;
         }
 
-        private object ApplyTimeWindow(PropertyInfo pInfo, object targetBackward, object timeSpan)
+        private object ApplyTimeWindow(PropertyInfo pInfo, object targetBackward, TimeWindows timeWindow, PropertyInfo tunableRule)
         {
             var clonedTarget = targetBackward.DeepClone();
-            pInfo.SetMethod.Invoke(clonedTarget, new [] { timeSpan });
+            pInfo.SetMethod.Invoke(clonedTarget, new [] { timeWindow });
+
+            var props = timeWindow.GetType().GetProperties() ?? new PropertyInfo[0];
+            var tunedParamAttributes = props.FirstOrDefault(_ => Attribute.IsDefined(_, typeof(TunedParam)));
+
+            if (tunedParamAttributes == null)
+            {
+                return clonedTarget;
+            }
+
+            var tunedParam = tunedParamAttributes.GetMethod.Invoke(timeWindow, new object[0]);
+            tunableRule.SetMethod.Invoke(clonedTarget, new[] { tunedParam });
 
             return clonedTarget;
         }
 
-        private List<object> PermutateBoolAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
+        private List<object> PermutateBoolAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo, PropertyInfo tunableRule)
         {
             if (!pInfo.CanWrite)
             {
@@ -218,6 +237,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                         var tuningId = TunedId(baseId, pInfo.Name, x);
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
+                        if (tunableRule != null)
+                            tunableRule.SetMethod.Invoke(clone, new[] { (object)_.MapToString() });
                         return clone;
                     })
                     .ToList();

@@ -22,6 +22,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
         [TuneableTimespanParameter]
         public TimeSpan FutureWindowSize { get; set; }
 
+        [TunedParam]
+        TunedParameter<string> TunedParam { get; set; }
+
         public override int GetHashCode()
         {
             return 

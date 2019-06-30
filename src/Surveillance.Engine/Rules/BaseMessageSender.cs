@@ -78,6 +78,12 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
+            if (ruleBreach.RuleParameters.IsTuned)
+            {
+                Logger.LogInformation($"was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected run was a tuning run");
+                return;
+            }
+
             var caseMessage = new CaseMessage { RuleBreachId = ruleBreachId.GetValueOrDefault(0) };
 
             try

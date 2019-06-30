@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Domain.Core.Financial.Assets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -36,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             RuleParameterId = parameters.Id;
             SystemOperationId = ctx.Id();
             CorrelationId = ctx.CorrelationId();
-
+            RuleParameters = parameters;
         }
 
         public TimeSpan Window { get; }
@@ -48,6 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public decimal MeanPrice { get; set; }
         public decimal StandardDeviationPrice { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
         public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
         public IReadOnlyCollection<ProbabilityOfExecution> ProbabilityForOrders { get; set; }
 

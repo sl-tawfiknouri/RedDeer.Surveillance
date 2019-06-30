@@ -37,6 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = equitiesParameters;
         }
 
         public IWashTradeRuleParameters EquitiesParameters { get; }
@@ -53,6 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
 
 
         public class WashTradeAveragePositionBreach

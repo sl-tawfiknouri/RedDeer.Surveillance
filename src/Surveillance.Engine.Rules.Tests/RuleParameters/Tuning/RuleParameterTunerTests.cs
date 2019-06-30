@@ -3,6 +3,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
@@ -213,6 +214,83 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     "GBP",
                     4,
                     0.2m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(45));
+        }
+
+        [Test]
+        public void Tuner_AdjustHighProfitFixedIncomeField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new HighProfitsRuleFixedIncomeParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(15));
+        }
+
+        [Test]
+        public void Tuner_AdjustHighVolumeIssuanceFixedIncomeField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new HighVolumeIssuanceRuleFixedIncomeParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(15));
+        }
+
+        [Test]
+        public void Tuner_AdjustWashTradeFixedIncomeField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new WashTradeRuleFixedIncomeParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    true,
+                    true,
+                    3,
+                    0.6m,
+                    0,
+                    "GBP",
+                    2,
+                    4,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
                     null,
                     true);
 

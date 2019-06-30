@@ -97,7 +97,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string Id { get; set; }
 
         [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; }
+        public TimeWindows Windows { get; set; }
 
         // Enabled analysis settings
         public bool PerformAveragePositionAnalysis { get; set; }

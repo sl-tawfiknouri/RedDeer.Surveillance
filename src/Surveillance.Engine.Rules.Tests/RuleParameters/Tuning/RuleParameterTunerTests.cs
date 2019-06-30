@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
         }
 
         [Test]
-        public void Tuner_AdjustsField_AsExpected()
+        public void Tuner_AdjustsCancelledOrderField_AsExpected()
         {
             var tuner = new RuleParameterTuner(_logger);
 
@@ -45,6 +45,181 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(39));
+        }
+
+        [Test]
+        public void Tuner_AdjustsHighProfitsField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new HighProfitsRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1), 
+                    TimeSpan.FromHours(1),
+                    true,
+                    true,
+                    0.3m,
+                    0.2m,
+                    false,
+                    "gbp",
+                    null,
+                    false);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(32));
+        }
+
+        [Test]
+        public void Tuner_AdjustsHighVolumeField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new HighVolumeRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    0.3m,
+                    0.6m,
+                    0.4m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(33));
+        }
+
+        [Test]
+        public void Tuner_AdjustsLayeringRuleField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new LayeringRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    0.3m,
+                    0.4m,
+                    true,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(28));
+        }
+
+        [Test]
+        public void Tuner_AdjustsMarkingTheCloseField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new MarkingTheCloseEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    0.3m,
+                    0.4m,
+                    0.7m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(33));
+        }
+
+        [Test]
+        public void Tuner_AdjustPlacingOrderWithNoIntentField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
+                    "id",
+                    0.3m,
+                    TimeSpan.FromHours(1),
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(21));
+        }
+
+        [Test]
+        public void Tuner_AdjustRampingRuleField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new RampingRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    0.3m,
+                    2,
+                    0.3m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(33));
+        }
+
+        [Test]
+        public void Tuner_AdjustSpoofingRuleField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new SpoofingRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    0.3m,
+                    0.8m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(27));
+        }
+
+        [Test]
+        public void Tuner_AdjustWashTradeField_AsExpected()
+        {
+            var tuner = new RuleParameterTuner(_logger);
+
+            var ruleParameters =
+                new WashTradeRuleEquitiesParameters(
+                    "id",
+                    TimeSpan.FromHours(1),
+                    true,
+                    true,
+                    2,
+                    8,
+                    0.3m,
+                    "GBP",
+                    4,
+                    0.2m,
+                    null,
+                    true);
+
+            var result = tuner.ParametersFramework(ruleParameters);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(45));
         }
     }
 }

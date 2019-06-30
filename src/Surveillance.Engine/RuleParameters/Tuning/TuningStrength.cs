@@ -2,9 +2,9 @@
 {
     public enum TuningStrength
     {
-        Small,
-        Medium,
-        Large,
-        Custom
+        Small = 0,
+        Medium = 1,
+        Large = 2,
+        Custom = 3
     }
 }

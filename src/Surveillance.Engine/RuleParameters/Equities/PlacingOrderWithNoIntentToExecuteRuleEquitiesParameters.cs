@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string Id { get; set; }
         [TuneableDecimalParameter]
         public decimal Sigma { get; set; }
-        [TuneableTimespanParameter]
+        [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }

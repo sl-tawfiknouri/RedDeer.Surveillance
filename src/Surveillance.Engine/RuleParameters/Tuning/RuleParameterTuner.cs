@@ -46,32 +46,50 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var decimalAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableDecimalParameter))).ToList();
             var integerAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableIntegerParameter))).ToList();
             var timespanAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableTimespanParameter))).ToList();
+            var timeWindowAttributes = props.Where(_ => Attribute.IsDefined(_, typeof(TuneableTimeWindowParameter))).ToList();
 
             var boolPermutations =
                 boolAttributes
-                    .Select(_ => PermutateBoolAttribute(_, parameters.DeepClone(), idField) as T)
+                    .Select(_ => PermutateBoolAttribute(_, parameters.DeepClone(), idField))
+                    .SelectMany(_ => _)
+                    .Select(_ => _ as T)
                     .ToList();
 
             var decimalPermutations =
                  decimalAttributes
-                     .Select(_ => PermutateDecimalAttribute(_, parameters.DeepClone(), idField) as T)
+                     .Select(_ => PermutateDecimalAttribute(_, parameters.DeepClone(), idField))
+                     .SelectMany(_ => _)
+                     .Select(_ => _ as T)
                      .ToList();
 
             var integerPermutations =
                 integerAttributes
-                    .Select(_ => PermutateIntegerAttribute(_, parameters.DeepClone(), idField) as T)
+                    .Select(_ => PermutateIntegerAttribute(_, parameters.DeepClone(), idField))
+                    .SelectMany(_ => _)
+                    .Select(_ => _ as T)
                     .ToList();
 
             var timespanPermutations =
                 timespanAttributes
-                    .Select(_ => PermutateTimespanAttribute(_, parameters.DeepClone(), idField) as T)
+                    .Select(_ => PermutateTimespanAttribute(_, parameters.DeepClone(), idField))
+                    .SelectMany(_ => _)
+                    .Select(_ => _ as T)
+                    .ToList();
+
+            var timeWindowPermutations =
+                timeWindowAttributes
+                    .Select(_ => PermutateTimeWindowAttribute(_, parameters.DeepClone()))
+                    .SelectMany(_ => _)
+                    .Select(_ => _ as T)
                     .ToList();
 
             return
                 decimalPermutations
+                    .Concat(boolPermutations)
                     .Concat(integerPermutations)
                     .Concat(timespanPermutations)
-                    .Concat(boolPermutations)
+                    .Concat(timeWindowPermutations)
+                    .Where(_ => _ != null)
                     .ToList();
         }
 
@@ -139,7 +157,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
 
             var baseId = idInfo.GetMethod.Invoke(target, new object[0]) as string;
             var baseTimespanValue = pInfo.GetMethod.Invoke(target, new object[0]) as TimeSpan?;
-            var tuningPermutations = PermutateTimeWindows(baseTimespanValue, pInfo.Name);
+            var tuningPermutations = PermutateTimeSpans(baseTimespanValue, pInfo.Name);
 
             var projectedTunedParameters =
                 tuningPermutations
@@ -154,6 +172,30 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     .ToList();
 
             return projectedTunedParameters;
+        }
+
+        private List<object> PermutateTimeWindowAttribute(PropertyInfo pInfo, object target)
+        {
+            if (!pInfo.CanWrite)
+            {
+                _logger.LogInformation($"Received a unwritable property parameters argument {pInfo.Name}. Returning");
+                return null;
+            }
+
+            var timeWindowObj = pInfo.GetMethod.Invoke(target, new object[0]) as TimeWindows;
+            var tunedWindow = ParametersFramework(timeWindowObj);
+
+            var tunedTimeWindows = tunedWindow.Select(_ => ApplyTimeWindow(pInfo, target, _)).ToList();
+
+            return tunedTimeWindows;
+        }
+
+        private object ApplyTimeWindow(PropertyInfo pInfo, object targetBackward, object timeSpan)
+        {
+            var clonedTarget = targetBackward.DeepClone();
+            pInfo.SetMethod.Invoke(clonedTarget, new [] { timeSpan });
+
+            return clonedTarget;
         }
 
         private List<object> PermutateBoolAttribute(PropertyInfo pInfo, object target, PropertyInfo idInfo)
@@ -273,18 +315,18 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             };
         }
 
-        private IReadOnlyCollection<TunedParameter<TimeSpan>> PermutateTimeWindows(TimeSpan? input, string name)
+        private IReadOnlyCollection<TunedParameter<TimeSpan>> PermutateTimeSpans(TimeSpan? input, string name)
         {
             if (input == null)
             {
                 return new TunedParameter<TimeSpan>[0];
             }
-
+            
             var timeSpan = input.GetValueOrDefault();
 
             var smallOffset = 0.1m;
-            var mediumOffset = 1.5m;
-            var largeOffset = 3m;
+            var mediumOffset = 0.5m;
+            var largeOffset = 1.5m;
 
             var appliedSmallOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * smallOffset));
             var appliedMediumOffset = TimeSpan.FromTicks((long)(timeSpan.Ticks * mediumOffset));
@@ -306,6 +348,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                 .Concat(mediumOffsets)
                 .Concat(largeOffsets)
                 .Where(_ => _.TunedValue < TimeSpan.FromDays(180)) // no back test tuning over 6 months
+                .Where(_ => _.TunedValue > TimeSpan.Zero)
+                .Distinct()
                 .ToList();
         }
 

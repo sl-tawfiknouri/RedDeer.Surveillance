@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableTimespanParameter]
+        [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }

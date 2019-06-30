@@ -72,7 +72,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableTimespanParameter]
+        [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
         public decimal? CancelledOrderPercentagePositionThreshold { get; set; }

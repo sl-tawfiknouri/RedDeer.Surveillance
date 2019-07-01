@@ -1,6 +1,5 @@
 ﻿using System;
 using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters
 {
@@ -26,7 +25,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
         public TimeSpan FutureWindowSize { get; set; }
 
         [TunedParam]
-        TunedParameter<string> TunedParam { get; set; }
+        public TunedParameter<string> TunedParam { get; set; }
 
         public override int GetHashCode()
         {

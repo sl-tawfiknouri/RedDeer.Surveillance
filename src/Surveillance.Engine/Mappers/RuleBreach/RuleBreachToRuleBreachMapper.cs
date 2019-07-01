@@ -54,6 +54,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
                     ruleBreach.SystemOperationId,
                     (int?)ruleBreach?.FactorValue?.OrganisationalFactors ?? 0,
                     ruleBreach?.FactorValue?.Value ?? string.Empty,
+                    ruleBreach.RuleParameters.TunedParam != null,
                     trades);
 
             return ruleBreachObj;

@@ -21,6 +21,7 @@ namespace Domain.Surveillance.Rules
             string systemOperationId,
             int organisationalFactor,
             string organisationalFactorValue,
+            bool parameterTuning,
             IReadOnlyCollection<int> ruleBreachOrderIds)
         {
             Id = id;
@@ -38,6 +39,7 @@ namespace Domain.Surveillance.Rules
             SystemOperationId = systemOperationId;
             OrganisationalFactor = organisationalFactor;
             OrganisationalFactorValue = organisationalFactorValue ?? string.Empty;
+            ParameterTuning = parameterTuning;
             RuleBreachOrderIds = ruleBreachOrderIds ?? new List<int>();
         }
 
@@ -56,6 +58,7 @@ namespace Domain.Surveillance.Rules
         public string SystemOperationId { get; set; }
         public int OrganisationalFactor { get; set; }
         public string OrganisationalFactorValue { get; set; }
+        public bool ParameterTuning { get; set; }
 
         public IReadOnlyCollection<int> RuleBreachOrderIds { get; set; }
     }

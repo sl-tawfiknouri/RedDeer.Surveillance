@@ -8,6 +8,6 @@ START TRANSACTION;
 
     INSERT INTO Migrations VALUES(39, "parametertuningtbl.sql", now());
 	ALTER TABLE RuleBreach Add ParameterTuning bit NOT NULL DEFAULT 0;
-	CREATE TABLE RuleParameterTuning (Id int auto_increment primary key NOT NULL);
+	CREATE TABLE RuleParameterTuning (Id int auto_increment primary key NOT NULL, BaseRunId nvarchar(255), ParameterTuningId nvarchar(1023), RuleRunJson text, BaseValue nvarchar(255), TunedValue nvarchar(255), ParameterName nvarchar(1023), TuningDirection int, TuningStrength int);
 
 COMMIT;

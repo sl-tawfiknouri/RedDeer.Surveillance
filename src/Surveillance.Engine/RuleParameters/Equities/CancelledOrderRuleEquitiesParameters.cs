@@ -24,7 +24,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter funds,
             RuleFilter strategy,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -42,6 +43,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public CancelledOrderRuleEquitiesParameters(
@@ -52,7 +55,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int minimumNumberOfTradesToApplyRuleTo,
             int? maximumNumberOfTradesToApplyRuleTo,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
             Windows = new TimeWindows(id, windowSize);
@@ -69,6 +73,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -145,6 +151,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && this.MinimumNumberOfTradesToApplyRuleTo == castObj.MinimumNumberOfTradesToApplyRuleTo
                 && this.MaximumNumberOfTradesToApplyRuleTo == castObj.MaximumNumberOfTradesToApplyRuleTo;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

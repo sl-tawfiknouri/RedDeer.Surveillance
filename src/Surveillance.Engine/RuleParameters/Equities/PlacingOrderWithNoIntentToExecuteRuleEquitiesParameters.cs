@@ -17,7 +17,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal sigma,
             TimeSpan windowSize,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -31,6 +32,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Markets = RuleFilter.None();
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
+
+            PerformTuning = performTuning;
         }
 
         public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
@@ -43,7 +46,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter traders,
             RuleFilter markets,
             RuleFilter funds,
-            RuleFilter strategies)
+            RuleFilter strategies,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -57,6 +61,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Markets = markets ?? RuleFilter.None();
             Funds = funds ?? RuleFilter.None();
             Strategies = strategies ?? RuleFilter.None();
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -113,6 +119,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             return Windows == castObj.Windows
                    && Sigma == castObj.Sigma;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

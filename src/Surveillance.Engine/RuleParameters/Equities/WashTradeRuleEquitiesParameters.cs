@@ -23,7 +23,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -48,6 +49,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public WashTradeRuleEquitiesParameters(
@@ -67,7 +70,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -92,6 +96,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -185,6 +191,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
                    && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

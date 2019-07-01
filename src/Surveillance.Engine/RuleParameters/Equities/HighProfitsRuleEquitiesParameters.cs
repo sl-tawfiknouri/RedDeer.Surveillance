@@ -22,7 +22,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool useCurrencyConversions,
             string highProfitCurrencyConversionTargetCurrency,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
             Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
@@ -41,6 +42,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public HighProfitsRuleEquitiesParameters(
@@ -59,7 +62,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
             Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
@@ -78,6 +82,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -163,6 +169,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
                && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

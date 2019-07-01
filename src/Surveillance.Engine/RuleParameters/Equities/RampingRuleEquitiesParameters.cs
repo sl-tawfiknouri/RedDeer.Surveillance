@@ -23,7 +23,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter funds,
             RuleFilter strategy,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id;
             Windows = new TimeWindows(id, windowSize);
@@ -40,6 +41,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public RampingRuleEquitiesParameters(
@@ -49,7 +52,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? thresholdOrdersExecutedInWindow,
             decimal? thresholdVolumePercentageWindow,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id;
             Windows = new TimeWindows(id, windowSize);
@@ -66,6 +70,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -136,6 +142,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                    && AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
                    && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

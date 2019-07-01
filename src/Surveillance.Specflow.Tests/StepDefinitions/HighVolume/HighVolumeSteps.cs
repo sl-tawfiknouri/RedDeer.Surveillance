@@ -146,6 +146,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 parameters.HighVolumePercentageWindow,
                 parameters.HighVolumePercentageMarketCap,
                 new [] {ClientOrganisationalFactors.None},
+                true,
                 true);
         }
 

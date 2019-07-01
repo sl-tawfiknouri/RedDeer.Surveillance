@@ -41,6 +41,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     2,
                     4,
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -66,7 +67,8 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     false,
                     "gbp",
                     null,
-                    false);
+                    false,
+                    true);
 
             var result = tuner.ParametersFramework(ruleParameters);
 
@@ -87,6 +89,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     0.6m,
                     0.4m,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -108,6 +111,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     0.4m,
                     true,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -129,6 +133,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     0.4m,
                     0.7m,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -148,6 +153,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     0.3m,
                     TimeSpan.FromHours(1),
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -169,6 +175,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     2,
                     0.3m,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -189,6 +196,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     0.3m,
                     0.8m,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -215,6 +223,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     4,
                     0.2m,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -238,6 +247,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     null,
                     null,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -261,6 +271,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     null,
                     null,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);
@@ -292,6 +303,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
                     null,
                     null,
                     null,
+                    true,
                     true);
 
             var result = tuner.ParametersFramework(ruleParameters);

@@ -20,7 +20,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
             Windows = new TimeWindows(id, windowSize);
@@ -32,6 +33,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             
             Factors = factors ?? new List<ClientOrganisationalFactors>();
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -83,7 +86,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
             return castObj.Windows == Windows;
         }
-        
+
+        public bool PerformTuning { get; set; }
+
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
     }

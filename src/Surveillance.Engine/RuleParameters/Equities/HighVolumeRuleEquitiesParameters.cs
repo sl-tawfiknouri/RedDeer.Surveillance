@@ -18,7 +18,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? highVolumePercentageWindow,
             decimal? highVolumePercentageMarketCap,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -35,6 +36,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public HighVolumeRuleEquitiesParameters(
@@ -49,7 +52,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
@@ -66,6 +70,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
@@ -139,6 +145,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
                 && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
         }
+
+        public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }

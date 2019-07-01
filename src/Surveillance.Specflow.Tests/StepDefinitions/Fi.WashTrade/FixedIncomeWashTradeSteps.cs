@@ -90,6 +90,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
                 RuleFilter.None(),
                 RuleFilter.None(),
                 new[] { ClientOrganisationalFactors.None },
+                true,
                 true);
         }
 

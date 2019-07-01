@@ -56,7 +56,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     _ruleProjector.Project(dto.Funds),
                     _ruleProjector.Project(dto.Strategies),
                     _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                    dto.AggregateNonFactorableIntoOwnCategory))
+                    dto.AggregateNonFactorableIntoOwnCategory,
+                    dto.PerformTuning))
                 .ToList();
         }
 
@@ -84,7 +85,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -115,7 +117,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -142,7 +145,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -170,7 +174,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
@@ -198,8 +203,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
+
         }
 
         public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(ScheduledExecution execution, List<WashTradeRuleParameterDto> dtos)
@@ -231,7 +238,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
@@ -259,7 +267,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Funds),
                             _ruleProjector.Project(dto.Strategies),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
@@ -291,7 +300,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -315,7 +325,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -339,7 +350,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
@@ -366,8 +378,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(_.Traders),
                         _ruleProjector.Project(_.Markets),
                         _ruleProjector.Project(_.Funds),
-                        _ruleProjector.Project(_.Strategies)))
-                .ToList();
+                        _ruleProjector.Project(_.Strategies),
+                        _.PerformTuning))
+                    .ToList();
         }
     }
 }

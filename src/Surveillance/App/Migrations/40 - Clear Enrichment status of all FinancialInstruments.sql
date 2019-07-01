@@ -6,6 +6,6 @@ START TRANSACTION;
 
 INSERT INTO Migrations VALUES(40, "Clear Enrichment status of all FinancialInstruments.sql", now());
 
-UPDATE financialinstruments SET Enrichment = NULL WHERE Enrichment IS NOT NULL;
+UPDATE FinancialInstruments SET Enrichment = NULL WHERE Enrichment IS NOT NULL;
 
 COMMIT;

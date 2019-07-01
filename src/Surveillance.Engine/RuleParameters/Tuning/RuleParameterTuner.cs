@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Accord.IO;
+using Domain.Surveillance.Rules.Tuning;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 

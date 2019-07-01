@@ -1,7 +1,7 @@
 ﻿using System;
-using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
+using Domain.Surveillance.Rules.Tuning.Interfaces;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Tuning
+namespace Domain.Surveillance.Rules.Tuning
 {
     [Serializable]
     public class TunedParameter<T> : ITunedParameter<T> where T : IEquatable<T>

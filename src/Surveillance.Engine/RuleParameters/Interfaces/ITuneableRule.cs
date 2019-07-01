@@ -1,4 +1,5 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.Tuning;
+﻿using Domain.Surveillance.Rules.Tuning;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {

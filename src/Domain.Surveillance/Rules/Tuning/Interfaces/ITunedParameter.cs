@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces
+﻿namespace Domain.Surveillance.Rules.Tuning.Interfaces
 {
     public interface ITunedParameter<T>
     {

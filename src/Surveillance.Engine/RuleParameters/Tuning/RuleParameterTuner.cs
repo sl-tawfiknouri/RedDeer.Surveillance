@@ -5,6 +5,7 @@ using System.Reflection;
 using Accord.IO;
 using Domain.Surveillance.Rules.Tuning;
 using Microsoft.Extensions.Logging;
+using Nest;
 using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Tuning
@@ -113,6 +114,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     {
                         var clone = target.DeepClone();
                         var tuningId = TunedId(baseId, pInfo.Name, x);
+                        _.TuningParameterId = tuningId;
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
                         if (tunableRule != null)
@@ -142,6 +144,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     {
                         var clone = target.DeepClone();
                         var tuningId = TunedId(baseId, pInfo.Name, x);
+                        _.TuningParameterId = tuningId;
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
                         if (tunableRule != null)
@@ -171,6 +174,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     {
                         var clone = target.DeepClone();
                         var tuningId = TunedId(baseId, pInfo.Name, x);
+                        _.TuningParameterId = tuningId;
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
                         if (tunableRule != null)
@@ -235,6 +239,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     {
                         var clone = target.DeepClone();
                         var tuningId = TunedId(baseId, pInfo.Name, x);
+                        _.TuningParameterId = tuningId;
                         idInfo.SetMethod.Invoke(clone, new[] { (object)tuningId });
                         pInfo.SetMethod.Invoke(clone, new[] { (object)_.TunedValue });
                         if (tunableRule != null)
@@ -278,7 +283,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return smallOffsets.Concat(mediumOffsets).Concat(largeOffsets).Distinct().ToList();
         }
 
-        private TunedParameter<decimal>[] ApplyDecimalOffset(decimal value, decimal offset, string name, string baseId, TuningStrength strength)
+        private TunedParameter<decimal>[] ApplyDecimalOffset(
+            decimal value,
+            decimal offset,
+            string name,
+            string baseId,
+            TuningStrength strength)
         {
             var positiveOffset =
                 new TunedParameter<decimal>(
@@ -286,6 +296,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     Math.Min(value + offset, 1),
                     name,
                     baseId,
+                    string.Empty,
                     TuningDirection.Positive, 
                     strength);
 
@@ -296,13 +307,18 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     Math.Max(value - offset, 0),
                     name,
                     baseId,
+                    string.Empty,
                     TuningDirection.Negative,
                     strength);
 
             return new[] { positiveOffset, negativeOffset };
         }
 
-        private IReadOnlyCollection<TunedParameter<int>> PermutateInteger(int? input, string name, string baseId, int? min)
+        private IReadOnlyCollection<TunedParameter<int>> PermutateInteger(
+            int? input,
+            string name,
+            string baseId,
+            int? min)
         {
             if (input == null)
             {
@@ -329,7 +345,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             return smallOffsets.Concat(mediumOffsets).Concat(largeOffsets).Distinct().ToList();
         }
 
-        private TunedParameter<int>[] ApplyIntegerOffset(int value, int offset, string name, string baseId, int? min, TuningStrength strength)
+        private TunedParameter<int>[] ApplyIntegerOffset(
+            int value,
+            int offset,
+            string name,
+            string baseId,
+            int? min,
+            TuningStrength strength)
         {
             var positiveOffset =
                 new TunedParameter<int>(
@@ -337,6 +359,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     value + offset,
                     name,
                     baseId,
+                    string.Empty,
                     TuningDirection.Positive,
                     strength);
             
@@ -346,6 +369,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     Math.Max(value - offset, min.GetValueOrDefault(0)),
                     name,
                     baseId,
+                    string.Empty,
                     TuningDirection.Negative,
                     strength);
 
@@ -368,6 +392,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     !boolVal,
                     name, 
                     baseId,
+                    string.Empty,
                     !boolVal ? TuningDirection.Positive : TuningDirection.Negative,
                     TuningStrength.Small)
             };
@@ -401,6 +426,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     TimeSpan.FromHours(1),
                     name,
                     baseId,
+                    string.Empty,
                     CheckDirection(timeSpan, TimeSpan.FromHours(1)),
                     TuningStrength.Custom),
 
@@ -409,6 +435,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     TimeSpan.FromDays(1),
                     name,
                     baseId,
+                    string.Empty,
                     CheckDirection(timeSpan, TimeSpan.FromDays(1)),
                     TuningStrength.Custom),
 
@@ -417,6 +444,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     TimeSpan.FromDays(7),
                     name,
                     baseId,
+                    string.Empty,
                     CheckDirection(timeSpan, TimeSpan.FromDays(7)),
                     TuningStrength.Custom),
 
@@ -425,6 +453,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     TimeSpan.FromDays(14),
                     name,
                     baseId,
+                    string.Empty,
                     CheckDirection(timeSpan, TimeSpan.FromDays(14)),
                     TuningStrength.Custom),
 
@@ -433,6 +462,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                     TimeSpan.FromDays(28),
                     name, 
                     baseId,
+                    string.Empty,
                     CheckDirection(timeSpan, TimeSpan.FromDays(28)),
                     TuningStrength.Custom)
             })
@@ -462,15 +492,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             }
         }
 
-        private TunedParameter<TimeSpan>[] ApplyTimeSpanOffset(TimeSpan value, TimeSpan offset, string name, string baseId, TuningStrength strength)
+        private TunedParameter<TimeSpan>[] ApplyTimeSpanOffset(
+            TimeSpan value,
+            TimeSpan offset,
+            string name,
+            string baseId,
+            TuningStrength strength)
         {
-            var positiveOffset = new TunedParameter<TimeSpan>(value, value + offset, name, baseId, TuningDirection.Positive, strength);
+            var positiveOffset = new TunedParameter<TimeSpan>(value, value + offset, name, baseId, string.Empty, TuningDirection.Positive, strength);
             if (value < offset)
             {
                 return new[] { positiveOffset };
             }
 
-            var negativeOffset = new TunedParameter<TimeSpan>(value, value - offset, name, baseId, TuningDirection.Negative, strength);
+            var negativeOffset = new TunedParameter<TimeSpan>(value, value - offset, name, baseId, string.Empty, TuningDirection.Negative, strength);
 
             return new[] { positiveOffset, negativeOffset };
         }

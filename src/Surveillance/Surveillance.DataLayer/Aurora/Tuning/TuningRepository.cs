@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.Surveillance.Rules.Tuning;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 
@@ -11,7 +12,7 @@ namespace Surveillance.DataLayer.Aurora.Tuning
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<TuningRepository> _logger;
 
-        private const string SaveTuning = @"";
+        private const string SaveTuning = @"INSERT IGNORE INTO RuleParameterTuning(ParameterRunId, BaseRunId, )";
 
         public TuningRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -34,13 +35,36 @@ namespace Surveillance.DataLayer.Aurora.Tuning
 
         private class TuningDto
         {
-            public TuningDto()
+            public TuningDto(TunedParameter<string> tunedParam, string ruleRunJson)
             {
-                BaseRunId = baseRunId;
+                if (tunedParam == null)
+                {
+                    return;
+                }
+
+                BaseRunId = tunedParam.BaseId;
+                ParameterTuningId = tunedParam.TuningParameterId;
+
+                BaseValue = tunedParam.BaseValue;
+                TunedValue = tunedParam.TunedValue;
+                ParameterName = tunedParam.ParameterName;
+
+                TuningDirection = (int)tunedParam.TuningDirection;
+                TuningStrength = (int)tunedParam.TuningStrength;
+
+                RuleRunJson = ruleRunJson;
             }
 
+            public TuningDto()
+            {
+                // leave in situ for dapper
+            }
 
             public string BaseRunId { get; set; }
+            public string ParameterTuningId { get; set; }
+
+
+            public string RuleRunJson { get; set; }
 
             public string BaseValue { get; set; }
             public string TunedValue { get; set; }
@@ -48,7 +72,8 @@ namespace Surveillance.DataLayer.Aurora.Tuning
 
             public int TuningDirection { get; set; }
             public int TuningStrength { get; set; }
-        }
 
+
+        }
     }
 }

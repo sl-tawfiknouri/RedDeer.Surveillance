@@ -11,6 +11,7 @@ namespace Domain.Surveillance.Rules.Tuning
             T tunedValue,
             string parameterName,
             string baseId,
+            string tuningParameterId,
             TuningDirection direction, 
             TuningStrength strength)
         {
@@ -18,6 +19,7 @@ namespace Domain.Surveillance.Rules.Tuning
             TunedValue = tunedValue;
             ParameterName = parameterName;
             BaseId = baseId ?? string.Empty;
+            TuningParameterId = tuningParameterId ?? string.Empty;
             TuningDirection = direction;
             TuningStrength = strength;
         }
@@ -27,6 +29,7 @@ namespace Domain.Surveillance.Rules.Tuning
 
         public string ParameterName { get; set; }
         public string BaseId { get; set; }
+        public string TuningParameterId { get; set; }
         public TuningDirection TuningDirection { get; set; }
         public TuningStrength TuningStrength { get; set; }
         
@@ -57,6 +60,7 @@ namespace Domain.Surveillance.Rules.Tuning
                 TunedValue?.ToString() ?? string.Empty,
                 ParameterName ?? string.Empty,
                 BaseId,
+                TuningParameterId,
                 TuningDirection,
                 TuningStrength);
         }

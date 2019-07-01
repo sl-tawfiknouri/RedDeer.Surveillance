@@ -8,9 +8,11 @@ namespace Surveillance.Engine.Rules.RuleParameters
     public class TimeWindows
     {
         public TimeWindows(
+            string timeWindowId,
             TimeSpan backwardWindowSize,
             TimeSpan? futureWindowSize = null)
         {
+            TimeWindowId = timeWindowId ?? string.Empty;
             BackwardWindowSize = backwardWindowSize;
             FutureWindowSize = futureWindowSize ?? TimeSpan.Zero;
         }

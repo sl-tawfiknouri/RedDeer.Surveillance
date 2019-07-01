@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;

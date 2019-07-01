@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
             HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
             HighVolumePercentageMarketCap = highVolumePercentageMarketCap;

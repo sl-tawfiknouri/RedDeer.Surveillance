@@ -7,6 +7,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
         : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable
     {
         decimal Sigma { get; }
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
     }
 }

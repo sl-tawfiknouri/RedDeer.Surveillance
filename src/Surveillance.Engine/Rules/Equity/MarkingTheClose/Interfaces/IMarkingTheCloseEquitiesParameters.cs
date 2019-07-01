@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
@@ -12,7 +13,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
         decimal? PercentageThresholdDailyVolume { get; }
         decimal? PercentageThresholdWindowVolume { get; }
         decimal? PercentThresholdOffTouch { get; }
-        TimeSpan Window { get; }
+        TimeWindows Windows { get; }
         IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         bool AggregateNonFactorableIntoOwnCategory { get; set; }
     }

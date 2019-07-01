@@ -74,14 +74,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe
         }
 
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Unknown, 0)]
-        [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Genesis, -1)]
+        [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Genesis, 0)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.ExchangeOpen, -1)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.EquityIntradayTick, -1)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.OrderPlaced, -1)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Order, -1)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.ExchangeClose, -1)]
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Eschaton, -1)]
-        [TestCase(UniverseStateEvent.Genesis, UniverseStateEvent.Unknown, 1)]
+        [TestCase(UniverseStateEvent.Genesis, UniverseStateEvent.Unknown, 0)]
         [TestCase(UniverseStateEvent.Genesis, UniverseStateEvent.Genesis, 0)]
         [TestCase(UniverseStateEvent.Genesis, UniverseStateEvent.ExchangeOpen, -1)]
         [TestCase(UniverseStateEvent.Genesis, UniverseStateEvent.EquityIntradayTick, -1)]

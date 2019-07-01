@@ -8,6 +8,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
         decimal? HighVolumePercentageDaily { get; }
         decimal? HighVolumePercentageWindow { get; }
         decimal? HighVolumePercentageMarketCap { get; }
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
     }
 }

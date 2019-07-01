@@ -7,6 +7,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
     {
         decimal CancellationThreshold { get; }
         decimal RelativeSizeMultipleForSpoofExceedingReal { get; }
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
     }
 }

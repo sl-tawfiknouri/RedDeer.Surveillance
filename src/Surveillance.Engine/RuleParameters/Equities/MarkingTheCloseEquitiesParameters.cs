@@ -10,7 +10,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
     {
         public MarkingTheCloseEquitiesParameters(
             string id,
-            TimeSpan window,
+            TimeSpan windowSize,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
             decimal? percentThresholdOffTouch,
@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Window = window;
+            Windows = new TimeWindows(windowSize);
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
             PercentThresholdOffTouch = percentThresholdOffTouch;
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public MarkingTheCloseEquitiesParameters(
             string id,
-            TimeSpan window,
+            TimeSpan windowSize,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
             decimal? percentThresholdOffTouch,
@@ -59,7 +59,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            Window = window;
+            Windows = new TimeWindows(windowSize);
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
             PercentThresholdOffTouch = percentThresholdOffTouch;
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public string Id { get; }
-        public TimeSpan Window { get; }
+        public TimeWindows Windows { get; }
 
         /// <summary>
         /// A fractional percentage e.g. 0.2 = 20%

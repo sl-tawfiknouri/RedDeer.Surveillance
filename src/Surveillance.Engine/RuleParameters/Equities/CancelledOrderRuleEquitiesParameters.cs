@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
             CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
             MinimumNumberOfTradesToApplyRuleTo = minimumNumberOfTradesToApplyRuleTo;
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
             CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
             MinimumNumberOfTradesToApplyRuleTo = minimumNumberOfTradesToApplyRuleTo;
@@ -83,7 +83,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public string Id { get; }
-        public TimeSpan WindowSize { get; }
+        public TimeWindows Windows { get; }
         public decimal? CancelledOrderPercentagePositionThreshold { get; }
         public decimal? CancelledOrderCountPercentageThreshold { get; }
         public int MinimumNumberOfTradesToApplyRuleTo { get; }

@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -50,8 +50,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         }
 
         public string Id { get; }
-        public TimeSpan WindowSize { get; }
-        
+        public TimeWindows Windows { get; }
+
         public bool PerformAveragePositionAnalysis { get; }
         public bool PerformClusteringPositionAnalysis { get; }
 

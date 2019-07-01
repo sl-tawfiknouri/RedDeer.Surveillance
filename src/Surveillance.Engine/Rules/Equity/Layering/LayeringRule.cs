@@ -43,7 +43,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleRunMode runMode,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(20),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(20),
+                equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
@@ -60,6 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
+
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
@@ -67,7 +69,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -213,7 +215,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _equitiesParameters,
-                    _equitiesParameters.WindowSize,
+                    _equitiesParameters.Windows?.BackwardWindowSize ?? TimeSpan.Zero,
                     allTrades,
                     mostRecentTrade.Instrument,
                     hasBidirectionalBreach,
@@ -254,7 +256,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllInterday);
@@ -284,7 +286,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market daily volume traded within a {_equitiesParameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketDailyVolume * 100}%."
+                    Description = $" Percentage of market daily volume traded within a {_equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketDailyVolume * 100}%."
                 };
             }
 
@@ -300,14 +302,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime.Subtract(BackwardWindowSize),
                     UniverseDateTime,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime.Subtract(BackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
 
@@ -343,7 +345,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market volume traded within a {_equitiesParameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketWindowVolume * 100}%."
+                    Description = $" Percentage of market volume traded within a {_equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketWindowVolume * 100}%."
                 };
             }
 
@@ -367,14 +369,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    startDate.Subtract(WindowSize),
+                    startDate.Subtract(BackwardWindowSize),
                     endDate,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime.Subtract(BackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
 
@@ -506,6 +508,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on fills in the layering rule
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

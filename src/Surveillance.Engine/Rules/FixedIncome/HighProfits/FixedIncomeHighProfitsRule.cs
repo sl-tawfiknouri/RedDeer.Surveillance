@@ -31,7 +31,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",
@@ -62,7 +63,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunRule completed for {UniverseDateTime}");
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule called at {UniverseDateTime}");
 
@@ -77,6 +78,21 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 
 
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void Genesis()

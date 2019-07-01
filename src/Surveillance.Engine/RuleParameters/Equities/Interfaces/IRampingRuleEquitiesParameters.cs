@@ -5,7 +5,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
     public interface IRampingRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable
     {
-        TimeSpan WindowSize { get; }
+        TimeWindows Windows { get; }
+
         decimal AutoCorrelationCoefficient { get; }
 
         // optional noise reduction

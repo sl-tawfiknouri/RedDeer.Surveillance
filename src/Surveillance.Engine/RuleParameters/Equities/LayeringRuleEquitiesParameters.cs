@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
             PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
             CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
@@ -59,7 +59,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         {
             Id = id ?? string.Empty;
 
-            WindowSize = windowSize;
+            Windows = new TimeWindows(windowSize);
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
             PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
             CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         }
 
         public string Id { get; }
-        public TimeSpan WindowSize { get; }
+        public TimeWindows Windows { get; }
         public decimal? PercentageOfMarketDailyVolume { get; }
         public decimal? PercentageOfMarketWindowVolume { get; }
         public bool? CheckForCorrespondingPriceMovement { get; }

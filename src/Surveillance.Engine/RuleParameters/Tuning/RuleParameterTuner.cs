@@ -419,54 +419,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
             var mediumOffsets = ApplyTimeSpanOffset(timeSpan, appliedMediumOffset, name, baseId, TuningStrength.Medium);
             var largeOffsets = ApplyTimeSpanOffset(timeSpan, appliedLargeOffset, name, baseId, TuningStrength.Large);
 
-            return (new[]
-            {
-                new TunedParameter<TimeSpan>(
-                    timeSpan,
-                    TimeSpan.FromHours(1),
-                    name,
-                    baseId,
-                    string.Empty,
-                    CheckDirection(timeSpan, TimeSpan.FromHours(1)),
-                    TuningStrength.Custom),
-
-                new TunedParameter<TimeSpan>(
-                    timeSpan,
-                    TimeSpan.FromDays(1),
-                    name,
-                    baseId,
-                    string.Empty,
-                    CheckDirection(timeSpan, TimeSpan.FromDays(1)),
-                    TuningStrength.Custom),
-
-                new TunedParameter<TimeSpan>(
-                    timeSpan,
-                    TimeSpan.FromDays(7),
-                    name,
-                    baseId,
-                    string.Empty,
-                    CheckDirection(timeSpan, TimeSpan.FromDays(7)),
-                    TuningStrength.Custom),
-
-                new TunedParameter<TimeSpan>(
-                    timeSpan,
-                    TimeSpan.FromDays(14),
-                    name,
-                    baseId,
-                    string.Empty,
-                    CheckDirection(timeSpan, TimeSpan.FromDays(14)),
-                    TuningStrength.Custom),
-
-                new TunedParameter<TimeSpan>(
-                    timeSpan,
-                    TimeSpan.FromDays(28),
-                    name, 
-                    baseId,
-                    string.Empty,
-                    CheckDirection(timeSpan, TimeSpan.FromDays(28)),
-                    TuningStrength.Custom)
-            })
-                .Concat(smallOffsets)
+            return smallOffsets
                 .Concat(mediumOffsets)
                 .Concat(largeOffsets)
                 .Where(_ => _.TunedValue < TimeSpan.FromDays(180)) // no back test tuning over 6 months

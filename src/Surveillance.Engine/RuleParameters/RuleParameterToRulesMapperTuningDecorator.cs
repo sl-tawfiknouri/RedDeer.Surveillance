@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Surveillance.Scheduling;
+using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
+using Surveillance.DataLayer.Aurora.Tuning;
+using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
@@ -16,13 +19,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
     {
         private readonly IRuleParameterTuner _tuner;
         private readonly IRuleParameterToRulesMapper _mapper;
+        private readonly ITuningRepository _tuningRepository;
 
         public RuleParameterToRulesMapperTuningDecorator(
             IRuleParameterTuner tuner,
-            IRuleParameterToRulesMapper mapper)
+            IRuleParameterToRulesMapper mapper,
+            ITuningRepository tuningRepository)
         {
             _tuner = tuner ?? throw new ArgumentNullException(nameof(tuner));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _tuningRepository = tuningRepository ?? throw new ArgumentNullException(nameof(tuningRepository));
         }
         
         public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(
@@ -36,6 +42,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid()).Distinct().ToList();
+
+            var saveableDtos =
+                tunedDtos
+                    .Select(_ =>  
+                        new TuningRepository.TuningPair(
+                            _.TunedParam,
+                            JsonConvert.SerializeObject(_)))
+                    .ToList();
+
+            _tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }

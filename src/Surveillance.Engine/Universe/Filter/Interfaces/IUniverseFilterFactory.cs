@@ -9,6 +9,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
             RuleFilter traders,
             RuleFilter markets,
             RuleFilter funds,
-            RuleFilter strategies);
+            RuleFilter strategies,
+            RuleFilter sectors,
+            RuleFilter industries,
+            RuleFilter regions,
+            RuleFilter countries);
     }
 }

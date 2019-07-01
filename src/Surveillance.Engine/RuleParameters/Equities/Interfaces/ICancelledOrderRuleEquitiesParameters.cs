@@ -3,7 +3,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface ICancelledOrderRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable
+    public interface ICancelledOrderRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable
     {
         TimeWindows Windows { get; }
         decimal? CancelledOrderPercentagePositionThreshold { get; }

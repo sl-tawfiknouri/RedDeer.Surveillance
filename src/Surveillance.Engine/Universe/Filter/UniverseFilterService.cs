@@ -22,6 +22,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private readonly RuleFilter _markets;
         private readonly RuleFilter _funds;
         private readonly RuleFilter _strategies;
+        private readonly RuleFilter _sectors;
+        private readonly RuleFilter _industries;
+        private readonly RuleFilter _regions;
+        private readonly RuleFilter _countries;
         private readonly ILogger<UniverseFilterService> _logger;
 
         public UniverseFilterService(
@@ -31,6 +35,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             RuleFilter markets,
             RuleFilter funds,
             RuleFilter strategies,
+            RuleFilter sectors,
+            RuleFilter industries,
+            RuleFilter regions,
+            RuleFilter countries,
             ILogger<UniverseFilterService> logger)
         {
             _universeUnsubscriberFactory =
@@ -42,6 +50,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _markets = markets;
             _funds = funds;
             _strategies = strategies;
+            _sectors = sectors;
+            _industries = industries;
+            _regions = regions;
+            _countries = countries;
 
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
 
@@ -105,6 +117,26 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             }
 
             if (FilterOnStrategy(value))
+            {
+                return;
+            }
+
+            if (FilterOnSector(value))
+            {
+                return;
+            }
+
+            if (FilterOnIndustry(value))
+            {
+                return;
+            }
+
+            if (FilterOnRegion(value))
+            {
+                return;
+            }
+
+            if (FilterOnCountry(value))
             {
                 return;
             }
@@ -216,6 +248,26 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private bool FilterOnStrategy(IUniverseEvent value)
         {
             return FilterOnOrderAttribute(value, _strategies, i => i.OrderStrategy, "strategy");
+        }
+
+        private bool FilterOnSector(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _sectors, i => i.Instrument.SectorCode, "sector");
+        }
+
+        private bool FilterOnIndustry(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _industries, i => i.Instrument.IndustryCode, "industry");
+        }
+
+        private bool FilterOnRegion(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _regions, i => i.Instrument.RegionCode, "region");
+        }
+
+        private bool FilterOnCountry(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _countries, i => i.Instrument.CountryCode, "country");
         }
 
         private bool FilterOnOrderAttribute(IUniverseEvent value, RuleFilter filter, Func<Order, string> propertyLens, string filterName)

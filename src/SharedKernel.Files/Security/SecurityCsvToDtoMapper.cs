@@ -162,10 +162,7 @@ namespace SharedKernel.Files.Security
                 csv.SecurityName,
                 csv.Cfi,
                 csv.Currency,
-                csv.IssuerIdentifier,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+                csv.IssuerIdentifier);
         }
 
         private SpreadTimeBar BuildSpread(

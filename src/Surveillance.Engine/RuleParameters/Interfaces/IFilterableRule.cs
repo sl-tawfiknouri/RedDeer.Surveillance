@@ -10,6 +10,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
         RuleFilter Funds { get; set; }
         RuleFilter Strategies { get; set; }
 
-        bool HasFilters();
+        bool HasInternalFilters();
     }
 }

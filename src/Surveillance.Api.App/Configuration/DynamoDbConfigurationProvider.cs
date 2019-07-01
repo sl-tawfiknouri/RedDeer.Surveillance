@@ -143,6 +143,8 @@ namespace Surveillance.Api.App.Configuration
 
         private QueryResponse QueryData(string environmentClientId)
         {
+            Logger.Log(NLog.LogLevel.Info, $"Fetching configuration '{environmentClientId}'.");
+
             var query = new QueryRequest
             {
                 TableName = DynamoDbTable,
@@ -172,16 +174,20 @@ namespace Surveillance.Api.App.Configuration
                 ProxyCredentials = CredentialCache.DefaultCredentials
             });
 
-            var tags = client.DescribeTagsAsync(new DescribeTagsRequest
+            var describeTagsResponse = client.DescribeTagsAsync(new DescribeTagsRequest
             {
                 Filters = new List<Filter>
                 {
                     new Filter("resource-id", new List<string> { instanceId }),
                     new Filter("key", new List<string> { name }),
                 }
-            }).Result.Tags;
+            }).Result;
 
-            return tags?.FirstOrDefault()?.Value;
+            var tags = describeTagsResponse?.Tags?.Select(s => s.Value).ToList();
+
+            Logger.Log(NLog.LogLevel.Info, $"Describe Tags for ResourceId '{instanceId}' with key '{name}' returned tags {string.Join(",", tags ?? new List<string>())}. Response HttpCode '{describeTagsResponse.HttpStatusCode}'.");
+
+            return tags?.FirstOrDefault();
         }
     }
 }

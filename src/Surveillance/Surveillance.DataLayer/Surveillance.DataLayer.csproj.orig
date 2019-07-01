@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.14.5" />
+    <PackageReference Include="AWSSDK.EC2" Version="3.3.64.2" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.24.3" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.1.14" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.3.3.22" />
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.12" />
+    <PackageReference Include="NEST" Version="6.2.0" />
+<<<<<<< HEAD
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.40.0" />
+=======
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.39.0" />
+>>>>>>> origin/master
+    <PackageReference Include="StructureMap" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
+    <ProjectReference Include="..\..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\..\Infrastructure.Network\Infrastructure.Network.csproj" />
+    <ProjectReference Include="..\..\PollyFacade\PollyFacade.csproj" />
+    <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
+  </PropertyGroup>
+</Project>

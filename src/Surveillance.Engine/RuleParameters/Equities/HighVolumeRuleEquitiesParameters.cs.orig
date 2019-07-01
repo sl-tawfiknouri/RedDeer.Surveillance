@@ -9,14 +9,14 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning;
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
     [Serializable]
-    public class LayeringRuleEquitiesParameters : ILayeringRuleEquitiesParameters
+    public class HighVolumeRuleEquitiesParameters : IHighVolumeRuleEquitiesParameters
     {
-        public LayeringRuleEquitiesParameters(
+        public HighVolumeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            decimal? highVolumePercentageDaily,
+            decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
@@ -24,9 +24,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            HighVolumePercentageDaily = highVolumePercentageDaily;
+            HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -45,12 +45,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformTuning = performTuning;
         }
 
-        public LayeringRuleEquitiesParameters(
+        public HighVolumeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            decimal? highVolumePercentageDaily,
+            decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -67,9 +67,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            HighVolumePercentageDaily = highVolumePercentageDaily;
+            HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -93,11 +93,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketDailyVolume { get; set; }
+        public decimal? HighVolumePercentageDaily { get; set; }
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketWindowVolume { get; set; }
-        [TuneableBoolParameter]
-        public bool? CheckForCorrespondingPriceMovement { get; set; }
+        public decimal? HighVolumePercentageWindow { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? HighVolumePercentageMarketCap { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -122,32 +122,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+<<<<<<< HEAD
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && (PercentageOfMarketDailyVolume == null
-                       || (PercentageOfMarketDailyVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketDailyVolume.GetValueOrDefault() <= 1))
-                   && (PercentageOfMarketWindowVolume == null
-                       || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
+                   && (HighVolumePercentageDaily == null
+                       || (HighVolumePercentageDaily.GetValueOrDefault() >= 0
+                           && HighVolumePercentageDaily.GetValueOrDefault() <= 1))
+                   && (HighVolumePercentageWindow == null
+                       || (HighVolumePercentageWindow.GetValueOrDefault() >= 0
+                           && HighVolumePercentageWindow.GetValueOrDefault() <= 1))
+                   && (HighVolumePercentageMarketCap == null
+                       || (HighVolumePercentageMarketCap.GetValueOrDefault() >= 0
+                           && HighVolumePercentageMarketCap.GetValueOrDefault() <= 1));
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode()
-               * PercentageOfMarketDailyVolume.GetHashCode()
-               * PercentageOfMarketWindowVolume.GetHashCode()
-                * CheckForCorrespondingPriceMovement.GetHashCode();
+            return 
+                this.Windows.GetHashCode()
+                * this.HighVolumePercentageDaily.GetHashCode()
+                * this.HighVolumePercentageWindow.GetHashCode()
+                * this.HighVolumePercentageMarketCap.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -157,22 +153,33 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            var castObj = obj as LayeringRuleEquitiesParameters;
+            var castObj = obj as HighVolumeRuleEquitiesParameters;
 
             if (castObj == null)
             {
                 return false;
             }
 
-            return this.Windows == castObj.Windows
-                   && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
-                   && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
-                   && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
+            return
+                this.Windows == castObj.Windows
+                && this.HighVolumePercentageDaily == castObj.HighVolumePercentageDaily
+                && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
+                && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
         }
 
         public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+=======
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
+        }
+>>>>>>> origin/master
     }
 }

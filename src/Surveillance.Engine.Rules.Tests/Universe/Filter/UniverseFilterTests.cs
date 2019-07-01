@@ -41,13 +41,17 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 new RuleFilter(),
                 new RuleFilter(),
                 new RuleFilter(),
+                new RuleFilter(),
+                new RuleFilter(),
+                new RuleFilter(),
+                new RuleFilter(),
                 _logger));
         }
 
         [Test]
         public void OnCompleted_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnCompleted();
@@ -58,7 +62,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnError_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnError(new ArgumentNullException());
@@ -69,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnNext(new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object()));
@@ -86,7 +90,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -114,7 +118,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -142,7 +146,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -170,7 +174,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -198,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -226,7 +230,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -264,7 +268,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -302,7 +306,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -330,7 +334,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -358,7 +362,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -386,7 +390,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -414,7 +418,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -442,7 +446,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -452,6 +456,342 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
             var fundTwo = ((Order)null).Random();
             fundTwo.OrderStrategy = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Sectors()
+        {
+            var sector = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.SectorCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.SectorCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Sectors()
+        {
+            var sector = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.SectorCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.SectorCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Sectors()
+        {
+            var sector = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.Instrument.SectorCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.Instrument.SectorCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Industries()
+        {
+            var industry = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.IndustryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.IndustryCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Industries()
+        {
+            var industry = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.IndustryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.IndustryCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Industries()
+        {
+            var industry = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.Instrument.IndustryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.Instrument.IndustryCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Regions()
+        {
+            var region = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.RegionCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.RegionCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Regions()
+        {
+            var region = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.RegionCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.RegionCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Regions()
+        {
+            var region = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.Instrument.RegionCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.Instrument.RegionCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Countries()
+        {
+            var country = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.CountryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.CountryCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Countries()
+        {
+            var country = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.Instrument.CountryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.Instrument.CountryCode = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Countries()
+        {
+            var country = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.Instrument.CountryCode = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.Instrument.CountryCode = "def";
             var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
 
             filter.OnNext(eventOne);

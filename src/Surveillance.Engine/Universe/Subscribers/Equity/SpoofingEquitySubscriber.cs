@@ -138,11 +138,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISpoofingRuleEquitiesParameters param,
             IUniverseRule spoofingRule)
         {
-            if (param.HasFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
-                var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
+                var filteredUniverse = _universeFilterFactory.Build(
+                    param.Accounts,
+                    param.Traders,
+                    param.Markets,
+                    param.Funds,
+                    param.Strategies,
+                    param.Sectors,
+                    param.Industries,
+                    param.Regions,
+                    param.Countries);
                 filteredUniverse.Subscribe(spoofingRule);
 
                 return filteredUniverse;

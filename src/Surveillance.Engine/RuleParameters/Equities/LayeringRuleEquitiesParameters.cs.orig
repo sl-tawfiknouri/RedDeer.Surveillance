@@ -9,23 +9,24 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning;
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
     [Serializable]
-    public class PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters 
-        : IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters
+    public class LayeringRuleEquitiesParameters : ILayeringRuleEquitiesParameters
     {
-        public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
-            string id, 
-            decimal sigma,
+        public LayeringRuleEquitiesParameters(
+            string id,
             TimeSpan windowSize,
+            decimal? percentageOfMarketDailyVolume,
+            decimal? percentOfMarketWindowVolume,
+            bool? checkForCorrespondingPriceMovement,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Sigma = sigma;
             Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
+            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
+            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -33,19 +34,23 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
 
-            PerformTuning = performTuning;
             Sectors = RuleFilter.None();
             Industries = RuleFilter.None();
             Regions = RuleFilter.None();
             Countries = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
+        public LayeringRuleEquitiesParameters(
             string id,
-            decimal sigma,
             TimeSpan windowSize,
-            IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory,
+            decimal? percentageOfMarketDailyVolume,
+            decimal? percentOfMarketWindowVolume,
+            bool? checkForCorrespondingPriceMovement,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -55,14 +60,16 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter industries,
             RuleFilter regions,
             RuleFilter countries,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Sigma = sigma;
             Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
+            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
+            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -70,22 +77,27 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = funds ?? RuleFilter.None();
             Strategies = strategies ?? RuleFilter.None();
 
-            PerformTuning = performTuning;
             Sectors = sectors ?? RuleFilter.None();
             Industries = industries ?? RuleFilter.None();
             Regions = regions ?? RuleFilter.None();
             Countries = countries ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableDecimalParameter]
-        public decimal Sigma { get; set; }
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
-
+        [TuneableDecimalParameter]
+        public decimal? PercentageOfMarketDailyVolume { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? PercentageOfMarketWindowVolume { get; set; }
+        [TuneableBoolParameter]
+        public bool? CheckForCorrespondingPriceMovement { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -97,6 +109,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Regions { get; set; }
         public RuleFilter Countries { get; set; }
 
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
         public bool HasInternalFilters()
         {
             return
@@ -107,25 +122,24 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+<<<<<<< HEAD
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && Sigma >= 0;
+                   && (PercentageOfMarketDailyVolume == null
+                       || (PercentageOfMarketDailyVolume.GetValueOrDefault() >= 0
+                           && PercentageOfMarketDailyVolume.GetValueOrDefault() <= 1))
+                   && (PercentageOfMarketWindowVolume == null
+                       || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
+                           && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
         }
 
         public override int GetHashCode()
         {
             return Windows.GetHashCode()
-               * Sigma.GetHashCode();
+               * PercentageOfMarketDailyVolume.GetHashCode()
+               * PercentageOfMarketWindowVolume.GetHashCode()
+                * CheckForCorrespondingPriceMovement.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -135,20 +149,32 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
+            var castObj = obj as LayeringRuleEquitiesParameters;
 
             if (castObj == null)
             {
                 return false;
             }
 
-            return Windows == castObj.Windows
-                   && Sigma == castObj.Sigma;
+            return this.Windows == castObj.Windows
+                   && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
+                   && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
+                   && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
         }
 
         public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+=======
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
+        }
+>>>>>>> origin/master
     }
 }

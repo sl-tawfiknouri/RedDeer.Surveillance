@@ -9,24 +9,30 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning;
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
     [Serializable]
-    public class LayeringRuleEquitiesParameters : ILayeringRuleEquitiesParameters
+    public class HighProfitsRuleEquitiesParameters : IHighProfitsRuleEquitiesParameters
     {
-        public LayeringRuleEquitiesParameters(
+        public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
+            bool performHighProfitWindowAnalysis,
+            bool performHighProfitDailyAnalysis,
+            decimal? highProfitPercentageThreshold,
+            decimal? highProfitAbsoluteThreshold,
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
             Id = id ?? string.Empty;
-
-            Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
+            HighProfitPercentageThreshold = highProfitPercentageThreshold;
+            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
+            PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -45,12 +51,16 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformTuning = performTuning;
         }
 
-        public LayeringRuleEquitiesParameters(
+        public HighProfitsRuleEquitiesParameters(
             string id,
-            TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            TimeSpan backWindowSize,
+            TimeSpan forwardWindowSize,
+            bool performHighProfitWindowAnalysis,
+            bool performHighProfitDailyAnalysis,
+            decimal? highProfitPercentageThreshold,
+            decimal? highProfitAbsoluteThreshold,
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -65,11 +75,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool performTuning)
         {
             Id = id ?? string.Empty;
-
-            Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
+            HighProfitPercentageThreshold = highProfitPercentageThreshold;
+            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
+            PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -92,12 +104,29 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string Id { get; set; }
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
+        public bool PerformHighProfitWindowAnalysis { get; set; }
+
+        public bool PerformHighProfitDailyAnalysis { get; set; }
+
+        // Percentage
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketDailyVolume { get; set; }
+        public decimal? HighProfitPercentageThreshold { get; set; }
+
+        // Absolute level
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketWindowVolume { get; set; }
-        [TuneableBoolParameter]
-        public bool? CheckForCorrespondingPriceMovement { get; set; }
+        public decimal? HighProfitAbsoluteThreshold { get; set; }
+
+        /// <summary>
+        /// If true we will use the target currency provided.
+        /// Using absolute profits is implicitly always a yes on use currency conversions
+        /// </summary>
+        public bool UseCurrencyConversions { get; set; }
+
+        /// <summary>
+        /// Target currency if using currency conversions and also used for high profit absolute threshold
+        /// </summary>
+        public string HighProfitCurrencyConversionTargetCurrency { get; set; }
+
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -122,32 +151,23 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+<<<<<<< HEAD
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && (PercentageOfMarketDailyVolume == null
-                       || (PercentageOfMarketDailyVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketDailyVolume.GetValueOrDefault() <= 1))
-                   && (PercentageOfMarketWindowVolume == null
-                       || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
+                && (HighProfitPercentageThreshold == null
+                    || (HighProfitPercentageThreshold.GetValueOrDefault() >= 0
+                        && HighProfitPercentageThreshold.GetValueOrDefault() <= 1))
+                && (HighProfitAbsoluteThreshold == null
+                    || (HighProfitAbsoluteThreshold.GetValueOrDefault() >= 0));
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode()
-               * PercentageOfMarketDailyVolume.GetHashCode()
-               * PercentageOfMarketWindowVolume.GetHashCode()
-                * CheckForCorrespondingPriceMovement.GetHashCode();
+            return 
+                this.Windows.GetHashCode()  
+               * this.HighProfitPercentageThreshold.GetHashCode()
+               * this.HighProfitAbsoluteThreshold.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -157,22 +177,32 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            var castObj = obj as LayeringRuleEquitiesParameters;
+            var castObj = obj as HighProfitsRuleEquitiesParameters;
 
             if (castObj == null)
             {
                 return false;
             }
 
-            return this.Windows == castObj.Windows
-                   && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
-                   && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
-                   && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
+            return 
+                 this.Windows == castObj.Windows          
+               && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
+               && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
         }
 
         public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+=======
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
+        }
+>>>>>>> origin/master
     }
 }

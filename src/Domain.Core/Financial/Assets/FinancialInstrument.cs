@@ -18,7 +18,11 @@ namespace Domain.Core.Financial.Assets
             string issuerIdentifier,
             string underlyingName,
             string underlyingCfi,
-            string underlyingIssuerIdentifier)
+            string underlyingIssuerIdentifier,
+            string sectorCode,
+            string industryCode,
+            string regionCode,
+            string countryCode)
         {
             Type = types;
             Identifiers = identifiers;
@@ -29,6 +33,10 @@ namespace Domain.Core.Financial.Assets
             UnderlyingName = underlyingName;
             UnderlyingCfi = underlyingCfi;
             UnderlyingIssuerIdentifier = underlyingIssuerIdentifier;
+            SectorCode = sectorCode;
+            IndustryCode = industryCode;
+            RegionCode = regionCode;
+            CountryCode = countryCode;
         }
 
         public FinancialInstrument(
@@ -48,6 +56,10 @@ namespace Domain.Core.Financial.Assets
             UnderlyingName = string.Empty;
             UnderlyingCfi = string.Empty;
             UnderlyingIssuerIdentifier = string.Empty;
+            SectorCode = string.Empty;
+            IndustryCode = string.Empty;
+            RegionCode = string.Empty;
+            CountryCode = string.Empty;
         }
 
         public InstrumentTypes Type { get; set; }
@@ -72,5 +84,11 @@ namespace Domain.Core.Financial.Assets
         public string UnderlyingName { get; set; }
         public string UnderlyingCfi { get; set; }
         public string UnderlyingIssuerIdentifier { get; set; }
+
+        // reference data
+        public string SectorCode { get; set; }
+        public string IndustryCode { get; set; }
+        public string RegionCode { get; set; }
+        public string CountryCode { get; set; }
     }
 }

@@ -9,23 +9,22 @@ using Surveillance.Engine.Rules.RuleParameters.Tuning;
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
     [Serializable]
-    public class PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters 
-        : IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters
+    public class SpoofingRuleEquitiesParameters : ISpoofingRuleEquitiesParameters
     {
-        public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
-            string id, 
-            decimal sigma,
+        public SpoofingRuleEquitiesParameters(
+            string id,
             TimeSpan windowSize,
+            decimal cancellationThreshold,
+            decimal relativeSizeMultipleForSpoofingExceedingReal,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Sigma = sigma;
             Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            CancellationThreshold = cancellationThreshold;
+            RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -33,19 +32,22 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
 
-            PerformTuning = performTuning;
             Sectors = RuleFilter.None();
             Industries = RuleFilter.None();
             Regions = RuleFilter.None();
             Countries = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
+        public SpoofingRuleEquitiesParameters(
             string id,
-            decimal sigma,
             TimeSpan windowSize,
-            IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory,
+            decimal cancellationThreshold,
+            decimal relativeSizeMultipleForSpoofingExceedingReal,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -55,14 +57,15 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter industries,
             RuleFilter regions,
             RuleFilter countries,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Sigma = sigma;
             Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            CancellationThreshold = cancellationThreshold;
+            RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -70,21 +73,25 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = funds ?? RuleFilter.None();
             Strategies = strategies ?? RuleFilter.None();
 
-            PerformTuning = performTuning;
             Sectors = sectors ?? RuleFilter.None();
             Industries = industries ?? RuleFilter.None();
             Regions = regions ?? RuleFilter.None();
             Countries = countries ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableDecimalParameter]
-        public decimal Sigma { get; set; }
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+        [TuneableDecimalParameter]
+        public decimal CancellationThreshold { get; set; }
+        [TuneableDecimalParameter]
+        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -92,10 +99,16 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Funds { get; set; }
         public RuleFilter Strategies { get; set; }
 
+<<<<<<< HEAD
+=======
         public RuleFilter Sectors { get; set; }
         public RuleFilter Industries { get; set; }
         public RuleFilter Regions { get; set; }
         public RuleFilter Countries { get; set; }
+
+>>>>>>> origin/master
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasInternalFilters()
         {
@@ -107,25 +120,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+<<<<<<< HEAD
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && Sigma >= 0;
+               && CancellationThreshold >= 0
+               && CancellationThreshold <= 1
+               && RelativeSizeMultipleForSpoofExceedingReal >= 0;
         }
 
         public override int GetHashCode()
         {
             return Windows.GetHashCode()
-               * Sigma.GetHashCode();
+               * CancellationThreshold.GetHashCode()
+               * RelativeSizeMultipleForSpoofExceedingReal.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -135,7 +143,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
+            var castObj = obj as SpoofingRuleEquitiesParameters;
 
             if (castObj == null)
             {
@@ -143,12 +151,24 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             }
 
             return Windows == castObj.Windows
-                   && Sigma == castObj.Sigma;
+                   && CancellationThreshold == castObj.CancellationThreshold
+                   && RelativeSizeMultipleForSpoofExceedingReal == castObj.RelativeSizeMultipleForSpoofExceedingReal;
+
         }
 
         public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+=======
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
+        }
+>>>>>>> origin/master
     }
 }

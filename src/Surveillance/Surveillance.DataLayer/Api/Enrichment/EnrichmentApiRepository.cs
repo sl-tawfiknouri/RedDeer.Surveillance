@@ -15,7 +15,7 @@ namespace Surveillance.DataLayer.Api.Enrichment
     public class EnrichmentApiRepository : IEnrichmentApiRepository
     {
         private const string HeartbeatRoute = "api/securityenrichment/heartbeat";
-        private const string Route = "api/securityenrichment/enrichment/v1";
+        private const string Route = "api/securityenrichment/enrichment/v2";
         private readonly IDataLayerConfiguration _dataLayerConfiguration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;

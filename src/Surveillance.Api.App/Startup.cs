@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
@@ -150,11 +149,16 @@ namespace Surveillance.Api.App
 
                     var environment = Configuration.GetValue<string>("Environment");
                     var client = Configuration.GetValue<string>("Customer");
+
+                    _logger.LogInformation($"Retrieved configuration (Environment: '{environment}', Customer: '{client}').");
+
                     var clientIssuer = new ComponentName(environment, client, ScopeType.ClientService);
                     var serialisedClientIssuer = clientIssuer.ToString();
 
                     var validIssuers = new[] { serialisedClientIssuer };
                     var validAudiences = new[] { serialisedClientIssuer };
+
+                    _logger.LogInformation($"JWT configuration (ValidIssuers: '{string.Join(";", validIssuers)}', ValidAudiences: '{string.Join(";", validAudiences)}').");
 
                     var issuerSigningKeys = new List<SecurityKey>();
                     var secretKey = Configuration.GetValue<string>("Secret-Key-Jwt");
@@ -186,7 +190,7 @@ namespace Surveillance.Api.App
                     {
                         OnAuthenticationFailed = (context) =>
                         {
-                            _logger.LogError(context.Exception, $"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
+                            _logger.LogWarning(context.Exception, $"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
 
                             context.Response.StatusCode = 401;
                             context.Fail("Invalid JWT token");

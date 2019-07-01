@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.RuleParameters.Tuning;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
     [Serializable]
-    public class LayeringRuleEquitiesParameters : ILayeringRuleEquitiesParameters
+    public class MarkingTheCloseEquitiesParameters : IMarkingTheCloseEquitiesParameters
     {
-        public LayeringRuleEquitiesParameters(
+        public MarkingTheCloseEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            decimal? percentageThresholdDailyVolume,
+            decimal? percentageThresholdWindowVolume,
+            decimal? percentThresholdOffTouch,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
@@ -24,9 +24,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            PercentThresholdOffTouch = percentThresholdOffTouch;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -45,12 +45,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformTuning = performTuning;
         }
 
-        public LayeringRuleEquitiesParameters(
+        public MarkingTheCloseEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? percentageOfMarketDailyVolume,
-            decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement,
+            decimal? percentageThresholdDailyVolume,
+            decimal? percentageThresholdWindowVolume,
+            decimal? percentThresholdOffTouch,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -67,9 +67,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Id = id ?? string.Empty;
 
             Windows = new TimeWindows(id, windowSize);
-            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
-            PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
-            CheckForCorrespondingPriceMovement = checkForCorrespondingPriceMovement;
+            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            PercentThresholdOffTouch = percentThresholdOffTouch;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -90,14 +90,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         [TuneableIdParameter]
         public string Id { get; set; }
+
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }
+
+        /// <summary>
+        /// A fractional percentage e.g. 0.2 = 20%
+        /// </summary>
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketDailyVolume { get; set; }
+        public decimal? PercentageThresholdDailyVolume { get; set; }
+
+        /// <summary>
+        /// A fractional percentage e.g. 0.2 = 20%
+        /// </summary>
         [TuneableDecimalParameter]
-        public decimal? PercentageOfMarketWindowVolume { get; set; }
-        [TuneableBoolParameter]
-        public bool? CheckForCorrespondingPriceMovement { get; set; }
+        public decimal? PercentageThresholdWindowVolume { get; set; }
+
+        /// <summary>
+        /// A fractional percentage for how far from touch e.g. % away from bid for a buy; % away from ask for a sell
+        /// </summary>
+        [TuneableDecimalParameter]
+        public decimal? PercentThresholdOffTouch { get; set; }
+
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -110,6 +124,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Countries { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasInternalFilters()
@@ -122,32 +137,28 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+<<<<<<< HEAD
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)
-                   && (PercentageOfMarketDailyVolume == null
-                       || (PercentageOfMarketDailyVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketDailyVolume.GetValueOrDefault() <= 1))
-                   && (PercentageOfMarketWindowVolume == null
-                       || (PercentageOfMarketWindowVolume.GetValueOrDefault() >= 0
-                           && PercentageOfMarketWindowVolume.GetValueOrDefault() <= 1));
+                && (PercentageThresholdDailyVolume == null
+                    || (PercentageThresholdDailyVolume.GetValueOrDefault() >= 0
+                        && PercentageThresholdDailyVolume.GetValueOrDefault() <= 1))
+               && (PercentageThresholdWindowVolume == null
+                   || (PercentageThresholdWindowVolume.GetValueOrDefault() >= 0
+                       && PercentageThresholdWindowVolume.GetValueOrDefault() <= 1))
+               && (PercentThresholdOffTouch == null
+                   || (PercentThresholdOffTouch.GetValueOrDefault() >= 0
+                       && PercentThresholdOffTouch.GetValueOrDefault() <= 1));
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode()
-               * PercentageOfMarketDailyVolume.GetHashCode()
-               * PercentageOfMarketWindowVolume.GetHashCode()
-                * CheckForCorrespondingPriceMovement.GetHashCode();
+            return 
+                Windows.GetHashCode()
+                    * PercentageThresholdDailyVolume.GetHashCode()
+                    * PercentageThresholdWindowVolume.GetHashCode()
+                    * PercentThresholdOffTouch.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -157,22 +168,33 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 return false;
             }
 
-            var castObj = obj as LayeringRuleEquitiesParameters;
+            var castObj = obj as MarkingTheCloseEquitiesParameters;
 
             if (castObj == null)
             {
                 return false;
             }
 
-            return this.Windows == castObj.Windows
-                   && this.PercentageOfMarketDailyVolume == castObj.PercentageOfMarketDailyVolume
-                   && this.PercentageOfMarketWindowVolume == castObj.PercentageOfMarketWindowVolume
-                   && this.CheckForCorrespondingPriceMovement == castObj.CheckForCorrespondingPriceMovement;
+            return
+                Windows == castObj.Windows
+                && PercentageThresholdDailyVolume == castObj.PercentageThresholdDailyVolume
+                && PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
+                && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
         }
 
         public bool PerformTuning { get; set; }
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+=======
+        public bool HasReferenceDataFilters()
+        {
+            return
+                Sectors?.Type != RuleFilterType.None
+                || Industries?.Type != RuleFilterType.None
+                || Regions?.Type != RuleFilterType.None
+                || Countries?.Type != RuleFilterType.None;
+        }
+>>>>>>> origin/master
     }
 }

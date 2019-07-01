@@ -411,12 +411,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(_.Markets),
                         _ruleProjector.Project(_.Funds),
                         _ruleProjector.Project(_.Strategies),
+<<<<<<< HEAD:src/Surveillance.Engine/RuleParameters/RuleParameterDtoToRuleParameterMapper.cs
+                        _.PerformTuning))
+                    .ToList();
+=======
                         _ruleProjector.Project(_.Sectors),
                         _ruleProjector.Project(_.Industries),
                         _ruleProjector.Project(_.Regions),
-                        _ruleProjector.Project(_.Countries),
-                        _.PerformTuning))
-                    .ToList();
+                        _ruleProjector.Project(_.Countries)))
+                .ToList();
+>>>>>>> origin/master:src/Surveillance.Engine/RuleParameters/RuleParameterToRulesMapper.cs
         }
     }
 }

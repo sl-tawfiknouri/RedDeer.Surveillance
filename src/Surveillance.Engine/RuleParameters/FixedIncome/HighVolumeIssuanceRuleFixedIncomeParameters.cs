@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public RuleFilter Funds { get; set; }
         public RuleFilter Strategies { get; set; }
 
-        public bool HasFilters()
+        public bool HasInternalFilters()
         {
             return
                 Accounts?.Type != RuleFilterType.None

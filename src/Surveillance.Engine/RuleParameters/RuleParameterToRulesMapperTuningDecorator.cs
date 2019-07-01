@@ -41,7 +41,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -66,7 +72,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -91,7 +103,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -116,7 +134,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -141,7 +165,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -166,7 +196,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -191,7 +227,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -216,7 +258,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -241,7 +289,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -266,7 +320,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -291,7 +351,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos
@@ -316,7 +382,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos = mappedDtos.SelectMany(_tuner.ParametersFramework).Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+            var tunedDtos =
+                mappedDtos
+                    .Where(_ => _.PerformTuning)
+                    .SelectMany(_tuner.ParametersFramework)
+                    .Where(_ => _.Valid() && _.TunedParam != null)
+                    .Distinct()
+                    .ToList();
 
             var saveableDtos =
                 tunedDtos

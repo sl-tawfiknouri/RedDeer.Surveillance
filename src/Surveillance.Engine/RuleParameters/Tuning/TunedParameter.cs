@@ -6,11 +6,18 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
     [Serializable]
     public class TunedParameter<T> : ITunedParameter<T> where T : IEquatable<T>
     {
-        public TunedParameter(T baseValue, T tunedValue, string parameterName, TuningDirection direction, TuningStrength strength)
+        public TunedParameter(
+            T baseValue, 
+            T tunedValue,
+            string parameterName,
+            string baseId,
+            TuningDirection direction, 
+            TuningStrength strength)
         {
             BaseValue = baseValue;
             TunedValue = tunedValue;
             ParameterName = parameterName;
+            BaseId = baseId ?? string.Empty;
             TuningDirection = direction;
             TuningStrength = strength;
         }
@@ -19,9 +26,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
         public T TunedValue { get; set; }
 
         public string ParameterName { get; set; }
+        public string BaseId { get; set; }
         public TuningDirection TuningDirection { get; set; }
         public TuningStrength TuningStrength { get; set; }
-
+        
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -48,6 +56,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Tuning
                 BaseValue?.ToString() ?? string.Empty,
                 TunedValue?.ToString() ?? string.Empty,
                 ParameterName ?? string.Empty,
+                BaseId,
                 TuningDirection,
                 TuningStrength);
         }

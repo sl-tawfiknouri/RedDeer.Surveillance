@@ -181,6 +181,7 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 "trader one",
                 "Rybank Long",
                 "deal-asap",
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

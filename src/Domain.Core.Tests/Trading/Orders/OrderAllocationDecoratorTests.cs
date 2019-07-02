@@ -125,6 +125,7 @@ namespace Domain.Core.Tests.Trading.Orders
                 "trader-1",
                 "clearing-agent",
                 "deal asap",
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

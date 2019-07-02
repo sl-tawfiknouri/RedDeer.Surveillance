@@ -212,6 +212,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "trader one",
                 "clearing-agent",
                 "deal asap",
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

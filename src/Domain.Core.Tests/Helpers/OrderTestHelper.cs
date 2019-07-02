@@ -52,6 +52,7 @@ namespace Domain.Core.Tests.Helpers
                 "trader one",
                 "clearing agent",
                 "dealer-instructions",
+                "order-broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

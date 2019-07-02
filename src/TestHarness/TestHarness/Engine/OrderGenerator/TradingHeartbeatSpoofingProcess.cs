@@ -141,6 +141,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
+                    null,
                     OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
@@ -182,6 +183,7 @@ namespace TestHarness.Engine.OrderGenerator
                     security.SpreadTimeBar.Price,
                     volumeToTrade,
                     volumeToTrade,
+                    null,
                     null,
                     null,
                     null,

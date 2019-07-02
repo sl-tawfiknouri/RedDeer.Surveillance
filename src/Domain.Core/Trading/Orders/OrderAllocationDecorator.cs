@@ -42,6 +42,7 @@ namespace Domain.Core.Trading.Orders
                 order.OrderTraderName,
                 order.OrderClearingAgent,
                 order.OrderDealingInstructions,
+                order.OrderBroker,
                 order.OrderOptionStrikePrice,
                 order.OrderOptionExpirationDate,
                 order.OrderOptionEuropeanAmerican,

@@ -52,6 +52,7 @@ namespace Surveillance.Engine.Rules.Tests.Helpers
                 "trader one",
                 "clearing agent",
                 "dealer-instructions",
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

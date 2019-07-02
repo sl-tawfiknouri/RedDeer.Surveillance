@@ -252,6 +252,7 @@ namespace TestHarness.Engine.OrderGenerator
                     "trader one",
                     "clearing-agent",
                     "dealing-instructions",
+                    "order broker",
                     null,
                     null,
                     OptionEuropeanAmerican.NONE,

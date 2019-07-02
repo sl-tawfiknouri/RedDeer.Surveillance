@@ -82,6 +82,7 @@ namespace TestHarness.Tests.Display
                 "trader one",
                 "clearing-bank",
                 "deal asap",
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

@@ -154,6 +154,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 traderId,
                 "Clearing-Bank",
                 dealerInstructions,
+                "order broker",
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

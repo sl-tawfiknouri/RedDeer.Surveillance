@@ -53,6 +53,7 @@ namespace Domain.Core.Trading.Orders
             string orderTraderName,
             string orderClearingAgent,
             string orderDealingInstructions,
+            string orderBroker,
 
             Money? orderOptionStrikePrice,
             DateTime? orderOptionExpirationDate,
@@ -92,6 +93,7 @@ namespace Domain.Core.Trading.Orders
             OrderAverageFillPrice = orderAverageFillPrice;
             OrderOrderedVolume = orderOrderedVolume;
             OrderFilledVolume = orderFilledVolume;
+            OrderBroker = orderBroker;
 
             // order trader and post trade
             OrderTraderId = orderTraderId ?? string.Empty;
@@ -142,7 +144,7 @@ namespace Domain.Core.Trading.Orders
         public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
-
+        public string OrderBroker { get; set; }
 
         public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
         

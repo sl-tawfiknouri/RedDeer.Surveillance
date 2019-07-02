@@ -923,6 +923,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
+                dto.OrderBroker,
 
                 optionStrikePrice,
                 dto.OptionExpirationDate,
@@ -1064,6 +1065,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderFilledDate = order.FilledDate;
                 OrderStatusChangedDate = order.MostRecentDateEvent();
                 CreatedDate = order.CreatedDate;
+                OrderBroker = order.OrderBroker;
 
                 LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
@@ -1162,6 +1164,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string OrderVersion { get; set; }
             public string OrderVersionLinkId { get; set; }
             public string OrderGroupId { get; set; }
+            public string OrderBroker { get; set; }
 
             public int? LifeCycleStatus { get; set; }
             public int? OrderType { get; set; }

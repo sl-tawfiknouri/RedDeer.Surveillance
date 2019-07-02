@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(39));
+            Assert.That(result.Count, Is.EqualTo(29));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(32));
+            Assert.That(result.Count, Is.EqualTo(22));
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(33));
+            Assert.That(result.Count, Is.EqualTo(23));
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(28));
+            Assert.That(result.Count, Is.EqualTo(18));
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(33));
+            Assert.That(result.Count, Is.EqualTo(23));
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(21));
+            Assert.That(result.Count, Is.EqualTo(11));
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(33));
+            Assert.That(result.Count, Is.EqualTo(23));
         }
 
         [Test]
@@ -202,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(27));
+            Assert.That(result.Count, Is.EqualTo(17));
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(45));
+            Assert.That(result.Count, Is.EqualTo(35));
         }
 
         [Test]
@@ -253,7 +253,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(15));
+            Assert.That(result.Count, Is.EqualTo(5));
         }
 
         [Test]
@@ -277,7 +277,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(15));
+            Assert.That(result.Count, Is.EqualTo(5));
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(45));
+            Assert.That(result.Count, Is.EqualTo(35));
         }
     }
 }

@@ -64,7 +64,7 @@ namespace DataSynchroniser.Api.Factset.Tests
         }
 
         [Test]
-        public async Task Handle_NonRelevantRequests_DoesNotThrow()
+        public void Handle_NonRelevantRequests_DoesNotThrow()
         {
             var synchroniser = BuildDataSynchroniser();
             A.CallTo(() => _requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(false);

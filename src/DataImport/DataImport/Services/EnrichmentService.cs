@@ -63,6 +63,7 @@ namespace DataImport.Services
         public async Task Terminate()
         {
             _timer?.Stop();
+            await Task.CompletedTask;
         }
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs e)

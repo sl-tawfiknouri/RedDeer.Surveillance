@@ -27,8 +27,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighVolume
         private UniverseSelectionState _universeSelectionState;
         private HighVolumeIssuanceRuleFixedIncomeParameters _parameters;
 
-        private FixedIncomeHighProfitsRule _rule;
-
         private IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;

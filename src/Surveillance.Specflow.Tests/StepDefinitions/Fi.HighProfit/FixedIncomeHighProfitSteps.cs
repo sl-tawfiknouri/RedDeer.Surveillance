@@ -26,8 +26,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighProfit
         private UniverseSelectionState _universeSelectionState;
         private HighProfitsRuleFixedIncomeParameters _parameters;
 
-        private FixedIncomeHighProfitsRule _rule;
-
         private IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;

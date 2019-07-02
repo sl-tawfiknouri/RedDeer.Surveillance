@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Timer = System.Timers.Timer;
 
 namespace DataImport.Services
@@ -17,6 +18,7 @@ namespace DataImport.Services
         private const int ScanFrequencyInSeconds = 60;
 
         private readonly IReddeerMarketRepository _marketRepository;
+        private readonly IOrderBrokerRepository _orderBrokerRepository;
         private readonly IEnrichmentApiRepository _apiRepository;
         private readonly ILogger<EnrichmentService> _logger;
 
@@ -24,10 +26,12 @@ namespace DataImport.Services
 
         public EnrichmentService(
             IReddeerMarketRepository marketRepository,
+            IOrderBrokerRepository orderBrokerRepository,
             IEnrichmentApiRepository apiRepository,
             ILogger<EnrichmentService> logger)
         {
             _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
+            _orderBrokerRepository = orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
             _apiRepository = apiRepository ?? throw new ArgumentNullException(nameof(apiRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -87,9 +91,13 @@ namespace DataImport.Services
         public async Task<bool> Scan()
         {
             var securities = await _marketRepository.GetUnEnrichedSecurities();
+            var brokers = await _orderBrokerRepository.GetUnEnrichedBrokers();
 
-            if (securities == null
+            if ((securities == null
                 || !securities.Any())
+                &&
+                (brokers == null
+                 || !brokers.Any()))
             {
                 return false;
             }
@@ -106,6 +114,8 @@ namespace DataImport.Services
             {
                 Securities = securities?.ToArray()
             };
+
+            _logger.LogInformation($"We need to add enrichment for brokers");
 
             var enrichmentResponse = await _apiRepository.Get(message);
             await _marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);

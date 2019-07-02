@@ -73,6 +73,7 @@ namespace Surveillance.DataLayer
             For<IPolicyFactory>().Use<PolicyFactory>();
             For<IHttpClientFactory>().Use<HttpClientFactory>();
             For<ITuningRepository>().Use<TuningRepository>();
+            For<IOrderBrokerRepository>().Use<OrderBrokerRepository>();
         }
     }
 }

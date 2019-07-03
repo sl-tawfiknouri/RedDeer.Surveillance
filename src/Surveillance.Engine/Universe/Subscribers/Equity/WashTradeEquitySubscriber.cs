@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class WashTradeEquitySubscriber : IWashTradeEquitySubscriber
     {
         private readonly IEquityRuleWashTradeFactory _equityRuleWashTradeFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<WashTradeEquitySubscriber> _logger;
 
         public WashTradeEquitySubscriber(
             IEquityRuleWashTradeFactory equityRuleWashTradeFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<WashTradeEquitySubscriber> logger)
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(wt => filteredParameters.Contains(wt.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var washTradeParameters = _ruleParameterMapper.Map(dtos);
+            var washTradeParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, washTradeParameters);
 
             return subscriptions;

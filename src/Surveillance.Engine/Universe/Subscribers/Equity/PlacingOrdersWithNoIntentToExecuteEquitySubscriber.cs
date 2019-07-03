@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
     {
         private readonly IEquityRulePlacingOrdersWithoutIntentToExecuteFactory _equityRulePlacingOrdersFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> _logger;
         
         public PlacingOrdersWithNoIntentToExecuteEquitySubscriber(
             IEquityRulePlacingOrdersWithoutIntentToExecuteFactory equityRulePlacingOrdersFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> logger)
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var placingOrderParameters = _ruleParameterMapper.Map(dtos);
+            var placingOrderParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, placingOrderParameters, dataRequestSubscriber);
 
             return subscriptions;

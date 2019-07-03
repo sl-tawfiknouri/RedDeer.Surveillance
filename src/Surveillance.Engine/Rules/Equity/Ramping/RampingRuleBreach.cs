@@ -1,5 +1,7 @@
 ﻿using System;
 using Domain.Core.Financial.Assets;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -16,7 +18,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             string systemOperationId,
             string correlationId,
             IFactorValue factorValue,
-            IRampingStrategySummaryPanel summaryPanel)
+            IRampingStrategySummaryPanel summaryPanel,
+            IRampingRuleEquitiesParameters parameters)
         {
             Window = window;
             Trades = trades;
@@ -26,6 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             CorrelationId = correlationId ?? string.Empty;
             FactorValue = factorValue;
             SummaryPanel = summaryPanel;
+            RuleParameters = parameters;
         }
 
         public TimeSpan Window { get; }
@@ -36,6 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
         public IRampingStrategySummaryPanel SummaryPanel { get; set; }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class WashTradeRuleEquitiesParameters : IWashTradeRuleEquitiesParameters
     {
         public WashTradeRuleEquitiesParameters(
@@ -20,11 +23,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -50,6 +54,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public WashTradeRuleEquitiesParameters(
@@ -73,11 +79,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter regions,
             RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -103,26 +110,35 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
 
-        public TimeWindows Windows { get; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
 
         // Enabled analysis settings
-        public bool PerformAveragePositionAnalysis { get; }
-        public bool PerformClusteringPositionAnalysis { get; }
+        public bool PerformAveragePositionAnalysis { get; set; }
+        public bool PerformClusteringPositionAnalysis { get; set; }
 
 
         // Averaging parameters
-        public int? AveragePositionMinimumNumberOfTrades { get; }
-        public decimal? AveragePositionMaximumPositionValueChange { get; }
-        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
-        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
-        
+        [TuneableIntegerParameter]
+        public int? AveragePositionMinimumNumberOfTrades { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? AveragePositionMaximumPositionValueChange { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; set; }
+        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; set; }
+
         // Clustering (k-means) parameters
-        public int? ClusteringPositionMinimumNumberOfTrades { get; }
-        public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+        [TuneableIntegerParameter]
+        public int? ClusteringPositionMinimumNumberOfTrades { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? ClusteringPercentageValueDifferenceThreshold { get; set; }
 
 
         public RuleFilter Accounts { get; set; }
@@ -157,5 +173,57 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Regions?.Type != RuleFilterType.None
                 || Countries?.Type != RuleFilterType.None;
         }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+               && (AveragePositionMinimumNumberOfTrades == null
+                   || (AveragePositionMinimumNumberOfTrades.GetValueOrDefault() >= 0))
+                && (AveragePositionMaximumPositionValueChange == null
+                    || AveragePositionMaximumPositionValueChange >= 0
+                && (AveragePositionMaximumAbsoluteValueChangeAmount == null
+                    || AveragePositionMaximumAbsoluteValueChangeAmount >= 0))
+                && (ClusteringPositionMinimumNumberOfTrades == null
+                    || ClusteringPositionMinimumNumberOfTrades >= 0)
+                && (ClusteringPercentageValueDifferenceThreshold == null
+                    || ClusteringPercentageValueDifferenceThreshold >= 0);
+        }
+
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode()
+               * AveragePositionMinimumNumberOfTrades.GetHashCode()
+               * AveragePositionMaximumPositionValueChange.GetHashCode()
+               * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
+               * ClusteringPositionMinimumNumberOfTrades.GetHashCode()
+               * ClusteringPercentageValueDifferenceThreshold.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as WashTradeRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return Windows == castObj.Windows
+                   && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
+                   && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
+                   && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount
+                   && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
+                   && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

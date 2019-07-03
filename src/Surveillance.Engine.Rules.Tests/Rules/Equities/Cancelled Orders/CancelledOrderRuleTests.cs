@@ -113,7 +113,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false, true);
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
 
@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false, true);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false, true);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -235,7 +235,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false, true);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -270,7 +270,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false, true);
 
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -307,7 +307,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
         {
             if (parameters == null)
             {               
-                parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
+                parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false, true);
             }
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,

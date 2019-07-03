@@ -120,6 +120,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
                 parameters.PercentageThresholdWindowVolume,
                 null,
                 new[] { ClientOrganisationalFactors.None },
+                true,
                 true);
         }
 

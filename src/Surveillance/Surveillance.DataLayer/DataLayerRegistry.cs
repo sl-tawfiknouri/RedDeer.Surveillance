@@ -35,6 +35,8 @@ using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Infrastructure.Network.HttpClient;
 using Surveillance.DataLayer.Aurora.Scheduler;
 using Surveillance.DataLayer.Aurora.Scheduler.Interfaces;
+using Surveillance.DataLayer.Aurora.Tuning;
+using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
 
 namespace Surveillance.DataLayer
 {
@@ -70,6 +72,7 @@ namespace Surveillance.DataLayer
             For<ITaskSchedulerRepository>().Use<TaskSchedulerRepository>();
             For<IPolicyFactory>().Use<PolicyFactory>();
             For<IHttpClientFactory>().Use<HttpClientFactory>();
+            For<ITuningRepository>().Use<TuningRepository>();
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class HighVolumeRuleEquitiesParameters : IHighVolumeRuleEquitiesParameters
     {
         public HighVolumeRuleEquitiesParameters(
@@ -15,11 +18,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? highVolumePercentageWindow,
             decimal? highVolumePercentageMarketCap,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
             HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
@@ -37,6 +41,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public HighVolumeRuleEquitiesParameters(
@@ -55,11 +61,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter regions,
             RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
             HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
@@ -77,13 +84,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
-        public TimeWindows Windows { get; }
-        public decimal? HighVolumePercentageDaily { get; }
-        public decimal? HighVolumePercentageWindow { get; }
-        public decimal? HighVolumePercentageMarketCap { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? HighVolumePercentageDaily { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? HighVolumePercentageWindow { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? HighVolumePercentageMarketCap { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -116,5 +130,54 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Regions?.Type != RuleFilterType.None
                 || Countries?.Type != RuleFilterType.None;
         }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                   && (HighVolumePercentageDaily == null
+                       || (HighVolumePercentageDaily.GetValueOrDefault() >= 0
+                           && HighVolumePercentageDaily.GetValueOrDefault() <= 1))
+                   && (HighVolumePercentageWindow == null
+                       || (HighVolumePercentageWindow.GetValueOrDefault() >= 0
+                           && HighVolumePercentageWindow.GetValueOrDefault() <= 1))
+                   && (HighVolumePercentageMarketCap == null
+                       || (HighVolumePercentageMarketCap.GetValueOrDefault() >= 0
+                           && HighVolumePercentageMarketCap.GetValueOrDefault() <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return 
+                this.Windows.GetHashCode()
+                * this.HighVolumePercentageDaily.GetHashCode()
+                * this.HighVolumePercentageWindow.GetHashCode()
+                * this.HighVolumePercentageMarketCap.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighVolumeRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return
+                this.Windows == castObj.Windows
+                && this.HighVolumePercentageDaily == castObj.HighVolumePercentageDaily
+                && this.HighVolumePercentageMarketCap == castObj.HighVolumePercentageMarketCap
+                && this.HighVolumePercentageWindow == castObj.HighVolumePercentageWindow;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

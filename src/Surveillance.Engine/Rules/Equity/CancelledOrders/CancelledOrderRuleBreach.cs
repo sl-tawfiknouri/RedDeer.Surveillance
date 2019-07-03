@@ -2,6 +2,7 @@
 using Domain.Core.Financial.Assets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -38,6 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             RuleParameterId = Parameters?.Id ?? string.Empty;
             SystemOperationId = ctx.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = Parameters;
         }
 
         public bool HasBreachedRule()
@@ -62,5 +64,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
     }
 }

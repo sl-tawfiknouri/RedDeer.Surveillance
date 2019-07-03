@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class HighVolumeEquitySubscriber : IHighVolumeEquitySubscriber
     {
         private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<HighVolumeEquitySubscriber> _logger;
 
         public HighVolumeEquitySubscriber(
             IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeEquitySubscriber> logger)
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
+            var highVolumeParameters = _ruleParameterMapper.Map(execution, dtos);
 
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
 

@@ -23,14 +23,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
     public class RampingEquitySubscriber : IRampingEquitySubscriber
     {
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IEquityRuleRampingFactory _equityRuleRampingFactory;
         private readonly ILogger<RampingEquitySubscriber> _logger;
 
         public RampingEquitySubscriber(
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             IEquityRuleRampingFactory equityRuleRampingFactory,
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
-            var rampingParameters = _ruleParameterMapper.Map(dtos);
+            var rampingParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters, dataRequestSubscriber);
         }

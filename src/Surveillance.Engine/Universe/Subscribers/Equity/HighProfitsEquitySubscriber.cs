@@ -23,14 +23,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class HighProfitsEquitySubscriber : IHighProfitsEquitySubscriber
     {
         private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
         public HighProfitsEquitySubscriber(
             IEquityRuleHighProfitFactory equityRuleHighProfitFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactor,
             ILogger<UniverseRuleSubscriber> logger)
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(hp => filteredParameters.Contains(hp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highProfitParameters = _ruleParameterMapper.Map(dtos);
+            var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
         }

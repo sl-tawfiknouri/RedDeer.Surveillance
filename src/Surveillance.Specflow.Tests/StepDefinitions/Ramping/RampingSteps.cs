@@ -131,6 +131,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Ramping
                     parameters.ThresholdOrdersExecutedInWindow,
                     parameters.ThresholdVolumePercentageWindow,
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
         }
 

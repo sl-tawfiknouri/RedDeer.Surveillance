@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class RampingRuleEquitiesParameters : IRampingRuleEquitiesParameters
     {
         public RampingRuleEquitiesParameters(
@@ -24,10 +27,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter regions,
             RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
 
             AutoCorrelationCoefficient = autoCorrelationCoefficient;
             ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
@@ -46,6 +50,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public RampingRuleEquitiesParameters(
@@ -55,10 +61,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? thresholdOrdersExecutedInWindow,
             decimal? thresholdVolumePercentageWindow,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
 
             AutoCorrelationCoefficient = autoCorrelationCoefficient;
             ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
@@ -77,15 +84,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors;
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-
-        public string Id { get; }
-
-        public TimeWindows Windows { get; }
-        public decimal AutoCorrelationCoefficient { get; }
-        public int? ThresholdOrdersExecutedInWindow { get; }
-        public decimal? ThresholdVolumePercentageWindow { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+        [TuneableIntegerParameter]
+        public int? ThresholdOrdersExecutedInWindow { get; set; }
+        [TuneableDecimalParameter]
+        public decimal AutoCorrelationCoefficient { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? ThresholdVolumePercentageWindow { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
@@ -119,5 +131,49 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
                 || Regions?.Type != RuleFilterType.None
                 || Countries?.Type != RuleFilterType.None;
         }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+                && (ThresholdOrdersExecutedInWindow == null
+                    || ThresholdOrdersExecutedInWindow.GetValueOrDefault() >= 0)
+                && AutoCorrelationCoefficient >= 0
+                && (ThresholdVolumePercentageWindow == null
+                    || (ThresholdVolumePercentageWindow >= 0
+                        && ThresholdVolumePercentageWindow <= 1));
+        }
+
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode()
+               * ThresholdOrdersExecutedInWindow.GetHashCode()
+               * AutoCorrelationCoefficient.GetHashCode()
+               * ThresholdVolumePercentageWindow.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as RampingRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return Windows == castObj.Windows
+                   && ThresholdOrdersExecutedInWindow == castObj.ThresholdOrdersExecutedInWindow
+                   && AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
+                   && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

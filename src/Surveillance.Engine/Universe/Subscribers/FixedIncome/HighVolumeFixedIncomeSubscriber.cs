@@ -25,14 +25,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
     public class HighVolumeFixedIncomeSubscriber : IHighVolumeFixedIncomeSubscriber
     {
         private readonly IFixedIncomeHighVolumeFactory _fixedIncomeRuleHighVolumeFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<HighVolumeFixedIncomeSubscriber> _logger;
 
         public HighVolumeFixedIncomeSubscriber(
             IFixedIncomeHighVolumeFactory fixedIncomeRuleHighVolumeFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeFixedIncomeSubscriber> logger)
@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
+            var highVolumeParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
 
             return subscriptions;

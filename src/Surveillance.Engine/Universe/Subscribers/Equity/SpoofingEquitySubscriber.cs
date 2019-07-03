@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class SpoofingEquitySubscriber : ISpoofingEquitySubscriber
     {
         private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger _logger;
 
         public SpoofingEquitySubscriber(
             IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<UniverseRuleSubscriber> logger)
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var spoofingParameters = _ruleParameterMapper.Map(dtos);
+            var spoofingParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptionRequests = SubscribeToUniverse(execution, opCtx, alertStream, spoofingParameters);
 
             return subscriptionRequests;

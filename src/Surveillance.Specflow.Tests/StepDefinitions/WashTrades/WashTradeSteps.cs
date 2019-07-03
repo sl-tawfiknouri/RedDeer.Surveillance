@@ -107,6 +107,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
                     parameters.ClusteringPositionMinimumNumberOfTrades,
                     parameters.ClusteringPercentageValueDifferenceThreshold,
                     new[] { ClientOrganisationalFactors.None },
+                    true,
                     true);
         }
 

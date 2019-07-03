@@ -28,7 +28,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 ReddeerEnrichmentId, 
                 SystemOperationId,
                 OrganisationalFactorType,
-                OrganisationalFactorValue)
+                OrganisationalFactorValue,
+                ParameterTuning)
             VALUES(
                 @RuleId,
                 @CorrelationId,
@@ -43,7 +44,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 @ReddeerEnrichmentId, 
                 @SystemOperationId,
                 @OrganisationalFactorType,
-                @OrganisationalFactorValue); 
+                @OrganisationalFactorValue,
+                @ParameterTuning); 
             SELECT LAST_INSERT_ID();";
 
         private const string HasDuplicateSql = @"
@@ -191,6 +193,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dto.SystemOperationId,
                 dto.OrganisationalFactorType,
                 dto.OrganisationalFactorValue,
+                dto.ParameterTuning,
                 new int[0]);
         }
 
@@ -223,6 +226,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 AssetCfi = message?.AssetCfi;
                 SystemOperationId = message?.SystemOperationId;
                 ReddeerEnrichmentId = message?.ReddeerEnrichmentId;
+                ParameterTuning = message?.ParameterTuning ?? false;
 
                 OrganisationalFactorType = message?.OrganisationalFactor ?? 0;
                 OrganisationalFactorValue = message?.OrganisationalFactorValue ?? string.Empty;
@@ -232,6 +236,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             public string RuleId { get; set; }
             public string CorrelationId { get; set; }
             public bool IsBackTest { get; set; }
+            public bool ParameterTuning { get; set; }
             public DateTime CreatedOn { get; set; }
             public string Title { get; set; }
             public string Description { get; set; }

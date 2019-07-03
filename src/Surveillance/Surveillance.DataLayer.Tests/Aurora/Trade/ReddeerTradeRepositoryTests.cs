@@ -6,6 +6,7 @@ using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora;
@@ -80,7 +81,10 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new OrdersRepository(factory, _marketRepository, _orderBrokerRepository, _logger);
+
+            var brokerRepository = new OrderBrokerRepository(factory, NullLogger<OrderBrokerRepository>.Instance);
+
+            var repo = new OrdersRepository(factory, _marketRepository, brokerRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();
             var start = row1.MostRecentDateEvent().Date;
@@ -215,7 +219,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "trader one",
                 "clearing-agent",
                 "deal asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
+                new OrderBroker(null, "", "Mr Broker", DateTime.Now, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

@@ -923,7 +923,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
-                dto.OrderBroker,
+                new OrderBroker(dto.OrderBrokerId, dto.OrderBrokerReddeerId, dto.OrderBroker, dto.OrderBrokerCreatedOn, dto.OrderBrokerLive), 
 
                 optionStrikePrice,
                 dto.OptionExpirationDate,
@@ -1065,7 +1065,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderFilledDate = order.FilledDate;
                 OrderStatusChangedDate = order.MostRecentDateEvent();
                 CreatedDate = order.CreatedDate;
-                OrderBroker = order.OrderBroker;
+
+                OrderBroker = order.OrderBroker?.Name;
+                OrderBrokerId = order.OrderBroker?.Id;
+                OrderBrokerCreatedOn = order.OrderBroker?.CreatedOn;
+                OrderBrokerReddeerId = order.OrderBroker?.ReddeerId;
+                OrderBrokerLive = order.OrderBroker?.Live ?? false;
 
                 LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
@@ -1164,7 +1169,14 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string OrderVersion { get; set; }
             public string OrderVersionLinkId { get; set; }
             public string OrderGroupId { get; set; }
+
+
             public string OrderBroker { get; set; }
+            public string OrderBrokerId { get; set; }
+            public string OrderBrokerReddeerId { get; set; }
+            public DateTime? OrderBrokerCreatedOn { get; set; }
+            public bool OrderBrokerLive { get; set; }
+
 
             public int? LifeCycleStatus { get; set; }
             public int? OrderType { get; set; }

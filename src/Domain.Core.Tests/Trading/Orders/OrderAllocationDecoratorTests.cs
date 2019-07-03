@@ -125,7 +125,7 @@ namespace Domain.Core.Tests.Trading.Orders
                 "trader-1",
                 "clearing-agent",
                 "deal asap",
-                "order broker",
+                new OrderBroker("", "", "Mr Broker", DateTime.Now, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

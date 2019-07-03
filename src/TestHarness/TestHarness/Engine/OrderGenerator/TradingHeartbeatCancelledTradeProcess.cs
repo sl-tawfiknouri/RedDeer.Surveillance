@@ -252,7 +252,7 @@ namespace TestHarness.Engine.OrderGenerator
                     "trader one",
                     "clearing-agent",
                     "dealing-instructions",
-                    "order broker",
+                    new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
                     null,
                     null,
                     OptionEuropeanAmerican.NONE,

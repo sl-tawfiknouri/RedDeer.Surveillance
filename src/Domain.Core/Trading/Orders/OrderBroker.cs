@@ -9,7 +9,7 @@ namespace Domain.Core.Trading.Orders
             string id,
             string reddeerId,
             string name,
-            DateTime createdOn,
+            DateTime? createdOn,
             bool live)
         {
             Id = id ?? string.Empty;
@@ -31,7 +31,7 @@ namespace Domain.Core.Trading.Orders
 
         public string Name { get; }
 
-        public DateTime CreatedOn { get; }
+        public DateTime? CreatedOn { get; }
 
         public bool Live { get; }
     }

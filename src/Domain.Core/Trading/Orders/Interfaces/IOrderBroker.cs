@@ -4,7 +4,7 @@ namespace Domain.Core.Trading.Orders.Interfaces
 {
     public interface IOrderBroker
     {
-        DateTime CreatedOn { get; }
+        DateTime? CreatedOn { get; }
         string Id { get; }
         bool Live { get; }
         string Name { get; }

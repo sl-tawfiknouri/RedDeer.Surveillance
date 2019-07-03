@@ -7,6 +7,6 @@ namespace Surveillance.DataLayer.Aurora.Orders.Interfaces
     public interface IOrderBrokerRepository
     {
         Task<IReadOnlyCollection<IOrderBroker>> GetUnEnrichedBrokers();
-        string InsertOrUpdateBroker(IOrderBroker brokerName);
+        Task<string> InsertOrUpdateBroker(IOrderBroker broker);
     }
 }

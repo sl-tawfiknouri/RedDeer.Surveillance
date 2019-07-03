@@ -212,7 +212,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "trader one",
                 "clearing-agent",
                 "deal asap",
-                "order broker",
+                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

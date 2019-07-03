@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Domain.Core.Trading.Orders;
 using Domain.Core.Trading.Orders.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -15,9 +17,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
         private readonly ILogger<OrderBrokerRepository> _logger;
 
         // INSERT OR CREATE
-        private const string InsertBrokerSql = @"";
+        private const string InsertBrokerSql =
+            @"INSERT IGNORE INTO Brokers (ExternalId, Name, CreatedOn, Live) VALUES(@ExternalId, @Name, now(), @Live);
+                SELECT LAST_INSERT_ID();";
 
-        private const string GetBrokerUnEnrichedSql = @"";
+        private const string GetBrokerUnEnrichedSql = @"SELECT Id, ExternalId, Name, CreatedOn, Live FROM Brokers WHERE Live = 0;";
         
         public OrderBrokerRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -27,23 +31,95 @@ namespace Surveillance.DataLayer.Aurora.Orders
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string InsertOrUpdateBroker(IOrderBroker brokerName)
+        public async Task<string> InsertOrUpdateBroker(IOrderBroker broker)
         {
-            _logger?.LogInformation($"{brokerName?.Name} about to insert or update broker");
+            _logger?.LogInformation($"{broker?.Name} about to insert or update broker");
 
-            if (brokerName == null)
+            if (broker == null)
             {
                 return string.Empty;
             }
 
-            return string.Empty;
+            try
+            {
+                using (var dbConn = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteScalarAsync<string>(InsertBrokerSql, broker))
+                {
+                    var id = await conn;
+                    return id;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                return string.Empty;
+            }
         }
 
         public async Task<IReadOnlyCollection<IOrderBroker>> GetUnEnrichedBrokers()
         {
             _logger?.LogInformation($"Fetching un enriched brokers");
 
-            return await Task.FromResult(new IOrderBroker[0]);
+            try
+            {
+                using (var dbConn = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.QueryAsync<BrokerDto>(GetBrokerUnEnrichedSql))
+                {
+                    var brokerDtos = await conn;
+
+                    return 
+                        brokerDtos
+                            .ToList()
+                            .Select(_ =>
+                                new OrderBroker(
+                                    _.Id,
+                                    _.ExternalId,
+                                    _.Name,
+                                    _.CreatedOn,
+                                    _.Live))
+                            .ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                return new IOrderBroker[0];
+            }
+        }
+
+        private class BrokerDto
+        {
+            public BrokerDto()
+            { }
+
+            public BrokerDto(IOrderBroker orderBroker)
+            {
+                if (orderBroker == null)
+                {
+                    return;
+                }
+
+                Id = orderBroker.Id;
+                ExternalId = orderBroker.ReddeerId;
+                Name = orderBroker.Name?.ToLower() ?? string.Empty;
+                Live = orderBroker.Live;
+            }
+
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public string Id { get; set; }
+
+            /// <summary>
+            /// AKA external id
+            /// </summary>
+            public string ExternalId { get; set; }
+
+            public string Name { get; set; }
+
+            public DateTime? CreatedOn { get; set; }
+
+            public bool Live { get; set; }
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 FilledVolume,
                 TraderId,
                 TraderName,
-                OrderBrokerId,
+                BrokerId,
                 ClearingAgent,
                 DealingInstructions,
                 OptionStrikePrice,
@@ -117,7 +117,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 FilledVolume=@OrderFilledVolume,
                 TraderId=@OrderTraderId,
                 TraderName = @OrderTraderName,
-                OrderBrokerId = @OrderBrokerId,
+                BrokerId = @OrderBrokerId,
                 ClearingAgent=@OrderClearingAgent,
                 DealingInstructions=@OrderDealingInstructions,
                 OptionStrikePrice=@OptionStrikePrice,
@@ -257,7 +257,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.OrderBrokerId as OrderBrokerId,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -289,7 +289,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 mark.MarketName AS MarketName,
                 broker.ExternalId as OrderBrokerReddeerId,
                 broker.Name as OrderBroker,
-                broker.CreatedOn as OrderBrokerCratedOn,
+                broker.CreatedOn as OrderBrokerCreatedOn,
                 broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
@@ -297,7 +297,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
-            on broker.Id = ord.OrderBrokerId
+            on broker.Id = ord.BrokerId
             WHERE Live = 1 AND Autoscheduled = 0
 
             UNION
@@ -333,7 +333,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.OrderBrokerId as OrderBrokerId
+                ord.BrokerId as OrderBrokerId
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -365,7 +365,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 mark.MarketName AS MarketName,
                 broker.ExternalId as OrderBrokerReddeerId,
                 broker.Name as OrderBroker,
-                broker.CreatedOn as OrderBrokerCratedOn,
+                broker.CreatedOn as OrderBrokerCreatedOn,
                 broker.Live as OrderBrokerLive
             FROM OrdersAllocation as OrdAlloc
             LEFT OUTER JOIN Orders as ord
@@ -375,7 +375,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
-            on broker.Id = ord.OrderBrokerId
+            on broker.Id = ord.BrokerId
             WHERE OrdAlloc.Live = 1 AND OrdAlloc.Autoscheduled = 0;";
 
         private const string SetOrdersToScheduled = @"
@@ -432,7 +432,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.OrderBrokerId as OrderBrokerId,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -464,7 +464,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 mark.MarketName AS MarketName,
                 broker.ExternalId as OrderBrokerReddeerId,
                 broker.Name as OrderBroker,
-                broker.CreatedOn as OrderBrokerCratedOn,
+                broker.CreatedOn as OrderBrokerCreatedOn,
                 broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
@@ -472,7 +472,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
-            on broker.Id = ord.OrderBrokerId
+            on broker.Id = ord.BrokerId
             WHERE Live = 0 AND CreatedDate < @StaleDate;";
 
         private const string GetOrderSql = @"
@@ -507,7 +507,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.OrderBrokerId as OrderBrokerId,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -539,7 +539,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 mark.MarketName AS MarketName,
                 broker.ExternalId as OrderBrokerReddeerId,
                 broker.Name as OrderBroker,
-                broker.CreatedOn as OrderBrokerCratedOn,
+                broker.CreatedOn as OrderBrokerCreatedOn,
                 broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
@@ -547,7 +547,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
-            on broker.Id = ord.OrderBrokerId
+            on broker.Id = ord.BrokerId
             WHERE
             ord.PlacedDate >= @Start
             AND ord.StatusChangedDate <= @End
@@ -1111,6 +1111,9 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
                 OrderBroker = order.OrderBroker?.Name;
                 OrderBrokerId = order.OrderBroker?.Id;
+                if (OrderBrokerId == string.Empty)
+                    OrderBrokerId = null;
+
                 OrderBrokerCreatedOn = order.OrderBroker?.CreatedOn;
                 OrderBrokerReddeerId = order.OrderBroker?.ReddeerId;
                 OrderBrokerLive = order.OrderBroker?.Live ?? false;

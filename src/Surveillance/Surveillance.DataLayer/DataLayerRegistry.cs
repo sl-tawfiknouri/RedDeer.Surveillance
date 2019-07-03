@@ -74,6 +74,7 @@ namespace Surveillance.DataLayer
             For<IHttpClientFactory>().Use<HttpClientFactory>();
             For<ITuningRepository>().Use<TuningRepository>();
             For<IOrderBrokerRepository>().Use<OrderBrokerRepository>();
+            For<IBrokerApiRepository>().Use<BrokerApiRepository>();
         }
     }
 }

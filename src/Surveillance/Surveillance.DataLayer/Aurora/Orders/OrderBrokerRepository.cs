@@ -6,6 +6,7 @@ using Dapper;
 using Domain.Core.Trading.Orders;
 using Domain.Core.Trading.Orders.Interfaces;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService.Api.BrokerEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
@@ -20,6 +21,10 @@ namespace Surveillance.DataLayer.Aurora.Orders
         private const string InsertBrokerSql =
             @"INSERT IGNORE INTO Brokers (ExternalId, Name, CreatedOn, Live) VALUES(@ExternalId, @Name, now(), @Live);
                 SELECT Id FROM Brokers WHERE Name = @Name;";
+
+        // INSERT OR CREATE
+        private const string InsertEnrichedBrokerSql =
+            @"UPDATE Brokers SET ExternalId = @ExternalId, Live = 1 WHERE Name = @Name;";
 
         private const string GetBrokerUnEnrichedSql = @"SELECT Id, ExternalId, Name, CreatedOn, Live FROM Brokers WHERE Live = 0;";
         
@@ -53,6 +58,44 @@ namespace Surveillance.DataLayer.Aurora.Orders
             {
                 _logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
                 return string.Empty;
+            }
+        }
+
+        public async Task UpdateEnrichedBroker(IReadOnlyCollection<BrokerEnrichmentDto> brokers)
+        {
+            _logger?.LogInformation($"{brokers?.Count ?? 0} about to insert or update enriched brokers");
+
+            if (brokers == null
+                || !brokers.Any())
+            {
+                _logger?.LogInformation($"could not insert or update empty or null broker response");
+                return;
+            }
+
+            try
+            {
+                var brokerDtos = brokers
+                    ?.Select(_ =>
+                        new BrokerDto
+                        {
+                            Name = _.Name,
+                            Id = _.Id,
+                            CreatedOn = _.CreatedOn,
+                            ExternalId = _.ExternalId,
+                            Live = _.Live
+                        })
+                    .ToList();
+
+                using (var dbConn = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(InsertEnrichedBrokerSql, brokerDtos))
+                {
+                    await conn;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                return;
             }
         }
 

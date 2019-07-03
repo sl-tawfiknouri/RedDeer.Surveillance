@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using System.Timers;
 using DataImport.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService.Api.BrokerEnrichment;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
+using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
@@ -20,6 +22,7 @@ namespace DataImport.Services
         private readonly IReddeerMarketRepository _marketRepository;
         private readonly IOrderBrokerRepository _orderBrokerRepository;
         private readonly IEnrichmentApiRepository _apiRepository;
+        private readonly IBrokerApiRepository _brokerApiRepository;
         private readonly ILogger<EnrichmentService> _logger;
 
         private Timer _timer;
@@ -28,11 +31,13 @@ namespace DataImport.Services
             IReddeerMarketRepository marketRepository,
             IOrderBrokerRepository orderBrokerRepository,
             IEnrichmentApiRepository apiRepository,
+            IBrokerApiRepository brokerApiRepository,
             ILogger<EnrichmentService> logger)
         {
             _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             _orderBrokerRepository = orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
             _apiRepository = apiRepository ?? throw new ArgumentNullException(nameof(apiRepository));
+            _brokerApiRepository = brokerApiRepository ?? throw new ArgumentNullException(nameof(brokerApiRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -93,15 +98,6 @@ namespace DataImport.Services
             var securities = await _marketRepository.GetUnEnrichedSecurities();
             var brokers = await _orderBrokerRepository.GetUnEnrichedBrokers();
 
-            if ((securities == null
-                || !securities.Any())
-                &&
-                (brokers == null
-                 || !brokers.Any()))
-            {
-                return false;
-            }
-
             var scanTokenSource = new CancellationTokenSource(10000);
             var apiCheck = await _apiRepository.HeartBeating(scanTokenSource.Token);
             if (!apiCheck)
@@ -110,17 +106,47 @@ namespace DataImport.Services
                 return false;
             }
 
-            var message = new SecurityEnrichmentMessage
+            var response = false;
+
+            if ((securities != null
+                 && securities.Any()))
             {
-                Securities = securities?.ToArray()
-            };
+                var message = new SecurityEnrichmentMessage
+                {
+                    Securities = securities?.ToArray()
+                };
 
-            _logger.LogInformation($"We need to add enrichment for brokers");
+                _logger.LogInformation($"We need to add enrichment for brokers");
 
-            var enrichmentResponse = await _apiRepository.Get(message);
-            await _marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
+                var enrichmentResponse = await _apiRepository.Get(message);
+                await _marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
 
-            return enrichmentResponse?.Securities?.Any() ?? false;
+                response = enrichmentResponse?.Securities?.Any() ?? false;
+            }
+
+            if ((brokers != null
+                 && brokers.Any()))
+            {
+                var message = new BrokerEnrichmentMessage
+                {
+                    Brokers = brokers?.Select(_ => new BrokerEnrichmentDto()
+                    {
+                        CreatedOn = _.CreatedOn,
+                        ExternalId = _.ReddeerId,
+                        Id = _.Id,
+                        Live = _.Live,
+                        Name = _.Name
+                    }).ToArray()
+                };
+
+                _logger.LogInformation($"We need to add enrichment for brokers");
+
+                var enrichmentResponse = await _brokerApiRepository.Get(message);
+                await _orderBrokerRepository.UpdateEnrichedBroker(enrichmentResponse.Brokers);
+                response = true;
+            }
+
+            return response;
         }
     }
 }

@@ -618,6 +618,14 @@ namespace Surveillance.DataLayer.Aurora.Orders
             {
                 dbConnection.Open();
 
+                if (entity.OrderBroker != null
+                    && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name) 
+                    && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
+                {
+                    var broker = await _orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
+                    entity.OrderBroker.Id = broker;
+                }
+
                 var dto = new OrderDto(entity);
 
                 _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");

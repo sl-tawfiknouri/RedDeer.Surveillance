@@ -22,17 +22,17 @@ namespace Domain.Core.Trading.Orders
         /// <summary>
         /// Primary key
         /// </summary>
-        public string Id { get; }
+        public string Id { get; set; }
 
         /// <summary>
         /// AKA external id
         /// </summary>
-        public string ReddeerId { get; }
+        public string ReddeerId { get; set; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public DateTime? CreatedOn { get; }
+        public DateTime? CreatedOn { get; set; }
 
-        public bool Live { get; }
+        public bool Live { get; set; }
     }
 }

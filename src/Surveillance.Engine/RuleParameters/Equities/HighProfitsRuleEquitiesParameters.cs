@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
@@ -30,6 +31,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
+            MarketCapFilter = DecimalRangeRuleFilter.None();
+
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
@@ -55,6 +58,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? highProfitAbsoluteThreshold,
             bool useCurrencyConversions,
             string highProfitCurrencyConversionTargetCurrency,
+            DecimalRangeRuleFilter marketCapFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -75,6 +79,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
             PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
+
+            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -113,6 +119,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         /// Target currency if using currency conversions and also used for high profit absolute threshold
         /// </summary>
         public string HighProfitCurrencyConversionTargetCurrency { get; }
+        public DecimalRangeRuleFilter MarketCapFilter { get; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -129,22 +136,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None
-                || Funds?.Type != RuleFilterType.None
-                || Strategies?.Type != RuleFilterType.None;
-        }
+            => IFilterableRuleExtensions.HasInternalFilters(this);
+
+        public bool HasMarketCapFilters()
+            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
 
         public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
+            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
     }
 }

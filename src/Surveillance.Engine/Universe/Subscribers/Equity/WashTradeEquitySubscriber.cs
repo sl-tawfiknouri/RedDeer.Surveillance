@@ -120,7 +120,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var washTradeFiltered = DecorateWithFilter(opCtx, param, washTradeOrgFactors);
+            var washTradeFiltered = DecorateWithFilter(opCtx, param, washTradeOrgFactors, ctx, runMode);
 
             return washTradeFiltered;
         }
@@ -128,9 +128,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             IWashTradeRuleEquitiesParameters param,
-            IUniverseRule washTrade)
+            IUniverseRule washTrade,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -143,7 +145,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Wash Trade Equity",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(washTrade);
 
                 return filteredUniverse;

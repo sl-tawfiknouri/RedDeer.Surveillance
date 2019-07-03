@@ -115,7 +115,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
             var cancelledOrderOrgFactors = _brokerServiceFactory.Build(cancelledOrderRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-            var cancelledOrderFiltered = DecorateWithFilter(opCtx, param, cancelledOrderOrgFactors);
+            var cancelledOrderFiltered = DecorateWithFilter(opCtx, param, cancelledOrderOrgFactors, ruleCtx, runMode);
 
             return cancelledOrderFiltered;
         }
@@ -123,9 +123,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             ICancelledOrderRuleEquitiesParameters param,
-            IUniverseRule cancelledOrderRule)
+            IUniverseRule cancelledOrderRule,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(
@@ -137,7 +139,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Cancelled Order Equity",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(cancelledOrderRule);
 
                 return filteredUniverse;

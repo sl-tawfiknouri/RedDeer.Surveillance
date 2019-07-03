@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var layeringRuleFiltered = DecorateWithFilter(opCtx, param, layeringRuleOrgFactors);
+            var layeringRuleFiltered = DecorateWithFilter(opCtx, param, layeringRuleOrgFactors, ruleCtx, runMode);
 
             return layeringRuleFiltered;
         }
@@ -131,9 +131,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             ILayeringRuleEquitiesParameters param,
-            IUniverseRule layering)
+            IUniverseRule layering,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -146,7 +148,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Layering Equity",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(layering);
 
                 return filteredUniverse;

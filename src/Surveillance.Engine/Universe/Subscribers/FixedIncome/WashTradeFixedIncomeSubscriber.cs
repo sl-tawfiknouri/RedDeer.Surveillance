@@ -119,7 +119,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     washTrade,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var washTradeFilters = DecorateWithFilters(opCtx, param, washTradeOrgFactors);
+            var washTradeFilters = DecorateWithFilters(opCtx, param, washTradeOrgFactors, ctx, runMode);
 
             return washTradeFilters;
         }
@@ -127,7 +127,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IWashTradeRuleFixedIncomeParameters param,
-            IUniverseRule washTrade)
+            IUniverseRule washTrade,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
             if (param.HasInternalFilters())
             {
@@ -142,7 +144,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    ruleRunMode,
+                    "Wash Trade Fixed Income",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(washTrade);
 
                 return filteredUniverse;

@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     highProfits,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var highProfitsFiltered = DecorateWithFilters(opCtx, param, highProfitsOrgFactors);
+            var highProfitsFiltered = DecorateWithFilters(opCtx, param, highProfitsOrgFactors, ruleCtx, runMode);
 
             return highProfitsFiltered;
         }
@@ -132,7 +132,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IHighProfitsRuleFixedIncomeParameters param,
-            IUniverseRule highProfits)
+            IUniverseRule highProfits,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
             if (param.HasInternalFilters())
             {
@@ -147,7 +149,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    ruleRunMode,
+                    "High Profits Fixed Income",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highProfits);
 
                 return filteredUniverse;

@@ -128,7 +128,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var filteredSpoofingRule = DecorateWithFilters(opCtx, param, spoofingRuleOrgFactors);
+            var filteredSpoofingRule = DecorateWithFilters(opCtx, param, spoofingRuleOrgFactors, ruleCtx, runMode);
 
             return filteredSpoofingRule;
         }
@@ -136,9 +136,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             ISpoofingRuleEquitiesParameters param,
-            IUniverseRule spoofingRule)
+            IUniverseRule spoofingRule,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -151,7 +153,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Spoofing Equity",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(spoofingRule);
 
                 return filteredUniverse;

@@ -15,6 +15,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class UniverseFilterService : IUniverseFilterService
     {
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
+        private readonly IHighMarketCapFilter _highMarketCapFilter;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
         private readonly RuleFilter _accounts;
@@ -30,6 +31,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public UniverseFilterService(
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
+            IHighMarketCapFilter highMarketCapFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -44,6 +46,9 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _universeUnsubscriberFactory =
                 universeUnsubscriberFactory
                 ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
+
+            _highMarketCapFilter = highMarketCapFilter 
+                ?? throw new ArgumentNullException(nameof(highMarketCapFilter)); ;
 
             _accounts = accounts;
             _traders = traders;
@@ -107,6 +112,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             }
 
             if (FilterOnMarkets(value))
+            {
+                return;
+            }
+
+            if (_highMarketCapFilter.Filter(value))
             {
                 return;
             }

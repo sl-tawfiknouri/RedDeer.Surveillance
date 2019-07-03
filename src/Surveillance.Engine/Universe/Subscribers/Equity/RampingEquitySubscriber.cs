@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
             var rampingRuleOrgFactors = _brokerServiceFactory.Build(rampingRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors);
+            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors, ruleCtx, runMode);
 
             return rampingRuleFiltered;
         }
@@ -125,9 +125,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IRampingRuleEquitiesParameters param,
-            IUniverseRule rampingRule)
+            IUniverseRule rampingRule,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(
@@ -139,7 +141,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Ramping Equity",
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(rampingRule);
 
                 return filteredUniverse;

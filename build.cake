@@ -44,7 +44,8 @@ var testProjects = new []
 	"src/DomainV2.Tests/Domain.Tests.csproj",
 	"src/Infrastructure.Network.Tests/Infrastructure.Network.Tests.csproj",
 	"src/Domain.Core.Tests/Domain.Core.Tests.csproj",
-	"src/Domain.Surveillance.Tests/Domain.Surveillance.Tests.csproj"
+	"src/Domain.Surveillance.Tests/Domain.Surveillance.Tests.csproj",
+	"src/Surveillance.Reddeer.ApiClient.Tests/Surveillance.Reddeer.ApiClient.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>

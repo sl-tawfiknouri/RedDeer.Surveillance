@@ -4,95 +4,47 @@ using System.Threading;
 using System.Threading.Tasks;
 using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using PollyFacade.Policies.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 
 namespace Surveillance.DataLayer.Api.MarketOpenClose
 {
-    public class MarketOpenCloseApiRepository : IMarketOpenCloseApiRepository
+    public class MarketOpenCloseApiRepository : BaseClientServiceApi, IMarketOpenCloseApiRepository
     {
         private const string HeartbeatRoute = "api/markets/heartbeat";
         private const string Route = "api/markets/get/v1";
-        private readonly IDataLayerConfiguration _dataLayerConfiguration;
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
 
         public MarketOpenCloseApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             IHttpClientFactory httpClientFactory,
+            IPolicyFactory pollyFactory,
             ILogger<MarketOpenCloseApiRepository> logger)
+            : base(
+                dataLayerConfiguration,
+                httpClientFactory,
+                pollyFactory,
+                logger)
         {
-            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
-            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IReadOnlyCollection<ExchangeDto>> Get()
         {
-            _logger.LogInformation($"MarketOpenCloseApiRepository GET request initiating");
+            _logger.LogInformation($"get request initiating {Route}");
+            var response = await Get<ExchangeDto[]>(Route);
+            _logger.LogInformation($"get request completed for {Route}");
 
-            try
-            {
-                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
-                {
-                    var response = await httpClient.GetAsync(Route);
+            response = response ?? new ExchangeDto[0];
 
-                    if (response == null
-                        || !response.IsSuccessStatusCode)
-                    {
-                        _logger.LogWarning($"Unsuccessful market open close api repository GET request. {response?.StatusCode}");
-
-                        return new ExchangeDto[0];
-                    }
-
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var deserialisedResponse = JsonConvert.DeserializeObject<ExchangeDto[]>(jsonResponse);
-
-                    if (deserialisedResponse == null)
-                    {
-                        _logger.LogWarning($"MarketOpenCloseApiRepository had a null deserialised response");
-                    }
-
-                    _logger.LogInformation($"MarketOpenCloseApiRepository returning result");
-                    return deserialisedResponse ?? new ExchangeDto[0];
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("MarketOpenCloseApiRepository: " + e.Message);
-            }
-
-            return new ExchangeDto[0];
+            return response;
         }
 
         public async Task<bool> HeartBeating(CancellationToken token)
         {
-            try
-            {
-                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
-                {
-                    var result = await httpClient.GetAsync(HeartbeatRoute, token);
-
-                    if (!result.IsSuccessStatusCode)
-                        _logger.LogError($"MarketOpenCloseApiRepository HEARTBEAT NEGATIVE");
-                    else
-                        _logger.LogInformation($"HEARTBEAT POSITIVE FOR MARKET OPEN CLOSE API REPOSITORY");
-
-                    return result.IsSuccessStatusCode;
-                }
-            }
-            catch (Exception)
-            {
-                _logger.LogError($"MarketOpenCloseApiRepository HEARTBEAT NEGATIVE");
-            }
-
-            return false;
+            return await GetHeartbeat(HeartbeatRoute, token);
         }
     }
 }

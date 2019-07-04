@@ -37,7 +37,7 @@ namespace Surveillance.DataLayer.Api
                     .PolicyTimeoutGeneric<HttpResponseMessage>(
                         TimeSpan.FromMinutes(2),
                         i => !i.IsSuccessStatusCode,
-                        10, 
+                        3, 
                         TimeSpan.FromSeconds(15));
 
             return await Post(message, route, policy);
@@ -58,8 +58,9 @@ namespace Surveillance.DataLayer.Api
                     HttpResponseMessage response = null;
                     await policy.ExecuteAsync(async () =>
                     {
+                        _logger.LogInformation($"policy about to call post");
                         response = await httpClient.PostAsync(route, new StringContent(json, Encoding.UTF8, "application/json"));
-                        _logger.LogInformation($"RequestMinuteBars policy received post response or timed out");
+                        _logger.LogInformation($"policy received post response or timed out");
                         return response;
                     });
 
@@ -91,6 +92,67 @@ namespace Surveillance.DataLayer.Api
             }
 
             return new T();
+        }
+        
+        public async Task<T> Get<T>(string route) where T : class
+        {
+            _logger.LogInformation($"get request initiating for {route}");
+
+            var policy =
+                _policyFactory
+                    .PolicyTimeoutGeneric<HttpResponseMessage>(
+                        TimeSpan.FromMinutes(2),
+                        i => !i.IsSuccessStatusCode,
+                        3,
+                        TimeSpan.FromSeconds(15));
+
+            return await Get<T>(route, policy);
+        }
+
+        public async Task<T> Get<T>(string route, IPolicy<HttpResponseMessage> policy) where T : class
+        {
+            _logger.LogInformation($"get request initiating for {route}");
+
+            try
+            {
+                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
+                    _dataLayerConfiguration.ClientServiceUrl,
+                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                {
+                    HttpResponseMessage response = null;
+                    await policy.ExecuteAsync(async () =>
+                    {
+                        _logger.LogInformation($"policy about to call get at {route}");
+                        response = await httpClient.GetAsync(route);
+                        _logger.LogInformation($"policy received post response or timed out for {route}");
+                        return response;
+                    });
+                    
+                    if (response == null
+                        || !response.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning($"failed get request at {route} {response?.StatusCode}");
+                        return null;
+                    }
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var deserialisedResponse = JsonConvert.DeserializeObject<T>(jsonResponse);
+
+                    if (deserialisedResponse == null)
+                    {
+                        _logger.LogWarning($"had a null deserialised response for {route}");
+                    }
+
+                    _logger.LogInformation($"returning get result from {route}");
+                    return deserialisedResponse;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"exception on get request to {route} {e.Message} {e.InnerException?.Message}");
+            }
+
+            return null;
         }
 
         public async Task<bool> GetHeartbeat(string route, CancellationToken token)
@@ -126,9 +188,9 @@ namespace Surveillance.DataLayer.Api
                     return response.IsSuccessStatusCode;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                _logger.LogError($"heartbeat for {route} was negative");
+                _logger.LogError($"heartbeat for {route} was negative {e.Message} {e.InnerException?.Message}");
             }
 
             return false;

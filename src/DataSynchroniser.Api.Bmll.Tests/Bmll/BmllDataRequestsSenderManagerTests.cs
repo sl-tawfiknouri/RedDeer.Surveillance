@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PollyFacade.Policies.Interfaces;
 using SharedKernel.Contracts.Markets;
-using Surveillance.DataLayer.Api.BmllMarketData;
-using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.BmllMarketData;
+using Surveillance.Reddeer.ApiClient.BmllMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 {
@@ -22,7 +22,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 
         private IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
-        private IBmllTimeBarApiRepository _timeBarRepository;
+        private IBmllTimeBarApi _timeBarRepository;
         private IPolicyFactory _policyFactory;
         private ILogger<BmllDataRequestsApiManager> _logger;
 
@@ -31,7 +31,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         {
             _requestsGetTimeBars = A.Fake<IBmllDataRequestsGetTimeBars>();
             _marketDataRequestProjector = A.Fake<IMarketDataRequestToMinuteBarRequestKeyDtoProjector>();
-            _timeBarRepository = A.Fake<IBmllTimeBarApiRepository>();
+            _timeBarRepository = A.Fake<IBmllTimeBarApi>();
             _policyFactory = A.Fake<IPolicyFactory>();
             _logger = A.Fake<ILogger<BmllDataRequestsApiManager>>();
 

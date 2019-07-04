@@ -17,7 +17,7 @@ namespace Surveillance.Reddeer.ApiClient.ExchangeRate
     {
         private const string HeartbeatRoute = "api/exchangerates/heartbeat";
         private const string Route = "api/exchangerates/get/v1";
-        private readonly IApiClientConfiguration _dataLayerConfiguration;
+        private readonly IApiClientConfiguration _apiClientConfiguration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
 
@@ -32,7 +32,7 @@ namespace Surveillance.Reddeer.ApiClient.ExchangeRate
             policyFactory,
             logger)
         {
-            _dataLayerConfiguration = apiClientConfiguration ?? throw new ArgumentNullException(nameof(apiClientConfiguration));
+            _apiClientConfiguration = apiClientConfiguration ?? throw new ArgumentNullException(nameof(apiClientConfiguration));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -50,8 +50,8 @@ namespace Surveillance.Reddeer.ApiClient.ExchangeRate
                 var routeWithQString = $"{Route}?commencement={commencement.ToString("MM/dd/yyyy")}&termination={termination.ToString("MM/dd/yyyy")}";
 
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var response = await httpClient.GetAsync(routeWithQString);
 

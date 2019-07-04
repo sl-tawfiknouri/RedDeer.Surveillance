@@ -13,7 +13,7 @@ namespace Surveillance.Reddeer.ApiClient
 {
     public class BaseClientServiceApi
     {
-        private readonly IApiClientConfiguration _dataLayerConfiguration;
+        private readonly IApiClientConfiguration _apiClientConfiguration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IPolicyFactory _policyFactory;
         private readonly ILogger _logger;
@@ -24,7 +24,7 @@ namespace Surveillance.Reddeer.ApiClient
             IPolicyFactory policyFactory,
             ILogger<BaseClientServiceApi> logger)
         {
-            _dataLayerConfiguration = apiClientConfiguration ?? throw new ArgumentNullException(nameof(apiClientConfiguration));
+            _apiClientConfiguration = apiClientConfiguration ?? throw new ArgumentNullException(nameof(apiClientConfiguration));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -50,8 +50,8 @@ namespace Surveillance.Reddeer.ApiClient
             try
             {
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var json = JsonConvert.SerializeObject(message);
 
@@ -116,8 +116,8 @@ namespace Surveillance.Reddeer.ApiClient
             try
             {
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     HttpResponseMessage response = null;
                     await policy.ExecuteAsync(async () =>
@@ -175,8 +175,8 @@ namespace Surveillance.Reddeer.ApiClient
             try
             {
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var response = await httpClient.GetAsync(route, token);
 

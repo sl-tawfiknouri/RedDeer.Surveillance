@@ -18,7 +18,7 @@ namespace Surveillance.Reddeer.ApiClient.FactsetMarketData
         private const string HeartbeatRoute = "api/factset/heartbeat";
         private const string Route = "api/factset/surveillance/v1";
 
-        private readonly IApiClientConfiguration _dataLayerConfiguration;
+        private readonly IApiClientConfiguration _apiClientConfiguration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<FactsetDailyBarApi> _logger;
@@ -29,7 +29,7 @@ namespace Surveillance.Reddeer.ApiClient.FactsetMarketData
             IPolicyFactory policyFactory,
             ILogger<FactsetDailyBarApi> logger)
         {
-            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
+            _apiClientConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -52,8 +52,8 @@ namespace Surveillance.Reddeer.ApiClient.FactsetMarketData
             }
 
             using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                _dataLayerConfiguration.ClientServiceUrl,
-                _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                _apiClientConfiguration.ClientServiceUrl,
+                _apiClientConfiguration.SurveillanceUserApiAccessToken))
             {
                 var json = JsonConvert.SerializeObject(request);
                 var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 5, TimeSpan.FromMinutes(1));
@@ -107,8 +107,8 @@ namespace Surveillance.Reddeer.ApiClient.FactsetMarketData
             try
             {
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var json = JsonConvert.SerializeObject(request);
                     var response = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
@@ -148,8 +148,8 @@ namespace Surveillance.Reddeer.ApiClient.FactsetMarketData
             try
             {
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                    _apiClientConfiguration.ClientServiceUrl,
+                    _apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var response = await httpClient.GetAsync(HeartbeatRoute, token);
 

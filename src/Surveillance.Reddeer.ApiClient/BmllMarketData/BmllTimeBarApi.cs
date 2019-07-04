@@ -23,7 +23,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
         private const string StatusRoute = "api/bmll/status/v1";
         private const string MinuteBarRoute = "api/bmll/minutebars/v1";
 
-        private readonly IApiClientConfiguration _dataLayerConfiguration;
+        private readonly IApiClientConfiguration _apiClientConfiguration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<BmllTimeBarApi> _logger;
@@ -34,7 +34,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
             IPolicyFactory policyFactory,
             ILogger<BmllTimeBarApi> logger)
         {
-            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
+            _apiClientConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -54,7 +54,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
 
             try
             {
-                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_apiClientConfiguration.BmllServiceUrl))
                 {
                     var json = JsonConvert.SerializeObject(createCommand);
                     var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 10, TimeSpan.FromMinutes(1));
@@ -111,7 +111,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
 
             try
             {
-                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_apiClientConfiguration.BmllServiceUrl))
                 {
                     var json = JsonConvert.SerializeObject(statusCommand);
                     var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 3, TimeSpan.FromMinutes(1));
@@ -188,7 +188,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
 
             try
             {
-                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_apiClientConfiguration.BmllServiceUrl))
                 {
                     var json = JsonConvert.SerializeObject(request);
                     var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 1, TimeSpan.FromSeconds(30));
@@ -236,7 +236,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
         {
             try
             {
-                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_apiClientConfiguration.BmllServiceUrl))
                 {
                     var response = await httpClient.GetAsync(HeartbeatRoute, token);
 

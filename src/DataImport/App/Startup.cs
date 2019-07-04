@@ -17,6 +17,7 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
 using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
@@ -51,6 +52,7 @@ namespace RedDeer.DataImport.DataImport.App
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.IncludeRegistry<DataLayerRegistry>();
+                config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.Populate(services);
             });
 

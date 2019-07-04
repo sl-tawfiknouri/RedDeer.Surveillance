@@ -19,6 +19,7 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
+using Surveillance.Reddeer.ApiClient;
 using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace RedDeer.Surveillance.App
@@ -58,6 +59,7 @@ namespace RedDeer.Surveillance.App
                 config.IncludeRegistry<RuleDistributorRegistry>();
                 config.IncludeRegistry<DataCoordinatorRegistry>();
                 config.IncludeRegistry<RuleRegistry>();
+                config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });

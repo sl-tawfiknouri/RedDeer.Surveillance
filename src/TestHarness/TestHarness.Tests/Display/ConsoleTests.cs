@@ -82,7 +82,7 @@ namespace TestHarness.Tests.Display
                 "trader one",
                 "clearing-bank",
                 "deal asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true),
+                new OrderBroker("", "", "Mr Broker", DateTime.UtcNow, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

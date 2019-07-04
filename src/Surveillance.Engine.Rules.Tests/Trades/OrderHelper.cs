@@ -65,7 +65,7 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 "trader one",
                 "Rybank Long",
                 "deal-asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
+                new OrderBroker("", "", "Mr Broker", DateTime.UtcNow, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

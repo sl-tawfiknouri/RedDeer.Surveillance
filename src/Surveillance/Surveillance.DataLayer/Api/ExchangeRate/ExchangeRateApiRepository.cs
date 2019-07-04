@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PollyFacade.Policies.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 
 namespace Surveillance.DataLayer.Api.ExchangeRate
 {
-    public class ExchangeRateApiRepository : IExchangeRateApiRepository
+    public class ExchangeRateApiRepository : BaseClientServiceApi, IExchangeRateApiRepository
     {
         private const string HeartbeatRoute = "api/exchangerates/heartbeat";
         private const string Route = "api/exchangerates/get/v1";
@@ -23,7 +24,13 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
         public ExchangeRateApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             IHttpClientFactory httpClientFactory,
+            IPolicyFactory policyFactory,
             ILogger<ExchangeRateApiRepository> logger)
+        : base(
+            dataLayerConfiguration,
+            httpClientFactory,
+            policyFactory,
+            logger)
         {
             _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
@@ -33,7 +40,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
         public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(DateTime commencement, DateTime termination)
         {
             _logger.LogInformation($"ExchangeRateApiRepository GET request for date {commencement} to {termination}");
-
+            
             try
             {
                 // US date format as that's default when deserialising on a UK machine as asp.net mvc core
@@ -83,30 +90,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 
         public async Task<bool> HeartBeating(CancellationToken token)
         {
-            try
-            {
-                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
-                    _dataLayerConfiguration.ClientServiceUrl,
-                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
-                {
-                    var response = await httpClient.GetAsync(HeartbeatRoute, token);
-
-                    if (!response.IsSuccessStatusCode)
-                        _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
-                    else
-                    {
-                        _logger.LogInformation($"HEARTBEAT POSITIVE FOR EXCHANGE RATE API REPOSITORY");
-                    }
-
-                    return response.IsSuccessStatusCode;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
-            }
-
-            return false;
+            return await GetHeartbeat(HeartbeatRoute, token);
         }
     }
 }

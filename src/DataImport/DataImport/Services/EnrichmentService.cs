@@ -21,8 +21,8 @@ namespace DataImport.Services
 
         private readonly IReddeerMarketRepository _marketRepository;
         private readonly IOrderBrokerRepository _orderBrokerRepository;
-        private readonly IEnrichmentApiRepository _apiRepository;
-        private readonly IBrokerApiRepository _brokerApiRepository;
+        private readonly IEnrichmentApi _api;
+        private readonly IBrokerApi _brokerApi;
         private readonly ILogger<EnrichmentService> _logger;
 
         private Timer _timer;
@@ -30,21 +30,21 @@ namespace DataImport.Services
         public EnrichmentService(
             IReddeerMarketRepository marketRepository,
             IOrderBrokerRepository orderBrokerRepository,
-            IEnrichmentApiRepository apiRepository,
-            IBrokerApiRepository brokerApiRepository,
+            IEnrichmentApi api,
+            IBrokerApi brokerApi,
             ILogger<EnrichmentService> logger)
         {
             _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             _orderBrokerRepository = orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
-            _apiRepository = apiRepository ?? throw new ArgumentNullException(nameof(apiRepository));
-            _brokerApiRepository = brokerApiRepository ?? throw new ArgumentNullException(nameof(brokerApiRepository));
+            _api = api ?? throw new ArgumentNullException(nameof(api));
+            _brokerApi = brokerApi ?? throw new ArgumentNullException(nameof(brokerApi));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Initialise()
         {
             var tokenSource = new CancellationTokenSource(60000);
-            var heartBeating = await _apiRepository.HeartBeating(tokenSource.Token);
+            var heartBeating = await _api.HeartBeating(tokenSource.Token);
 
             if (!heartBeating)
             {
@@ -55,7 +55,7 @@ namespace DataImport.Services
             {
                 Thread.Sleep(15000);
                 var loopTokenSource = new CancellationTokenSource(10000);
-                heartBeating = await _apiRepository.HeartBeating(loopTokenSource.Token);
+                heartBeating = await _api.HeartBeating(loopTokenSource.Token);
             }
 
             var timer = new Timer(ScanFrequencyInSeconds * 1000)
@@ -99,7 +99,7 @@ namespace DataImport.Services
             var brokers = await _orderBrokerRepository.GetUnEnrichedBrokers();
 
             var scanTokenSource = new CancellationTokenSource(10000);
-            var apiCheck = await _apiRepository.HeartBeating(scanTokenSource.Token);
+            var apiCheck = await _api.HeartBeating(scanTokenSource.Token);
             if (!apiCheck)
             {
                 _logger.LogError("Enrichment Service was about to enrich a scan but found the enrichment api to be unresponsive.");
@@ -118,7 +118,7 @@ namespace DataImport.Services
 
                 _logger.LogInformation($"We need to add enrichment for brokers");
 
-                var enrichmentResponse = await _apiRepository.Get(message);
+                var enrichmentResponse = await _api.Post(message);
                 await _marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
 
                 response = enrichmentResponse?.Securities?.Any() ?? false;
@@ -141,7 +141,7 @@ namespace DataImport.Services
 
                 _logger.LogInformation($"We need to add enrichment for brokers");
 
-                var enrichmentResponse = await _brokerApiRepository.Get(message);
+                var enrichmentResponse = await _brokerApi.Post(message);
                 await _orderBrokerRepository.UpdateEnrichedBroker(enrichmentResponse.Brokers);
                 response = true;
             }

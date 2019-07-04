@@ -4,9 +4,9 @@ using RedDeer.Contracts.SurveillanceService.Api.BrokerEnrichment;
 
 namespace Surveillance.DataLayer.Api.Enrichment
 {
-    public interface IBrokerApiRepository
+    public interface IBrokerApi
     {
-        Task<BrokerEnrichmentMessage> Get(BrokerEnrichmentMessage message);
+        Task<BrokerEnrichmentMessage> Post(BrokerEnrichmentMessage message);
         Task<bool> HeartBeating(CancellationToken token);
     }
 }

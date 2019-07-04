@@ -17,28 +17,28 @@ namespace Surveillance.DataLayer.Tests.Api.Enrichment
     {
         private IHttpClientFactory _httpClientFactory;
         private IDataLayerConfiguration _configuration;
-        private ILogger<BrokerApiRepository> _logger;
+        private ILogger<BrokerApi> _logger;
 
         [SetUp]
         public void Setup()
         {
             _httpClientFactory = new HttpClientFactory(NullLogger<HttpClientFactory>.Instance);
             _configuration = TestHelpers.Config();
-            _logger = A.Fake<ILogger<BrokerApiRepository>>();
+            _logger = A.Fake<ILogger<BrokerApi>>();
         }
 
         [Test]
         [Explicit]
         public async Task Get()
         {
-            var repo = new BrokerApiRepository(_configuration, _httpClientFactory, _logger);
+            var repo = new BrokerApi(_configuration, _httpClientFactory, _logger);
 
             var message = new BrokerEnrichmentMessage()
             {
                 Brokers = new[] {new BrokerEnrichmentDto {Name = "1010data Financial" } }
             };
         
-            var messageResult = await repo.Get(message);
+            var messageResult = await repo.Post(message);
 
             Assert.IsTrue(true);
         }

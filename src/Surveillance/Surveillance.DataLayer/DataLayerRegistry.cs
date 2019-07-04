@@ -51,7 +51,7 @@ namespace Surveillance.DataLayer
             For<IRuleParameterApiRepository>().Use<RuleParameterApiRepository>();
             For<IExchangeRateApiRepository>().Use<ExchangeRateApiRepository>();
             For<IExchangeRateApiCachingDecoratorRepository>().Use<ExchangeRateApiCachingDecoratorRepository>();
-            For<IEnrichmentApiRepository>().Use<EnrichmentApiRepository>();
+            For<IEnrichmentApi>().Use<EnrichmentApi>();
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
             For<IOrdersRepository>().Use<OrdersRepository>().Singleton();
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
@@ -74,7 +74,7 @@ namespace Surveillance.DataLayer
             For<IHttpClientFactory>().Use<HttpClientFactory>();
             For<ITuningRepository>().Use<TuningRepository>();
             For<IOrderBrokerRepository>().Use<OrderBrokerRepository>();
-            For<IBrokerApiRepository>().Use<BrokerApiRepository>();
+            For<IBrokerApi>().Use<BrokerApi>();
         }
     }
 }

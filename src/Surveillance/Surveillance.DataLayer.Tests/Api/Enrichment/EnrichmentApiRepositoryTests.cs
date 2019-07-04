@@ -15,21 +15,21 @@ namespace Surveillance.DataLayer.Tests.Api.Enrichment
     {
         private IHttpClientFactory _httpClientFactory;
         private IDataLayerConfiguration _configuration;
-        private ILogger<EnrichmentApiRepository> _logger;
+        private ILogger<EnrichmentApi> _logger;
 
         [SetUp]
         public void Setup()
         {
             _httpClientFactory = A.Fake<IHttpClientFactory>();
             _configuration = TestHelpers.Config();
-            _logger = A.Fake<ILogger<EnrichmentApiRepository>>();
+            _logger = A.Fake<ILogger<EnrichmentApi>>();
         }
 
         [Test]
         [Explicit]
         public async Task Get()
         {
-            var repo = new EnrichmentApiRepository(_configuration, _httpClientFactory, _logger);
+            var repo = new EnrichmentApi(_configuration, _httpClientFactory, _logger);
 
             var message = new SecurityEnrichmentMessage
             {
@@ -37,7 +37,7 @@ namespace Surveillance.DataLayer.Tests.Api.Enrichment
             };
 
 
-            await repo.Get(message);
+            await repo.Post(message);
 
             Assert.IsTrue(true);
         }

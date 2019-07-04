@@ -18,14 +18,14 @@ namespace Surveillance.Engine.Rules.Utility
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
         private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketRateApi;
         private readonly IRuleParameterApiRepository _rulesApi;
-        private readonly IEnrichmentApiRepository _enrichmentApi;
+        private readonly IEnrichmentApi _enrichmentApi;
         private readonly ILogger<ApiHeartbeat> _logger;
 
         public ApiHeartbeat(
             IExchangeRateApiCachingDecoratorRepository exchangeRateApi,
             IMarketOpenCloseApiCachingDecoratorRepository marketRateApi,
             IRuleParameterApiRepository rulesApi,
-            IEnrichmentApiRepository enrichmentApi,
+            IEnrichmentApi enrichmentApi,
             ILogger<ApiHeartbeat> logger)
         {
             _exchangeRateApi = exchangeRateApi ?? throw new ArgumentNullException(nameof(exchangeRateApi));

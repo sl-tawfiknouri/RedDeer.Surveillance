@@ -4,9 +4,9 @@ using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 
 namespace Surveillance.DataLayer.Api.Enrichment.Interfaces
 {
-    public interface IEnrichmentApiRepository
+    public interface IEnrichmentApi
     {
-        Task<SecurityEnrichmentMessage> Get(SecurityEnrichmentMessage message);
+        Task<SecurityEnrichmentMessage> Post(SecurityEnrichmentMessage message);
         Task<bool> HeartBeating(CancellationToken token);
     }
 }

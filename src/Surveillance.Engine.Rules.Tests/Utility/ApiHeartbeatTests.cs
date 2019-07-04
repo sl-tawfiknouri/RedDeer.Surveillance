@@ -18,7 +18,7 @@ namespace Surveillance.Engine.Rules.Tests.Utility
         private IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
         private IMarketOpenCloseApiCachingDecoratorRepository _marketApi;
         private IRuleParameterApiRepository _ruleApi;
-        private IEnrichmentApiRepository _enrichmentApi;
+        private IEnrichmentApi _enrichmentApi;
         private ILogger<ApiHeartbeat> _logger;
 
         [SetUp]
@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Utility
             _exchangeRateApi = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
             _marketApi = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
             _ruleApi = A.Fake<IRuleParameterApiRepository>();
-            _enrichmentApi = A.Fake<IEnrichmentApiRepository>();
+            _enrichmentApi = A.Fake<IEnrichmentApi>();
             _logger = A.Fake<ILogger<ApiHeartbeat>>();
         }
 

@@ -6,8 +6,8 @@ using Domain.Core.Financial.Money;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 namespace Surveillance.Engine.Rules.Currency
@@ -17,16 +17,16 @@ namespace Surveillance.Engine.Rules.Currency
     /// </summary>
     public class CurrencyConverterService : ICurrencyConverterService
     {
-        private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
+        private readonly IExchangeRateApiCachingDecorator _exchangeRateApi;
         private readonly ILogger<CurrencyConverterService> _logger;
 
         public CurrencyConverterService(
-            IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
+            IExchangeRateApiCachingDecorator exchangeRateApi,
             ILogger<CurrencyConverterService> logger)
         {
-            _exchangeRateApiRepository =
-                exchangeRateApiRepository
-                ?? throw new ArgumentNullException(nameof(exchangeRateApiRepository));
+            _exchangeRateApi =
+                exchangeRateApi
+                ?? throw new ArgumentNullException(nameof(exchangeRateApi));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -253,7 +253,7 @@ namespace Surveillance.Engine.Rules.Currency
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             dayOfRate = dayOfRate.Date;
-            var exchRate = await _exchangeRateApiRepository.Get(dayOfRate, dayOfRate);
+            var exchRate = await _exchangeRateApi.Get(dayOfRate, dayOfRate);
 
             // cycle through last two weeks of exchange rates
             var offset = 0;

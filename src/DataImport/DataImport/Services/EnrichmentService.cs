@@ -7,10 +7,9 @@ using DataImport.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.BrokerEnrichment;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
-using Surveillance.DataLayer.Api.Enrichment;
-using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+using Surveillance.Reddeer.ApiClient.Enrichment.Interfaces;
 using Timer = System.Timers.Timer;
 
 namespace DataImport.Services

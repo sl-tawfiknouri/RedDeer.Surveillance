@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories;
@@ -28,6 +27,7 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 {
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         private ILayeringRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
 
-        private IMarketOpenCloseApiCachingDecoratorRepository _tradingHoursRepository;
+        private IMarketOpenCloseApiCachingDecorator _tradingHoursRepository;
         private IMarketTradingHoursService _tradingHoursService;
         private IRuleRunDataRequestRepository _ruleRunRepository;
         private IStubRuleRunDataRequestRepository _stubRuleRunRepository;
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
             _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _factoryLogger);
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
-            _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+            _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
             A.CallTo(() => _tradingHoursRepository.Get())
                 .Returns(
                     new ExchangeDto[]

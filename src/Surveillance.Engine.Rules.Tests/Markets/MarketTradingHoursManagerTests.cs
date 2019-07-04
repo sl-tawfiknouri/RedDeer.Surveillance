@@ -4,21 +4,21 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.Engine.Rules.Markets;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class MarketTradingHoursManagerTests
     {
-        private IMarketOpenCloseApiCachingDecoratorRepository _marketOpenCloseRepository;
+        private IMarketOpenCloseApiCachingDecorator _marketOpenCloseRepository;
         private ILogger<MarketTradingHoursService> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _marketOpenCloseRepository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+            _marketOpenCloseRepository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
             _logger = new NullLogger<MarketTradingHoursService>();
         }
 

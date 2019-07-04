@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.MarketEvents
 {
     public class MarketOpenCloseEventService : IMarketOpenCloseEventService
     {
-        private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketOpenCloseRepository;
+        private readonly IMarketOpenCloseApiCachingDecorator _marketOpenCloseRepository;
         private readonly ILogger<MarketOpenCloseEventService> _logger;
 
         public MarketOpenCloseEventService(
-            IMarketOpenCloseApiCachingDecoratorRepository marketOpenCloseRepository,
+            IMarketOpenCloseApiCachingDecorator marketOpenCloseRepository,
             ILogger<MarketOpenCloseEventService> logger)
         {
             _marketOpenCloseRepository =

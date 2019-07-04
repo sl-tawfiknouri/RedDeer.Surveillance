@@ -8,20 +8,20 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
+using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Distributor
 {
     public class ScheduleDisassembler : IScheduleDisassembler
     {
-        private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly IRuleParameterApi _ruleParameterApiRepository;
         private readonly IQueueDistributedRulePublisher _rulePublisher;
         private readonly ILogger<ScheduleDisassembler> _logger;
         
         public ScheduleDisassembler(
-            IRuleParameterApiRepository ruleParameterApiRepository,
+            IRuleParameterApi ruleParameterApiRepository,
             IQueueDistributedRulePublisher rulePublisher,
             ILogger<ScheduleDisassembler> logger)
         {

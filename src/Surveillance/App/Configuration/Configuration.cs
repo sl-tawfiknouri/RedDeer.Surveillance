@@ -13,6 +13,8 @@ using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Engine.DataCoordinator.Configuration;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient.Configuration;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
 namespace RedDeer.Surveillance.App.Configuration
@@ -60,6 +62,33 @@ namespace RedDeer.Surveillance.App.Configuration
             }
         }
 
+        public IApiClientConfiguration BuildApiClientConfiguration(IConfigurationRoot configurationBuilder)
+        {
+            lock (_lock)
+            {
+                Ec2Check();
+
+                var apiClient = new ApiClientConfiguration
+                {
+                    IsEc2Instance = Amazon.Util.EC2InstanceMetadata.InstanceId != null,
+                    ScheduledRuleQueueName = GetValue("ScheduledRuleQueueName", configurationBuilder),
+                    ScheduleRuleDistributedWorkQueueName = GetValue("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                    CaseMessageQueueName = GetValue("CaseMessageQueueName", configurationBuilder),
+                    DataSynchroniserRequestQueueName = GetValue("DataSynchronizerQueueName", configurationBuilder),
+                    ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
+                    TestRuleRunUpdateQueueName = GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
+                    SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
+                    AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
+                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder),
+                    ScheduleRuleCancellationQueueName = GetValue($"ScheduleRuleCancellationQueueName", configurationBuilder),
+                    ScheduleDelayedRuleRunQueueName = GetValue($"ScheduleDelayedRuleRunQueueName", configurationBuilder)
+                };
+
+                return apiClient;
+            }
+        }
+        
         public IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
         {
             lock (_lock)

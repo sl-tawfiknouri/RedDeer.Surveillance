@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
@@ -92,7 +93,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
                     false,
                     new TradePosition(new List<Order>()),
                     false,
-                    exchangeRateProfitBreakdown);
+                    exchangeRateProfitBreakdown,
+                    DateTime.UtcNow);
 
             await messageSender.Send(breach);
         }

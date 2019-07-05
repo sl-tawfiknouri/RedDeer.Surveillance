@@ -16,5 +16,6 @@ namespace Surveillance.Engine.Rules.Rules.Interfaces
         string CorrelationId { get; set; }
         IFactorValue FactorValue { get; set; }
         IRuleParameter RuleParameters { get; set; }
+        DateTime UniverseDateTime { get; set; }
     }
 }

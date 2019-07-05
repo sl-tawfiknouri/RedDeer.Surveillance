@@ -21,7 +21,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             decimal sdPrice,
             IReadOnlyCollection<ProbabilityOfExecution> probabilityForOrders,
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
-            ISystemProcessOperationRunRuleContext ctx)
+            ISystemProcessOperationRunRuleContext ctx,
+            DateTime universeDateTime)
         {
             Window = window;
             Trades = trades;
@@ -38,6 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             SystemOperationId = ctx.Id();
             CorrelationId = ctx.CorrelationId();
             RuleParameters = parameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -50,6 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public decimal StandardDeviationPrice { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
         public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
         public IReadOnlyCollection<ProbabilityOfExecution> ProbabilityForOrders { get; set; }
 

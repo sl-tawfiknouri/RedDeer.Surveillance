@@ -28,7 +28,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             bool hasRelativeProfitBreach,
             ITradePosition trades,
             bool marketClosureVirtualProfitComponent,
-            IExchangeRateProfitBreakdown profitBreakdown)
+            IExchangeRateProfitBreakdown profitBreakdown,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
             Window = equitiesParameters.Windows.BackwardWindowSize;
@@ -46,6 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public IHighProfitsRuleEquitiesParameters EquitiesParameters { get; }
@@ -66,5 +68,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

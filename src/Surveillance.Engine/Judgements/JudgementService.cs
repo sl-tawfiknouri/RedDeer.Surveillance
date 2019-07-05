@@ -1,15 +1,21 @@
 ﻿using System;
 using Domain.Surveillance.Judgements.Equity;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 
 namespace Surveillance.Engine.Rules.Judgements
 {
-    public class JudgementService
+    public class JudgementService : IJudgementService
     {
+        private readonly IJudgementRepository _judgementRepository;
         private readonly ILogger<JudgementService> _logger;
 
-        public JudgementService(ILogger<JudgementService> logger)
+        public JudgementService(
+            IJudgementRepository judgementRepository,
+            ILogger<JudgementService> logger)
         {
+            _judgementRepository = judgementRepository ?? throw new ArgumentNullException(nameof(judgementRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -20,6 +26,9 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"High Profit Judgement was null");
                 return;
             }
+
+
+            _judgementRepository.Save(highProfit);
         }
 
         public void Judgement(CancelledOrderJudgement cancelledOrder)
@@ -29,6 +38,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Cancelled Order Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(cancelledOrder);
         }
 
         public void Judgement(HighVolumeJudgement highVolume)
@@ -38,6 +49,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"High Volume Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(highVolume);
         }
 
         public void Judgement(LayeringJudgement layering)
@@ -47,6 +60,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Layering Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(layering);
         }
 
         public void Judgement(MarkingTheCloseJudgement markingTheClose)
@@ -56,6 +71,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Marking The Close Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(markingTheClose);
         }
 
         public void Judgement(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
@@ -65,6 +82,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Placing Orders Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(placingOrders);
         }
 
         public void Judgement(RampingJudgement ramping)
@@ -74,6 +93,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Ramping Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(ramping);
         }
 
         public void Judgement(SpoofingJudgement spoofing)
@@ -83,9 +104,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 _logger?.LogError($"Spoofing Judgement was null");
                 return;
             }
+
+            _judgementRepository.Save(spoofing);
         }
-
-
-
     }
 }

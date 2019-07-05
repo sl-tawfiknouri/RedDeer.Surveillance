@@ -103,6 +103,8 @@ using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;
 using Surveillance.Engine.Rules.Utility.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Judgements;
 
 namespace Surveillance.Engine.Rules
 {
@@ -277,6 +279,7 @@ namespace Surveillance.Engine.Rules
             For<IRuleParameterToRulesMapperDecorator>().Use<RuleParameterToRulesMapperTuningDecorator>();
 
             For<IHighVolumeVenueFilter>().Use<HighVolumeVenueFilter>();
+            For<IJudgementService>().Use<JudgementService>();
             For<IHighVolumeVenueDecoratorFilter>().Use<HighVolumeVenueDecoratorFilter>();
 
             For<IHighVolumeVenueDecoratorFilterFactory>().Use<HighVolumeVenueDecoratorFilterFactory>();

@@ -1,5 +1,8 @@
-﻿namespace Surveillance.Engine.Rules.RuleParameters.Filter
+﻿using System;
+
+namespace Surveillance.Engine.Rules.RuleParameters.Filter
 {
+    [Serializable]
     public class DecimalRangeRuleFilter
     {
         public RuleFilterType Type { get; set; }

@@ -129,7 +129,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     placingOrders,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var filteredPlacingOrders = DecorateWithFilters(opCtx, param, placingOrdersOrgFactors, ruleCtx, runMode);
+            var filteredPlacingOrders = DecorateWithFilters(opCtx, param, placingOrdersOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return filteredPlacingOrders;
         }
@@ -138,6 +138,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters param,
             IUniverseRule placingOrders,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -158,6 +159,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "Placing Orders Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(placingOrders);
 

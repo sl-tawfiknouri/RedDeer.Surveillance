@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var filteredMarkingTheClose = DecorateWithFilters(opCtx, param, markingTheCloseOrgFactors, ruleCtx, runMode);
+            var filteredMarkingTheClose = DecorateWithFilters(opCtx, param, markingTheCloseOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return filteredMarkingTheClose;
         }
@@ -132,6 +132,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IMarkingTheCloseEquitiesParameters param,
             IUniverseRule markingTheClose,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -152,6 +153,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "Marking The Close Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(markingTheClose);
 

@@ -64,13 +64,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, cancelledOrderParameters);
+            return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, cancelledOrderParameters);
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> cancelledOrderParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -80,7 +81,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in cancelledOrderParameters)
                 {
-                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
+                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, universeDataRequestsSubscriber, param);
                     subscriptions.Add(baseSubscriber);
                 }
             }
@@ -98,6 +99,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ICancelledOrderRuleEquitiesParameters param)
         {
             var ruleCtx = opCtx
@@ -115,7 +117,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
             var cancelledOrderOrgFactors = _brokerServiceFactory.Build(cancelledOrderRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-            var cancelledOrderFiltered = DecorateWithFilter(opCtx, param, cancelledOrderOrgFactors, ruleCtx, runMode);
+            var cancelledOrderFiltered = DecorateWithFilter(opCtx, param, cancelledOrderOrgFactors, universeDataRequestsSubscriber, ruleCtx, runMode);
 
             return cancelledOrderFiltered;
         }
@@ -124,6 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             ICancelledOrderRuleEquitiesParameters param,
             IUniverseRule cancelledOrderRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -143,6 +146,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "Cancelled Order Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(cancelledOrderRule);
 

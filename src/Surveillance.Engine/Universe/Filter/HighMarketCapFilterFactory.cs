@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
@@ -25,7 +26,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        public IHighMarketCapFilter Build(RuleRunMode ruleRunMode, DecimalRangeRuleFilter marketCap, string ruleName, ISystemProcessOperationRunRuleContext operationRunRuleContext)
+        public IHighMarketCapFilter Build(RuleRunMode ruleRunMode, 
+            DecimalRangeRuleFilter marketCap, 
+            string ruleName, 
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber, 
+            ISystemProcessOperationRunRuleContext operationRunRuleContext)
         {
             return new HighMarketCapFilter(
                 _universeMarketCacheFactory, 
@@ -33,6 +38,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 marketCap, 
                 _tradingHoursService, 
                 operationRunRuleContext,
+                universeDataRequestsSubscriber,
                 ruleName,
                 _loggerFactory.CreateLogger<HighMarketCapFilter>());
         }

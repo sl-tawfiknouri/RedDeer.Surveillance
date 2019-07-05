@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -22,6 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         private IUniverseEquityInterDayCache _universeEquityInterDayCache;
         private IMarketTradingHoursService _tradingHoursService;
         private ISystemProcessOperationRunRuleContext _operationRunRuleContext;
+        private IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
         private ILogger<HighMarketCapFilter> _logger;
 
         [SetUp]
@@ -29,6 +31,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         {
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _universeEquityInterDayCache = A.Fake<IUniverseEquityInterDayCache>();
+            _universeDataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             A.CallTo(() => _universeMarketCacheFactory.BuildInterday(Engine.Rules.Rules.RuleRunMode.ValidationRun))
                 .Returns(_universeEquityInterDayCache);
@@ -49,6 +52,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -68,6 +72,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -90,6 +95,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -115,6 +121,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -146,6 +153,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -181,6 +189,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 
@@ -225,6 +234,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 marketCapRangeRuleFilter,
                 _tradingHoursService,
                 _operationRunRuleContext,
+                _universeDataRequestsSubscriber,
                 "test",
                 _logger);
 

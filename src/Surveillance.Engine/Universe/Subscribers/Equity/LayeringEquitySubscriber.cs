@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .ToList();
 
             var layeringParameters = _ruleParameterMapper.Map(dtos);
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, layeringParameters);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, layeringParameters);
 
             return subscriptions;
         }
@@ -72,6 +72,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<ILayeringRuleEquitiesParameters> layeringParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -82,7 +83,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in layeringParameters)
                 {
-                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, universeDataRequestsSubscriber, param);
                     subscriptions.Add(paramSubscriptions);
                 }
             }
@@ -100,6 +101,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ILayeringRuleEquitiesParameters param)
         {
             var ruleCtx = opCtx
@@ -123,7 +125,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var layeringRuleFiltered = DecorateWithFilter(opCtx, param, layeringRuleOrgFactors, ruleCtx, runMode);
+            var layeringRuleFiltered = DecorateWithFilter(opCtx, param, layeringRuleOrgFactors, universeDataRequestsSubscriber, ruleCtx, runMode);
 
             return layeringRuleFiltered;
         }
@@ -132,6 +134,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             ILayeringRuleEquitiesParameters param,
             IUniverseRule layering,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -152,6 +155,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "Layering Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(layering);
 

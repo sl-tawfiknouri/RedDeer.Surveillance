@@ -2,6 +2,7 @@
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -38,10 +39,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 DecimalRangeRuleFilter marketCap,
                 RuleRunMode ruleRunMode,
                 string ruleName,
+                IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
                 ISystemProcessOperationRunRuleContext operationRunRuleContext)
         {
 
-            var highMarketCapFilter = _highMarketCapFilterFactory.Build(ruleRunMode, marketCap, ruleName, operationRunRuleContext);
+            var highMarketCapFilter = _highMarketCapFilterFactory.Build(ruleRunMode, marketCap, ruleName, universeDataRequestsSubscriber, operationRunRuleContext);
 
             return new UniverseFilterService(
                 _unsubscriberFactory,

@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
             var rampingRuleOrgFactors = _brokerServiceFactory.Build(rampingRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors, ruleCtx, runMode);
+            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return rampingRuleFiltered;
         }
@@ -126,6 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IRampingRuleEquitiesParameters param,
             IUniverseRule rampingRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -145,6 +146,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "Ramping Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(rampingRule);
 

@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     highVolume,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var highVolumeFilters = DecorateWithFilters(opCtx, param, highVolumeOrgFactors, ruleCtx, runMode);
+            var highVolumeFilters = DecorateWithFilters(opCtx, param, highVolumeOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return highVolumeFilters;
         }
@@ -133,6 +133,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             ISystemProcessOperationContext opCtx,
             IHighVolumeIssuanceRuleFixedIncomeParameters param,
             IUniverseRule highVolume,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -153,6 +154,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     null,
                     ruleRunMode,
                     "High Volume Fixed Income",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highVolume);
 

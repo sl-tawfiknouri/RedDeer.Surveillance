@@ -134,7 +134,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.AggregateNonFactorableIntoOwnCategory);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var decoratedHighProfits = DecorateWithFilter(opCtx, param, highProfitsRuleOrgFactor, ruleCtxMarketClosure, runMode);
+            var decoratedHighProfits = DecorateWithFilter(opCtx, param, highProfitsRuleOrgFactor, dataRequestSubscriber, ruleCtxMarketClosure, runMode);
 
             return decoratedHighProfits;
         }
@@ -143,6 +143,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IHighProfitsRuleEquitiesParameters param,
             IUniverseRule highProfitsRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -163,6 +164,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "High Profits Equity",
+                    universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highProfitsRule);
 

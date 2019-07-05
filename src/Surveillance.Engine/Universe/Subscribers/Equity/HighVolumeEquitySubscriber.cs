@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors, ruleCtx, runMode);
+            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return decoratedHighVolumeRule;
         }
@@ -135,6 +135,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IHighVolumeRuleEquitiesParameters param,
             IUniverseRule highVolume,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
@@ -155,6 +156,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.MarketCapFilter,
                     ruleRunMode,
                     "High Volume Equity",
+                    dataRequestSubscriber,
                     processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highVolume);
 

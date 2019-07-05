@@ -221,7 +221,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     hasBidirectionalBreach,
                     hasDailyVolumeBreach,
                     hasWindowVolumeBreach,
-                    priceMovementBreach)
+                    priceMovementBreach,
+                    UniverseDateTime)
                 : null;
         }
 

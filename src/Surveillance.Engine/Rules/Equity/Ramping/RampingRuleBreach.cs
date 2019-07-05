@@ -19,7 +19,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             string correlationId,
             IFactorValue factorValue,
             IRampingStrategySummaryPanel summaryPanel,
-            IRampingRuleEquitiesParameters parameters)
+            IRampingRuleEquitiesParameters parameters,
+            DateTime universeDateTime)
         {
             Window = window;
             Trades = trades;
@@ -30,6 +31,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             FactorValue = factorValue;
             SummaryPanel = summaryPanel;
             RuleParameters = parameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -41,6 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
         public IRampingStrategySummaryPanel SummaryPanel { get; set; }
     }
 }

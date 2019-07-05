@@ -868,7 +868,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
                 LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
                 ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
-                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                MarketCap = entity.DailySummaryTimeBar.MarketCapCents;
                 VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
                 DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 MarketId = marketId.ToString();
@@ -1018,7 +1018,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
                 LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
                 ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
-                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                MarketCap = entity.DailySummaryTimeBar.MarketCapCents;
                 VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
                 DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);

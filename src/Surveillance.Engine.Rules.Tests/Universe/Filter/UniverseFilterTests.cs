@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Universe.Filter
@@ -20,6 +21,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
     public class UniverseFilterTests
     {
         private IUnsubscriberFactory<IUniverseEvent> _unsubscriber;
+        private IHighMarketCapFilter _highMarketCapFilter;
         private IUniverseCloneableRule _observer;
         private ILogger<UniverseFilterService> _logger;
 
@@ -27,6 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Setup()
         {
             _unsubscriber = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
+            _highMarketCapFilter = A.Fake<IHighMarketCapFilter>();
             _observer = A.Fake<IUniverseCloneableRule>();
             _logger = A.Fake<ILogger<UniverseFilterService>>();
         }
@@ -35,7 +38,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Constructor_ConsidersNullUnsubscriber_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseFilterService(null,
+            Assert.Throws<ArgumentNullException>(() => new UniverseFilterService(null, 
+                _highMarketCapFilter,
                 new RuleFilter(),
                 new RuleFilter(),
                 new RuleFilter(),
@@ -51,7 +55,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnCompleted_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnCompleted();
@@ -62,7 +66,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnError_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnError(new ArgumentNullException());
@@ -73,7 +77,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnNext(new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object()));
@@ -90,7 +94,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -118,7 +122,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -146,7 +150,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, account, null, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, account, null, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -174,7 +178,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, traders, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -202,7 +206,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, traders, null, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, traders, null, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -230,7 +234,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, markets, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -268,7 +272,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, markets, null, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, markets, null, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -306,7 +310,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -334,7 +338,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -362,7 +366,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, fund, null, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, fund, null, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -390,7 +394,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -418,7 +422,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -446,7 +450,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, strategy, null, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, strategy, null, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -474,7 +478,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, sector, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -502,7 +506,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, sector, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -530,7 +534,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, sector, null, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, sector, null, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -558,7 +562,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, industry, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -586,7 +590,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, industry, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -614,7 +618,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, industry, null, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, industry, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -642,7 +646,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, region, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -670,7 +674,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, region, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -698,7 +702,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, region, null, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, region, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -726,7 +730,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, country, _logger);
 
             filter.Subscribe(_observer);
 
@@ -754,7 +758,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, country, _logger);
 
             filter.Subscribe(_observer);
 
@@ -782,7 +786,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilterService(_unsubscriber, null, null, null, null, null, null, null, null, country, _logger);
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, country, _logger);
 
             filter.Subscribe(_observer);
 
@@ -799,6 +803,40 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
             A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_HighMarketCapFilter()
+        {
+            var fundOne = ((Order)null).Random();
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            A.CallTo(() => _highMarketCapFilter.Filter(eventOne)).Returns(false);
+
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            filter.OnNext(eventOne);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_HighMarketCapFilter()
+        {
+            var fundOne = ((Order)null).Random();
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            A.CallTo(() => _highMarketCapFilter.Filter(eventOne)).Returns(true);
+
+            var filter = new UniverseFilterService(_unsubscriber, _highMarketCapFilter, null, null, null, null, null, null, null, null, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            filter.OnNext(eventOne);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
         }
     }
 }

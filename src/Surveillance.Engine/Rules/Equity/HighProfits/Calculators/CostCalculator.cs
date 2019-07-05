@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({money.Currency}) {money.Value}.");
 
-            return money;
+            return await Task.FromResult(money);
         }
     }
 }

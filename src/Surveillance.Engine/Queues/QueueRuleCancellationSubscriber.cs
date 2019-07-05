@@ -77,6 +77,8 @@ namespace Surveillance.Engine.Rules.Queues
                 _ruleCancellation?.Cancel(cancellationMessage?.RuleRunId ?? string.Empty);
 
                 _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} completed for {messageId}");
+
+                await Task.CompletedTask;
             }
             catch (Exception e)
             {

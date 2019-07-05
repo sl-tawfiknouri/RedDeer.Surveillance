@@ -19,15 +19,18 @@ namespace Surveillance.Engine.Rules.RuleParameters
     public class RuleParameterDtoToRuleParameterMapper : IRuleParameterToRulesMapper
     {
         private readonly IRuleProjector _ruleProjector;
+        private readonly IDecimalRangeRuleFilterProjector _decimalRangeRuleFilterProjector;
         private readonly IClientOrganisationalFactorMapper _organisationalFactorMapper;
         private readonly ILogger<RuleParameterDtoToRuleParameterMapper> _logger;
 
         public RuleParameterDtoToRuleParameterMapper(
             IRuleProjector ruleProjector,
+            IDecimalRangeRuleFilterProjector decimalRangeRuleFilterProjector,
             IClientOrganisationalFactorMapper organisationalFactorMapper,
             ILogger<RuleParameterDtoToRuleParameterMapper> logger)
         {
             _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
+            _decimalRangeRuleFilterProjector = decimalRangeRuleFilterProjector ?? throw new ArgumentNullException(nameof(decimalRangeRuleFilterProjector));
             _organisationalFactorMapper =
                 organisationalFactorMapper
                 ?? throw new ArgumentNullException(nameof(organisationalFactorMapper));
@@ -50,6 +53,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     dto.WindowSize,
                     dto.CancellationThreshold,
                     dto.RelativeSizeMultipleForSpoofExceedingReal,
+                    _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                     _ruleProjector.Project(dto.Accounts),
                     _ruleProjector.Project(dto.Traders),
                     _ruleProjector.Project(dto.Markets),
@@ -83,6 +87,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         dto.CancelledOrderCountPercentageThreshold,
                         dto.MinimumNumberOfTradesToApplyRuleTo,
                         dto.MaximumNumberOfTradesToApplyRuleTo,
+                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
                         _ruleProjector.Project(dto.Markets),
@@ -119,6 +124,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         dto.HighProfitAbsoluteThreshold,
                         dto.UseCurrencyConversions,
                         dto.HighProfitCurrencyConversionTargetCurrency,
+                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
                         _ruleProjector.Project(dto.Markets),
@@ -151,6 +157,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         dto.PercentageThresholdDailyVolume,
                         dto.PercentageThresholdWindowVolume,
                         dto.PercentThresholdOffTouch,
+                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
                         _ruleProjector.Project(dto.Markets),
@@ -184,6 +191,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             dto.PercentageOfMarketDailyVolume,
                             dto.PercentageOfMarketWindowVolume,
                             dto.CheckForCorrespondingPriceMovement,
+                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets),
@@ -217,6 +225,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             dto.HighVolumePercentageDaily,
                             dto.HighVolumePercentageWindow,
                             dto.HighVolumePercentageMarketCap,
+                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets),
@@ -256,6 +265,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             dto.AveragePositionMaximumAbsoluteValueChangeCurrency,
                             dto.ClusteringPositionMinimumNumberOfTrades,
                             dto.ClusteringPercentageValueDifferenceThreshold,
+                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets),
@@ -289,6 +299,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             dto.AutoCorrelationCoefficient,
                             dto.ThresholdOrdersExecutedInWindow,
                             dto.ThresholdVolumePercentageWindow,
+                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets),
@@ -405,7 +416,8 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _.Sigma, 
                         _.WindowSize, 
                         _organisationalFactorMapper.Map(_.OrganisationalFactors), 
-                        _.AggregateNonFactorableIntoOwnCategory, 
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _decimalRangeRuleFilterProjector.Project(_.MarketCap),
                         _ruleProjector.Project(_.Accounts),
                         _ruleProjector.Project(_.Traders),
                         _ruleProjector.Project(_.Markets),

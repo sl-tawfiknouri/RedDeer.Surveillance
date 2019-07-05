@@ -223,6 +223,7 @@ namespace Surveillance.Engine.Rules
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IRuleProjector>().Use<RuleProjector>();
+            For<IDecimalRangeRuleFilterProjector>().Use<DecimalRangeRuleFilterProjector>();
 
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
@@ -271,6 +272,8 @@ namespace Surveillance.Engine.Rules
 
             For<IRuleParameterTuner>().Use<RuleParameterTuner>();
             For<ITaskReSchedulerService>().Use<TaskReSchedulerService>();
+
+            For<IHighMarketCapFilterFactory>().Use<HighMarketCapFilterFactory>();
             For<IRuleParameterToRulesMapperDecorator>().Use<RuleParameterToRulesMapperTuningDecorator>();
         }
     }

@@ -27,6 +27,8 @@ namespace DataSynchroniser.Api.Markit
 
 
             _logger.LogInformation($"{nameof(MarkitDataSynchroniser)} Handle completed processing request");
+
+            await Task.CompletedTask;
         }
     }
 }

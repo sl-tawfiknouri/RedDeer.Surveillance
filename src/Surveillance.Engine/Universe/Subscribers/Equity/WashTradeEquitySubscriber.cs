@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .ToList();
 
             var washTradeParameters = _ruleParameterMapper.Map(execution, dtos);
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, washTradeParameters);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, washTradeParameters);
 
             return subscriptions;
         }
@@ -72,6 +72,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<IWashTradeRuleEquitiesParameters> washTradeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -81,7 +82,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in washTradeParameters)
                 {
-                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, universeDataRequestsSubscriber, param);
                     subscriptions.Add(paramSubscriptions);
                 }
             }
@@ -99,6 +100,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IWashTradeRuleEquitiesParameters param)
         {
             var ctx = opCtx.CreateAndStartRuleRunContext(
@@ -120,7 +122,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var washTradeFiltered = DecorateWithFilter(opCtx, param, washTradeOrgFactors);
+            var washTradeFiltered = DecorateWithFilter(opCtx, param, washTradeOrgFactors, universeDataRequestsSubscriber, ctx, runMode);
 
             return washTradeFiltered;
         }
@@ -128,9 +130,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             IWashTradeRuleEquitiesParameters param,
-            IUniverseRule washTrade)
+            IUniverseRule washTrade,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -143,7 +148,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Wash Trade Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(washTrade);
 
                 return filteredUniverse;

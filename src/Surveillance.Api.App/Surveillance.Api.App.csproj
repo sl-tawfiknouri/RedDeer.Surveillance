@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="3.0.3" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.13" />
-    <PackageReference Include="AWSSDK.EC2" Version="3.3.87" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.101.33" />
+    <PackageReference Include="AWSSDK.EC2" Version="3.3.120" />
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.2.0" />
     <PackageReference Include="Dazinator.AspNet.Extensions.FileProviders" Version="1.4.0" />
     <PackageReference Include="GraphQL" Version="2.4.0" />

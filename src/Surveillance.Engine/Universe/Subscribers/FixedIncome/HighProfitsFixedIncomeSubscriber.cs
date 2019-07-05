@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
                     subscriptions.Add(paramSubscriptions);
                 }
             }
@@ -103,6 +103,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IHighProfitsRuleFixedIncomeParameters param)
         {
             var ruleCtx = opCtx
@@ -124,7 +125,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     highProfits,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var highProfitsFiltered = DecorateWithFilters(opCtx, param, highProfitsOrgFactors);
+            var highProfitsFiltered = DecorateWithFilters(opCtx, param, highProfitsOrgFactors, universeDataRequestsSubscriber, ruleCtx, runMode);
 
             return highProfitsFiltered;
         }
@@ -132,7 +133,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IHighProfitsRuleFixedIncomeParameters param,
-            IUniverseRule highProfits)
+            IUniverseRule highProfits,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
             if (param.HasInternalFilters())
             {
@@ -147,7 +151,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    null,
+                    ruleRunMode,
+                    "High Profits Fixed Income",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highProfits);
 
                 return filteredUniverse;

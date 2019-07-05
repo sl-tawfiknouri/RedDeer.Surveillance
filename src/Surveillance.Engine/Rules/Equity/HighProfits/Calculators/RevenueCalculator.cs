@@ -99,7 +99,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             var totalMoneys = realisedRevenue + money;
 
-            return new RevenueMoney(false, totalMoneys);
+            return await Task.FromResult(new RevenueMoney(false, totalMoneys));
         }
 
         private Money? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)

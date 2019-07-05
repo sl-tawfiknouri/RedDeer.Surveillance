@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.RuleParameters.Tuning;
@@ -18,6 +19,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? cancelledOrderCountPercentageThreshold,
             int minimumNumberOfTradesToApplyRuleTo,
             int? maximumNumberOfTradesToApplyRuleTo,
+            DecimalRangeRuleFilter marketCapFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -38,6 +40,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
             MinimumNumberOfTradesToApplyRuleTo = minimumNumberOfTradesToApplyRuleTo;
             MaximumNumberOfTradesToApplyRuleTo = maximumNumberOfTradesToApplyRuleTo;
+
+            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -74,6 +78,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             MinimumNumberOfTradesToApplyRuleTo = minimumNumberOfTradesToApplyRuleTo;
             MaximumNumberOfTradesToApplyRuleTo = maximumNumberOfTradesToApplyRuleTo;
 
+            MarketCapFilter = DecimalRangeRuleFilter.None();
+
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
@@ -103,6 +109,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public int MinimumNumberOfTradesToApplyRuleTo { get; set; }
         [TuneableIntegerParameter]
         public int? MaximumNumberOfTradesToApplyRuleTo { get; set; }
+        public DecimalRangeRuleFilter MarketCapFilter { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -118,24 +125,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None
-                || Funds?.Type != RuleFilterType.None
-                || Strategies?.Type != RuleFilterType.None;
-        }
+            => IFilterableRuleExtensions.HasInternalFilters(this);
+
+        public bool HasMarketCapFilters()
+            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
 
         public bool HasReferenceDataFilters()
-        {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
-        }
-
+            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(Id)

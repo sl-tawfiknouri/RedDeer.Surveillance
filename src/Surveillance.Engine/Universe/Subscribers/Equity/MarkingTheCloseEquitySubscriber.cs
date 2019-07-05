@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var filteredMarkingTheClose = DecorateWithFilters(opCtx, param, markingTheCloseOrgFactors);
+            var filteredMarkingTheClose = DecorateWithFilters(opCtx, param, markingTheCloseOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return filteredMarkingTheClose;
         }
@@ -131,9 +131,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IMarkingTheCloseEquitiesParameters param,
-            IUniverseRule markingTheClose)
+            IUniverseRule markingTheClose,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -146,7 +149,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Marking The Close Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(markingTheClose);
 
                 return filteredUniverse;

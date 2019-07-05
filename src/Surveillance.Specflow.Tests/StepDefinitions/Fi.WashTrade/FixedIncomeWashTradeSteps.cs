@@ -30,8 +30,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
         private UniverseSelectionState _universeSelectionState;
         private WashTradeRuleFixedIncomeParameters _parameters;
 
-        private FixedIncomeWashTradeRule _rule;
-
         private IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;

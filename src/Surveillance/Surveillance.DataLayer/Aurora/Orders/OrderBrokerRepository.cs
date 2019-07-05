@@ -142,9 +142,9 @@ namespace Surveillance.DataLayer.Aurora.Orders
                     return;
                 }
 
-                Id = orderBroker.Id;
-                ExternalId = orderBroker.ReddeerId;
-                Name = orderBroker.Name?.ToLower() ?? string.Empty;
+                Id = string.IsNullOrWhiteSpace(orderBroker.Id) ? null : orderBroker.Id;
+                ExternalId = string.IsNullOrWhiteSpace(orderBroker.ReddeerId) ? null : orderBroker.ReddeerId;
+                Name = string.IsNullOrWhiteSpace(orderBroker.Name) ? null : orderBroker.Name?.ToLower();
                 Live = orderBroker.Live;
             }
 

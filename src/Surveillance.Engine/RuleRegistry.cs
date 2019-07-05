@@ -44,6 +44,8 @@ using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
+using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
 using Surveillance.Engine.Rules.Rules.Cancellation;
 using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
@@ -214,7 +216,7 @@ namespace Surveillance.Engine.Rules
 
             For<IPortfolioFactory>().Use<PortfolioFactory>();
             
-            For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
+            For<IRuleParameterToRulesMapper>().Use<RuleParameterDtoToRuleParameterMapper>();
             For<ICurrencyConverterService>().Use<CurrencyConverterService>();
             For<IExchangeRatesService>().Use<ExchangeRatesService>();
             For<ITradePositionWeightedAverageExchangeRateService>().Use<TradePositionWeightedAverageExchangeRateService>();
@@ -268,9 +270,11 @@ namespace Surveillance.Engine.Rules
             For<IQueueRuleCancellationSubscriber>().Use<QueueRuleCancellationSubscriber>();
             For<IRuleCancellation>().Use<RuleCancellation>().Singleton();
 
+            For<IRuleParameterTuner>().Use<RuleParameterTuner>();
             For<ITaskReSchedulerService>().Use<TaskReSchedulerService>();
 
             For<IHighMarketCapFilterFactory>().Use<HighMarketCapFilterFactory>();
+            For<IRuleParameterToRulesMapperDecorator>().Use<RuleParameterToRulesMapperTuningDecorator>();
         }
     }
 }

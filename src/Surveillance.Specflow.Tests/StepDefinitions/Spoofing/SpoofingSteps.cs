@@ -80,6 +80,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Spoofing
                     parameters.CancellationThreshold,
                     parameters.RelativeSizeMultipleForSpoofExceedingReal,
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
         }
 

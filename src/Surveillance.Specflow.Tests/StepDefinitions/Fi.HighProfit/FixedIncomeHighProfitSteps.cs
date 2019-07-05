@@ -73,6 +73,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighProfit
                 RuleFilter.None(),
                 RuleFilter.None(),
                 new[] { ClientOrganisationalFactors.None },
+                true,
                 true);
         }
 

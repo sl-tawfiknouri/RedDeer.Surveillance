@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class SpoofingRuleEquitiesParameters : ISpoofingRuleEquitiesParameters
     {
         public SpoofingRuleEquitiesParameters(
@@ -15,11 +18,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal cancellationThreshold,
             decimal relativeSizeMultipleForSpoofingExceedingReal,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
@@ -38,6 +42,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public SpoofingRuleEquitiesParameters(
@@ -56,11 +62,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter regions,
             RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
 
@@ -79,13 +86,21 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
-        public TimeWindows Windows { get; }
-        public decimal CancellationThreshold { get; }
-        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+        [TuneableDecimalParameter]
+        public decimal CancellationThreshold { get; set; }
+        [TuneableDecimalParameter]
+        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; set; }
+
         public DecimalRangeRuleFilter MarketCapFilter { get; }
+
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -108,5 +123,45 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public bool HasReferenceDataFilters()
             => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+               && CancellationThreshold >= 0
+               && CancellationThreshold <= 1
+               && RelativeSizeMultipleForSpoofExceedingReal >= 0;
+        }
+
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode()
+               * CancellationThreshold.GetHashCode()
+               * RelativeSizeMultipleForSpoofExceedingReal.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as SpoofingRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return Windows == castObj.Windows
+                   && CancellationThreshold == castObj.CancellationThreshold
+                   && RelativeSizeMultipleForSpoofExceedingReal == castObj.RelativeSizeMultipleForSpoofExceedingReal;
+
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

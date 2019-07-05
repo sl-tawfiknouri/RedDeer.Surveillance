@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class MarkingTheCloseEquitySubscriber : IMarkingTheCloseEquitySubscriber
     {
         private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<MarkingTheCloseEquitySubscriber> _logger;
 
         public MarkingTheCloseEquitySubscriber(
             IEquityRuleMarkingTheCloseFactory equityRuleMarkingTheCloseFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<MarkingTheCloseEquitySubscriber> logger)
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(mtc => filteredParameters.Contains(mtc.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var markingTheCloseParameters = _ruleParameterMapper.Map(dtos);
+            var markingTheCloseParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, markingTheCloseParameters);
 
             return subscriptions;

@@ -124,6 +124,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.PlacingOrders
                     parameters.Sigma,
                     new TimeSpan(parameters.WindowHours, 0, 0),
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
         }
 

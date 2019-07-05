@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
@@ -15,18 +16,18 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters
 {
-    public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
+    public class RuleParameterDtoToRuleParameterMapper : IRuleParameterToRulesMapper
     {
         private readonly IRuleProjector _ruleProjector;
         private readonly IDecimalRangeRuleFilterProjector _decimalRangeRuleFilterProjector;
         private readonly IClientOrganisationalFactorMapper _organisationalFactorMapper;
-        private readonly ILogger<RuleParameterToRulesMapper> _logger;
+        private readonly ILogger<RuleParameterDtoToRuleParameterMapper> _logger;
 
-        public RuleParameterToRulesMapper(
+        public RuleParameterDtoToRuleParameterMapper(
             IRuleProjector ruleProjector,
             IDecimalRangeRuleFilterProjector decimalRangeRuleFilterProjector,
             IClientOrganisationalFactorMapper organisationalFactorMapper,
-            ILogger<RuleParameterToRulesMapper> logger)
+            ILogger<RuleParameterDtoToRuleParameterMapper> logger)
         {
             _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
             _decimalRangeRuleFilterProjector = decimalRangeRuleFilterProjector ?? throw new ArgumentNullException(nameof(decimalRangeRuleFilterProjector));
@@ -36,7 +37,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(List<SpoofingRuleParameterDto> dtos)
+        public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(ScheduledExecution execution, List<SpoofingRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -63,11 +64,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     _ruleProjector.Project(dto.Regions),
                     _ruleProjector.Project(dto.Countries),
                     _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                    dto.AggregateNonFactorableIntoOwnCategory))
+                    dto.AggregateNonFactorableIntoOwnCategory,
+                    dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Map(List<CancelledOrderRuleParameterDto> dtos)
+        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Map(ScheduledExecution execution, List<CancelledOrderRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -96,11 +98,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Regions),
                         _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> Map(List<HighProfitsRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> Map(ScheduledExecution execution, List<HighProfitsRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -132,11 +135,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Regions),
                         _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos)
+        public IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> Map(ScheduledExecution execution, List<MarkingTheCloseRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -164,11 +168,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Regions),
                         _ruleProjector.Project(dto.Countries),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(List<LayeringRuleParameterDto> dtos)
+        public IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(ScheduledExecution execution, List<LayeringRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -197,11 +202,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Regions),
                             _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(ScheduledExecution execution, List<HighVolumeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -230,11 +236,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Regions),
                             _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
+
         }
 
-        public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(ScheduledExecution execution, List<WashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -268,11 +276,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Regions),
                             _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
-        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(List<RampingRuleParameterDto> dtos)
+        public IReadOnlyCollection<IRampingRuleEquitiesParameters> Map(ScheduledExecution execution, List<RampingRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -301,11 +310,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _ruleProjector.Project(dto.Regions),
                             _ruleProjector.Project(dto.Countries),
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory))
+                            dto.AggregateNonFactorableIntoOwnCategory,
+                            dto.PerformTuning))
                     .ToList();
         }
 
-        public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -333,11 +343,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeHighProfitRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -357,11 +368,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(ScheduledExecution execution, List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -381,11 +393,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(dto.Funds),
                         _ruleProjector.Project(dto.Strategies),
                         _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory))
+                        dto.AggregateNonFactorableIntoOwnCategory,
+                        dto.PerformTuning))
                 .ToList();
         }
 
         public IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> Map(
+            ScheduledExecution execution,
             List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
         {
             if (dtos == null
@@ -412,8 +426,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
                         _ruleProjector.Project(_.Sectors),
                         _ruleProjector.Project(_.Industries),
                         _ruleProjector.Project(_.Regions),
-                        _ruleProjector.Project(_.Countries)))
-                .ToList();
+                        _ruleProjector.Project(_.Countries),
+                        _.PerformTuning))
+                    .ToList();
         }
     }
 }

@@ -149,6 +149,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 parameters.HighProfitUseCurrencyConversions,
                 parameters.HighProfitCurrency,
                 new[] { ClientOrganisationalFactors.None },
+                true,
                 true);
         }
 

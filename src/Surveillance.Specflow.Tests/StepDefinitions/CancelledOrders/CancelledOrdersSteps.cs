@@ -75,6 +75,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
                 parameters.MinimumNumberOfTradesToApplyRuleTo,
                 parameters.MaximumNumberOfTradesToApplyRuleTo,
                 new []{ ClientOrganisationalFactors.None},
+                true, 
                 true);
         }
 

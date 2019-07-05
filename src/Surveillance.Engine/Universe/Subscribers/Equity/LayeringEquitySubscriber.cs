@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class LayeringEquitySubscriber : ILayeringEquitySubscriber
     {
         private readonly IEquityRuleLayeringFactory _equityRuleLayeringFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<LayeringEquitySubscriber> _logger;
 
         public LayeringEquitySubscriber(
             IEquityRuleLayeringFactory equityRuleLayeringFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<LayeringEquitySubscriber> logger)
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(la => filteredParameters.Contains(la.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var layeringParameters = _ruleParameterMapper.Map(dtos);
+            var layeringParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, layeringParameters);
 
             return subscriptions;

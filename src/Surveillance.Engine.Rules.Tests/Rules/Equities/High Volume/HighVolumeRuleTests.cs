@@ -119,7 +119,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void DailyParameter_NoThresholdBreach_DoesNotRaiseAlert()
         {
-            var windows = new TimeWindows(TimeSpan.FromHours(1));
+            var windows = new TimeWindows("id", TimeSpan.FromHours(1));
             A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _equitiesParameters.Windows).Returns(windows);
             var highVolumeRule = BuildRule();
@@ -170,7 +170,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void DailyParameter_ThresholdBreach_RaisesAlert()
         {
-            var windows = new TimeWindows(TimeSpan.FromHours(1));
+            var windows = new TimeWindows("id", TimeSpan.FromHours(1));
             A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _equitiesParameters.Windows).Returns(windows);
             var highVolumeRule = BuildRule();
@@ -218,7 +218,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void WindowParameter_ThresholdBreach_RaisesAlert()
         {
-            var windows = new TimeWindows(TimeSpan.FromHours(1));
+            var windows = new TimeWindows("id", TimeSpan.FromHours(1));
             A.CallTo(() => _equitiesParameters.HighVolumePercentageWindow).Returns(0.1m);
             A.CallTo(() => _equitiesParameters.Windows).Returns(windows);
             var highVolumeRule = BuildRule();

@@ -23,7 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
-            decimal totalOrdersTradedInWindow)
+            decimal totalOrdersTradedInWindow,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
 
@@ -41,6 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -61,6 +63,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
 
         public class BreachDetails
         {

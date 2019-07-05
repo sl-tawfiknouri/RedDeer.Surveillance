@@ -163,7 +163,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 cancelledPositionOrders,
                 totalPositionOrders,
                 hasBreachedRuleByOrderCount,
-                cancellationRatioByOrderCount);
+                cancellationRatioByOrderCount,
+                UniverseDateTime);
         }
 
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)

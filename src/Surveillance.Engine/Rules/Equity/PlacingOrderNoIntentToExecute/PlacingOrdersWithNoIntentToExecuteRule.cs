@@ -156,7 +156,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
             var position = new TradePosition(ruleBreaches.Select(_ => _.Item2).ToList());
             var poe = ruleBreaches.Select(_ => ExecutionUnderNormalDistribution(_.Item2, mean, sd, _.Item1)).ToList();
-            var breach = new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(_parameters.Windows.BackwardWindowSize, position, benchmarkOrder.Instrument, OrganisationFactorValue, mean, sd, poe, _parameters, _ruleCtx);
+            var breach =
+                new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(
+                    _parameters.Windows.BackwardWindowSize,
+                    position,
+                    benchmarkOrder.Instrument,
+                    OrganisationFactorValue,
+                    mean, 
+                    sd,
+                    poe,
+                    _parameters,
+                    _ruleCtx, 
+                    UniverseDateTime);
+
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }

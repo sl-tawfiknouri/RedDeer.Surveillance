@@ -26,6 +26,12 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
             var oldestPositionValue = oldestPosition ?? DateTime.UtcNow;
             var latestPositionValue = latestPosition ?? DateTime.UtcNow;
 
+            if (ruleBreach.UniverseDateTime < oldestPositionValue)
+                oldestPositionValue = ruleBreach.UniverseDateTime;
+
+            if (ruleBreach.UniverseDateTime > latestPositionValue)
+                latestPositionValue = ruleBreach.UniverseDateTime;
+
             description = description ?? string.Empty;
 
             var trades =

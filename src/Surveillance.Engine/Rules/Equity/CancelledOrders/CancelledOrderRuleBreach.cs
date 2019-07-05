@@ -23,7 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             int? amountOfPositionCancelled,
             int? amountOfPositionInTotal,
             bool exceededPercentageTradeCountCancellations,
-            decimal? percentageTradeCountCancelled)
+            decimal? percentageTradeCountCancelled,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
             Parameters = parameters;
@@ -40,6 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             SystemOperationId = ctx.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = Parameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public bool HasBreachedRule()
@@ -65,5 +67,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

@@ -9,8 +9,8 @@ using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using PollyFacade.Policies.Interfaces;
 using SharedKernel.Contracts.Markets;
-using Surveillance.DataLayer.Api.BmllMarketData;
-using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.BmllMarketData;
+using Surveillance.Reddeer.ApiClient.BmllMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {
@@ -19,14 +19,14 @@ namespace DataSynchroniser.Api.Bmll.Bmll
         private readonly IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private readonly IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
         private readonly IPolicyFactory _policyFactory;
-        private readonly IBmllTimeBarApiRepository _timeBarRepository;
+        private readonly IBmllTimeBarApi _timeBarRepository;
         private readonly ILogger<BmllDataRequestsApiManager> _logger;
 
         public BmllDataRequestsApiManager(
             IBmllDataRequestsGetTimeBars requestsGetTimeBars,
             IMarketDataRequestToMinuteBarRequestKeyDtoProjector marketDataRequestProjector,
             IPolicyFactory policyFactory,
-            IBmllTimeBarApiRepository timeBarRepository,
+            IBmllTimeBarApi timeBarRepository,
             ILogger<BmllDataRequestsApiManager> logger)
         {
             _requestsGetTimeBars = requestsGetTimeBars ?? throw new ArgumentNullException(nameof(requestsGetTimeBars));

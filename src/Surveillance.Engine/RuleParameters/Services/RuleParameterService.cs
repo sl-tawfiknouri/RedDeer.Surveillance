@@ -6,18 +6,18 @@ using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
+using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Services
 {
     public class RuleParameterService : IRuleParameterService
     {
-        private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly IRuleParameterApi _ruleParameterApiRepository;
         private readonly ILogger<RuleParameterService> _logger;
 
         public RuleParameterService(
-            IRuleParameterApiRepository ruleParameterApiRepository,
+            IRuleParameterApi ruleParameterApiRepository,
             ILogger<RuleParameterService> logger)
         {
             _ruleParameterApiRepository = ruleParameterApiRepository ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));

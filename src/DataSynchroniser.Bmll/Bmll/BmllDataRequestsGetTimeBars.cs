@@ -5,16 +5,16 @@ using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.BmllMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class BmllDataRequestsGetTimeBars : IBmllDataRequestsGetTimeBars
     {
-        private readonly IBmllTimeBarApiRepository _timeBarRepository;
+        private readonly IBmllTimeBarApi _timeBarRepository;
         private readonly ILogger<BmllDataRequestsGetTimeBars> _logger;
 
-        public BmllDataRequestsGetTimeBars(IBmllTimeBarApiRepository timeBarRepository, ILogger<BmllDataRequestsGetTimeBars> logger)
+        public BmllDataRequestsGetTimeBars(IBmllTimeBarApi timeBarRepository, ILogger<BmllDataRequestsGetTimeBars> logger)
         {
             _timeBarRepository = timeBarRepository ?? throw new ArgumentNullException(nameof(timeBarRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

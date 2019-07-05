@@ -11,6 +11,8 @@ using DataImport.Configuration;
 using Microsoft.Extensions.Configuration;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient.Configuration;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
 namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
@@ -31,24 +33,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 
         public Configuration Build(IConfigurationRoot configurationBuilder)
         {
-            lock (_lock)
-            {
-                IsUnitTest = AppDomain
-                    .CurrentDomain
-                    .GetAssemblies()
-                    .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
-
-                IsEC2Instance =
-                    IsUnitTest == false &&
-                    Amazon.Util.EC2InstanceMetadata.InstanceId != null;
-
-                if (IsEC2Instance)
-                {
-                    var environment = GetTag("Environment");
-                    var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
-                    _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
-                }
-            }
+            SetDynamoConfig();
 
             var networkConfiguration = new Configuration
             {
@@ -71,6 +56,42 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 
         public IDataLayerConfiguration BuildData(IConfigurationRoot configurationBuilder)
         {
+            SetDynamoConfig();
+
+            return new DataLayerConfiguration
+            {
+                ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
+            };
+        }
+
+        public IApiClientConfiguration BuildApi(IConfigurationRoot configurationBuilder)
+        {
+            SetDynamoConfig();
+
+            return new ApiClientConfiguration
+            {
+                ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
+            };
+        }
+
+        private void SetDynamoConfig()
+        {
             lock (_lock)
             {
                 IsUnitTest = AppDomain
@@ -89,19 +110,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
                 }
             }
-
-            return new DataLayerConfiguration
-            {
-                ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
-                ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
-                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
-                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder),
-                EmailServiceSendEmailQueueName = GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
-            };
         }
 
         private string GetSetting(string name, IConfigurationRoot config)

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using SharedKernel.Contracts.Markets;
-using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.FactsetMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Tests
 {
@@ -20,7 +20,7 @@ namespace DataSynchroniser.Api.Factset.Tests
             typeof(MarketDataRequest)};
             var method = typeof(FactsetDataRequestsApiManager).GetMethod("Project", BindingFlags.Instance | BindingFlags.NonPublic, null, parameterTypes, new ParameterModifier[] { });
             var underTest = new FactsetDataRequestsApiManager(
-                A.Fake<IFactsetDailyBarApiRepository>(),
+                A.Fake<IFactsetDailyBarApi>(),
                 A.Fake<ILogger<FactsetDataRequestsApiManager>>());
             var fakeRequest = A.Fake<MarketDataRequest>();
             

@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Currency;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Currency
 {
@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
     public class CurrencyConverterTests
     {
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private IExchangeRateApiCachingDecoratorRepository _apiRepository;
+        private IExchangeRateApiCachingDecorator _apiRepository;
         private ILogger<CurrencyConverterService> _logger;
         private Domain.Core.Financial.Money.Currency _currency;
         private DateTime _conversionTime;
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public void Setup()
         {
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _apiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
+            _apiRepository = A.Fake<IExchangeRateApiCachingDecorator>();
             _logger = A.Fake<ILogger<CurrencyConverterService>>();
             _currency = new Domain.Core.Financial.Money.Currency("USD");
             _conversionTime = new DateTime(2017, 8, 31);

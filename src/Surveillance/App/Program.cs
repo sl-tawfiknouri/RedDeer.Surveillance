@@ -24,6 +24,8 @@ using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
 using Surveillance.Engine.Scheduler;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -60,6 +62,10 @@ namespace RedDeer.Surveillance.App
                 var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
                 Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
+
+                var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
+                Container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
+
                 Container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
                 Container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
@@ -74,6 +80,7 @@ namespace RedDeer.Surveillance.App
                     config.IncludeRegistry<DataCoordinatorRegistry>();
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
+                    config.IncludeRegistry<ReddeerApiClientRegistry>();
                     config.IncludeRegistry<RuleSchedulerRegistry>();
                 });
 

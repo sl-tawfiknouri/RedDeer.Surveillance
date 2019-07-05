@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency
 {
@@ -19,11 +19,11 @@ namespace Surveillance.Engine.Rules.Currency
     /// </summary>
     public class ExchangeRatesService : IExchangeRatesService
     {
-        private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
+        private readonly IExchangeRateApiCachingDecorator _exchangeRateApiRepository;
         private readonly ILogger<ExchangeRatesService> _logger;
 
         public ExchangeRatesService(
-            IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
+            IExchangeRateApiCachingDecorator exchangeRateApiRepository,
             ILogger<ExchangeRatesService> logger)
         {
             _exchangeRateApiRepository =

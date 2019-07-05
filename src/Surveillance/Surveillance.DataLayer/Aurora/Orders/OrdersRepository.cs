@@ -20,6 +20,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
     {
         private readonly IReddeerMarketRepository _marketRepository;
         private readonly IConnectionStringFactory _dbConnectionFactory;
+        private readonly IOrderBrokerRepository _orderBrokerRepository;
+
         private readonly ILogger _logger;
 
         private const string InsertOrderSql = @"
@@ -51,6 +53,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 FilledVolume,
                 TraderId,
                 TraderName,
+                BrokerId,
                 ClearingAgent,
                 DealingInstructions,
                 OptionStrikePrice,
@@ -84,6 +87,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 @OrderFilledVolume,
                 @OrderTraderId,
                 @OrderTraderName,
+                @OrderBrokerId,
                 @OrderClearingAgent,
                 @OrderDealingInstructions,
                 @OptionStrikePrice,
@@ -113,6 +117,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 FilledVolume=@OrderFilledVolume,
                 TraderId=@OrderTraderId,
                 TraderName = @OrderTraderName,
+                BrokerId = @OrderBrokerId,
                 ClearingAgent=@OrderClearingAgent,
                 DealingInstructions=@OrderDealingInstructions,
                 OptionStrikePrice=@OptionStrikePrice,
@@ -252,6 +257,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -280,12 +286,18 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
-                mark.MarketName AS MarketName
+                mark.MarketName AS MarketName,
+                broker.ExternalId as OrderBrokerReddeerId,
+                broker.Name as OrderBroker,
+                broker.CreatedOn as OrderBrokerCreatedOn,
+                broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
             ON fi.Id = ord.SecurityId
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
+            LEFT OUTER JOIN Brokers as broker
+            on broker.Id = ord.BrokerId
             WHERE Live = 1 AND Autoscheduled = 0
 
             UNION
@@ -321,6 +333,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+                ord.BrokerId as OrderBrokerId
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -349,7 +362,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
-                mark.MarketName AS MarketName
+                mark.MarketName AS MarketName,
+                broker.ExternalId as OrderBrokerReddeerId,
+                broker.Name as OrderBroker,
+                broker.CreatedOn as OrderBrokerCreatedOn,
+                broker.Live as OrderBrokerLive
             FROM OrdersAllocation as OrdAlloc
             LEFT OUTER JOIN Orders as ord
             ON OrdAlloc.OrderId = ord.ClientOrderId
@@ -357,6 +374,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
             ON fi.Id = ord.SecurityId
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
+            LEFT OUTER JOIN Brokers as broker
+            on broker.Id = ord.BrokerId
             WHERE OrdAlloc.Live = 1 AND OrdAlloc.Autoscheduled = 0;";
 
         private const string SetOrdersToScheduled = @"
@@ -413,6 +432,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -441,12 +461,18 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
-                mark.MarketName AS MarketName
+                mark.MarketName AS MarketName,
+                broker.ExternalId as OrderBrokerReddeerId,
+                broker.Name as OrderBroker,
+                broker.CreatedOn as OrderBrokerCreatedOn,
+                broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
             ON fi.Id = ord.SecurityId
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
+            LEFT OUTER JOIN Brokers as broker
+            on broker.Id = ord.BrokerId
             WHERE Live = 0 AND CreatedDate < @StaleDate;";
 
         private const string GetOrderSql = @"
@@ -481,6 +507,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
@@ -509,12 +536,18 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 fi.CountryCode As CountryCode,
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
-                mark.MarketName AS MarketName
+                mark.MarketName AS MarketName,
+                broker.ExternalId as OrderBrokerReddeerId,
+                broker.Name as OrderBroker,
+                broker.CreatedOn as OrderBrokerCreatedOn,
+                broker.Live as OrderBrokerLive
             FROM Orders as ord
             LEFT OUTER JOIN FinancialInstruments as fi
             ON fi.Id = ord.SecurityId
             LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
+            LEFT OUTER JOIN Brokers as broker
+            on broker.Id = ord.BrokerId
             WHERE
             ord.PlacedDate >= @Start
             AND ord.StatusChangedDate <= @End
@@ -559,6 +592,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
          public OrdersRepository(
             IConnectionStringFactory connectionStringFactory,
             IReddeerMarketRepository marketRepository,
+            IOrderBrokerRepository orderBrokerRepository,
             ILogger<OrdersRepository> logger)
         {
             _dbConnectionFactory =
@@ -566,6 +600,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ?? throw new ArgumentNullException(nameof(connectionStringFactory));
 
             _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
+            _orderBrokerRepository = orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -582,6 +617,14 @@ namespace Surveillance.DataLayer.Aurora.Orders
             try
             {
                 dbConnection.Open();
+
+                if (entity.OrderBroker != null
+                    && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name) 
+                    && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
+                {
+                    var broker = await _orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
+                    entity.OrderBroker.Id = broker;
+                }
 
                 var dto = new OrderDto(entity);
 
@@ -923,6 +966,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
+                new OrderBroker(dto.OrderBrokerId, dto.OrderBrokerReddeerId, dto.OrderBroker, dto.OrderBrokerCreatedOn, dto.OrderBrokerLive), 
 
                 optionStrikePrice,
                 dto.OptionExpirationDate,
@@ -1065,6 +1109,15 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderStatusChangedDate = order.MostRecentDateEvent();
                 CreatedDate = order.CreatedDate;
 
+                OrderBroker = order.OrderBroker?.Name;
+                OrderBrokerId = order.OrderBroker?.Id;
+                if (OrderBrokerId == string.Empty)
+                    OrderBrokerId = null;
+
+                OrderBrokerCreatedOn = order.OrderBroker?.CreatedOn;
+                OrderBrokerReddeerId = order.OrderBroker?.ReddeerId;
+                OrderBrokerLive = order.OrderBroker?.Live ?? false;
+
                 LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
                 OrderDirection = (int?)order.OrderDirection;
@@ -1162,6 +1215,14 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string OrderVersion { get; set; }
             public string OrderVersionLinkId { get; set; }
             public string OrderGroupId { get; set; }
+
+
+            public string OrderBroker { get; set; }
+            public string OrderBrokerId { get; set; }
+            public string OrderBrokerReddeerId { get; set; }
+            public DateTime? OrderBrokerCreatedOn { get; set; }
+            public bool OrderBrokerLive { get; set; }
+
 
             public int? LifeCycleStatus { get; set; }
             public int? OrderType { get; set; }

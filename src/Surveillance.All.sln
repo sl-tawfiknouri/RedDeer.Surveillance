@@ -127,6 +127,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Schedul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AimOmsFileHeaderTrimmerLambda", "NeptuneAimOmsFileLambda\AimOmsFileHeaderTrimmerLambda.csproj", "{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.ApiClient", "Surveillance.Reddeer.ApiClient\Surveillance.Reddeer.ApiClient.csproj", "{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.ApiClient.Tests", "Surveillance.Reddeer.ApiClient.Tests\Surveillance.Reddeer.ApiClient.Tests.csproj", "{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -333,6 +337,14 @@ Global
 		{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -388,6 +400,8 @@ Global
 		{91467EBB-B480-4169-BB04-BE1FDCEC5A74} = {BD399509-342E-47C3-A2AE-DFF418E01CF7}
 		{4DE87049-A635-4F04-9B8B-27FFBAE199B5} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97} = {1E88F83E-A7E1-403D-A9BB-82806595669A}
+		{3B8E3413-4656-45FD-B009-3ECB2B46CAC6} = {93E57B33-108D-4DF9-840A-693277AAA75B}
+		{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

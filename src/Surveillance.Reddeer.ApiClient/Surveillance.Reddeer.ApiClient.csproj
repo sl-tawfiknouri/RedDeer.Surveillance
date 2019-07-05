@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.1" />
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.41.0" />
+    <PackageReference Include="StructureMap" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
+    <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\Infrastructure.Network\Infrastructure.Network.csproj" />
+    <ProjectReference Include="..\PollyFacade\PollyFacade.csproj" />
+  </ItemGroup>
+
+</Project>

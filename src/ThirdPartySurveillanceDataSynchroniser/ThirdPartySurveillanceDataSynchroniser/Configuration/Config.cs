@@ -1,10 +1,11 @@
 ﻿using Infrastructure.Network.Aws.Interfaces;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace DataSynchroniser.Configuration
 {
-    public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration
+    public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration, IApiClientConfiguration
     {
         public string DataSynchroniserRequestQueueName { get; set; }
         public string ScheduledRuleQueueName { get; set; }

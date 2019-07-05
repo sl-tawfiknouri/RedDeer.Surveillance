@@ -4,30 +4,30 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.DataLayer.Api.Enrichment.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.Rules.Utility;
+using Surveillance.Reddeer.ApiClient.Enrichment.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
+using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Utility
 {
     [TestFixture]
     public class ApiHeartbeatTests
     {
-        private IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
-        private IMarketOpenCloseApiCachingDecoratorRepository _marketApi;
-        private IRuleParameterApiRepository _ruleApi;
-        private IEnrichmentApiRepository _enrichmentApi;
+        private IExchangeRateApiCachingDecorator _exchangeRateApi;
+        private IMarketOpenCloseApiCachingDecorator _marketApi;
+        private IRuleParameterApi _ruleApi;
+        private IEnrichmentApi _enrichmentApi;
         private ILogger<ApiHeartbeat> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _exchangeRateApi = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
-            _marketApi = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
-            _ruleApi = A.Fake<IRuleParameterApiRepository>();
-            _enrichmentApi = A.Fake<IEnrichmentApiRepository>();
+            _exchangeRateApi = A.Fake<IExchangeRateApiCachingDecorator>();
+            _marketApi = A.Fake<IMarketOpenCloseApiCachingDecorator>();
+            _ruleApi = A.Fake<IRuleParameterApi>();
+            _enrichmentApi = A.Fake<IEnrichmentApi>();
             _logger = A.Fake<ILogger<ApiHeartbeat>>();
         }
 

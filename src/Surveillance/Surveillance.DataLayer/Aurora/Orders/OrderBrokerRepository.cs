@@ -19,12 +19,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
         // INSERT OR CREATE
         private const string InsertBrokerSql =
-            @"INSERT IGNORE INTO Brokers (ExternalId, Name, CreatedOn, Live) VALUES(@ExternalId, @Name, now(), @Live);
+            @"INSERT IGNORE INTO Brokers (ExternalId, Name, CreatedOn, Live, Updated) VALUES(@ExternalId, @Name, now(), @Live, now());
                 SELECT Id FROM Brokers WHERE Name = @Name;";
 
         // INSERT OR CREATE
         private const string InsertEnrichedBrokerSql =
-            @"UPDATE Brokers SET ExternalId = @ExternalId, Live = 1 WHERE Name = @Name;";
+            @"UPDATE Brokers SET ExternalId = @ExternalId, Live = 1, Updated = now() WHERE Name = @Name;";
 
         private const string GetBrokerUnEnrichedSql = @"SELECT Id, ExternalId, Name, CreatedOn, Live FROM Brokers WHERE Live = 0;";
         

@@ -112,6 +112,12 @@ _via direct access to Surveillance Db and via queues_
 | TestRuleRunUpdateQueueName | {environment}-surveillance-{client}-scheduledrule-dlq |
 
 
+## Surveillance Neptune Oms Lambda
+### Dependencies
+#### No service dependencies
+Lambda Configuration Environment Variable 
+AimOmsWriteDirectory | "some-aws-bucket"
+
 ## Surveillance GraphQL API Service
 ### Dependencies
 #### No service dependencies

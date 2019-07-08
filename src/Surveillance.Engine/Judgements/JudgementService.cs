@@ -3,7 +3,14 @@ using Domain.Surveillance.Judgements.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 
 namespace Surveillance.Engine.Rules.Judgements
 {
@@ -42,14 +49,8 @@ namespace Surveillance.Engine.Rules.Judgements
                 return;
 
             // judgement is also a rule breach
-            var lol = (IHighProfitRuleBreach)new object();
-
-            _highProfitCachedMessageSender.Send(lol);
-            _highProfitCachedMessageSender.Flush();
-
-
-
-            _ruleViolationService.AddRuleViolation(lol);
+            var projectedBreach = (IHighProfitRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(CancelledOrderJudgement cancelledOrder)
@@ -61,6 +62,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(cancelledOrder);
+
+            // judgement is also a rule breach
+            var projectedBreach = (ICancelledOrderRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(HighVolumeJudgement highVolume)
@@ -72,6 +77,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(highVolume);
+
+            // judgement is also a rule breach
+            var projectedBreach = (IHighVolumeRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(LayeringJudgement layering)
@@ -83,6 +92,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(layering);
+
+            // judgement is also a rule breach
+            var projectedBreach = (ILayeringRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(MarkingTheCloseJudgement markingTheClose)
@@ -94,6 +107,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(markingTheClose);
+
+            // judgement is also a rule breach
+            var projectedBreach = (IMarkingTheCloseBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
@@ -105,6 +122,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(placingOrders);
+
+            // judgement is also a rule breach
+            var projectedBreach = (IPlacingOrdersWithNoIntentToExecuteRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(RampingJudgement ramping)
@@ -116,6 +137,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(ramping);
+
+            // judgement is also a rule breach
+            var projectedBreach = (IRampingRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
         public void Judgement(SpoofingJudgement spoofing)
@@ -127,6 +152,10 @@ namespace Surveillance.Engine.Rules.Judgements
             }
 
             _judgementRepository.Save(spoofing);
+
+            // judgement is also a rule breach
+            var projectedBreach = (ISpoofingRuleBreach)new object();
+            _ruleViolationService.AddRuleViolation(projectedBreach);
         }
     }
 }

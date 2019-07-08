@@ -3,19 +3,27 @@ using Domain.Surveillance.Judgements.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 
 namespace Surveillance.Engine.Rules.Judgements
 {
     public class JudgementService : IJudgementService
     {
         private readonly IJudgementRepository _judgementRepository;
+        private readonly IHighProfitRuleCachedMessageSender _highProfitCachedMessageSender;
+        private readonly IRuleViolationService _ruleViolationService;
+
         private readonly ILogger<JudgementService> _logger;
 
         public JudgementService(
             IJudgementRepository judgementRepository,
+            IHighProfitRuleCachedMessageSender highProfitCachedRuleCachedMessageSender,
+            IRuleViolationService ruleViolationService,
             ILogger<JudgementService> logger)
         {
             _judgementRepository = judgementRepository ?? throw new ArgumentNullException(nameof(judgementRepository));
+            _highProfitCachedMessageSender = highProfitCachedRuleCachedMessageSender ?? throw new ArgumentNullException(nameof(highProfitCachedRuleCachedMessageSender));
+            _ruleViolationService = ruleViolationService ?? throw new ArgumentNullException(nameof(ruleViolationService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -27,8 +35,21 @@ namespace Surveillance.Engine.Rules.Judgements
                 return;
             }
 
-
+            // save judgement
             _judgementRepository.Save(highProfit);
+
+            if (!highProfit.ProjectToAlert)
+                return;
+
+            // judgement is also a rule breach
+            var lol = (IHighProfitRuleBreach)new object();
+
+            _highProfitCachedMessageSender.Send(lol);
+            _highProfitCachedMessageSender.Flush();
+
+
+
+            _ruleViolationService.AddRuleViolation(lol);
         }
 
         public void Judgement(CancelledOrderJudgement cancelledOrder)

@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
@@ -38,6 +39,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
 
+        private IJudgementServiceFactory _judgementServiceFactory;
         private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
@@ -98,6 +100,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            _judgementServiceFactory = A.Fake<IJudgementServiceFactory>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverterService>()),
@@ -123,6 +126,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _universeOrderFilterService,
                 _interdayUniverseMarketCacheFactory,
                 _marketDataCacheStrategyFactory,
+                _judgementServiceFactory,
                 _logger,
                 _tradingLogger);
         }

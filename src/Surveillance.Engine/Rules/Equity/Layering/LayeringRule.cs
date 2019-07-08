@@ -209,6 +209,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var allTradesInPositions = opposingPosition.Get().Concat(tradingPosition.Get()).ToList();
             var allTrades = new TradePosition(allTradesInPositions);
 
+            // wrong should use a judgement
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
                     OrganisationFactorValue,
@@ -222,6 +223,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     hasDailyVolumeBreach,
                     hasWindowVolumeBreach,
                     priceMovementBreach,
+                    "desc",
+                    "title",
                     UniverseDateTime)
                 : null;
         }

@@ -22,6 +22,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             IReadOnlyCollection<ProbabilityOfExecution> probabilityForOrders,
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             ISystemProcessOperationRunRuleContext ctx,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             Window = window;
@@ -39,6 +41,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             SystemOperationId = ctx.Id();
             CorrelationId = ctx.CorrelationId();
             RuleParameters = parameters;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
             UniverseDateTime = universeDateTime;
         }
 
@@ -53,6 +57,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
         public DateTime UniverseDateTime { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
         public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
         public IReadOnlyCollection<ProbabilityOfExecution> ProbabilityForOrders { get; set; }
 

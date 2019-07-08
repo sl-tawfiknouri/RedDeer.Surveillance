@@ -6,6 +6,7 @@ using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
@@ -31,6 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -45,6 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 marketCacheFactory,
                 marketDataCacheFactory,
                 dataRequestSubscriber,
+                judgementService,
                 runMode,
                 logger,
                 tradingHistoryLogger)

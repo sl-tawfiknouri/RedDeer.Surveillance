@@ -94,6 +94,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
                     new TradePosition(new List<Order>()),
                     false,
                     exchangeRateProfitBreakdown,
+                    "desc",
+                    "case",
                     DateTime.UtcNow);
 
             await messageSender.Send(breach);

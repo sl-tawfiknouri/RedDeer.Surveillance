@@ -29,6 +29,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ITradePosition trades,
             bool marketClosureVirtualProfitComponent,
             IExchangeRateProfitBreakdown profitBreakdown,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             FactorValue = factorValue;
@@ -48,6 +50,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             CorrelationId = correlationId;
             RuleParameters = equitiesParameters;
             UniverseDateTime = universeDateTime;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
         }
 
         public IHighProfitsRuleEquitiesParameters EquitiesParameters { get; }
@@ -69,5 +73,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
         public DateTime UniverseDateTime { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
     }
 }

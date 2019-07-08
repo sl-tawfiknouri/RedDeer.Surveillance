@@ -23,6 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleBreachDescription dailyVolumeTradeBreach,
             RuleBreachDescription windowVolumeTradeBreach,
             RuleBreachDescription priceMovementBreach,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             FactorValue = factorValue;
@@ -38,6 +40,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = equitiesParameters;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
             UniverseDateTime = universeDateTime;
         }
 
@@ -57,6 +61,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
         public DateTime UniverseDateTime { get; set; }
     }
 }

@@ -22,6 +22,8 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             FinancialInstrument security,
             WashTradeAveragePositionBreach averagePositionBreach,
             WashTradeClusteringPositionBreach clusteringPositionBreach,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             FactorValue = factorValue;
@@ -39,6 +41,8 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = equitiesParameters;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
             UniverseDateTime = universeDateTime;
         }
 
@@ -58,6 +62,8 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
         public DateTime UniverseDateTime { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
 
 
         public class WashTradeAveragePositionBreach

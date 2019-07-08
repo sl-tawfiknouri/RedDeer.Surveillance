@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Judgements.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -10,6 +11,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
@@ -37,6 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        private readonly IJudgementService _judgementService;
 
         private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
@@ -52,6 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -203,6 +207,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     hasHighProfitPercentage,
                     exchangeRateProfits);
             }
+            
+            _judgementService.Judgement(new HighProfitJudgement("", "", "", true));
         }
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
@@ -303,6 +309,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
 
             var position = new TradePosition(activeTrades.ToList());
+
+            // wrong should use a judgement
             var breach =
                 new HighProfitRuleBreach(
                     OrganisationFactorValue,
@@ -318,6 +326,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     position,
                     MarketClosureRule,
                     breakdown,
+                    "desc",
+                    "title",
                     UniverseDateTime);
 
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);

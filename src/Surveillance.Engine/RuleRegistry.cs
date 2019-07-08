@@ -11,6 +11,8 @@ using RedDeer.Contracts.SurveillanceService.Interfaces;
 using SharedKernel.Contracts.Queues;
 using SharedKernel.Contracts.Queues.Interfaces;
 using StructureMap;
+using Surveillance.DataLayer.Aurora.Judgements;
+using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Analysis;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Factory;
@@ -283,6 +285,9 @@ namespace Surveillance.Engine.Rules
             For<IHighVolumeVenueDecoratorFilter>().Use<HighVolumeVenueDecoratorFilter>();
 
             For<IHighVolumeVenueDecoratorFilterFactory>().Use<HighVolumeVenueDecoratorFilterFactory>();
+            For<IJudgementRepository>().Use<JudgementRepository>();
+            For<IJudgementServiceFactory>().Use<JudgementServiceFactory>();
+            For<IRuleViolationServiceFactory>().Use<RuleViolationServiceFactory>();
         }
     }
 }

@@ -17,5 +17,7 @@ namespace Surveillance.Engine.Rules.Rules.Interfaces
         IFactorValue FactorValue { get; set; }
         IRuleParameter RuleParameters { get; set; }
         DateTime UniverseDateTime { get; set; }
+        string Description { get; set; }
+        string CaseTitle { get; set; }
     }
 }

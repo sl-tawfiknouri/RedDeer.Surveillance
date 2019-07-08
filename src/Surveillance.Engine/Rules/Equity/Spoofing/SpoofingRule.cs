@@ -186,6 +186,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var tradingPosition = new TradePosition(alignedSentiment.Ledger.FullLedger().ToList());
             var opposingPosition = new TradePosition(opposingSentiment.Ledger.FullLedger().ToList());
 
+            // wrong but should be a judgement anyway
             var ruleBreach =
                 new SpoofingRuleBreach(
                     OrganisationFactorValue,
@@ -197,6 +198,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     lastTrade.Instrument, 
                     lastTrade,
                     _equitiesParameters,
+                    "desc",
+                    "title",
                     UniverseDateTime);
 
             var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);

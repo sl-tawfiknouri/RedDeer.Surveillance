@@ -24,6 +24,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             FinancialInstrument security,
             Order mostRecentTrade,
             ISpoofingRuleEquitiesParameters spoofingEquitiesParameters,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             FactorValue = factorValue;
@@ -42,6 +44,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
             RuleParameters = spoofingEquitiesParameters;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
             UniverseDateTime = universeDateTime;
         }
 
@@ -63,5 +67,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
         public DateTime UniverseDateTime { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
     }
 }

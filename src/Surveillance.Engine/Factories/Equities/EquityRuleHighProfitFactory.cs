@@ -6,6 +6,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -26,6 +27,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly IMarketDataCacheStrategyFactory _cacheStrategyFactory;
+        private readonly IJudgementServiceFactory _judgementServiceFactory;
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
@@ -36,6 +38,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory cacheStrategyFactory,
+            IJudgementServiceFactory judgementServiceFactory,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -49,6 +52,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
+            _judgementServiceFactory = judgementServiceFactory ?? throw new ArgumentNullException(nameof(judgementServiceFactory));
         }
 
         public IHighProfitRule Build(
@@ -72,6 +76,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,
+                _judgementServiceFactory.Build(),
                 runMode,
                 _logger,
                 _tradingHistoryLogger);
@@ -87,6 +92,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,
+                _judgementServiceFactory.Build(),
                 runMode,
                 _logger,
                 _tradingHistoryLogger);

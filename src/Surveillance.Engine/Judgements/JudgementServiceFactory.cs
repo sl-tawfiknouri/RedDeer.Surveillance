@@ -10,14 +10,14 @@ namespace Surveillance.Engine.Rules.Judgements
     {
         private readonly IRuleViolationServiceFactory _ruleViolationServiceFactory;
         private readonly IJudgementRepository _judgementRepository;
-        private readonly IHighProfitRuleCachedMessageSender _highProfitRuleCachedMessageSender;
+        private readonly IHighProfitJudgementMapper _highProfitJudgementMapper;
 
         private readonly ILogger<JudgementService> _logger;
 
         public JudgementServiceFactory(
             IRuleViolationServiceFactory ruleViolationServiceFactory,
             IJudgementRepository judgementRepository,
-            IHighProfitRuleCachedMessageSender highProfitRuleCachedMessageSender,
+            IHighProfitJudgementMapper highProfitJudgementMapper,
             ILogger<JudgementService> logger)
         {
             _ruleViolationServiceFactory =
@@ -28,9 +28,9 @@ namespace Surveillance.Engine.Rules.Judgements
                 judgementRepository
                 ?? throw new ArgumentNullException(nameof(judgementRepository));
 
-            _highProfitRuleCachedMessageSender =
-                highProfitRuleCachedMessageSender 
-                ?? throw new ArgumentNullException(nameof(highProfitRuleCachedMessageSender));
+            _highProfitJudgementMapper =
+                highProfitJudgementMapper
+                ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -39,8 +39,8 @@ namespace Surveillance.Engine.Rules.Judgements
         {
             return new JudgementService(
                 _judgementRepository,
-                _highProfitRuleCachedMessageSender,
                 _ruleViolationServiceFactory.Build(),
+                _highProfitJudgementMapper,
                 _logger);
         }
     }

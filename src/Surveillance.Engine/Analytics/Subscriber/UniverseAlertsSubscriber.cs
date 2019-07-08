@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
@@ -245,14 +246,14 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 return;
             }
 
-            var ruleBreach = (IHighProfitRuleBreach) alert.UnderlyingAlert;
-            SetIsBackTest(ruleBreach);
+            //var ruleBreach = (IHighProfitJudgementContext) alert.UnderlyingAlert;
+            //SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"high profits adding alert to high profits message sender");
-            _highProfitMessageSender.Send(ruleBreach);
+            //_logger.LogInformation($"high profits adding alert to high profits message sender");
+            //_highProfitMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"high profits incrementing raw alert count by 1");
-            Analytics.HighProfitAlertsRaw += 1;
+            //_logger.LogInformation($"high profits incrementing raw alert count by 1");
+            //Analytics.HighProfitAlertsRaw += 1;
         }
 
         private void HighProfitsFlush()

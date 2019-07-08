@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
@@ -14,39 +15,39 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     public class HighProfitRuleCachedMessageSender : IHighProfitRuleCachedMessageSender
     {
         private readonly object _lock = new object();
-        private readonly IHighProfitMessageSender _messageSender;
+        private readonly IHighProfitJudgementMapper _judgementMapper;
         private readonly ILogger<HighProfitRuleCachedMessageSender> _logger;
-        private List<IHighProfitRuleBreach> _messages;
+        private List<IHighProfitJudgementContext> _messages;
 
         public HighProfitRuleCachedMessageSender(
-            IHighProfitMessageSender messageSender,
+            IHighProfitJudgementMapper judgementMapper,
             ILogger<HighProfitRuleCachedMessageSender> logger)
         {
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _judgementMapper = judgementMapper ?? throw new ArgumentNullException(nameof(judgementMapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _messages = new List<IHighProfitRuleBreach>();
+            _messages = new List<IHighProfitJudgementContext>();
         }
 
         /// <summary>
         /// Receive and cache rule breach in memory
         /// </summary>
-        public void Send(IHighProfitRuleBreach ruleBreach)
+        public void Send(IHighProfitJudgementContext judgementContext)
         {
-            if (ruleBreach == null)
+            if (judgementContext == null)
             {
                 return;
             }
 
             lock (_lock)
             {
-                _logger.LogInformation($"High Profit Rule Cached Message Sender received rule breach for {ruleBreach.Security.Identifiers}");
+                //_logger.LogInformation($"High Profit Rule Cached Message Sender received rule breach for {judgementContext.Security.Identifiers}");
 
-                var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
-                _messages = _messages.Except(duplicates).ToList();
+                //var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(judgementContext.Trades)).ToList();
+                //_messages = _messages.Except(duplicates).ToList();
 
-                _logger.LogInformation($"High Profit Rule Cached Message Sender deduplicating {_messages.Count()} for {ruleBreach.Security.Identifiers}");
+                //_logger.LogInformation($"High Profit Rule Cached Message Sender deduplicating {_messages.Count()} for {judgementContext.Security.Identifiers}");
 
-                _messages.Add(ruleBreach);
+                //_messages.Add(judgementContext);
             }
         }
 
@@ -58,17 +59,17 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            lock (_lock)
-            {
-                var duplicates =
-                    _messages
-                        .Where(msg => msg != null)
-                        .Where(msg => msg.MarketClosureVirtualProfitComponent)
-                        .Where(msg => msg.Trades.PositionIsSubsetOf(position))
-                        .ToList();
+            //lock (_lock)
+            //{
+            //    var duplicates =
+            //        _messages
+            //            .Where(msg => msg != null)
+            //            .Where(msg => msg.MarketClosureVirtualProfitComponent)
+            //            .Where(msg => msg.Trades.PositionIsSubsetOf(position))
+            //            .ToList();
 
-                _messages = _messages.Except(duplicates).ToList();
-            }
+            //    _messages = _messages.Except(duplicates).ToList();
+           // }
         }
 
         /// <summary>
@@ -80,11 +81,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             {
                 _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
 
-                foreach (var msg in _messages)
-                {
-                    _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {msg?.Security?.Identifiers} rule breaches to message bus");
-                    _messageSender.Send(msg);
-                }
+                //foreach (var msg in _messages)
+                //{
+                //    _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {msg?.Security?.Identifiers} rule breaches to message bus");
+                //    _judgementMapper.Send(msg);
+                //}
 
                 var count = _messages.Count;
                 _messages.RemoveAll(m => true);
@@ -98,7 +99,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             lock (_lock)
             {
                 _logger.LogInformation($"High Profit Rule Cached Message Sender deleting alert messages");
-                _messages = new List<IHighProfitRuleBreach>();
+                _messages = new List<IHighProfitJudgementContext>();
             }
         }
     }

@@ -5,6 +5,7 @@ using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
 using Domain.Surveillance.Judgement.Equity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -82,7 +83,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
-
+            _judgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -193,22 +194,53 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
+            
+            RuleBreachContext ruleBreachContext = null;
 
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
                 Logger.LogInformation($"had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
 
-                WriteAlertToMessageSender(
-                    activeTrades,
+                ruleBreachContext =
+                    new RuleBreachContext(
+                        _equitiesParameters.Windows.BackwardWindowSize + _equitiesParameters.Windows.FutureWindowSize,
+                        new TradePosition(liveTrades),
+                        liveTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
+                        _ruleCtx.IsBackTest(),
+                        _ruleCtx.SystemProcessOperationContext().Id.ToString(),
+                        _ruleCtx.SystemProcessOperationContext().Id.ToString(),
+                        _ruleCtx.CorrelationId(),
+                        OrganisationFactorValue,
+                        _equitiesParameters,
+                        UniverseDateTime);
+            }
+
+            var dailyHighProfit = 
+                (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitDailyAnalysis)
+                ? absoluteProfit.Value.ToString()
+                : string.Empty;
+
+            var windowHighProfit =
+                (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitWindowAnalysis)
+                    ? absoluteProfit.Value.ToString() 
+                    : string.Empty;
+
+            var jsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var judgement = new HighProfitJudgement(dailyHighProfit, windowHighProfit, jsonParameters);
+
+            _judgementService.Judgement(
+                new HighProfitJudgementContext(
+                    judgement, 
+                    hasHighProfitAbsolute || hasHighProfitPercentage, 
+                    ruleBreachContext, 
+                    _equitiesParameters, 
                     absoluteProfit,
+                    absoluteProfit.Currency.Symbol,
                     profitRatio,
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
-                    exchangeRateProfits);
-            }
-            
-            _judgementService.Judgement(new HighProfitJudgement("", "", "", true));
+                    exchangeRateProfits));
         }
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
@@ -296,43 +328,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             // do nothing
         }
 
-        private void WriteAlertToMessageSender(
-            Stack<Order> activeTrades,
-            Money absoluteProfit,
-            decimal profitRatio,
-            bool hasHighProfitAbsolute,
-            bool hasHighProfitPercentage,
-            IExchangeRateProfitBreakdown breakdown)
-        {
-            var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
+        //private void WriteAlertToMessageSender(
+        //    Stack<Order> activeTrades,
+        //    Money absoluteProfit,
+        //    decimal profitRatio,
+        //    bool hasHighProfitAbsolute,
+        //    bool hasHighProfitPercentage,
+        //    IExchangeRateProfitBreakdown breakdown)
+        //{
+        //    var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
 
-            Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
+        //    Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
 
-            var position = new TradePosition(activeTrades.ToList());
+        //    var position = new TradePosition(activeTrades.ToList());
 
-            // wrong should use a judgement
-            var breach =
-                new HighProfitRuleBreach(
-                    OrganisationFactorValue,
-                    _ruleCtx.SystemProcessOperationContext(),
-                    _ruleCtx.CorrelationId(),
-                    _equitiesParameters,
-                    absoluteProfit.Value,
-                    absoluteProfit.Currency.Code,
-                    profitRatio,
-                    security,
-                    hasHighProfitAbsolute,
-                    hasHighProfitPercentage,
-                    position,
-                    MarketClosureRule,
-                    breakdown,
-                    "desc",
-                    "title",
-                    UniverseDateTime);
+        //    // wrong should use a judgement
+ 
 
-            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
-            _alertStream.Add(alertEvent);
-        }
+        //    var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+        //    _alertStream.Add(alertEvent);
+        //}
 
         private bool HasHighProfitPercentage(decimal profitRatio)
         {

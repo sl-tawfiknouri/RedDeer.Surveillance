@@ -1,12 +1,10 @@
 ﻿using System;
 using Domain.Surveillance.Judgement.Equity;
-using Domain.Surveillance.Rules;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
@@ -20,38 +18,37 @@ namespace Surveillance.Engine.Rules.Judgements
     public class JudgementService : IJudgementService
     {
         private readonly IJudgementRepository _judgementRepository;
-        private readonly IHighProfitRuleCachedMessageSender _highProfitCachedMessageSender;
+        private readonly IHighProfitJudgementMapper _highProfitJudgementMapper;
         private readonly IRuleViolationService _ruleViolationService;
 
         private readonly ILogger<JudgementService> _logger;
 
         public JudgementService(
             IJudgementRepository judgementRepository,
-            IHighProfitRuleCachedMessageSender highProfitCachedRuleCachedMessageSender,
             IRuleViolationService ruleViolationService,
+            IHighProfitJudgementMapper highProfitJudgementMapper,
             ILogger<JudgementService> logger)
         {
             _judgementRepository = judgementRepository ?? throw new ArgumentNullException(nameof(judgementRepository));
-            _highProfitCachedMessageSender = highProfitCachedRuleCachedMessageSender ?? throw new ArgumentNullException(nameof(highProfitCachedRuleCachedMessageSender));
+            _highProfitJudgementMapper = highProfitJudgementMapper ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
             _ruleViolationService = ruleViolationService ?? throw new ArgumentNullException(nameof(ruleViolationService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Judgement(HighProfitJudgement highProfit)
+        public void Judgement(IHighProfitJudgementContext judgementContext)
         {
-            if (highProfit == null)
+            if (judgementContext == null)
             {
                 _logger?.LogError($"High Profit Judgement was null");
                 return;
             }
 
-            // save judgement
-            _judgementRepository.Save(highProfit);
+            _judgementRepository.Save(judgementContext.Judgement);
 
-            if (!highProfit.ProjectToAlert)
+            if (!judgementContext.ProjectToAlert)
                 return;
 
-            var projectedBreach = (IHighProfitRuleBreach) new object();
+            var projectedBreach = _highProfitJudgementMapper.Map(judgementContext);
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 

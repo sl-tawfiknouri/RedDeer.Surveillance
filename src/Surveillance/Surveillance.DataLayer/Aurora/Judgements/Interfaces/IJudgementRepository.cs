@@ -1,4 +1,4 @@
-﻿using Domain.Surveillance.Judgements.Equity;
+﻿using Domain.Surveillance.Judgement.Equity;
 
 namespace Surveillance.DataLayer.Aurora.Judgements.Interfaces
 {

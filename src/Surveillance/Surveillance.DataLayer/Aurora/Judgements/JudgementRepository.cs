@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Surveillance.Judgements.Equity;
+using Domain.Surveillance.Judgement.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;

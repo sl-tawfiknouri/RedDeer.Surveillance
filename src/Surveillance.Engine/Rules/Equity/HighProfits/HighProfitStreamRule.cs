@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Judgements.Equity;
+using Domain.Surveillance.Judgement.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;

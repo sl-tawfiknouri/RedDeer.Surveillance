@@ -1,4 +1,4 @@
-﻿namespace Domain.Surveillance.Judgements.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
     public class RampingJudgement
     {

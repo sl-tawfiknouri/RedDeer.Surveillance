@@ -1,9 +1,12 @@
 ﻿using System;
-using Domain.Surveillance.Judgements.Equity;
+using Domain.Surveillance.Judgement.Equity;
+using Domain.Surveillance.Rules;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
@@ -48,8 +51,7 @@ namespace Surveillance.Engine.Rules.Judgements
             if (!highProfit.ProjectToAlert)
                 return;
 
-            // judgement is also a rule breach
-            var projectedBreach = (IHighProfitRuleBreach)new object();
+            var projectedBreach = (IHighProfitRuleBreach) new object();
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 

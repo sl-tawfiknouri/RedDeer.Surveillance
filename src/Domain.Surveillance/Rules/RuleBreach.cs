@@ -5,6 +5,11 @@ namespace Domain.Surveillance.Rules
 {
     public class RuleBreach
     {
+        public RuleBreach()
+        {
+            
+        }
+
         public RuleBreach(
             int? id,
             string ruleId,

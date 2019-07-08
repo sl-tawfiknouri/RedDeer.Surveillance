@@ -124,6 +124,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             if (!liveTrades.Any())
             {
+                var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+                var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, false, true);
+
+                _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
                 return;
             }
 
@@ -153,6 +157,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             if (revenueResponse.HadMissingMarketData)
             {
+                var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+                var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, true, false);
+
+                _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+
                 _hasMissingData = true;
                 return;
             }
@@ -163,6 +172,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             {
                 Logger.LogInformation($"rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
 
+                var noRevenueDailyHighProfit =
+                    (_equitiesParameters.PerformHighProfitDailyAnalysis)
+                        ? (0-cost.Value.Value).ToString()
+                        : string.Empty;
+
+                var noRevenueWindowHighProfit =
+                    (_equitiesParameters.PerformHighProfitWindowAnalysis)
+                        ? (0-cost.Value.Value).ToString()
+                        : string.Empty;
+
+                var noRevenueJsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
+                var noRevenueJudgement =
+                    new HighProfitJudgement(
+                        noRevenueDailyHighProfit,
+                        noRevenueWindowHighProfit, 
+                        noRevenueJsonParameters,
+                        false, 
+                        false);
+
+                _judgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
                 return;
             }
 
@@ -227,7 +256,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     : string.Empty;
 
             var jsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
-            var judgement = new HighProfitJudgement(dailyHighProfit, windowHighProfit, jsonParameters);
+            var judgement = new HighProfitJudgement(dailyHighProfit, windowHighProfit, jsonParameters, false, false);
 
             _judgementService.Judgement(
                 new HighProfitJudgementContext(

@@ -11,6 +11,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     {
         public HighProfitJudgementContext(
             HighProfitJudgement judgement,
+            bool projectToAlert)
+        {
+            Judgement = judgement;
+            ProjectToAlert = projectToAlert;
+        }
+
+        public HighProfitJudgementContext(
+            HighProfitJudgement judgement,
             bool projectToAlert,
             IRuleBreachContext ruleBreachContext,
             IHighProfitsRuleEquitiesParameters equitiesParameters,

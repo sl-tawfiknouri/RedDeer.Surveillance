@@ -24,6 +24,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates;
@@ -41,6 +42,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
         private JudgementService _judgementService;
+
+        private IJudgementRepository _judgementRepository;
+        private IRuleViolationService _ruleViolationService;
 
         private IJudgementServiceFactory _judgementServiceFactory;
         private ICurrencyConverterService _currencyConverterService;
@@ -105,6 +109,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _judgementServiceFactory = A.Fake<IJudgementServiceFactory>();
 
+            _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+
             _costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverterService>()),
                 new NullLogger<CostCalculator>(),
@@ -129,10 +136,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _logger,
                 _tradingLogger);
 
+            _judgementRepository = A.Fake<IJudgementRepository>();
+            _ruleViolationService = A.Fake<IRuleViolationService>();
+
             _judgementService =
                 new JudgementService(
-                    A.Fake<IJudgementRepository>(),
-                    A.Fake<IRuleViolationService>(),
+                    _judgementRepository,
+                    _ruleViolationService,
                     new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
                     new NullLogger<JudgementService>());
 
@@ -189,7 +199,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         [Then(@"I will have (.*) high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent))).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(_ => _ == alertCount);
         }
     }
 }

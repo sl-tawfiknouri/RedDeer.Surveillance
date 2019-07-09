@@ -156,5 +156,10 @@ namespace Surveillance.Engine.Rules.Judgements
             var projectedBreach = (ISpoofingRuleBreach)new object();
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
+
+        public void PassJudgement()
+        {
+            _ruleViolationService.ProcessRuleViolationCache();
+        }
     }
 }

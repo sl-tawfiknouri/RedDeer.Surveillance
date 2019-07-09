@@ -13,5 +13,6 @@ namespace Surveillance.Engine.Rules.Judgements.Interfaces
         void Judgement(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders);
         void Judgement(RampingJudgement ramping);
         void Judgement(SpoofingJudgement spoofing);
+        void PassJudgement();
     }
 }

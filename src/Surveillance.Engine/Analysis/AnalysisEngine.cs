@@ -160,6 +160,7 @@ namespace Surveillance.Engine.Rules.Analysis
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
             dataRequestSubscriber.DispatchIfSubmitRequest();
+            judgementService.PassJudgement();
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
 

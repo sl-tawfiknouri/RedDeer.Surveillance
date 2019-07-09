@@ -10,6 +10,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
@@ -52,6 +53,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Surveillance.Scheduling.Rules.HighProfits) ?? true)
@@ -68,13 +70,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
 
-            return SubscribeToUniverse(execution, opCtx, dataRequestSubscriber, highProfitParameters);
+            return SubscribeToUniverse(execution, opCtx, dataRequestSubscriber, judgementService, highProfitParameters);
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> highProfitParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -84,7 +87,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var cloneableRule = SubscribeParameters(execution, opCtx, dataRequestSubscriber, param);
+                    var cloneableRule = SubscribeParameters(execution, opCtx, dataRequestSubscriber, judgementService, param);
                     subscriptions.Add(cloneableRule);
                 }
             }
@@ -102,6 +105,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             IHighProfitsRuleEquitiesParameters param)
         {
             var ruleCtxStream = opCtx
@@ -128,7 +132,15 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.CorrelationId,
                     execution.IsForceRerun);
 
-            var highProfitsRule = _equityRuleHighProfitFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, dataRequestSubscriber, execution);
+            var highProfitsRule = 
+                _equityRuleHighProfitFactory.Build(
+                    param,
+                    ruleCtxStream,
+                    ruleCtxMarketClosure,
+                    dataRequestSubscriber,
+                    judgementService,
+                    execution);
+
             var highProfitsRuleOrgFactor =
                 _brokerServiceFactory.Build(
                     highProfitsRule,

@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Rules.Cancellation;
@@ -32,6 +33,7 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
         private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
         private readonly IUniverseAlertStreamFactory _alertStreamFactory;
+        private readonly IJudgementServiceFactory _judgementServiceFactory;
         private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private readonly IUniverseDataRequestsSubscriberFactory _dataRequestSubscriberFactory;
         private readonly IUniversePercentageCompletionLogger _universeCompletionLogger;
@@ -54,6 +56,7 @@ namespace Surveillance.Engine.Rules.Analysis
             IUniverseRuleSubscriber ruleSubscriber,
             IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
             IUniverseAlertStreamFactory alertStreamFactory,
+            IJudgementServiceFactory judgementServiceFactory,
             IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
             IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory,
             IUniversePercentageCompletionLogger universeCompletionLogger,
@@ -75,6 +78,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _analyticsSubscriber = analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
             _ruleAnalyticsRepository = ruleAnalyticsRepository ?? throw new ArgumentNullException(nameof(ruleAnalyticsRepository));
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
+            _judgementServiceFactory = judgementServiceFactory ?? throw new ArgumentNullException(nameof(judgementServiceFactory));
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
             _queueRuleUpdatePublisher = queueRuleUpdatePublisher ?? throw new ArgumentNullException(nameof(queueRuleUpdatePublisher));
@@ -118,10 +122,12 @@ namespace Surveillance.Engine.Rules.Analysis
 
             var dataRequestSubscriber = _dataRequestSubscriberFactory.Build(opCtx);
             var universeAlertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
+            var judgementService = _judgementServiceFactory.Build();
             var alertStream = _alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, dataRequestSubscriber, opCtx, ruleParameters);
+
+            var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, dataRequestSubscriber, judgementService, opCtx, ruleParameters);
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
             RuleRunUpdateMessageSend(execution, ids);
 

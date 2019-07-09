@@ -90,7 +90,8 @@ namespace Surveillance.Engine.Rules.Judgements
                     if (ruleViolation == null)
                         continue;
 
-                    if (ruleViolation?.Trades?.Get() == null)
+                    if (ruleViolation?.Trades?.Get() == null 
+                        || (!ruleViolation?.Trades.Get().Any() ?? true))
                     {
                         _logger.LogInformation($"{ruleViolation.RuleParameterId} had null trades. Returning.");
                         return;

@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private IMarketDataCacheStrategyFactory _cacheStrategyFactory;
-        private IJudgementServiceFactory _judgementServiceFactory;
+        private IJudgementService _judgementService;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
        
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _cacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
-            _judgementServiceFactory = A.Fake<IJudgementServiceFactory>();
+            _judgementService = A.Fake<IJudgementService>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
 
@@ -70,7 +70,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -87,7 +86,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -104,7 +102,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -121,7 +118,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     null,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -138,7 +134,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     null,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -155,7 +150,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     null,
-                    _judgementServiceFactory,
                     _logger,
                     _tradingHistoryLogger));
         }
@@ -172,7 +166,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     null,
                     _tradingHistoryLogger));
         }
@@ -189,7 +182,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
-                    _judgementServiceFactory,
                     _logger,
                     null));
         }
@@ -205,11 +197,17 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _orderFilterService,
                 _marketCacheFactory,
                 _cacheStrategyFactory,
-                _judgementServiceFactory,
                 _logger,
                 _tradingHistoryLogger);
 
-            var result = factory.Build(_equitiesParameters, _ruleCtxStream, _ruleCtxMarket, _dataRequestSubscriber, _scheduledExecution);
+            var result =
+                factory.Build(
+                    _equitiesParameters,
+                    _ruleCtxStream, 
+                    _ruleCtxMarket,
+                    _dataRequestSubscriber,
+                    _judgementService,
+                    _scheduledExecution);
 
             Assert.IsNotNull(result);
         }

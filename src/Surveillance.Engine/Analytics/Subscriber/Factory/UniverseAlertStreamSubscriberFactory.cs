@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
@@ -17,7 +16,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
     public class UniverseAlertStreamSubscriberFactory : IUniverseAlertStreamSubscriberFactory
     {
         private readonly ICancelledOrderRuleCachedMessageSender _cancelledOrderMessageSender;
-        private readonly IHighProfitRuleCachedMessageSender _highProfitMessageSender;
         private readonly IHighVolumeRuleCachedMessageSender _highVolumeMessageSender;
         private readonly ILayeringCachedMessageSender _layeringCachedMessageSender;
         private readonly IMarkingTheCloseMessageSender _markingTheCloseMessageSender;
@@ -30,7 +28,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
 
         public UniverseAlertStreamSubscriberFactory(
             ICancelledOrderRuleCachedMessageSender cancelledOrderMessageSender,
-            IHighProfitRuleCachedMessageSender highProfitMessageSender,
             IHighVolumeRuleCachedMessageSender highVolumeMessageSender,
             ILayeringCachedMessageSender layeringMessageSender,
             IMarkingTheCloseMessageSender markingTheCloseMessageSender,
@@ -44,10 +41,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
             _cancelledOrderMessageSender =
                 cancelledOrderMessageSender
                 ?? throw new ArgumentNullException(nameof(cancelledOrderMessageSender));
-
-            _highProfitMessageSender =
-                highProfitMessageSender
-                ?? throw new ArgumentNullException(nameof(highProfitMessageSender));
 
             _highVolumeMessageSender =
                 highVolumeMessageSender
@@ -90,7 +83,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
                 opCtxId,
                 isBackTest,
                 _cancelledOrderMessageSender,
-                _highProfitMessageSender,
                 _highVolumeMessageSender,
                 _layeringCachedMessageSender,
                 _markingTheCloseMessageSender,

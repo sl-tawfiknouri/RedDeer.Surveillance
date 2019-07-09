@@ -85,6 +85,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (securitiesBrought > securitiesSold)
             {
                 Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded securities sold {securitiesSold}. Proceeding to evaluate market closure rule.");
+
                 return true;
             }
 
@@ -96,6 +97,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             }
 
             Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
+
+            SetLiveTradesJudgement();
 
             return false;
         }

@@ -33,6 +33,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         protected readonly IUniverseAlertStream _alertStream;
+        protected readonly IJudgementService _judgementService;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -40,7 +41,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private readonly IJudgementService _judgementService;
 
         private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
@@ -294,7 +294,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
         }
 
-        private void SetLiveTradesJudgement()
+        protected void SetLiveTradesJudgement()
         {
             var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
             var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, false, true);

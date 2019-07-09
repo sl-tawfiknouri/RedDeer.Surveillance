@@ -124,10 +124,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             if (!liveTrades.Any())
             {
-                var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
-                var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, false, true);
+                SetLiveTradesJudgement();
 
-                _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
                 return;
             }
 
@@ -157,54 +155,29 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             if (revenueResponse.HadMissingMarketData)
             {
-                var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
-                var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, true, false);
-
-                _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
-
+                SetMissingMarketDataJudgement();
                 _hasMissingData = true;
+
                 return;
             }
 
             var revenue = revenueResponse.Money;
 
-            if (revenue == null)
+            if (revenue == null
+                || revenue.Value.Value <= 0)
             {
                 Logger.LogInformation($"rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
 
-                var noRevenueDailyHighProfit =
-                    (_equitiesParameters.PerformHighProfitDailyAnalysis)
-                        ? (0-cost.Value.Value).ToString()
-                        : string.Empty;
-
-                var noRevenueWindowHighProfit =
-                    (_equitiesParameters.PerformHighProfitWindowAnalysis)
-                        ? (0-cost.Value.Value).ToString()
-                        : string.Empty;
-
-                var noRevenueJsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
-                var noRevenueJudgement =
-                    new HighProfitJudgement(
-                        noRevenueDailyHighProfit,
-                        noRevenueWindowHighProfit, 
-                        noRevenueJsonParameters,
-                        false, 
-                        false);
-
-                _judgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
+                NoRevenueOrCostJudgement(cost);
                 return;
             }
 
-            if (cost == null)
-            {
-                Logger.LogError($"something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
-                return;
-            }
-
-            if (revenue.Value.Value <= 0
+            if (cost == null
                 || cost.Value.Value <= 0)
             {
-                Logger.LogInformation($"had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
+                Logger.LogError($"something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
+
+                NoRevenueOrCostJudgement(revenue);
                 return;
             }
 
@@ -223,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
-            
+
             RuleBreachContext ruleBreachContext = null;
 
             if (hasHighProfitAbsolute
@@ -245,14 +218,31 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                         UniverseDateTime);
             }
 
-            var dailyHighProfit = 
+            SetJudgementForFullAnalysis(
+                absoluteProfit,
+                profitRatio,
+                hasHighProfitAbsolute,
+                hasHighProfitPercentage,
+                exchangeRateProfits,
+                ruleBreachContext);
+        }
+
+        private void SetJudgementForFullAnalysis(
+            Money absoluteProfit,
+            decimal profitRatio,
+            bool hasHighProfitAbsolute,
+            bool hasHighProfitPercentage,
+            IExchangeRateProfitBreakdown exchangeRateProfits,
+            RuleBreachContext ruleBreachContext)
+        {
+            var dailyHighProfit =
                 (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitDailyAnalysis)
                 ? absoluteProfit.Value.ToString()
                 : string.Empty;
 
             var windowHighProfit =
                 (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitWindowAnalysis)
-                    ? absoluteProfit.Value.ToString() 
+                    ? absoluteProfit.Value.ToString()
                     : string.Empty;
 
             var jsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
@@ -260,10 +250,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             _judgementService.Judgement(
                 new HighProfitJudgementContext(
-                    judgement, 
-                    hasHighProfitAbsolute || hasHighProfitPercentage, 
-                    ruleBreachContext, 
-                    _equitiesParameters, 
+                    judgement,
+                    hasHighProfitAbsolute || hasHighProfitPercentage,
+                    ruleBreachContext,
+                    _equitiesParameters,
                     absoluteProfit,
                     absoluteProfit.Currency.Symbol,
                     profitRatio,
@@ -272,6 +262,46 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     exchangeRateProfits));
         }
 
+        private void NoRevenueOrCostJudgement(Money? costOrRevenue)
+        {
+            var noRevenueDailyHighProfit =
+                (_equitiesParameters.PerformHighProfitDailyAnalysis && costOrRevenue != null)
+                    ? (0 - costOrRevenue.Value.Value).ToString()
+                    : string.Empty;
+
+            var noRevenueWindowHighProfit =
+                (_equitiesParameters.PerformHighProfitWindowAnalysis && costOrRevenue != null)
+                    ? (0 - costOrRevenue.Value.Value).ToString()
+                    : string.Empty;
+
+            var noRevenueJsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noRevenueJudgement =
+                new HighProfitJudgement(
+                    noRevenueDailyHighProfit,
+                    noRevenueWindowHighProfit,
+                    noRevenueJsonParameters,
+                    false,
+                    false);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
+        }
+
+        private void SetMissingMarketDataJudgement()
+        {
+            var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, true, false);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+        }
+
+        private void SetLiveTradesJudgement()
+        {
+            var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noTradesJudgement = new HighProfitJudgement(string.Empty, string.Empty, noTradesParameters, false, true);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+        }
+        
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
             var currency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);

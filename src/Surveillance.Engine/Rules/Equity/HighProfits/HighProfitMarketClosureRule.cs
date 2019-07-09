@@ -2,7 +2,6 @@
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -24,7 +23,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public HighProfitMarketClosureRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -39,7 +37,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             : base(
                 equitiesParameters, 
                 ruleCtx,
-                alertStream,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
@@ -89,14 +86,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return true;
             }
 
-            if (_equitiesParameters.PerformHighProfitWindowAnalysis)
-            {
-                var position = new TradePosition(activeWindow.ToList());
-                var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
-                _alertStream.Add(message);
-            }
-
-            Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
+            Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equaled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
             SetLiveTradesJudgement();
 

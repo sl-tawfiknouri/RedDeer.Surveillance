@@ -2,7 +2,6 @@
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -59,7 +58,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
-            IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ScheduledExecution scheduledExecution)
         {
@@ -68,7 +66,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             var stream = new HighProfitStreamRule(
                 equitiesParameters,
                 ruleCtxStream,
-                alertStream,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
@@ -84,7 +81,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             var marketClosure = new HighProfitMarketClosureRule(
                 equitiesParameters,
                 ruleCtxMarket,
-                alertStream,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,

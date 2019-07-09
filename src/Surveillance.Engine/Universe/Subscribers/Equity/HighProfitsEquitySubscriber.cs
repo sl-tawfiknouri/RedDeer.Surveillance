@@ -68,13 +68,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
+            return SubscribeToUniverse(execution, opCtx, dataRequestSubscriber, highProfitParameters);
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> highProfitParameters)
         {
@@ -85,7 +84,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, dataRequestSubscriber, param);
+                    var cloneableRule = SubscribeParameters(execution, opCtx, dataRequestSubscriber, param);
                     subscriptions.Add(cloneableRule);
                 }
             }
@@ -102,7 +101,6 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule SubscribeParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitsRuleEquitiesParameters param)
         {
@@ -130,7 +128,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.CorrelationId,
                     execution.IsForceRerun);
 
-            var highProfitsRule = _equityRuleHighProfitFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, dataRequestSubscriber, execution);
+            var highProfitsRule = _equityRuleHighProfitFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, dataRequestSubscriber, execution);
             var highProfitsRuleOrgFactor =
                 _brokerServiceFactory.Build(
                     highProfitsRule,

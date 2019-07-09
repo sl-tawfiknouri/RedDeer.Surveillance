@@ -32,7 +32,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected readonly ILogger<HighProfitsRule> Logger;
         protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        protected readonly IUniverseAlertStream _alertStream;
         protected readonly IJudgementService _judgementService;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
@@ -48,7 +47,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public HighProfitStreamRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -74,7 +72,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         {
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
             _marketDataCacheFactory = marketDataCacheFactory ?? throw new ArgumentNullException(nameof(marketDataCacheFactory));
@@ -463,11 +460,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 Logger.LogInformation($"Deleting alerts off the message sender");
-                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
-                _alertStream.Add(alert);
-
                 _dataRequestSubscriber.SubmitRequest();
-
                 _ruleCtx?.EndEvent();
             }
             else

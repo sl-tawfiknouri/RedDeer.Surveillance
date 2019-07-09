@@ -169,7 +169,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                     _highProfitRuleEquitiesParameters,
                     _ruleCtx,
                     _ruleCtx,
-                    _alertStream,
                     _dataRequestSubscriber,
                     scheduledExecution);
 

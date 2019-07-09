@@ -1,12 +1,10 @@
 ﻿using System;
 using Domain.Surveillance.Scheduling;
-using Domain.Surveillance.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -18,17 +16,13 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.I
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
     [TestFixture]
     public class HighProfitRuleFactoryTests
     {
-        private IUniversePercentageCompletionLoggerFactory _percentageCompleteFactory;
         private IUniverseEquityOrderFilterService _orderFilterService;
-        private IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
@@ -41,16 +35,13 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private IHighProfitsRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtxStream;
         private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
-        private IUniverseAlertStream _alertStream;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ScheduledExecution _scheduledExecution;
 
         [SetUp]
         public void Setup()
         {
-            _percentageCompleteFactory = A.Fake<IUniversePercentageCompletionLoggerFactory>();
             _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
             _costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             _revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
@@ -63,7 +54,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
             _ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();
             _ruleCtxMarket = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _scheduledExecution = new ScheduledExecution();
         }
@@ -219,7 +209,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _logger,
                 _tradingHistoryLogger);
 
-            var result = factory.Build(_equitiesParameters, _ruleCtxStream, _ruleCtxMarket, _alertStream, _dataRequestSubscriber, _scheduledExecution);
+            var result = factory.Build(_equitiesParameters, _ruleCtxStream, _ruleCtxMarket, _dataRequestSubscriber, _scheduledExecution);
 
             Assert.IsNotNull(result);
         }

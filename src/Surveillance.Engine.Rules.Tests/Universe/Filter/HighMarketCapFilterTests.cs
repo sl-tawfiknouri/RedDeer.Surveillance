@@ -199,7 +199,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         }
 
         [TestCase(150, null, null, false)]
-        [TestCase(150, 100, 200, false)]
+        [TestCase(150, 100, 200, true)]
         [TestCase(50, 100, 200, true)]
         [TestCase(250, 100, 200, true)]
         public void Filter_WhenUniverseEventAndMarketCapFilter_MustFilterCorrectly(decimal? marketCap, decimal? min, decimal? max, bool mustBeFiltered)

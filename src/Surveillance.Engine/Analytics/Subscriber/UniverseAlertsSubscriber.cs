@@ -35,7 +35,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
-        private bool _hasHighProfitDeleteRequest;
 
         public UniverseAlertsSubscriber(
             int opCtxId,

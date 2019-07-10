@@ -227,11 +227,13 @@ namespace Surveillance.DataLayer.Aurora.Market
             WHERE NOT EXISTS(
 	            SELECT 1
 	            FROM FinancialInstruments
-	            WHERE Sedol = @Sedol
-                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey))
+	            WHERE (Sedol = @Sedol AND Sedol <> '' AND Sedol Is Not Null)
+                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null))
             LIMIT 1;
 
-            SELECT Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey);";
+            SELECT Id FROM FinancialInstruments WHERE Sedol = @sedol AND Sedol <> '' AND Sedol IS NOT NULL
+            UNION
+            SELECT Id FROM FinancialInstruments WHERE (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin IS NOT NULL);";
 
         private const string SecurityMatchOrInsertSqlv2 = @"
             INSERT INTO FinancialInstruments(
@@ -274,7 +276,10 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey))
             LIMIT 1;
 
-            SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey) LIMIT 1;
+            (SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol AND Sedol <> '' AND Sedol Is Not Null
+            UNION
+            SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null))
+            LIMIT 1;
 
              INSERT IGNORE INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded);
 

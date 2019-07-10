@@ -1,10 +1,11 @@
-﻿using Domain.Surveillance.Judgement.Equity;
+﻿using System.Threading.Tasks;
+using Domain.Surveillance.Judgement.Equity;
 
 namespace Surveillance.DataLayer.Aurora.Judgements.Interfaces
 {
     public interface IJudgementRepository
     {
-        void Save(HighProfitJudgement highProfit);
+        Task Save(HighProfitJudgement highProfit);
         void Save(CancelledOrderJudgement cancelledOrder);
         void Save(HighVolumeJudgement highVolume);
         void Save(LayeringJudgement layering);

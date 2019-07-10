@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Dapper;
 using Domain.Surveillance.Judgement.Equity;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -11,6 +13,9 @@ namespace Surveillance.DataLayer.Aurora.Judgements
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<JudgementRepository> _logger;
 
+        private const string SaveHighProfit =
+            @"INSERT INTO JudgementEquityHighProfitRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, DailyHighProfit, WindowHighProfit, NoAnalysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @DailyHighProfit, @WindowHighProfit, @NoAnalysis);";
+
         public JudgementRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<JudgementRepository> logger)
@@ -19,15 +24,32 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Save(HighProfitJudgement highProfit)
+        public async Task Save(HighProfitJudgement highProfit)
         {
+            _logger?.LogInformation($"High profit judgement saving for rule run {highProfit.RuleRunId}");
+
             if (highProfit == null)
             {
-                _logger?.LogError($"High Profit Judgement was null");
+                _logger?.LogError($"High profit judgement was null");
                 return;
             }
-        }
 
+            var dto = new HighProfitJudgementDto(highProfit);
+
+            try
+            {
+                using (var dbConn = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(SaveHighProfit, dto))
+                {
+                    await conn;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
+            }
+        }
+        
         public void Save(CancelledOrderJudgement cancelledOrder)
         {
             if (cancelledOrder == null)
@@ -91,7 +113,40 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
+        private class HighProfitJudgementDto
+        {
+            public HighProfitJudgementDto()
+            {
+                // leave for dapper
+            }
 
+            public HighProfitJudgementDto(HighProfitJudgement judgement)
+            {
+                if (judgement == null)
+                {
+                    return;
+                }
 
+                RuleRunId = judgement.RuleRunId;
+                RuleRunCorrelationId = judgement.RuleRunCorrelationId;
+                OrderId = judgement.OrderId;
+                ClientOrderId = judgement.ClientOrderId;
+
+                DailyHighProfit = judgement.DailyHighProfit;
+                WindowHighProfit = judgement.WindowHighProfit;
+                Parameter = judgement.Parameters;
+                NoAnalysis = judgement.NoAnalysis;
+            }
+
+            public string RuleRunId { get; set; }
+            public string RuleRunCorrelationId { get; set; }
+            public string OrderId { get; set; }
+            public string ClientOrderId { get; set; }
+
+            public decimal? DailyHighProfit { get; set; }
+            public decimal? WindowHighProfit { get; set; }
+            public string Parameter { get; set; }
+            public bool NoAnalysis { get; set; }
+        }
     }
 }

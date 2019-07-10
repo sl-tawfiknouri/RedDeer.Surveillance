@@ -298,7 +298,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
             on broker.Id = ord.BrokerId
-            WHERE Live = 1 AND Autoscheduled = 0
+            WHERE ord.Live = 1 AND ord.Autoscheduled = 0
 
             UNION
 
@@ -473,7 +473,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             on mark.Id = ord.MarketId
             LEFT OUTER JOIN Brokers as broker
             on broker.Id = ord.BrokerId
-            WHERE Live = 0 AND CreatedDate < @StaleDate;";
+            WHERE ord.Live = 0 AND ord.CreatedDate < @StaleDate;";
 
         private const string GetOrderSql = @"
             SELECT

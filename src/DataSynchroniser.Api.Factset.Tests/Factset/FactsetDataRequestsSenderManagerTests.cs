@@ -8,20 +8,20 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using SharedKernel.Contracts.Markets;
-using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.FactsetMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Tests.Factset
 {
     [TestFixture]
     public class FactsetDataRequestsSenderManagerTests
     {
-        private IFactsetDailyBarApiRepository _dailyBarRepository;
+        private IFactsetDailyBarApi _dailyBarRepository;
         private ILogger<FactsetDataRequestsApiManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _dailyBarRepository = A.Fake<IFactsetDailyBarApiRepository>();
+            _dailyBarRepository = A.Fake<IFactsetDailyBarApi>();
             _logger = new NullLogger<FactsetDataRequestsApiManager>();
         }
 

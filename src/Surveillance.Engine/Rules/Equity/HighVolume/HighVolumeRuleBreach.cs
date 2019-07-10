@@ -3,6 +3,7 @@ using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -22,7 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
-            decimal totalOrdersTradedInWindow)
+            decimal totalOrdersTradedInWindow,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
 
@@ -39,6 +41,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -58,6 +62,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
 
         public class BreachDetails
         {

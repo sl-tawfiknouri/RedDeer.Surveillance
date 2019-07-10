@@ -6,18 +6,6 @@ using Infrastructure.Network.HttpClient.Interfaces;
 using PollyFacade.Policies;
 using PollyFacade.Policies.Interfaces;
 using StructureMap;
-using Surveillance.DataLayer.Api.BmllMarketData;
-using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
-using Surveillance.DataLayer.Api.Enrichment;
-using Surveillance.DataLayer.Api.Enrichment.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.DataLayer.Api.FactsetMarketData;
-using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
-using Surveillance.DataLayer.Api.RuleParameter;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
@@ -35,6 +23,8 @@ using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Infrastructure.Network.HttpClient;
 using Surveillance.DataLayer.Aurora.Scheduler;
 using Surveillance.DataLayer.Aurora.Scheduler.Interfaces;
+using Surveillance.DataLayer.Aurora.Tuning;
+using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
 
 namespace Surveillance.DataLayer
 {
@@ -44,12 +34,6 @@ namespace Surveillance.DataLayer
         {
             For<IAwsSnsClient>().Use<AwsSnsClient>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
-            For<IMarketOpenCloseApiRepository>().Use<MarketOpenCloseApiRepository>();
-            For<IMarketOpenCloseApiCachingDecoratorRepository>().Use<MarketOpenCloseApiCachingDecoratorRepository>();
-            For<IRuleParameterApiRepository>().Use<RuleParameterApiRepository>();
-            For<IExchangeRateApiRepository>().Use<ExchangeRateApiRepository>();
-            For<IExchangeRateApiCachingDecoratorRepository>().Use<ExchangeRateApiCachingDecoratorRepository>();
-            For<IEnrichmentApiRepository>().Use<EnrichmentApiRepository>();
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
             For<IOrdersRepository>().Use<OrdersRepository>().Singleton();
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
@@ -58,10 +42,8 @@ namespace Surveillance.DataLayer
             For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
             For<IRuleRunDataRequestRepository>().Use<RuleRunDataRequestRepository>();
             For<IStubRuleRunDataRequestRepository>().Use<StubRuleRunDataRequestRepository>();
-            For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
             For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
             For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
-            For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
             For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
@@ -70,6 +52,8 @@ namespace Surveillance.DataLayer
             For<ITaskSchedulerRepository>().Use<TaskSchedulerRepository>();
             For<IPolicyFactory>().Use<PolicyFactory>();
             For<IHttpClientFactory>().Use<HttpClientFactory>();
+            For<ITuningRepository>().Use<TuningRepository>();
+            For<IOrderBrokerRepository>().Use<OrderBrokerRepository>();
         }
     }
 }

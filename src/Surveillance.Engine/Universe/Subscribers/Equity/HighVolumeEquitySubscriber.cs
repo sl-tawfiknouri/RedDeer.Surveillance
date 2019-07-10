@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class HighVolumeEquitySubscriber : IHighVolumeEquitySubscriber
     {
         private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<HighVolumeEquitySubscriber> _logger;
 
         public HighVolumeEquitySubscriber(
             IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeEquitySubscriber> logger)
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
+            var highVolumeParameters = _ruleParameterMapper.Map(execution, dtos);
 
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
 
@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors);
+            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return decoratedHighVolumeRule;
         }
@@ -134,9 +134,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             IHighVolumeRuleEquitiesParameters param,
-            IUniverseRule highVolume)
+            IUniverseRule highVolume,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -149,7 +152,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "High Volume Equity",
+                    dataRequestSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highVolume);
 
                 return filteredUniverse;

@@ -6,20 +6,20 @@ using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.BmllMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsGetTimeBarsTests
     {
-        private IBmllTimeBarApiRepository _timeBarRepository;
+        private IBmllTimeBarApi _timeBarRepository;
         private ILogger<BmllDataRequestsGetTimeBars> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _timeBarRepository = A.Fake<IBmllTimeBarApiRepository>();
+            _timeBarRepository = A.Fake<IBmllTimeBarApi>();
             _logger = new NullLogger<BmllDataRequestsGetTimeBars>();
         }
 

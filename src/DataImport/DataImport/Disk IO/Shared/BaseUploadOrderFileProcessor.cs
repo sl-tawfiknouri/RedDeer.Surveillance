@@ -64,6 +64,7 @@ namespace DataImport.Disk_IO.Shared
                 OrderCancelledDate = PreProcess(rawRecord["OrderCancelledDate"]),
                 OrderFilledDate = PreProcess(rawRecord["OrderFilledDate"]),
 
+                OrderBroker = PreProcess(rawRecord["OrderBroker"]),
                 OrderType = PreProcess(rawRecord["OrderType"]),
                 OrderDirection = PreProcess(rawRecord["OrderDirection"]),
                 OrderCurrency = PreProcess(rawRecord["OrderCurrency"]),

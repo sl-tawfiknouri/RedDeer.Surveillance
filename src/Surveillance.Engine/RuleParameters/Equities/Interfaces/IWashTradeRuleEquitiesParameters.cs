@@ -3,7 +3,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IWashTradeRuleParameters, IReferenceDataFilterable
+    public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IWashTradeRuleParameters, IReferenceDataFilterable, IMarketCapFilterable
     {
         TimeWindows Windows { get; }
     }

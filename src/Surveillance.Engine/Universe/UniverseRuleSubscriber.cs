@@ -218,7 +218,7 @@ namespace Surveillance.Engine.Rules.Universe
             var jointIds = ids.Aggregate((a, b) => $"{a} {b}");
             _logger.LogInformation($"subscriber processed for the following ids {jointIds}");
 
-            return ids;
+            return await Task.FromResult(ids);
 
             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
         }

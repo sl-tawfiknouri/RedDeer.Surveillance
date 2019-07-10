@@ -180,7 +180,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     _ruleCtx?.Id(),
                     _ruleCtx?.CorrelationId(),
                     OrganisationFactorValue,
-                    rampingAnalysisResults.Last());
+                    rampingAnalysisResults.Last(),
+                    _rampingParameters,
+                    UniverseDateTime);
 
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
             var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Ramping, breach, _ruleCtx);

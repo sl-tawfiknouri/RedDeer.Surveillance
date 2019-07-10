@@ -5,6 +5,7 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial.Assets;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {
@@ -21,7 +22,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleBreachDescription bidirectionalTradeBreach, 
             RuleBreachDescription dailyVolumeTradeBreach,
             RuleBreachDescription windowVolumeTradeBreach,
-            RuleBreachDescription priceMovementBreach)
+            RuleBreachDescription priceMovementBreach,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
             EquitiesParameters = equitiesParameters;
@@ -35,6 +37,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public ILayeringRuleEquitiesParameters EquitiesParameters { get; }
@@ -52,5 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

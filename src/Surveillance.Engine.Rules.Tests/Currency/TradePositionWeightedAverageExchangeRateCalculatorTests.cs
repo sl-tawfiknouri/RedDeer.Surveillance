@@ -8,38 +8,42 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
 using Infrastructure.Network.HttpClient;
+using PollyFacade.Policies.Interfaces;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate;
 
 namespace Surveillance.Engine.Rules.Tests.Currency
 {
     [TestFixture]
     public class TradePositionWeightedAverageExchangeRateCalculatorTests
     {
-        private ILogger<ExchangeRateApiRepository> _logger;
+        private ILogger<ExchangeRateApi> _logger;
         private ILogger<ExchangeRatesService> _loggerExchRate;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private IDataLayerConfiguration _configuration;
+        private IApiClientConfiguration _configuration;
         private ILogger<TradePositionWeightedAverageExchangeRateService> _calculatorLogger;
         private IExchangeRatesService _exchangeRatesService;
+        private IPolicyFactory _policyFactory;
         private Domain.Core.Financial.Money.Currency _currency;
 
         [SetUp]
         public void Setup()
         {
-            _logger = A.Fake<ILogger<ExchangeRateApiRepository>>();
+            _logger = A.Fake<ILogger<ExchangeRateApi>>();
             _loggerExchRate = A.Fake<ILogger<ExchangeRatesService>>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateService>>();
             _exchangeRatesService = A.Fake<IExchangeRatesService>();
             _currency = new Domain.Core.Financial.Money.Currency("GBX");
+            _policyFactory = A.Fake<IPolicyFactory>();
 
-            _configuration = A.Fake<IDataLayerConfiguration>();
+            _configuration = A.Fake<IApiClientConfiguration>();
             _configuration.ClientServiceUrl = "http://localhost:8080";
             _configuration.SurveillanceUserApiAccessToken = "uwat";
         }
@@ -168,8 +172,8 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task WeightedExchangeRate_Returns_ExpectedResult()
         {
             var clientFactory = new HttpClientFactory(new NullLogger<HttpClientFactory>());
-            var repo = new ExchangeRateApiRepository(_configuration, clientFactory, _logger);
-            var repoDecorator = new ExchangeRateApiCachingDecoratorRepository(repo);
+            var repo = new ExchangeRateApi(_configuration, clientFactory, _policyFactory, _logger);
+            var repoDecorator = new ExchangeRateApiCachingDecorator(repo);
             var exchangeRates = new ExchangeRatesService(repoDecorator, _loggerExchRate);
             var calculator = new TradePositionWeightedAverageExchangeRateService(exchangeRates, _calculatorLogger);
 

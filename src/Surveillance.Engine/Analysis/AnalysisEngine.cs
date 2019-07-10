@@ -99,11 +99,9 @@ namespace Surveillance.Engine.Rules.Analysis
                 opCtx.EndEventWithError($"was executing a schedule that did not specify any rules to run");
                 return;
             }
-            
+
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
-            var executionJson = JsonConvert.SerializeObject(execution);
-            var opCtxJson = JsonConvert.SerializeObject(opCtx);
-            _logger.LogInformation($"analysis execute received json {executionJson} for opCtx {opCtxJson}");
+            LogExecutionParameters(execution, opCtx);
 
             var cts = new CancellationTokenSource();
             var ruleCancellation = new CancellableRule(execution, cts);
@@ -158,7 +156,7 @@ namespace Surveillance.Engine.Rules.Analysis
             dataRequestSubscriber.DispatchIfSubmitRequest();
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
- 
+
             _logger.LogInformation($"calling rule run update message send");
             RuleRunUpdateMessageSend(execution, ids);
             _logger.LogInformation($"completed rule run update message send");
@@ -167,10 +165,18 @@ namespace Surveillance.Engine.Rules.Analysis
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
         }
 
+         private void LogExecutionParameters(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
+        {
+            var executionJson = JsonConvert.SerializeObject(execution);
+            var opCtxJson = JsonConvert.SerializeObject(opCtx);
+            _logger.LogInformation($"analysis execute received json {executionJson} for opCtx {opCtxJson}");
+        }
+        
         private bool GuardForBackTestIntoFutureExecution(ScheduledExecution execution)
         {
             if (execution == null)
                 return false;
+
 
             if (!execution.IsBackTest)
                 return false;

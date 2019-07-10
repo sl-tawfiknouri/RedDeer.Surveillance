@@ -17,6 +17,8 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {
@@ -40,6 +42,9 @@ namespace RedDeer.DataImport.DataImport.App
             container.Inject(typeof(IAwsConfiguration), builtDataConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtDataConfig);
 
+            var builtClientApiConfig = BuildApiClientConfiguration();
+            container.Inject(typeof(IApiClientConfiguration), builtClientApiConfig);
+
             container.Configure(config =>
             {
                 config.IncludeRegistry<DataImportRegistry>();
@@ -47,6 +52,7 @@ namespace RedDeer.DataImport.DataImport.App
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.IncludeRegistry<DataLayerRegistry>();
+                config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.Populate(services);
             });
 
@@ -88,6 +94,16 @@ namespace RedDeer.DataImport.DataImport.App
 
             var builder = new ConfigBuilder.ConfigBuilder();
             return builder.BuildData(configurationBuilder);
+        }
+
+        private static IApiClientConfiguration BuildApiClientConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+            return builder.BuildApi(configurationBuilder);
         }
     }
 }

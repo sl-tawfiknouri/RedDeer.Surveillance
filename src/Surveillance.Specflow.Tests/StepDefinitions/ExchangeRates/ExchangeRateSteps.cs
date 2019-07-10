@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -30,7 +30,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
                 return;
             }
 
-            _exchangeRateSelection.ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
+            _exchangeRateSelection.ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecorator>();
             var parameters = ruleParameters.CreateSet<ExchangeRateApiParameters>();
             var groupedParams = parameters.GroupBy(i => i.Date.Date);
 

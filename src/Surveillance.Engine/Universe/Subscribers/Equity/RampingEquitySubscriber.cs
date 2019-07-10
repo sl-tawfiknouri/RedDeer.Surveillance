@@ -23,14 +23,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
     public class RampingEquitySubscriber : IRampingEquitySubscriber
     {
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IEquityRuleRampingFactory _equityRuleRampingFactory;
         private readonly ILogger<RampingEquitySubscriber> _logger;
 
         public RampingEquitySubscriber(
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             IEquityRuleRampingFactory equityRuleRampingFactory,
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.OrdinalIgnoreCase))
                     .ToList();
 
-            var rampingParameters = _ruleParameterMapper.Map(dtos);
+            var rampingParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters, dataRequestSubscriber);
         }
@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
             var rampingRuleOrgFactors = _brokerServiceFactory.Build(rampingRule, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors);
+            var rampingRuleFiltered = DecorateWithFilters(opCtx, param, rampingRuleOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return rampingRuleFiltered;
         }
@@ -125,9 +125,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IRampingRuleEquitiesParameters param,
-            IUniverseRule rampingRule)
+            IUniverseRule rampingRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(
@@ -139,7 +142,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Ramping Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(rampingRule);
 
                 return filteredUniverse;

@@ -6,16 +6,16 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Universe.MarketEvents
 {
     [TestFixture]
     public class MarketOpenCloseEventManagerTests
     {
-        private IMarketOpenCloseApiCachingDecoratorRepository _repository;
+        private IMarketOpenCloseApiCachingDecorator _repository;
         private ILogger<MarketOpenCloseEventService> _logger;
         private ExchangeDto _marketOpenClose;
 
@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.MarketEvents
         public void Setup()
         {
             _logger = A.Fake<ILogger<MarketOpenCloseEventService>>();
-            _repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+            _repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
             _marketOpenClose =
                 new ExchangeDto
                 {

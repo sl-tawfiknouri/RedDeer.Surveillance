@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters 
         : IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters
     {
@@ -14,14 +18,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal sigma,
             TimeSpan windowSize,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
             Sigma = sigma;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            MarketCapFilter = DecimalRangeRuleFilter.None();
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -29,6 +36,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = RuleFilter.None();
             Strategies = RuleFilter.None();
 
+            PerformTuning = performTuning;
             Sectors = RuleFilter.None();
             Industries = RuleFilter.None();
             Regions = RuleFilter.None();
@@ -41,6 +49,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             TimeSpan windowSize,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
+            DecimalRangeRuleFilter marketCapFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -49,14 +58,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter sectors,
             RuleFilter industries,
             RuleFilter regions,
-            RuleFilter countries)
+            RuleFilter countries,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
 
             Sigma = sigma;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -64,18 +76,23 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Funds = funds ?? RuleFilter.None();
             Strategies = strategies ?? RuleFilter.None();
 
+            PerformTuning = performTuning;
             Sectors = sectors ?? RuleFilter.None();
             Industries = industries ?? RuleFilter.None();
             Regions = regions ?? RuleFilter.None();
             Countries = countries ?? RuleFilter.None();
         }
 
-        public string Id { get; }
-        public decimal Sigma { get; }
-        public TimeWindows Windows { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableDecimalParameter]
+        public decimal Sigma { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
+        public DecimalRangeRuleFilter MarketCapFilter { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -88,22 +105,47 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Countries { get; set; }
 
         public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None
-                || Funds?.Type != RuleFilterType.None
-                || Strategies?.Type != RuleFilterType.None;
-        }
+            => IFilterableRuleExtensions.HasInternalFilters(this);
+
+        public bool HasMarketCapFilters()
+            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
 
         public bool HasReferenceDataFilters()
+            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+
+        public bool Valid()
         {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
+            return !string.IsNullOrWhiteSpace(Id)
+                   && Sigma >= 0;
         }
+
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode()
+               * Sigma.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return Windows == castObj.Windows
+                   && Sigma == castObj.Sigma;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

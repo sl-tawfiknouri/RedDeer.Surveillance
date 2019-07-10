@@ -4,18 +4,18 @@ using System.Linq;
 using Domain.Core.Dates;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Markets
 {
     public class MarketTradingHoursService : IMarketTradingHoursService
     {
-        private readonly IMarketOpenCloseApiCachingDecoratorRepository _repository;
+        private readonly IMarketOpenCloseApiCachingDecorator _repository;
         private readonly ILogger<MarketTradingHoursService> _logger;
 
         public MarketTradingHoursService(
-            IMarketOpenCloseApiCachingDecoratorRepository repository,
+            IMarketOpenCloseApiCachingDecorator repository,
             ILogger<MarketTradingHoursService> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));

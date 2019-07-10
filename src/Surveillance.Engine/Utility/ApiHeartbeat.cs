@@ -2,11 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Api.Enrichment.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.Rules.Utility.Interfaces;
+using Surveillance.Reddeer.ApiClient.Enrichment.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
+using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Utility
 {
@@ -15,17 +15,17 @@ namespace Surveillance.Engine.Rules.Utility
     /// </summary>
     public class ApiHeartbeat : IApiHeartbeat
     {
-        private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
-        private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketRateApi;
-        private readonly IRuleParameterApiRepository _rulesApi;
-        private readonly IEnrichmentApiRepository _enrichmentApi;
+        private readonly IExchangeRateApiCachingDecorator _exchangeRateApi;
+        private readonly IMarketOpenCloseApiCachingDecorator _marketRateApi;
+        private readonly IRuleParameterApi _rulesApi;
+        private readonly IEnrichmentApi _enrichmentApi;
         private readonly ILogger<ApiHeartbeat> _logger;
 
         public ApiHeartbeat(
-            IExchangeRateApiCachingDecoratorRepository exchangeRateApi,
-            IMarketOpenCloseApiCachingDecoratorRepository marketRateApi,
-            IRuleParameterApiRepository rulesApi,
-            IEnrichmentApiRepository enrichmentApi,
+            IExchangeRateApiCachingDecorator exchangeRateApi,
+            IMarketOpenCloseApiCachingDecorator marketRateApi,
+            IRuleParameterApi rulesApi,
+            IEnrichmentApi enrichmentApi,
             ILogger<ApiHeartbeat> logger)
         {
             _exchangeRateApi = exchangeRateApi ?? throw new ArgumentNullException(nameof(exchangeRateApi));

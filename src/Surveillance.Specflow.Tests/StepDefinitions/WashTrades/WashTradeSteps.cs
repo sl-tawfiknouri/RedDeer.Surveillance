@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -19,6 +18,7 @@ using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -50,7 +50,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
             _scenarioContext = scenarioContext;
             _universeSelectionState = universeSelectionState;
 
-            var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
+            var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecorator>();
 
             var exchangeRateDto = new ExchangeRateDto { DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 200d };
 
@@ -107,6 +107,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
                     parameters.ClusteringPositionMinimumNumberOfTrades,
                     parameters.ClusteringPercentageValueDifferenceThreshold,
                     new[] { ClientOrganisationalFactors.None },
+                    true,
                     true);
         }
 

@@ -118,7 +118,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     dailyBreach,
                     windowBreach,
                     marketCapBreach,
-                    tradedVolume);
+                    tradedVolume,
+                    UniverseDateTime);
 
             _logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
             var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, breach, _ruleCtx);

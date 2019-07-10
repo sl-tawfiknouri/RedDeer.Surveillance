@@ -8,16 +8,16 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
+using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 {
     [TestFixture]
     public class ScheduleDisassemblerTests
     {
-        private IRuleParameterApiRepository _apiRepository;
+        private IRuleParameterApi _apiRepository;
         private ISystemProcessOperationContext _systemProcessOperationContext;
         private IQueueDistributedRulePublisher _distributedRulePublisher;
         private ILogger<ScheduleDisassembler> _logger;
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
         [SetUp]
         public void Setup()
         {
-            _apiRepository = A.Fake<IRuleParameterApiRepository>();
+            _apiRepository = A.Fake<IRuleParameterApi>();
             _systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
             _distributedRulePublisher = A.Fake<IQueueDistributedRulePublisher>();
             _logger = A.Fake<ILogger<ScheduleDisassembler>>();

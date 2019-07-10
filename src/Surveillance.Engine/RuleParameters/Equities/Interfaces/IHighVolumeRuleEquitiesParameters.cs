@@ -1,9 +1,8 @@
-﻿using System;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+﻿using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface IHighVolumeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable
+    public interface IHighVolumeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable
     {
         decimal? HighVolumePercentageDaily { get; }
         decimal? HighVolumePercentageWindow { get; }

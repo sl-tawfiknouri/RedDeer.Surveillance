@@ -19,6 +19,8 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace RedDeer.DataImport.DataImport.App
@@ -53,6 +55,9 @@ namespace RedDeer.DataImport.DataImport.App
                 Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
                 Container.Inject(typeof(IDataLayerConfiguration), builtDataLayerConfig);
 
+                var builtApiClientConfig = BuildApiClientConfiguration();
+                Container.Inject(typeof(IApiClientConfiguration), builtApiClientConfig);
+
                 Container.Configure(config =>
                 {
                     config.IncludeRegistry<DataImportRegistry>();
@@ -60,6 +65,7 @@ namespace RedDeer.DataImport.DataImport.App
                     config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                     config.IncludeRegistry<DataLayerRegistry>();
+                    config.IncludeRegistry<ReddeerApiClientRegistry>();
                 });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
@@ -98,6 +104,18 @@ namespace RedDeer.DataImport.DataImport.App
             var builder = new ConfigBuilder.ConfigBuilder();
 
             return builder.BuildData(configurationBuilder);
+        }
+
+        private static IApiClientConfiguration BuildApiClientConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+
+            return builder.BuildApi(configurationBuilder);
         }
 
         private static void ProcessArguments(string[] args)

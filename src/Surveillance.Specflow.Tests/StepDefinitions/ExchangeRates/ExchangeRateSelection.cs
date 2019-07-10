@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FakeItEasy;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
 {
@@ -12,7 +12,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
         {
             if (ExchangeRateRepository == null)
             {
-                ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
+                ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecorator>();
 
                 var exchangeRateDto = new ExchangeRateDto
                 {
@@ -41,7 +41,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
             }
         }
 
-        public IExchangeRateApiCachingDecoratorRepository ExchangeRateRepository { get; set; }
+        public IExchangeRateApiCachingDecorator ExchangeRateRepository { get; set; }
 
     }
 }

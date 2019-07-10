@@ -1,9 +1,8 @@
-﻿using System;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+﻿using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface IHighProfitsRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable
+    public interface IHighProfitsRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable
     {
         TimeWindows Windows { get; }
         bool PerformHighProfitWindowAnalysis { get; }

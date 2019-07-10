@@ -317,7 +317,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     hasHighProfitPercentage,
                     position,
                     MarketClosureRule,
-                    breakdown);
+                    breakdown,
+                    UniverseDateTime);
 
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);

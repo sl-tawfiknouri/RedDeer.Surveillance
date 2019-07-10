@@ -8,6 +8,7 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {
@@ -23,7 +24,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ITradePosition tradingPosition,
             IMarkingTheCloseEquitiesParameters equitiesParameters,
             VolumeBreach dailyBreach,
-            VolumeBreach windowBreach)
+            VolumeBreach windowBreach,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
 
@@ -40,6 +42,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -58,5 +62,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

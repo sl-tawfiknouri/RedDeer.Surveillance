@@ -59,8 +59,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             var highAbsoluteProfitSection = HighAbsoluteProfitText(ruleBreach, highAbsoluteProfit);
             var highProfitExchangeRatesSection = HighProfitExchangeRateText(ruleBreach);
-
-            return $"High profit rule breach detected for {ruleBreach.Security.Name}.{highRelativeProfitSection}{highAbsoluteProfitSection}{highProfitExchangeRatesSection}";
+            
+            return $"High profit rule breach detected for {ruleBreach.Security.Name} at {ruleBreach.UniverseDateTime}.{highRelativeProfitSection}{highAbsoluteProfitSection}{highProfitExchangeRatesSection}";
         }
 
         private string HighRelativeProfitText(

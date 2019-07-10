@@ -8,6 +8,7 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 {
@@ -22,7 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ITradePosition cancelledTradePosition,
             FinancialInstrument security,
             Order mostRecentTrade,
-            ISpoofingRuleEquitiesParameters spoofingEquitiesParameters)
+            ISpoofingRuleEquitiesParameters spoofingEquitiesParameters,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
 
@@ -39,6 +41,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             RuleParameterId = spoofingEquitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = spoofingEquitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public TimeSpan Window { get; }
@@ -57,5 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

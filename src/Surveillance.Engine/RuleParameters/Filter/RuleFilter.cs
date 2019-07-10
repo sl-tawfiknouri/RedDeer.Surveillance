@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Filter
 {
+    [Serializable]
     public class RuleFilter
     {
         public RuleFilter()

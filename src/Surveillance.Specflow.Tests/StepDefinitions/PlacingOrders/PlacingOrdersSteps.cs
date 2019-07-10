@@ -3,7 +3,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -13,16 +12,12 @@ using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -56,7 +51,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.PlacingOrders
             _alertStream = A.Fake<IUniverseAlertStream>();
             _equityOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
 
-            var repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+            var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
             A
                 .CallTo(() => repository.Get()).
@@ -124,6 +119,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.PlacingOrders
                     parameters.Sigma,
                     new TimeSpan(parameters.WindowHours, 0, 0),
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
         }
 

@@ -19,7 +19,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
 
         public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
         {
-            return new MarketDataRequest[0];
+            return await Task.FromResult(new MarketDataRequest[0]);
         }
 
         public Task UpdateToCompleteWithDuplicates(IReadOnlyCollection<MarketDataRequest> requests)

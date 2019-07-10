@@ -52,6 +52,7 @@ namespace Domain.Core.Tests.Helpers
                 "trader one",
                 "clearing agent",
                 "dealer-instructions",
+                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

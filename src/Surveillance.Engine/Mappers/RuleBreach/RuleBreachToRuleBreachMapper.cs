@@ -26,6 +26,12 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
             var oldestPositionValue = oldestPosition ?? DateTime.UtcNow;
             var latestPositionValue = latestPosition ?? DateTime.UtcNow;
 
+            if (ruleBreach.UniverseDateTime < oldestPositionValue)
+                oldestPositionValue = ruleBreach.UniverseDateTime;
+
+            if (ruleBreach.UniverseDateTime > latestPositionValue)
+                latestPositionValue = ruleBreach.UniverseDateTime;
+
             description = description ?? string.Empty;
 
             var trades =
@@ -54,6 +60,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
                     ruleBreach.SystemOperationId,
                     (int?)ruleBreach?.FactorValue?.OrganisationalFactors ?? 0,
                     ruleBreach?.FactorValue?.Value ?? string.Empty,
+                    ruleBreach.RuleParameters.TunedParam != null,
                     trades);
 
             return ruleBreachObj;

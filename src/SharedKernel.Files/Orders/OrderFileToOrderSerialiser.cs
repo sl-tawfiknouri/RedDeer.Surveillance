@@ -122,6 +122,7 @@ namespace SharedKernel.Files.Orders
             contract.OrderTraderName = order.OrderTraderName;
             contract.OrderClearingAgent = order.OrderClearingAgent;
             contract.OrderDealingInstructions = order.OrderDealingInstructions;
+            contract.OrderBroker = order.OrderBroker?.Name;
 
             return contract;
         }
@@ -214,6 +215,7 @@ namespace SharedKernel.Files.Orders
                 contract.OrderTraderName,
                 contract.OrderClearingAgent,
                 contract.OrderDealingInstructions,
+                new OrderBroker(string.Empty, string.Empty, contract.OrderBroker, null, false), 
                 orderOptionStrikePrice,
                 orderOptionExpirationDate,
                 orderOptionEuropeanAmerican,

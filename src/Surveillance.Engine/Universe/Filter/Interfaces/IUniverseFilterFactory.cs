@@ -1,4 +1,7 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.Filter;
+﻿using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
+using Surveillance.Engine.Rules.Rules;
 
 namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
 {
@@ -13,6 +16,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
             RuleFilter sectors,
             RuleFilter industries,
             RuleFilter regions,
-            RuleFilter countries);
+            RuleFilter countries,
+            DecimalRangeRuleFilter marketCap,
+            RuleRunMode ruleRunMode,
+            string ruleName,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext operationRunRuleContext);
     }
 }

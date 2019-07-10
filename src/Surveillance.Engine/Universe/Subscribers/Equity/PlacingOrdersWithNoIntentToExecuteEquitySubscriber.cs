@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
     {
         private readonly IEquityRulePlacingOrdersWithoutIntentToExecuteFactory _equityRulePlacingOrdersFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> _logger;
         
         public PlacingOrdersWithNoIntentToExecuteEquitySubscriber(
             IEquityRulePlacingOrdersWithoutIntentToExecuteFactory equityRulePlacingOrdersFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> logger)
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(_ => filteredParameters.Contains(_.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var placingOrderParameters = _ruleParameterMapper.Map(dtos);
+            var placingOrderParameters = _ruleParameterMapper.Map(execution, dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, placingOrderParameters, dataRequestSubscriber);
 
             return subscriptions;
@@ -129,7 +129,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     placingOrders,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var filteredPlacingOrders = DecorateWithFilters(opCtx, param, placingOrdersOrgFactors);
+            var filteredPlacingOrders = DecorateWithFilters(opCtx, param, placingOrdersOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
 
             return filteredPlacingOrders;
         }
@@ -137,9 +137,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters param,
-            IUniverseRule placingOrders)
+            IUniverseRule placingOrders,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -152,7 +155,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Placing Orders Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(placingOrders);
 
                 return filteredUniverse;

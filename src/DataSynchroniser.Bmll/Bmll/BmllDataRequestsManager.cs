@@ -41,6 +41,8 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 var split = splitTask.Select(ProcessBmllRequests).ToList();
                 Task.WhenAll(split).Wait(TimeSpan.FromMinutes(20));
             }
+
+            await Task.CompletedTask;
         }
 
         private async Task ProcessBmllRequests(List<MarketDataRequest> bmllRequests)

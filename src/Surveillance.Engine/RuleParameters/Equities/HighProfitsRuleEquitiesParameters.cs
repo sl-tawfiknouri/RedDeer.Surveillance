@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    [Serializable]
     public class HighProfitsRuleEquitiesParameters : IHighProfitsRuleEquitiesParameters
     {
         public HighProfitsRuleEquitiesParameters(
@@ -19,16 +23,19 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool useCurrencyConversions,
             string highProfitCurrencyConversionTargetCurrency,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
             HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
             PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
+
+            MarketCapFilter = DecimalRangeRuleFilter.None();
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -43,6 +50,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
         public HighProfitsRuleEquitiesParameters(
@@ -55,6 +64,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? highProfitAbsoluteThreshold,
             bool useCurrencyConversions,
             string highProfitCurrencyConversionTargetCurrency,
+            DecimalRangeRuleFilter marketCapFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -65,16 +75,19 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter regions,
             RuleFilter countries,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(backWindowSize, forwardWindowSize);
+            Windows = new TimeWindows(id, backWindowSize, forwardWindowSize);
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
             UseCurrencyConversions = useCurrencyConversions;
             HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
             PerformHighProfitWindowAnalysis = performHighProfitWindowAnalysis;
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
+
+            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -89,30 +102,38 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
-        public TimeWindows Windows { get; }
-        public bool PerformHighProfitWindowAnalysis { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+        public bool PerformHighProfitWindowAnalysis { get; set; }
 
-        public bool PerformHighProfitDailyAnalysis { get; }
+        public bool PerformHighProfitDailyAnalysis { get; set; }
 
         // Percentage
-        public decimal? HighProfitPercentageThreshold { get; }
+        [TuneableDecimalParameter]
+        public decimal? HighProfitPercentageThreshold { get; set; }
 
         // Absolute level
-        public decimal? HighProfitAbsoluteThreshold { get; }
+        [TuneableDecimalParameter]
+        public decimal? HighProfitAbsoluteThreshold { get; set; }
 
         /// <summary>
         /// If true we will use the target currency provided.
         /// Using absolute profits is implicitly always a yes on use currency conversions
         /// </summary>
-        public bool UseCurrencyConversions { get; }
+        public bool UseCurrencyConversions { get; set; }
 
         /// <summary>
         /// Target currency if using currency conversions and also used for high profit absolute threshold
         /// </summary>
         public string HighProfitCurrencyConversionTargetCurrency { get; }
+
+        public DecimalRangeRuleFilter MarketCapFilter { get; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -129,22 +150,55 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None
-                || Funds?.Type != RuleFilterType.None
-                || Strategies?.Type != RuleFilterType.None;
-        }
+            => IFilterableRuleExtensions.HasInternalFilters(this);
+
+        public bool HasMarketCapFilters()
+            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
 
         public bool HasReferenceDataFilters()
+            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+
+        public bool Valid()
         {
-            return
-                Sectors?.Type != RuleFilterType.None
-                || Industries?.Type != RuleFilterType.None
-                || Regions?.Type != RuleFilterType.None
-                || Countries?.Type != RuleFilterType.None;
+            return !string.IsNullOrWhiteSpace(Id)
+                && (HighProfitPercentageThreshold == null
+                    || (HighProfitPercentageThreshold.GetValueOrDefault() >= 0
+                        && HighProfitPercentageThreshold.GetValueOrDefault() <= 1))
+                && (HighProfitAbsoluteThreshold == null
+                    || (HighProfitAbsoluteThreshold.GetValueOrDefault() >= 0));
         }
+
+        public override int GetHashCode()
+        {
+            return 
+                this.Windows.GetHashCode()  
+               * this.HighProfitPercentageThreshold.GetHashCode()
+               * this.HighProfitAbsoluteThreshold.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighProfitsRuleEquitiesParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return 
+                 this.Windows == castObj.Windows          
+               && this.HighProfitPercentageThreshold == castObj.HighProfitPercentageThreshold
+               && this.HighProfitAbsoluteThreshold == castObj.HighProfitAbsoluteThreshold;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

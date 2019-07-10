@@ -73,6 +73,9 @@
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\41 - Add backtest tuning.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\37 - Update data request tbl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -151,6 +154,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\4 - Exception Audit.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\43 - Add broker enrichment flag.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\40 - Clear Enrichment status of all FinancialInstruments.sql">

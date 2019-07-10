@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
+    [Serializable]
     public class HighVolumeIssuanceRuleFixedIncomeParameters : IHighVolumeIssuanceRuleFixedIncomeParameters
     {
         public HighVolumeIssuanceRuleFixedIncomeParameters(
@@ -17,10 +20,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
@@ -29,10 +33,14 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             
             Factors = factors ?? new List<ClientOrganisationalFactors>();
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
-        public TimeWindows Windows { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
@@ -44,10 +52,44 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             return
                 Accounts?.Type != RuleFilterType.None
                 || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None;
+                || Markets?.Type != RuleFilterType.None
+                || Funds?.Type != RuleFilterType.None
+                || Strategies?.Type != RuleFilterType.None;
         }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as HighVolumeIssuanceRuleFixedIncomeParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return castObj.Windows == Windows;
+        }
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

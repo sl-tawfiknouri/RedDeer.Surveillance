@@ -1,7 +1,7 @@
 ﻿namespace SharedKernel.Files.Orders
 {
     /// <summary>
-    /// Version 0.3 of the Trade File
+    /// Version 0.4 of the Trade File
     /// </summary>
     public class OrderFileContract
     {
@@ -66,6 +66,8 @@
         public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
+        public string OrderBroker { get; set; }
+
 
         // options
         public string OrderOptionStrikePrice { get; set; }

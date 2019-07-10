@@ -4,6 +4,7 @@ using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -27,7 +28,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             bool hasRelativeProfitBreach,
             ITradePosition trades,
             bool marketClosureVirtualProfitComponent,
-            IExchangeRateProfitBreakdown profitBreakdown)
+            IExchangeRateProfitBreakdown profitBreakdown,
+            DateTime universeDateTime)
         {
             FactorValue = factorValue;
             Window = equitiesParameters.Windows.BackwardWindowSize;
@@ -44,6 +46,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
+            RuleParameters = equitiesParameters;
+            UniverseDateTime = universeDateTime;
         }
 
         public IHighProfitsRuleEquitiesParameters EquitiesParameters { get; }
@@ -63,5 +67,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
         public IFactorValue FactorValue { get; set; }
+        public IRuleParameter RuleParameters { get; set; }
+        public DateTime UniverseDateTime { get; set; }
     }
 }

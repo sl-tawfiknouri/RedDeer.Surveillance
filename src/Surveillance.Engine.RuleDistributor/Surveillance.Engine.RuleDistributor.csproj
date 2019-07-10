@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Surveillance.Engine.Interfaces\Surveillance.Engine.Interfaces.csproj" />
+    <ProjectReference Include="..\Surveillance.Reddeer.ApiClient\Surveillance.Reddeer.ApiClient.csproj" />
     <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>

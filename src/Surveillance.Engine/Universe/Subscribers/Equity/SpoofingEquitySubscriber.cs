@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class SpoofingEquitySubscriber : ISpoofingEquitySubscriber
     {
         private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger _logger;
 
         public SpoofingEquitySubscriber(
             IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<UniverseRuleSubscriber> logger)
@@ -69,8 +69,8 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var spoofingParameters = _ruleParameterMapper.Map(dtos);
-            var subscriptionRequests = SubscribeToUniverse(execution, opCtx, alertStream, spoofingParameters);
+            var spoofingParameters = _ruleParameterMapper.Map(execution, dtos);
+            var subscriptionRequests = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, spoofingParameters);
 
             return subscriptionRequests;
         }
@@ -79,6 +79,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<ISpoofingRuleEquitiesParameters> spoofingParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -88,7 +89,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in spoofingParameters)
                 {
-                    var paramSubscriptions = SubscribeForParams(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeForParams(execution, opCtx, alertStream, universeDataRequestsSubscriber, param);
                     subscriptions.Add(paramSubscriptions);
                 }
             }
@@ -106,6 +107,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISpoofingRuleEquitiesParameters param)
         {
             var ruleCtx = opCtx
@@ -128,7 +130,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
 
-            var filteredSpoofingRule = DecorateWithFilters(opCtx, param, spoofingRuleOrgFactors);
+            var filteredSpoofingRule = DecorateWithFilters(opCtx, param, spoofingRuleOrgFactors, universeDataRequestsSubscriber, ruleCtx, runMode);
 
             return filteredSpoofingRule;
         }
@@ -136,9 +138,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilters(
             ISystemProcessOperationContext opCtx,
             ISpoofingRuleEquitiesParameters param,
-            IUniverseRule spoofingRule)
+            IUniverseRule spoofingRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -151,7 +156,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "Spoofing Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(spoofingRule);
 
                 return filteredUniverse;

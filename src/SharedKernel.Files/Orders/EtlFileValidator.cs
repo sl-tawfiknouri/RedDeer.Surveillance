@@ -115,6 +115,7 @@ namespace SharedKernel.Files.Orders
             RuleFor(x => x.OrderVersion).MaximumLength(255).WithMessage("OrderVersion must have a maximum length of 255 characters");
             RuleFor(x => x.OrderVersionLinkId).MaximumLength(255).WithMessage("OrderVersionLinkId must have a maximum length of 255 characters");
             RuleFor(x => x.OrderGroupId).MaximumLength(255).WithMessage("OrderGroupId must have a maximum length of 255 characters");
+            RuleFor(x => x.OrderBroker).MaximumLength(1023).WithMessage("OrderBroker must have a maximum length of 1023 characters");
 
             RuleFor(x => x.OrderCurrency).NotEmpty().Length(3).WithMessage("OrderCurrency must have a length of 3 characters"); ;
             RuleFor(x => x.OrderSettlementCurrency).Length(3)

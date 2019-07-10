@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -23,14 +24,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     public class HighProfitsEquitySubscriber : IHighProfitsEquitySubscriber
     {
         private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
         public HighProfitsEquitySubscriber(
             IEquityRuleHighProfitFactory equityRuleHighProfitFactory,
-            IRuleParameterToRulesMapper ruleParameterMapper,
+            IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactor,
             ILogger<UniverseRuleSubscriber> logger)
@@ -61,7 +62,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     .Where(hp => filteredParameters.Contains(hp.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var highProfitParameters = _ruleParameterMapper.Map(dtos);
+            var highProfitParameters = _ruleParameterMapper.Map(execution, dtos);
 
             return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
         }
@@ -131,7 +132,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     highProfitsRule,
                     param.Factors,
                     param.AggregateNonFactorableIntoOwnCategory);
-            var decoratedHighProfits = DecorateWithFilter(opCtx, param, highProfitsRuleOrgFactor);
+
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+            var decoratedHighProfits = DecorateWithFilter(opCtx, param, highProfitsRuleOrgFactor, dataRequestSubscriber, ruleCtxMarketClosure, runMode);
 
             return decoratedHighProfits;
         }
@@ -139,9 +142,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private IUniverseRule DecorateWithFilter(
             ISystemProcessOperationContext opCtx,
             IHighProfitsRuleEquitiesParameters param,
-            IUniverseRule highProfitsRule)
+            IUniverseRule highProfitsRule,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
+            RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters())
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -154,7 +160,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     param.Sectors,
                     param.Industries,
                     param.Regions,
-                    param.Countries);
+                    param.Countries,
+                    param.MarketCapFilter,
+                    ruleRunMode,
+                    "High Profits Equity",
+                    universeDataRequestsSubscriber,
+                    processOperationRunRuleContext);
                 filteredUniverse.Subscribe(highProfitsRule);
 
                 return filteredUniverse;

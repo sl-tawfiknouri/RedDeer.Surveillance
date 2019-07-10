@@ -3,7 +3,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -22,6 +21,7 @@ using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -54,7 +54,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Ramping
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
-            var repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
+            var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
             A
                 .CallTo(() => repository.Get()).
@@ -131,6 +131,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Ramping
                     parameters.ThresholdOrdersExecutedInWindow,
                     parameters.ThresholdVolumePercentageWindow,
                     new ClientOrganisationalFactors[0],
+                    true,
                     true);
         }
 

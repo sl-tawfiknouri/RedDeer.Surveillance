@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
+    [Serializable]
     public class WashTradeRuleFixedIncomeParameters : IWashTradeRuleFixedIncomeParameters
     {
         public WashTradeRuleFixedIncomeParameters(
@@ -25,10 +28,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             RuleFilter funds,
             RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
-            bool aggregateNonFactorableIntoOwnCategory)
+            bool aggregateNonFactorableIntoOwnCategory,
+            bool performTuning)
         {
             Id = id ?? string.Empty;
-            Windows = new TimeWindows(windowSize);
+            Windows = new TimeWindows(id, windowSize);
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
@@ -47,21 +51,30 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             Strategies = strategies ?? RuleFilter.None();
             Factors = factors ?? new List<ClientOrganisationalFactors>();
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            PerformTuning = performTuning;
         }
 
-        public string Id { get; }
-        public TimeWindows Windows { get; }
+        [TuneableIdParameter]
+        public string Id { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
 
-        public bool PerformAveragePositionAnalysis { get; }
-        public bool PerformClusteringPositionAnalysis { get; }
+        public bool PerformAveragePositionAnalysis { get; set; }
+        public bool PerformClusteringPositionAnalysis { get; set; }
+        
+        [TuneableIntegerParameter]
+        public int? AveragePositionMinimumNumberOfTrades { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? AveragePositionMaximumPositionValueChange { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; set; }
+        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; set; }
 
-        public int? AveragePositionMinimumNumberOfTrades { get; }
-        public decimal? AveragePositionMaximumPositionValueChange { get; }
-        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
-        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
-
-        public int? ClusteringPositionMinimumNumberOfTrades { get; }
-        public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+        [TuneableIntegerParameter]
+        public int? ClusteringPositionMinimumNumberOfTrades { get; set; }
+        [TuneableDecimalParameter]
+        public decimal? ClusteringPercentageValueDifferenceThreshold { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -80,8 +93,53 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(Id)
+               && (AveragePositionMinimumNumberOfTrades == null
+                   || AveragePositionMinimumNumberOfTrades >= 0)
+                && (AveragePositionMaximumPositionValueChange == null
+                || AveragePositionMaximumPositionValueChange >= 0)
+                && (AveragePositionMaximumAbsoluteValueChangeAmount == null
+                    || AveragePositionMaximumAbsoluteValueChangeAmount >= 0)
+                && (ClusteringPositionMinimumNumberOfTrades == null
+                    || ClusteringPositionMinimumNumberOfTrades >= 0)
+                && (ClusteringPercentageValueDifferenceThreshold == null
+                    || ClusteringPercentageValueDifferenceThreshold >= 0);
+        }
 
+        public override int GetHashCode()
+        {
+            return Windows.GetHashCode()
+               * AveragePositionMinimumNumberOfTrades.GetHashCode()
+               * AveragePositionMaximumPositionValueChange.GetHashCode()
+               * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
+               * ClusteringPositionMinimumNumberOfTrades.GetHashCode()
+               * ClusteringPercentageValueDifferenceThreshold.GetHashCode();
+        }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var castObj = obj as WashTradeRuleFixedIncomeParameters;
+
+            if (castObj == null)
+            {
+                return false;
+            }
+
+            return Windows == castObj.Windows
+                   && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
+                   && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
+                   && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount
+                   && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
+                   && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
+
+        }
 
         // Removing from wash trade parameter interface soon
         public bool PerformPairingPositionAnalysis => false;
@@ -95,5 +153,10 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public decimal? PairingPositionMaximumAbsoluteMoney => null;
 
         public string PairingPositionMaximumAbsoluteCurrency => null;
+
+        public bool PerformTuning { get; set; }
+
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
     }
 }

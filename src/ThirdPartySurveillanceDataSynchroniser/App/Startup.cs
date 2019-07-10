@@ -18,6 +18,7 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
 
 namespace DataSynchroniser.App
 {
@@ -53,6 +54,7 @@ namespace DataSynchroniser.App
                 config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
                 config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                 config.IncludeRegistry<AppRegistry>();
+                config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.Populate(services);
             });
 

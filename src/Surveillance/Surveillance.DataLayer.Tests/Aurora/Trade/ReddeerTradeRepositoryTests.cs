@@ -6,11 +6,13 @@ using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -23,6 +25,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         private ILogger<OrdersRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
         private IReddeerMarketRepository _marketRepository;
+        private IOrderBrokerRepository _orderBrokerRepository;
 
         [SetUp]
         public void Setup()
@@ -31,6 +34,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             _logger = A.Fake<ILogger<OrdersRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _marketRepository = A.Fake<IReddeerMarketRepository>();
+            _orderBrokerRepository = A.Fake<IOrderBrokerRepository>();
         }
 
         [Test]
@@ -38,7 +42,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Create()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _orderBrokerRepository, _logger);
             var frame = Frame();
 
             await repo.Create(frame);
@@ -51,7 +55,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Creates_LiveUnscheduledOrders()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _orderBrokerRepository, _logger);
 
             var result = await repo.LiveUnscheduledOrders();
 
@@ -63,7 +67,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task SetScheduledOrder_SetsOrderToAutoScheduled()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _orderBrokerRepository, _logger);
             var frame = Frame();
             var frames = new[] { frame };
 
@@ -77,7 +81,10 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+
+            var brokerRepository = new OrderBrokerRepository(factory, NullLogger<OrderBrokerRepository>.Instance);
+
+            var repo = new OrdersRepository(factory, _marketRepository, brokerRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();
             var start = row1.MostRecentDateEvent().Date;
@@ -212,6 +219,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "trader one",
                 "clearing-agent",
                 "deal asap",
+                new OrderBroker(null, "", "Mr Broker", DateTime.Now, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

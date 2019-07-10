@@ -6,17 +6,17 @@ using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using SharedKernel.Contracts.Markets;
-using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
+using Surveillance.Reddeer.ApiClient.FactsetMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsApiManager : IFactsetDataRequestsApiManager
     {
-        private readonly IFactsetDailyBarApiRepository _dailyBarRepository;
+        private readonly IFactsetDailyBarApi _dailyBarRepository;
         private readonly ILogger<FactsetDataRequestsApiManager> _logger;
 
         public FactsetDataRequestsApiManager(
-            IFactsetDailyBarApiRepository dailyBarRepository,
+            IFactsetDailyBarApi dailyBarRepository,
             ILogger<FactsetDataRequestsApiManager> logger)
         {
             _dailyBarRepository = dailyBarRepository ?? throw new ArgumentNullException(nameof(dailyBarRepository));

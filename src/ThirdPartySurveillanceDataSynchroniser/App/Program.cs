@@ -20,6 +20,8 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace DataSynchroniser.App
@@ -50,7 +52,7 @@ namespace DataSynchroniser.App
                 Container.Inject(typeof(IAwsConfiguration), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
-                
+                Container.Inject(typeof(IApiClientConfiguration), builtConfig);
 
                 Container.Configure(config =>
                 {
@@ -61,6 +63,7 @@ namespace DataSynchroniser.App
                     config.IncludeRegistry<BmllDataSynchroniserRegistry>();
                     config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
                     config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
+                    config.IncludeRegistry<ReddeerApiClientRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
 

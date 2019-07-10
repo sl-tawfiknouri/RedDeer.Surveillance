@@ -5,6 +5,7 @@ using Domain.Core.Extensions;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;
+using Domain.Core.Trading.Orders.Interfaces;
 
 namespace Domain.Core.Trading.Orders
 {
@@ -53,6 +54,7 @@ namespace Domain.Core.Trading.Orders
             string orderTraderName,
             string orderClearingAgent,
             string orderDealingInstructions,
+            IOrderBroker orderBroker,
 
             Money? orderOptionStrikePrice,
             DateTime? orderOptionExpirationDate,
@@ -92,6 +94,7 @@ namespace Domain.Core.Trading.Orders
             OrderAverageFillPrice = orderAverageFillPrice;
             OrderOrderedVolume = orderOrderedVolume;
             OrderFilledVolume = orderFilledVolume;
+            OrderBroker = orderBroker;
 
             // order trader and post trade
             OrderTraderId = orderTraderId ?? string.Empty;
@@ -142,7 +145,7 @@ namespace Domain.Core.Trading.Orders
         public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
-
+        public IOrderBroker OrderBroker { get; set; }
 
         public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
         

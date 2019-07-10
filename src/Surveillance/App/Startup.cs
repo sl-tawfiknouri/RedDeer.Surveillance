@@ -19,6 +19,8 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {
@@ -40,6 +42,10 @@ namespace RedDeer.Surveillance.App
             var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
             container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
+
+            var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
+            container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
+
             container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
             container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
             SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
@@ -53,6 +59,7 @@ namespace RedDeer.Surveillance.App
                 config.IncludeRegistry<RuleDistributorRegistry>();
                 config.IncludeRegistry<DataCoordinatorRegistry>();
                 config.IncludeRegistry<RuleRegistry>();
+                config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });

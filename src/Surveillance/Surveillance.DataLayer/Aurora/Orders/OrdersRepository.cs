@@ -333,7 +333,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 ord.OptionStrikePrice as OptionStrikePrice,
                 ord.OptionExpirationDate as OptionExpirationDate,
                 ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.BrokerId as OrderBrokerId
+                ord.BrokerId as OrderBrokerId,
 	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,

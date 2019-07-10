@@ -11,7 +11,7 @@ namespace Domain.Core.Markets.Timebars
             Volume dailyVolume, 
             DateTime timeStamp)
         {
-            MarketCap = marketCap;
+            MarketCapCents = marketCap;
             IntradayPrices = intradayPrices;
             ListedSecurities = listedSecurities;
             DailyVolume = dailyVolume;
@@ -19,9 +19,11 @@ namespace Domain.Core.Markets.Timebars
         }
 
         /// <summary>
-        /// Valuation of the security
+        /// Valuation of the security in full USD
         /// </summary>
-        public decimal? MarketCap { get; }
+        public decimal? MarketCap => MarketCapCents.GetValueOrDefault(0) > 0 ? MarketCapCents / 100 : MarketCapCents;
+
+        public decimal? MarketCapCents { get; }
 
         public IntradayPrices IntradayPrices { get; }
 

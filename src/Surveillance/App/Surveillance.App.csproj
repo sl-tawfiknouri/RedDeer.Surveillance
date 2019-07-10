@@ -159,6 +159,9 @@
     <None Update="Migrations\43 - Add broker enrichment flag.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\40 - Clear Enrichment status of all FinancialInstruments.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\5 - Security Enrichment.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>    

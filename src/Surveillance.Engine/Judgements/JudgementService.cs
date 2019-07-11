@@ -43,6 +43,13 @@ namespace Surveillance.Engine.Rules.Judgements
                 return;
             }
 
+
+            if (string.IsNullOrWhiteSpace(judgementContext?.Judgement?.OrderId))
+            {
+                _logger?.LogInformation($"High Profit Judgement had no order id - this is normal for market close analysis");
+                return;
+            }
+
             _judgementRepository.Save(judgementContext.Judgement);
 
             if (!judgementContext.ProjectToAlert)

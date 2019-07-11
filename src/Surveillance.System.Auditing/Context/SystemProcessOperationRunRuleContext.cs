@@ -67,6 +67,11 @@ namespace Surveillance.Auditing.Context
             return _ruleRun.CorrelationId ?? string.Empty;
         }
 
+        public string RuleParameterId()
+        {
+            return _ruleRun.RuleParameterId ?? string.Empty;
+        }
+
         public bool IsBackTest()
         {
             return _ruleRun.IsBackTest;

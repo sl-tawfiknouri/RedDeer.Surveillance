@@ -7,8 +7,9 @@
             string ruleRunCorrelationId,
             string orderId,
             string clientOrderId,
-            decimal? dailyHighProfit,
-            decimal? windowHighProfit,
+            decimal? absoluteHighProfit,
+            string absoluteHighProfitCurrency,
+            decimal? percentageHighProfit,
             string parameters,
             bool hadMissingMarketData,
             bool noAnalysis)
@@ -18,8 +19,10 @@
             OrderId = orderId;
             ClientOrderId = clientOrderId;
 
-            DailyHighProfit = dailyHighProfit;
-            WindowHighProfit = windowHighProfit;
+            AbsoluteHighProfit = absoluteHighProfit;
+            AbsoluteHighProfitCurrency = absoluteHighProfitCurrency;
+            PercentageHighProfit = percentageHighProfit;
+
             Parameters = parameters ?? string.Empty;
             HadMissingMarketData = hadMissingMarketData;
             NoAnalysis = noAnalysis;
@@ -30,8 +33,9 @@
         public string OrderId { get; set; }
         public string ClientOrderId { get; set; }
 
-        public decimal? DailyHighProfit { get; }
-        public decimal? WindowHighProfit { get; }
+        public decimal? AbsoluteHighProfit { get; }
+        public string AbsoluteHighProfitCurrency { get; }
+        public decimal? PercentageHighProfit { get; }
         public string Parameters { get; }
         public bool HadMissingMarketData { get; }
         public bool NoAnalysis { get; }

@@ -88,7 +88,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equaled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
             var orderUnderAnalysis = UniverseEvent.UnderlyingEvent as Order;
-            SetLiveTradesJudgement(orderUnderAnalysis);
+            SetNoLiveTradesJudgement(orderUnderAnalysis);
 
             return false;
         }

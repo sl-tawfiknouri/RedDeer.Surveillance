@@ -11,6 +11,7 @@ namespace Surveillance.Auditing.Context.Interfaces
         void EventException(Exception e);
         string Id();
         string CorrelationId();
+        string RuleParameterId();
         bool IsBackTest();
         ISystemProcessOperationContext SystemProcessOperationContext();
     }

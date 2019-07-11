@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Judgements
         private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
 
         private readonly object _lock = new object();
-        private readonly Queue<IRuleBreach> _ruleViolations;
+        private readonly Stack<IRuleBreach> _ruleViolations;
         private readonly Queue<RuleViolationIdPair> _deduplicatedRuleViolations;
         private readonly IQueueCasePublisher _queueCasePublisher;
         private readonly ILogger<RuleViolationService> _logger;
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Judgements
             IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper,
             ILogger<RuleViolationService> logger)
         {
-            _ruleViolations = new Queue<IRuleBreach>();
+            _ruleViolations = new Stack<IRuleBreach>();
             _deduplicatedRuleViolations = new Queue<RuleViolationIdPair>();
 
             _queueCasePublisher =
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Judgements
 
             lock (_lock)
             {
-                _ruleViolations.Enqueue(ruleBreach);
+                _ruleViolations.Push(ruleBreach);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Judgements
             {
                 while (_ruleViolations.Any())
                 {
-                    var ruleViolation = _ruleViolations.Dequeue();
+                    var ruleViolation = _ruleViolations.Pop();
 
                     if (ruleViolation == null)
                         continue;

@@ -36,6 +36,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Judgements
                     "order100",
                     "ABCD-100",
                     100,
+                    "EUR",
                     92,
                     "some params",
                     false,

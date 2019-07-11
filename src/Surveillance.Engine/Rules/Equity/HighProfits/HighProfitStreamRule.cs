@@ -119,9 +119,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
+            if (orderUnderAnalysis == null)
+            {
+                orderUnderAnalysis = activeTrades.LastOrDefault();
+            }
+
             if (!liveTrades.Any())
             {
-                SetLiveTradesJudgement(orderUnderAnalysis);
+                SetNoLiveTradesJudgement(orderUnderAnalysis);
 
                 return;
             }
@@ -207,7 +212,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                         new TradePosition(liveTrades),
                         liveTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
                         _ruleCtx.IsBackTest(),
-                        _ruleCtx.Id(),
+                        _ruleCtx.RuleParameterId(),
                         _ruleCtx.SystemProcessOperationContext().Id.ToString(),
                         _ruleCtx.CorrelationId(),
                         OrganisationFactorValue,
@@ -234,25 +239,31 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             RuleBreachContext ruleBreachContext,
             Order orderUnderAnalysis)
         {
-            var dailyHighProfit =
-                (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitDailyAnalysis)
+            var absoluteHighProfit =
+                hasHighProfitAbsolute
                 ? absoluteProfit.Value
                 : (decimal?)null;
 
-            var windowHighProfit =
-                (hasHighProfitAbsolute && _equitiesParameters.PerformHighProfitWindowAnalysis)
-                    ? absoluteProfit.Value
+            var absoluteHighProfitCurrency =
+                hasHighProfitAbsolute
+                    ? absoluteProfit.Currency.Code
+                    : null;
+
+            var percentageHighProfit =
+                hasHighProfitPercentage
+                    ? profitRatio
                     : (decimal?)null;
 
             var jsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
             var judgement =
                 new HighProfitJudgement(
-                    _ruleCtx.Id(),
+                    _ruleCtx.RuleParameterId(),
                     _ruleCtx.CorrelationId(),
                     orderUnderAnalysis?.OrderId,
                     orderUnderAnalysis?.ReddeerOrderId?.ToString(),
-                    dailyHighProfit,
-                    windowHighProfit,
+                    absoluteHighProfit,
+                    absoluteHighProfitCurrency,
+                    percentageHighProfit,
                     jsonParameters,
                     false,
                     false);
@@ -276,10 +287,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             var noRevenueJsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
             var noRevenueJudgement =
                 new HighProfitJudgement(
-                    _ruleCtx.Id(),
+                    _ruleCtx.RuleParameterId(),
                     _ruleCtx.CorrelationId(),
                     orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                     orderUnderAnalysis?.OrderId,
+                    null,
                     null,
                     null,
                     noRevenueJsonParameters,
@@ -294,10 +306,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
             var noTradesJudgement =
                 new HighProfitJudgement(
-                    _ruleCtx.Id(),
+                    _ruleCtx.RuleParameterId(),
                     _ruleCtx.CorrelationId(),
                     orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                     orderUnderAnalysis?.OrderId,
+                    null,
                     null,
                     null,
                     noTradesParameters,
@@ -307,15 +320,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
         }
 
-        protected void SetLiveTradesJudgement(Order orderUnderAnalysis)
+        protected void SetNoLiveTradesJudgement(Order orderUnderAnalysis)
         {
             var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
             var noTradesJudgement =
                 new HighProfitJudgement(
-                    _ruleCtx.Id(),
+                    _ruleCtx.RuleParameterId(),
                     _ruleCtx.CorrelationId(),
                     orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                     orderUnderAnalysis?.OrderId,
+                    null,
                     null,
                     null,
                     noTradesParameters,
@@ -409,27 +423,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         {
             // do nothing
         }
-
-        //private void WriteAlertToMessageSender(
-        //    Stack<Order> activeTrades,
-        //    Money absoluteProfit,
-        //    decimal profitRatio,
-        //    bool hasHighProfitAbsolute,
-        //    bool hasHighProfitPercentage,
-        //    IExchangeRateProfitBreakdown breakdown)
-        //{
-        //    var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
-
-        //    Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
-
-        //    var position = new TradePosition(activeTrades.ToList());
-
-        //    // wrong should use a judgement
- 
-
-        //    var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
-        //    _alertStream.Add(alertEvent);
-        //}
 
         private bool HasHighProfitPercentage(decimal profitRatio)
         {

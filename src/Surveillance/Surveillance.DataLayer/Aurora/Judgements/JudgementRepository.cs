@@ -14,7 +14,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
         private readonly ILogger<JudgementRepository> _logger;
 
         private const string SaveHighProfit =
-            @"INSERT INTO JudgementEquityHighProfitRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, DailyHighProfit, WindowHighProfit, NoAnalysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @DailyHighProfit, @WindowHighProfit, @NoAnalysis);";
+            @"INSERT INTO JudgementEquityHighProfitRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, AbsoluteHighProfit, AbsoluteHighProfitCurrency, PercentageHighProfit, NoAnalysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @AbsoluteHighProfit, @AbsoluteHighProfitCurrency, @PercentageHighProfit, @NoAnalysis);";
 
         public JudgementRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -131,9 +131,9 @@ namespace Surveillance.DataLayer.Aurora.Judgements
                 RuleRunCorrelationId = judgement.RuleRunCorrelationId;
                 OrderId = judgement.OrderId;
                 ClientOrderId = judgement.ClientOrderId;
-
-                DailyHighProfit = judgement.DailyHighProfit;
-                WindowHighProfit = judgement.WindowHighProfit;
+                AbsoluteHighProfit = judgement.AbsoluteHighProfit;
+                AbsoluteHighProfitCurrency = judgement.AbsoluteHighProfitCurrency;
+                PercentageHighProfit = judgement.PercentageHighProfit;
                 Parameter = judgement.Parameters;
                 NoAnalysis = judgement.NoAnalysis;
             }
@@ -143,8 +143,9 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             public string OrderId { get; set; }
             public string ClientOrderId { get; set; }
 
-            public decimal? DailyHighProfit { get; set; }
-            public decimal? WindowHighProfit { get; set; }
+            public decimal? AbsoluteHighProfit { get; set; }
+            public string AbsoluteHighProfitCurrency { get; set; }
+            public decimal? PercentageHighProfit { get; set; }
             public string Parameter { get; set; }
             public bool NoAnalysis { get; set; }
         }

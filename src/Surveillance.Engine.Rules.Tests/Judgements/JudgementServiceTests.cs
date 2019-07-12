@@ -17,6 +17,7 @@ namespace Surveillance.Engine.Rules.Tests.Judgements
     {
         private IJudgementRepository _judgementRepository;
         private IHighProfitJudgementContext _highProfitJudgementContext;
+        private ICancelledOrderJudgement _cancelledOrderJudgementContext;
         private IHighProfitJudgementMapper _highProfitJudgementMapper;
         private IRuleViolationService _ruleViolationService;
         private ILogger<JudgementService> _logger;
@@ -26,6 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Judgements
         {
             _judgementRepository = A.Fake<IJudgementRepository>();
             _highProfitJudgementContext = A.Fake<IHighProfitJudgementContext>();
+            _cancelledOrderJudgementContext = A.Fake<ICancelledOrderJudgement>();
             _highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
             _ruleViolationService = A.Fake<IRuleViolationService>();
             _logger = A.Fake<ILogger<JudgementService>>();
@@ -113,7 +115,38 @@ namespace Surveillance.Engine.Rules.Tests.Judgements
             A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void Judgement_NullCancelledOrderJudgement_NullDoesNotThrowException()
+        {
+            var service = new JudgementService(_judgementRepository, _ruleViolationService, _highProfitJudgementMapper, _logger);
 
+            Assert.DoesNotThrow(() => service.Judgement((ICancelledOrderJudgement)null));
+
+            A.CallTo(() => _judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Judgement_CancelledOrderJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        {
+            var service = new JudgementService(_judgementRepository, _ruleViolationService, _highProfitJudgementMapper, _logger);
+
+            service.Judgement(_cancelledOrderJudgementContext);
+
+            A.CallTo(() => _judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+        
+        [Test]
+        public void Judgement_CancelledOrderJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        {
+            var service = new JudgementService(_judgementRepository, _ruleViolationService, _highProfitJudgementMapper, _logger);
+
+            service.Judgement(_cancelledOrderJudgementContext);
+
+            A.CallTo(() => _judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+        }
 
     }
 }

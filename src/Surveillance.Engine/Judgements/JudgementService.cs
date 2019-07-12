@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(cancelledOrder);
 
             // judgement is also a rule breach
-            var projectedBreach = (ICancelledOrderRuleBreach)new object();
+            var projectedBreach = (ICancelledOrderRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -84,7 +84,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(highVolume);
 
             // judgement is also a rule breach
-            var projectedBreach = (IHighVolumeRuleBreach)new object();
+            var projectedBreach = (IHighVolumeRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -99,7 +99,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(layering);
 
             // judgement is also a rule breach
-            var projectedBreach = (ILayeringRuleBreach)new object();
+            var projectedBreach = (ILayeringRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -114,7 +114,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(markingTheClose);
 
             // judgement is also a rule breach
-            var projectedBreach = (IMarkingTheCloseBreach)new object();
+            var projectedBreach = (IMarkingTheCloseBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -129,7 +129,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(placingOrders);
 
             // judgement is also a rule breach
-            var projectedBreach = (IPlacingOrdersWithNoIntentToExecuteRuleBreach)new object();
+            var projectedBreach = (IPlacingOrdersWithNoIntentToExecuteRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -144,7 +144,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(ramping);
 
             // judgement is also a rule breach
-            var projectedBreach = (IRampingRuleBreach)new object();
+            var projectedBreach = (IRampingRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
@@ -159,7 +159,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _judgementRepository.Save(spoofing);
 
             // judgement is also a rule breach
-            var projectedBreach = (ISpoofingRuleBreach)new object();
+            var projectedBreach = (ISpoofingRuleBreach)null;
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 

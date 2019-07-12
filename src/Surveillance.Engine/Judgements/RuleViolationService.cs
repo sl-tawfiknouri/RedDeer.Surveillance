@@ -65,6 +65,7 @@ namespace Surveillance.Engine.Rules.Judgements
             if (ruleBreach == null)
             {
                 _logger?.LogError($"received a null rule breach in add rule violations");
+                return;
             }
 
             lock (_lock)

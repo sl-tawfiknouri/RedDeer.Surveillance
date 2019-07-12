@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Surveillance.Judgement.Equity;
+using Domain.Surveillance.Judgement.Equity.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
@@ -24,7 +25,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Save(HighProfitJudgement highProfit)
+        public async Task Save(IHighProfitJudgement highProfit)
         {
             _logger?.LogInformation($"High profit judgement saving for rule run {highProfit.RuleRunId}");
 
@@ -50,7 +51,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
         
-        public void Save(CancelledOrderJudgement cancelledOrder)
+        public void Save(ICancelledOrderJudgement cancelledOrder)
         {
             if (cancelledOrder == null)
             {
@@ -59,7 +60,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
-        public void Save(HighVolumeJudgement highVolume)
+        public void Save(IHighVolumeJudgement highVolume)
         {
             if (highVolume == null)
             {
@@ -68,7 +69,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
-        public void Save(LayeringJudgement layering)
+        public void Save(ILayeringJudgement layering)
         {
             if (layering == null)
             {
@@ -76,8 +77,8 @@ namespace Surveillance.DataLayer.Aurora.Judgements
                 return;
             }
         }
-
-        public void Save(MarkingTheCloseJudgement markingTheClose)
+        
+        public void Save(IMarkingTheCloseJudgement markingTheClose)
         {
             if (markingTheClose == null)
             {
@@ -86,7 +87,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
-        public void Save(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
+        public void Save(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
         {
             if (placingOrders == null)
             {
@@ -95,7 +96,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
-        public void Save(RampingJudgement ramping)
+        public void Save(IRampingJudgement ramping)
         {
             if (ramping == null)
             {
@@ -104,7 +105,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
         }
 
-        public void Save(SpoofingJudgement spoofing)
+        public void Save(ISpoofingJudgement spoofing)
         {
             if (spoofing == null)
             {
@@ -120,7 +121,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
                 // leave for dapper
             }
 
-            public HighProfitJudgementDto(HighProfitJudgement judgement)
+            public HighProfitJudgementDto(IHighProfitJudgement judgement)
             {
                 if (judgement == null)
                 {

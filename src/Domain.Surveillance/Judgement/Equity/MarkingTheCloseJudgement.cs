@@ -1,6 +1,8 @@
-﻿namespace Domain.Surveillance.Judgement.Equity
+﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
+
+namespace Domain.Surveillance.Judgement.Equity
 {
-    public class MarkingTheCloseJudgement
+    public class MarkingTheCloseJudgement : IMarkingTheCloseJudgement
     {
         public MarkingTheCloseJudgement(
             decimal? dailyPercentageMarketVolume,

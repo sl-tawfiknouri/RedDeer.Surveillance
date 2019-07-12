@@ -1,6 +1,8 @@
-﻿namespace Domain.Surveillance.Judgement.Equity
+﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
+
+namespace Domain.Surveillance.Judgement.Equity
 {
-    public class RampingJudgement
+    public class RampingJudgement : IRampingJudgement
     {
         public RampingJudgement(decimal? autoCorrelationCoefficient)
         {

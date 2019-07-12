@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Surveillance.Judgement.Equity;
+using Domain.Surveillance.Judgement.Equity.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
@@ -20,7 +21,6 @@ namespace Surveillance.Engine.Rules.Judgements
         private readonly IJudgementRepository _judgementRepository;
         private readonly IHighProfitJudgementMapper _highProfitJudgementMapper;
         private readonly IRuleViolationService _ruleViolationService;
-
         private readonly ILogger<JudgementService> _logger;
 
         public JudgementService(
@@ -43,7 +43,6 @@ namespace Surveillance.Engine.Rules.Judgements
                 return;
             }
 
-
             if (string.IsNullOrWhiteSpace(judgementContext?.Judgement?.OrderId))
             {
                 _logger?.LogInformation($"High Profit Judgement had no order id - this is normal for market close analysis");
@@ -59,7 +58,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(CancelledOrderJudgement cancelledOrder)
+        public void Judgement(ICancelledOrderJudgement cancelledOrder)
         {
             if (cancelledOrder == null)
             {
@@ -74,7 +73,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(HighVolumeJudgement highVolume)
+        public void Judgement(IHighVolumeJudgement highVolume)
         {
             if (highVolume == null)
             {
@@ -89,7 +88,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(LayeringJudgement layering)
+        public void Judgement(ILayeringJudgement layering)
         {
             if (layering == null)
             {
@@ -104,7 +103,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(MarkingTheCloseJudgement markingTheClose)
+        public void Judgement(IMarkingTheCloseJudgement markingTheClose)
         {
             if (markingTheClose == null)
             {
@@ -119,7 +118,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
+        public void Judgement(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
         {
             if (placingOrders == null)
             {
@@ -134,7 +133,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(RampingJudgement ramping)
+        public void Judgement(IRampingJudgement ramping)
         {
             if (ramping == null)
             {
@@ -149,7 +148,7 @@ namespace Surveillance.Engine.Rules.Judgements
             _ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
-        public void Judgement(SpoofingJudgement spoofing)
+        public void Judgement(ISpoofingJudgement spoofing)
         {
             if (spoofing == null)
             {

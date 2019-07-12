@@ -1,17 +1,18 @@
 ﻿using System.Threading.Tasks;
 using Domain.Surveillance.Judgement.Equity;
+using Domain.Surveillance.Judgement.Equity.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Judgements.Interfaces
 {
     public interface IJudgementRepository
     {
-        Task Save(HighProfitJudgement highProfit);
-        void Save(CancelledOrderJudgement cancelledOrder);
-        void Save(HighVolumeJudgement highVolume);
-        void Save(LayeringJudgement layering);
-        void Save(MarkingTheCloseJudgement markingTheClose);
-        void Save(PlacingOrdersWithNoIntentToExecuteJudgement placingOrders);
-        void Save(RampingJudgement ramping);
-        void Save(SpoofingJudgement spoofing);
+        Task Save(IHighProfitJudgement highProfit);
+        void Save(ICancelledOrderJudgement cancelledOrder);
+        void Save(IHighVolumeJudgement highVolume);
+        void Save(ILayeringJudgement layering);
+        void Save(IMarkingTheCloseJudgement markingTheClose);
+        void Save(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders);
+        void Save(IRampingJudgement ramping);
+        void Save(ISpoofingJudgement spoofing);
     }
 }

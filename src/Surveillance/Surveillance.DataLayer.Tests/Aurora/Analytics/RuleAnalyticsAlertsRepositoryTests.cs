@@ -4,18 +4,21 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Analytics;
-using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Analytics
 {
     [TestFixture]
     public class RuleAnalyticsAlertsRepositoryTests
     {
+        private IDataLayerConfiguration _configuration;
         private ILogger<RuleAnalyticsAlertsRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<RuleAnalyticsAlertsRepository>>();
         }
 
@@ -45,15 +48,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
                 FixedIncomeHighVolumeIssuanceAlertsAdjusted = 9,
                 FixedIncomeHighVolumeIssuanceAlertsRaw = 10,
                 FixedIncomeWashTradeAlertsRaw = 5,
-                FixedIncomeWashTradeAlertsAdjusted = 4
+                FixedIncomeWashTradeAlertsAdjusted = 4,
+                RampingAlertsRaw = 99,
+                RampingAlertsAdjusted = 100,
+                PlacingOrdersAlertsRaw = 88,
+                PlacingOrdersAlertsAdjusted = 89
             };
 
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new RuleAnalyticsAlertsRepository(factory, _logger);
 
             await repo.Create(alertAnalytics);

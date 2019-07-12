@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Analytics;
+using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -13,18 +15,43 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
     public class RuleAnalyticsAlertsRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
+        private IConnectionStringFactory _connectionStringFactory;
         private ILogger<RuleAnalyticsAlertsRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
             _configuration = TestHelpers.Config();
+            _connectionStringFactory = A.Fake<IConnectionStringFactory>();
             _logger = A.Fake<ILogger<RuleAnalyticsAlertsRepository>>();
         }
 
         [Test]
+        public void Ctor_NullConnectionStringFactory_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsAlertsRepository(null, _logger));
+        }
+
+        [Test]
+        public void Ctor_NullLogger_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsAlertsRepository(_connectionStringFactory, null));
+        }
+
+        [Test]
+        public void Does_SaveNull_DoesNotThrow()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new RuleAnalyticsAlertsRepository(factory, _logger);
+
+            Assert.DoesNotThrowAsync(() => repo.Create(null));
+        }
+
+        [Test]
         [Explicit]
-        public async Task Does_Save()
+        public async Task Does_Save_ValidDto()
         {
             var alertAnalytics = new AlertAnalytics
             {

@@ -14,7 +14,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
         private readonly ILogger<JudgementRepository> _logger;
 
         private const string SaveHighProfit =
-            @"INSERT INTO JudgementEquityHighProfitRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, AbsoluteHighProfit, AbsoluteHighProfitCurrency, PercentageHighProfit, NoAnalysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @AbsoluteHighProfit, @AbsoluteHighProfitCurrency, @PercentageHighProfit, @NoAnalysis);";
+            @"INSERT INTO JudgementEquityHighProfitRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, AbsoluteHighProfit, AbsoluteHighProfitCurrency, PercentageHighProfit, Analysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @AbsoluteHighProfit, @AbsoluteHighProfitCurrency, @PercentageHighProfit, @Analysis);";
 
         public JudgementRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -135,7 +135,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
                 AbsoluteHighProfitCurrency = judgement.AbsoluteHighProfitCurrency;
                 PercentageHighProfit = judgement.PercentageHighProfit;
                 Parameter = judgement.Parameters;
-                NoAnalysis = judgement.NoAnalysis;
+                Analysis = !judgement.NoAnalysis;
             }
 
             public string RuleRunId { get; set; }
@@ -147,7 +147,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             public string AbsoluteHighProfitCurrency { get; set; }
             public decimal? PercentageHighProfit { get; set; }
             public string Parameter { get; set; }
-            public bool NoAnalysis { get; set; }
+            public bool Analysis { get; set; }
         }
     }
 }

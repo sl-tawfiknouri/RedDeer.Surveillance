@@ -259,8 +259,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 new HighProfitJudgement(
                     _ruleCtx.RuleParameterId(),
                     _ruleCtx.CorrelationId(),
-                    orderUnderAnalysis?.OrderId,
                     orderUnderAnalysis?.ReddeerOrderId?.ToString(),
+                    orderUnderAnalysis?.OrderId,
                     absoluteHighProfit,
                     absoluteHighProfitCurrency,
                     percentageHighProfit,

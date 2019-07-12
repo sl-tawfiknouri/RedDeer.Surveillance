@@ -7,7 +7,7 @@ START TRANSACTION;
 
 	INSERT INTO Migrations VALUES(42, "Add High Profit Analysis.sql", now());
 	
-	CREATE TABLE JudgementEquityHighProfitRule (Id INT auto_increment primary key NOT NULL, RuleRunId NVARCHAR(4095) NOT NULL, RuleRunCorrelationId NVARCHAR(4095) NOT NULL, OrderId NVARCHAR(255), ClientOrderId NVARCHAR(255), Parameter TEXT, AbsoluteHighProfit DECIMAL(25, 5) NULL, AbsoluteHighProfitCurrency NVARCHAR(255), PercentageHighProfit DECIMAL(25, 5) NULL, NoAnalysis BIT, INDEX (OrderId));
+	CREATE TABLE JudgementEquityHighProfitRule (Id INT auto_increment primary key NOT NULL, RuleRunId NVARCHAR(4095) NOT NULL, RuleRunCorrelationId NVARCHAR(4095) NOT NULL, OrderId NVARCHAR(255), ClientOrderId NVARCHAR(255), Parameter TEXT, AbsoluteHighProfit DECIMAL(25, 5) NULL, AbsoluteHighProfitCurrency NVARCHAR(255), PercentageHighProfit DECIMAL(25, 5) NULL, Analysis BIT, INDEX (OrderId));
 
 --	CREATE TABLE JudgementEquityCancelledOrdersRule (Id INT auto_increment primary key NOT NULL, RuleRunId NVARCHAR(4095) NOT NULL, RuleRunCorrelationId NVARCHAR(4095) NOT NULL, CancelledOrderPercentagePositionThreshold DECIMAL(25, 5) NULL, CancelledOrderCountPercentageThreshold DECIMAL(25, 5) NULL);
 --	CREATE TABLE JudgementEquityHighVolumeRule (Id INT auto_increment primary key NOT NULL, RuleRunId NVARCHAR(4095) NOT NULL, RuleRunCorrelationId NVARCHAR(4095) NOT NULL, DailyHighVolumePercentage DECIMAL(25, 5) NULL, WindowHighVolumePercentage DECIMAL(25, 5) NULL, MarketCapHighVolumePercentage DECIMAL(25, 5) NULL);

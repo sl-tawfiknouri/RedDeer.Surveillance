@@ -60,6 +60,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return false;
             }
 
+            var baseOrder = activeWindow.Any() ? activeWindow.Peek() : null;
+
             var tradeBuy =
                 activeWindow
                     .Where(aw => aw != null)
@@ -87,8 +89,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equaled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
-            var orderUnderAnalysis = UniverseEvent.UnderlyingEvent as Order;
-            SetNoLiveTradesJudgement(orderUnderAnalysis);
+            SetNoLiveTradesJudgement(baseOrder);
 
             return false;
         }

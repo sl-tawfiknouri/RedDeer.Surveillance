@@ -45,28 +45,18 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
             lock (_lock)
             {
-                var dbConnection = _dbConnectionFactory.BuildConn();
-
                 try
                 {
-                    dbConnection.Open();
-
                     _logger.LogInformation($"SystemProcessOperationRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
-                        entity.Id = connTask.Result;
+                        entity.Id = conn.Result;
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
-                }
-                finally
-                {
-                    dbConnection.Close();
-                    dbConnection.Dispose();
                 }
             }
         }
@@ -78,12 +68,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(UpdateSql, entity))
                 {
                     await conn;
@@ -93,21 +80,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             {
                 _logger.LogError($"System Process Operation Repository Update Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         public async Task<IReadOnlyCollection<ISystemProcessOperation>> GetDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperation>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -117,11 +96,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Repository Get Dashboard {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperation[0];

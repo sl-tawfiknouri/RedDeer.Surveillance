@@ -27,7 +27,7 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             LEFT OUTER JOIN SystemProcessOperation AS SysOp
             ON UploadFile.SystemProcessOperationId = SysOp.Id
             WHERE SysOp.OperationStart >= @StartDate
-            AND SysOp.OperationStart < @EndDate";
+            AND SysOp.OperationStart < @EndDate;";
 
         public SystemProcessOperationUploadFileRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -46,40 +46,27 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
             lock (_lock)
             {
-                var dbConnection = _dbConnectionFactory.BuildConn();
-
                 try
                 {
-                    dbConnection.Open();
-
                     _logger.LogInformation($"SystemProcessOperationUploadFileRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
-                        entity.Id = connTask.Result;
+                        entity.Id = conn.Result;
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"System Process Operation Upload File Repository Create Method For {entity.Id} {entity.SystemProcessId}. {e.Message}");
                 }
-                finally
-                {
-                    dbConnection.Close();
-                    dbConnection.Dispose();
-                }
             }
         }
 
         public async Task<IReadOnlyCollection<ISystemProcessOperationUploadFile>> GetDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -90,11 +77,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             {
                 _logger.LogError($"System Process Operation Upload File Repository Get Dashboard method {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
 
             return new ISystemProcessOperationUploadFile[0];
         }
@@ -104,12 +86,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             var startDate = date.Date;
             var endDate = date.Date.AddDays(1).AddSeconds(-1);
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-                
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(GetByDate, new { StartDate = startDate, EndDate = endDate }))
                 {
                     var result = await conn;
@@ -119,11 +98,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Upload File Repository Get On Date method {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperationUploadFile[0];

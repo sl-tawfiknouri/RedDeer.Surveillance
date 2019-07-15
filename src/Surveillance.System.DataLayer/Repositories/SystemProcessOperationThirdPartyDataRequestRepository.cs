@@ -33,28 +33,18 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
             lock (_lock)
             {
-                var dbConnection = _dbConnectionFactory.BuildConn();
-
                 try
                 {
-                    dbConnection.Open();
-
                     _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
-                        entity.Id = connTask.Result;
+                        entity.Id = conn.Result;
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
-                }
-                finally
-                {
-                    dbConnection.Close();
-                    dbConnection.Dispose();
                 }
             }
         }

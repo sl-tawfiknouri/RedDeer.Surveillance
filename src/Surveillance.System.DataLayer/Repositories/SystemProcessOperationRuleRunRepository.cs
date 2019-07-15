@@ -22,7 +22,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
         private const string GetSql = "SELECT * FROM SystemProcessOperationRuleRun WHERE SystemProcessOperationId = @Id;";
 
-
         private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationRuleRun ORDER BY Id DESC LIMIT 100;";
 
         public SystemProcessOperationRuleRunRepository(
@@ -45,28 +44,18 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
             lock (_lock)
             {
-                var dbConnection = _dbConnectionFactory.BuildConn();
-
                 try
                 {
-                    dbConnection.Open();
-
                     _logger.LogInformation($"SystemProcessOperationRuleRunRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
-                        entity.Id = connTask.Result;
+                        entity.Id = conn.Result;
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"System Process Operation Rule Run Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
-                }
-                finally
-                {
-                    dbConnection.Close();
-                    dbConnection.Dispose();
                 }
             }
         }
@@ -78,12 +67,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(UpdateSql, entity))
                 {
                     await conn;
@@ -93,21 +79,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         public async Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> GetDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -117,11 +95,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Get Dashboard method {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperationRuleRun[0];
@@ -135,12 +108,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return new ISystemProcessOperationRuleRun[0];
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetSql, new {Id = systemProcessOperationIds}))
                 {
                     var result = await conn;
@@ -150,11 +120,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Get method {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperationRuleRun[0];

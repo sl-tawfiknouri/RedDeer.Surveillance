@@ -65,12 +65,15 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 EquityInterDay(universeEvent);
             }
 
-            if (universeEvent.StateChange == UniverseStateEvent.Eschaton && _requestData && _ruleRunMode == RuleRunMode.ValidationRun)
+            if (universeEvent.StateChange == UniverseStateEvent.Eschaton
+                && _requestData
+                && _ruleRunMode == RuleRunMode.ValidationRun)
             {
                 _universeDataRequestsSubscriber.SubmitRequest();
             }
 
-            if (universeEvent.StateChange != UniverseStateEvent.Order && universeEvent.StateChange != UniverseStateEvent.OrderPlaced)
+            if (universeEvent.StateChange != UniverseStateEvent.Order
+                && universeEvent.StateChange != UniverseStateEvent.OrderPlaced)
             {
                 return false;
             }
@@ -130,7 +133,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             _logger?.LogInformation($"Equity inter day event in HighMarketCapFilter occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
-            // TODO: Check if everything will be added when I
             _universeEquityInterdayCache.Add(value);
         }
     }

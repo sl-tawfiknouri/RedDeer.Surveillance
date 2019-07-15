@@ -98,10 +98,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                     using (var dbConnection = _dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                     {
-                        var resultTask = conn;
-                        resultTask.Wait();
-                        var result = resultTask.Result;
-
+                        var result = conn.Result;
                         _logger.LogInformation($"completed saving rule breach to repository");
 
                         return result;

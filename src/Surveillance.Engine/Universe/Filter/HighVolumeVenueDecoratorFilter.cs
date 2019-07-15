@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters;
@@ -10,7 +12,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 {
     public class HighVolumeVenueDecoratorFilter : IUniverseFilterService
     {
+        private readonly Queue<IUniverseEvent> _universeCache;
         private readonly TimeWindows _timeWindows;
+        private DateTime _windowTime;
+        private bool _eschaton;
         private readonly IUniverseFilterService _baseService;
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
@@ -25,6 +30,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         {
             _timeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
             _baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            _universeCache = new Queue<IUniverseEvent>();
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = universeUnsubscriberFactory ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -67,9 +73,35 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            foreach (var obs in _universeObservers)
+            _universeCache.Enqueue(value);
+            _windowTime = value.EventTime;
+
+            if (value.StateChange == UniverseStateEvent.Eschaton)
             {
-                obs.Value.OnNext(value);
+                _eschaton = true;
+            }
+
+            ProcessCache();
+        }
+
+        private void ProcessCache()
+        {
+            if (!_universeCache.Any())
+            {
+                return;
+            }
+
+            while (_universeCache.Any()
+                   && 
+                    (_universeCache.Peek().EventTime < _windowTime
+                     || _eschaton))
+            {
+                var value = _universeCache.Dequeue();
+                
+                foreach (var obs in _universeObservers)
+                {
+                    obs.Value.OnNext(value);
+                }
             }
         }
     }

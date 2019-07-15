@@ -5,6 +5,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -135,7 +136,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         }
 
         [Test]
-        public void Subscribe_SubscribeObserverAndOnNextNull_ReturnsNonNullAndCallsFactory()
+        public void OnNext_SubscribeObserverAndOnNextNull_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
             var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
@@ -157,15 +158,18 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         }
 
         [Test]
-        public void Subscribe_SubscribeObserverAndOnNextValid_ReturnsNonNullAndCallsFactory()
+        public void OnNext_SubscribeObserverAndOnNextValid_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
             var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
-            var onNext = A.Fake<IUniverseEvent>();
+            var onNext1 = A.Fake<IUniverseEvent>();
+            var onNext2 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext2.StateChange).Returns(UniverseStateEvent.Eschaton);
 
             var result = venueFilter.Subscribe(anObserver);
-            venueFilter.OnNext(onNext);
+            venueFilter.OnNext(onNext1);
+            venueFilter.OnNext(onNext2);
 
             A.CallTo(() =>
                     _universeUnsubscriberFactory
@@ -176,7 +180,91 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
             Assert.IsNotNull(result);
 
-            A.CallTo(() => anObserver.OnNext(onNext)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext2)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_SubscribeObserverAndOnNextValidWaitsLengthOfWindow_ReturnsNonNullAndCallsFactory()
+        {
+            var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
+            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var anObserver = A.Fake<IObserver<IUniverseEvent>>();
+            var baseDate = new DateTime(2018, 01, 01);
+
+            var onNext1 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext1.EventTime).Returns(baseDate);
+            
+            var onNext2 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext2.EventTime).Returns(baseDate.AddDays(1));
+
+            var onNext3 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext3.EventTime).Returns(baseDate.AddDays(2));
+
+            var onNext4 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext4.EventTime).Returns(baseDate.AddDays(3));
+
+            var result = venueFilter.Subscribe(anObserver);
+            venueFilter.OnNext(onNext1);
+            venueFilter.OnNext(onNext2);
+            venueFilter.OnNext(onNext3);
+            venueFilter.OnNext(onNext4);
+
+            A.CallTo(() =>
+                    _universeUnsubscriberFactory
+                        .Create(
+                            A<ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>>.Ignored,
+                            A<IObserver<IUniverseEvent>>.Ignored))
+                .MustHaveHappenedOnceExactly();
+
+            Assert.IsNotNull(result);
+
+            A.CallTo(() => anObserver.OnNext(onNext1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext3)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext4)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_SubscribeObserverAndOnNextValidWaitsLengthOfWindowWithEschaton_ReturnsNonNullAndCallsFactory()
+        {
+            var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
+            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var anObserver = A.Fake<IObserver<IUniverseEvent>>();
+            var baseDate = new DateTime(2018, 01, 01);
+
+            var onNext1 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext1.EventTime).Returns(baseDate);
+
+            var onNext2 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext2.EventTime).Returns(baseDate.AddDays(1));
+
+            var onNext3 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext3.EventTime).Returns(baseDate.AddDays(2));
+
+            var onNext4 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext4.EventTime).Returns(baseDate.AddDays(3));
+            A.CallTo(() => onNext4.StateChange).Returns(UniverseStateEvent.Eschaton);
+
+            var result = venueFilter.Subscribe(anObserver);
+            venueFilter.OnNext(onNext1);
+            venueFilter.OnNext(onNext2);
+            venueFilter.OnNext(onNext3);
+            venueFilter.OnNext(onNext4);
+
+            A.CallTo(() =>
+                    _universeUnsubscriberFactory
+                        .Create(
+                            A<ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>>.Ignored,
+                            A<IObserver<IUniverseEvent>>.Ignored))
+                .MustHaveHappenedOnceExactly();
+
+            Assert.IsNotNull(result);
+
+            A.CallTo(() => anObserver.OnNext(onNext1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext3)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext4)).MustHaveHappenedOnceExactly();
         }
     }
 }

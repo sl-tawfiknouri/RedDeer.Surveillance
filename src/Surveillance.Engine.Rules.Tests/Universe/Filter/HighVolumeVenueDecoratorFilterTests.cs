@@ -12,7 +12,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 {
     [TestFixture]
-    public class HighVolumeVenueFilterTests
+    public class HighVolumeVenueDecoratorFilterTests
     {
         private ILogger<IHighVolumeVenueFilter> _logger;
         private IUniverseFilterService _baseService;
@@ -134,7 +134,49 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             A.CallTo(() => _baseService.OnError(error)).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void Subscribe_SubscribeObserverAndOnNextNull_ReturnsNonNullAndCallsFactory()
+        {
+            var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
+            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var anObserver = A.Fake<IObserver<IUniverseEvent>>();
 
+            var result = venueFilter.Subscribe(anObserver);
+            venueFilter.OnNext(null);
+            
+            A.CallTo(() =>
+                    _universeUnsubscriberFactory
+                        .Create(
+                            A<ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>>.Ignored,
+                            A<IObserver<IUniverseEvent>>.Ignored))
+                .MustHaveHappenedOnceExactly();
 
+            Assert.IsNotNull(result);
+
+            A.CallTo(() => anObserver.OnNext(null)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Subscribe_SubscribeObserverAndOnNextValid_ReturnsNonNullAndCallsFactory()
+        {
+            var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
+            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var anObserver = A.Fake<IObserver<IUniverseEvent>>();
+            var onNext = A.Fake<IUniverseEvent>();
+
+            var result = venueFilter.Subscribe(anObserver);
+            venueFilter.OnNext(onNext);
+
+            A.CallTo(() =>
+                    _universeUnsubscriberFactory
+                        .Create(
+                            A<ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>>.Ignored,
+                            A<IObserver<IUniverseEvent>>.Ignored))
+                .MustHaveHappenedOnceExactly();
+
+            Assert.IsNotNull(result);
+
+            A.CallTo(() => anObserver.OnNext(onNext)).MustHaveHappenedOnceExactly();
+        }
     }
 }

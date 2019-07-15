@@ -62,6 +62,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public void OnNext(IUniverseEvent value)
         {
+            if (value == null)
+            {
+                return;
+            }
+
             foreach (var obs in _universeObservers)
             {
                 obs.Value.OnNext(value);

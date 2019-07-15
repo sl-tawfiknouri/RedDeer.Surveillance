@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             while (_universeCache.Any()
                    && 
-                    (_universeCache.Peek().EventTime < _windowTime
+                    ((_universeCache.Peek().EventTime + _timeWindows.BackwardWindowSize) <= _windowTime
                      || _eschaton))
             {
                 var value = _universeCache.Dequeue();

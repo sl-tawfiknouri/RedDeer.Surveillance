@@ -204,11 +204,15 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             var onNext4 = A.Fake<IUniverseEvent>();
             A.CallTo(() => onNext4.EventTime).Returns(baseDate.AddDays(3));
 
+            var onNext5 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext5.EventTime).Returns(baseDate.AddDays(4.5));
+
             var result = venueFilter.Subscribe(anObserver);
             venueFilter.OnNext(onNext1);
             venueFilter.OnNext(onNext2);
             venueFilter.OnNext(onNext3);
             venueFilter.OnNext(onNext4);
+            venueFilter.OnNext(onNext5);
 
             A.CallTo(() =>
                     _universeUnsubscriberFactory
@@ -222,7 +226,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             A.CallTo(() => anObserver.OnNext(onNext1)).MustHaveHappenedOnceExactly();
             A.CallTo(() => anObserver.OnNext(onNext2)).MustHaveHappenedOnceExactly();
             A.CallTo(() => anObserver.OnNext(onNext3)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => anObserver.OnNext(onNext4)).MustNotHaveHappened();
+            A.CallTo(() => anObserver.OnNext(onNext4)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => anObserver.OnNext(onNext5)).MustNotHaveHappened();
         }
 
         [Test]
@@ -266,5 +271,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             A.CallTo(() => anObserver.OnNext(onNext3)).MustHaveHappenedOnceExactly();
             A.CallTo(() => anObserver.OnNext(onNext4)).MustHaveHappenedOnceExactly();
         }
+
+
     }
 }

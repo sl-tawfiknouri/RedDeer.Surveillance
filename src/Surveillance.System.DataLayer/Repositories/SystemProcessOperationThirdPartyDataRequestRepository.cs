@@ -10,6 +10,7 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationThirdPartyDataRequestRepository : ISystemProcessOperationThirdPartyDataRequestRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<SystemProcessOperationThirdPartyDataRequestRepository> _logger;
 
@@ -30,26 +31,31 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
+                var dbConnection = _dbConnectionFactory.BuildConn();
 
-                _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                try
                 {
-                    entity.Id = await conn;
+                    dbConnection.Open();
+
+                    _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
+                    using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                    {
+                        var connTask = conn;
+                        connTask.Wait();
+                        entity.Id = connTask.Result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                catch (Exception e)
+                {
+                    _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                }
+                finally
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+                }
             }
         }
     }

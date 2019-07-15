@@ -10,6 +10,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
 {
     public class RuleBreachRepository : IRuleBreachRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<RuleBreachRepository> _logger;
 
@@ -87,27 +88,32 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return null;
             }
 
-            try
+            lock (_lock)
             {
-                _logger.LogInformation($"saving rule breach to repository");
-                var dto = new RuleBreachDto(message);
-
-                using (var dbConnection = _dbConnectionFactory.BuildConn())
-                using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
+                try
                 {
-                    var result = await conn;
+                    _logger.LogInformation($"saving rule breach to repository");
+                    var dto = new RuleBreachDto(message);
 
-                    _logger.LogInformation($"completed saving rule breach to repository");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
+                    using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
+                    {
+                        var resultTask = conn;
+                        resultTask.Wait();
+                        var result = resultTask.Result;
 
-                    return result;
+                        _logger.LogInformation($"completed saving rule breach to repository");
+
+                        return result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
+                catch (Exception e)
+                {
+                    _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                }
 
-            return null;
+                return null;
+            }
         }
         
         public async Task<RuleBreach> Get(string id)

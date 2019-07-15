@@ -18,6 +18,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
 {
     public class OrdersRepository : IOrdersRepository
     {
+        private readonly object _lock = new object();
+
         private readonly IReddeerMarketRepository _marketRepository;
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly IOrderBrokerRepository _orderBrokerRepository;
@@ -612,80 +614,92 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
+                var dbConnection = _dbConnectionFactory.BuildConn();
 
-                if (entity.OrderBroker != null
-                    && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name) 
-                    && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
+                try
                 {
-                    var broker = await _orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
-                    entity.OrderBroker.Id = broker;
-                }
+                    dbConnection.Open();
 
-                var dto = new OrderDto(entity);
-
-                _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
-
-                if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
-                || string.IsNullOrWhiteSpace(dto.MarketId))
-                {
-                    var marketDataPair = new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
-                    var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
-                    dto.SecurityReddeerId = marketSecurityId.SecurityId;
-                    dto.MarketId = marketSecurityId.MarketId;
-                }
-
-                _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new order");
-                using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto))
-                {
-                    var orderId = await conn;
-                    entity.ReddeerOrderId = orderId;
-                    _logger.LogInformation($"ReddeerTradeRepository Create completed for the new order {orderId}");
-                }
-
-                if (entity.ReddeerOrderId == null)
-                {
-                    _logger.LogError($"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
-                }
-
-                if (entity.DealerOrders == null
-                    || !entity.DealerOrders.Any())
-                {
-                    _logger.LogInformation($"ReddeerTradeRepository Create saved an order with id {entity.ReddeerOrderId} and it had no trades so returning.");
-                    return;
-                }
-
-                foreach (var trade in entity.DealerOrders)
-                {
-                    if (trade == null)
+                    if (entity.OrderBroker != null
+                        && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name)
+                        && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
                     {
-                        continue;
+                        var brokerTask = _orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
+                        brokerTask.Wait();
+                        var broker = brokerTask.Result;
+                        entity.OrderBroker.Id = broker;
                     }
 
-                    _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
-                    var tradeDto = new DealerOrdersDto(trade, entity.ReddeerOrderId);
-                    using (var conn = dbConnection.ExecuteScalarAsync<string>(InsertDealerOrderSql, tradeDto))
-                    {
-                        var tradeId = await conn;
-                        tradeDto.ReddeerDealerOrderId = tradeId;
-                        _logger.LogInformation($"ReddeerTradeRepository Create inserted a new trade entry for order {entity.ReddeerOrderId} and it had an id of {tradeId}");
-                    }
-                }
+                    var dto = new OrderDto(entity);
 
-                _logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                    _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
+
+                    if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
+                    || string.IsNullOrWhiteSpace(dto.MarketId))
+                    {
+                        var marketDataPair = new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
+                        var marketSecurityIdTask = _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
+                        marketSecurityIdTask.Wait();
+                        var marketSecurityId = marketSecurityIdTask.Result;
+                        dto.SecurityReddeerId = marketSecurityId.SecurityId;
+                        dto.MarketId = marketSecurityId.MarketId;
+                    }
+
+                    _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new order");
+                    using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto))
+                    {
+                        var orderIdTask = conn;
+                        orderIdTask.Wait();
+                        var orderId = orderIdTask.Result;
+
+                        entity.ReddeerOrderId = orderId;
+                        _logger.LogInformation($"ReddeerTradeRepository Create completed for the new order {orderId}");
+                    }
+
+                    if (entity.ReddeerOrderId == null)
+                    {
+                        _logger.LogError($"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
+                    }
+
+                    if (entity.DealerOrders == null
+                        || !entity.DealerOrders.Any())
+                    {
+                        _logger.LogInformation($"ReddeerTradeRepository Create saved an order with id {entity.ReddeerOrderId} and it had no trades so returning.");
+                        return;
+                    }
+
+                    foreach (var trade in entity.DealerOrders)
+                    {
+                        if (trade == null)
+                        {
+                            continue;
+                        }
+
+                        _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
+                        var tradeDto = new DealerOrdersDto(trade, entity.ReddeerOrderId);
+                        using (var conn = dbConnection.ExecuteScalarAsync<string>(InsertDealerOrderSql, tradeDto))
+                        {
+                            var tradeIdTask = conn;
+                            tradeIdTask.Wait();
+                            var tradeId = tradeIdTask.Result;
+                            tradeDto.ReddeerDealerOrderId = tradeId;
+                            _logger.LogInformation($"ReddeerTradeRepository Create inserted a new trade entry for order {entity.ReddeerOrderId} and it had an id of {tradeId}");
+                        }
+                    }
+
+                    _logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
+                }
+                finally
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+                }
             }
         }
 

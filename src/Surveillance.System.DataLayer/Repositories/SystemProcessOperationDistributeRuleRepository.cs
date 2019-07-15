@@ -13,11 +13,14 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationDistributeRuleRepository : ISystemProcessOperationDistributeRuleRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationDistributeRuleRepository> _logger;
 
         private const string CreateSql = "INSERT INTO SystemProcessOperationDistributeRule(SystemProcessOperationId, ScheduleRuleInitialStart, ScheduleRuleInitialEnd, RulesDistributed) VALUES(@SystemProcessOperationId, @ScheduleRuleInitialStart, @ScheduleRuleInitialEnd, @RulesDistributed); SELECT LAST_INSERT_ID();";
+
         private const string UpdateSql = "UPDATE SystemProcessOperationDistributeRule SET ScheduleRuleInitialStart = @ScheduleRuleInitialStart, ScheduleRuleInitialEnd = @ScheduleRuleInitialEnd, RulesDistributed = @RulesDistributed WHERE Id = @Id";
+
         private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationDistributeRule ORDER BY Id DESC LIMIT 10;";
 
         public SystemProcessOperationDistributeRuleRepository(
@@ -38,26 +41,31 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
+                var dbConnection = _dbConnectionFactory.BuildConn();
 
-                _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                try
                 {
-                    entity.Id = await conn;
+                    dbConnection.Open();
+
+                    _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
+                    using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                    {
+                        var connTask = conn;
+                        connTask.Wait();
+                        entity.Id = connTask.Result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                catch (Exception e)
+                {
+                    _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                }
+                finally
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+                }
             }
         }
 

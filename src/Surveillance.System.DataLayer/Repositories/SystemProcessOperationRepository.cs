@@ -13,10 +13,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationRepository : ISystemProcessOperationRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationRepository> _logger;
         private const string CreateSql = "INSERT INTO SystemProcessOperation(SystemProcessId, OperationStart, OperationEnd, OperationState)  VALUES(@SystemProcessId, @OperationStart, @OperationEnd, @OperationState); SELECT LAST_INSERT_ID();";
+
         private const string UpdateSql = "UPDATE SystemProcessOperation SET OperationStart = @OperationStart, OperationEnd = @OperationEnd, OperationState = @OperationState WHERE Id = @Id;";
+
         private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperation ORDER BY Id DESC LIMIT 15;";
 
         public SystemProcessOperationRepository(
@@ -40,26 +43,31 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
+                var dbConnection = _dbConnectionFactory.BuildConn();
 
-                _logger.LogInformation($"SystemProcessOperationRepository SAVING {entity}");
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                try
                 {
-                    entity.Id = await conn;
+                    dbConnection.Open();
+
+                    _logger.LogInformation($"SystemProcessOperationRepository SAVING {entity}");
+                    using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                    {
+                        var connTask = conn;
+                        connTask.Wait();
+                        entity.Id = connTask.Result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                catch (Exception e)
+                {
+                    _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
+                }
+                finally
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+                }
             }
         }
 

@@ -94,6 +94,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Orders
         }
 
         [Test]
+        [Explicit]
         public async Task Create_OrderMultipleInsert_DoesNotThrow()
         {
             var factory = new ConnectionStringFactory(_configuration);

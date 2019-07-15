@@ -13,10 +13,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationRepository : ISystemProcessOperationRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationRepository> _logger;
         private const string CreateSql = "INSERT INTO SystemProcessOperation(SystemProcessId, OperationStart, OperationEnd, OperationState)  VALUES(@SystemProcessId, @OperationStart, @OperationEnd, @OperationState); SELECT LAST_INSERT_ID();";
+
         private const string UpdateSql = "UPDATE SystemProcessOperation SET OperationStart = @OperationStart, OperationEnd = @OperationEnd, OperationState = @OperationState WHERE Id = @Id;";
+
         private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperation ORDER BY Id DESC LIMIT 15;";
 
         public SystemProcessOperationRepository(
@@ -40,26 +43,21 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
-
-                _logger.LogInformation($"SystemProcessOperationRepository SAVING {entity}");
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                try
                 {
-                    entity.Id = await conn;
+                    _logger.LogInformation($"SystemProcessOperationRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
+                    using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                    {
+                        entity.Id = conn.Result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                catch (Exception e)
+                {
+                    _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
+                }
             }
         }
 
@@ -70,12 +68,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(UpdateSql, entity))
                 {
                     await conn;
@@ -85,21 +80,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             {
                 _logger.LogError($"System Process Operation Repository Update Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         public async Task<IReadOnlyCollection<ISystemProcessOperation>> GetDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperation>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -109,11 +96,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Repository Get Dashboard {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperation[0];

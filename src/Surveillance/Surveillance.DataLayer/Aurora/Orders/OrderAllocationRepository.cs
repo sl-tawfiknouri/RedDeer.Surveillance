@@ -12,6 +12,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
 {
     public class OrderAllocationRepository : IOrderAllocationRepository
     {
+        private readonly object _lock = new object();
+
         private readonly IConnectionStringFactory _connectionFactory;
         private readonly ILogger<OrderAllocationRepository> _logger;
 
@@ -62,79 +64,89 @@ namespace Surveillance.DataLayer.Aurora.Orders
         {
             _logger.LogInformation($"OrderAllocationRepository Create bulk method called");
 
-            var filteredEntities = entities?.Where(i => i != null && i.IsValid())?.ToList();
-
-            if (filteredEntities == null
-                || !filteredEntities.Any())
+            lock (_lock)
             {
-                _logger.LogInformation($"OrderAllocationRepository Create bulk method called with null or invalid order allocation, returning without saving");
-                return new List<string>();
-            }
+                var filteredEntities = entities?.Where(i => i != null && i.IsValid())?.ToList();
 
-            var projectedFilteredEntities =
-                filteredEntities
-                    .Where(i => i != null)
-                    .Select(i => new OrderAllocationDto(i))
-                    .ToList();
-
-            var insertedIds = new List<string>();
-
-            try
-            {
-                _logger.LogInformation($"OrderAllocationRepository Create bulk method opened db connection and about to write {projectedFilteredEntities.Count} records");
-
-                using (var dbConn = _connectionFactory.BuildConn())
+                if (filteredEntities == null
+                    || !filteredEntities.Any())
                 {
-                    foreach (var dto in projectedFilteredEntities)
+                    _logger.LogInformation($"OrderAllocationRepository Create bulk method called with null or invalid order allocation, returning without saving");
+                    return new List<string>();
+                }
+
+                var projectedFilteredEntities =
+                    filteredEntities
+                        .Where(i => i != null)
+                        .Select(i => new OrderAllocationDto(i))
+                        .ToList();
+
+                var insertedIds = new List<string>();
+
+                try
+                {
+                    _logger.LogInformation($"OrderAllocationRepository Create bulk method opened db connection and about to write {projectedFilteredEntities.Count} records");
+
+                    using (var dbConn = _connectionFactory.BuildConn())
                     {
-                        using (var conn = dbConn.ExecuteScalarAsync<string>(InsertAttributionSql, dto))
+                        foreach (var dto in projectedFilteredEntities)
                         {
-                            var id = await conn;
-                           insertedIds.Add(id);
-                            _logger.LogInformation($"OrderAllocationRepository Create bulk method completed writing record");
+                            using (var conn = dbConn.ExecuteScalarAsync<string>(InsertAttributionSql, dto))
+                            {
+                                var idTask = conn;
+                                idTask.Wait();
+                                var id = idTask.Result;
+
+                                insertedIds.Add(id);
+                                _logger.LogInformation($"OrderAllocationRepository Create bulk method completed writing record");
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"OrderAllocationRepository Create bulk method had an exception. ", e);
-            }
+                catch (Exception e)
+                {
+                    _logger.LogError($"OrderAllocationRepository Create bulk method had an exception. ", e);
+                }
 
-            _logger.LogInformation($"OrderAllocationRepository Create bulk method completed");
+                _logger.LogInformation($"OrderAllocationRepository Create bulk method completed");
 
-            return insertedIds;
+                return insertedIds;
+            }
         }
 
         public async Task Create(OrderAllocation entity)
         {
             _logger.LogInformation($"OrderAllocationRepository Create method called");
 
-            if (entity == null
-                || !entity.IsValid())
+            lock (_lock)
             {
-                _logger.LogInformation($"OrderAllocationRepository Create method called with null or invalid order allocation, returning without saving");
-                return;
-            }
-
-            try
-            {
-                var dto = new OrderAllocationDto(entity);
-                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to write record"); 
-
-                using (var dbConn = _connectionFactory.BuildConn())
-                using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto))
+                if (entity == null
+                    || !entity.IsValid())
                 {
-                    await conn;
-                    _logger.LogInformation($"OrderAllocationRepository Create method completed writing record");
+                    _logger.LogInformation($"OrderAllocationRepository Create method called with null or invalid order allocation, returning without saving");
+                    return;
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"OrderAllocationRepository Create method had an exception. ", e);
-            }
 
-            _logger.LogInformation($"OrderAllocationRepository Create method completed");
+                try
+                {
+                    var dto = new OrderAllocationDto(entity);
+                    _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to write record");
+
+                    using (var dbConn = _connectionFactory.BuildConn())
+                    using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto))
+                    {
+                        var connTask = conn;
+                        connTask.Wait();
+                        _logger.LogInformation($"OrderAllocationRepository Create method completed writing record");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"OrderAllocationRepository Create method had an exception. ", e);
+                }
+
+                _logger.LogInformation($"OrderAllocationRepository Create method completed");
+            }
         }
 
         public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orderIds)

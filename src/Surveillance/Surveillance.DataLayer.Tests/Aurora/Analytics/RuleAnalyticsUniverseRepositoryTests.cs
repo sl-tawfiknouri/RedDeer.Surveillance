@@ -1,22 +1,51 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Analytics;
-using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Analytics
 {
     [TestFixture]
     public class RuleAnalyticsUniverseRepositoryTests
     {
+        private IDataLayerConfiguration _configuration;
+        private IConnectionStringFactory _connectionStringFactory;
         private ILogger<RuleAnalyticsUniverseRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _configuration = TestHelpers.Config();
+            _connectionStringFactory = A.Fake<IConnectionStringFactory>();
             _logger = A.Fake<ILogger<RuleAnalyticsUniverseRepository>>();
+        }
+
+        [Test]
+        public void Ctor_NullDbconnectionFactory_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsUniverseRepository(null, _logger));
+        }
+
+        [Test]
+        public void Ctor_NullLogger_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsUniverseRepository(_connectionStringFactory, null));
+        }
+
+        [Test]
+        public void Create_NullAnalytics_DoesNotThrow()
+        {
+            var repo = new RuleAnalyticsUniverseRepository(_connectionStringFactory, _logger);
+
+            Assert.DoesNotThrowAsync(() => repo.Create(null));
         }
 
         [Test]
@@ -25,26 +54,20 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
         {
             var universeAnalytics = new UniverseAnalytics
             {
-                UnknownEventCount = 1,
-                GenesisEventCount = 1,
-                EschatonEventCount = 1,
-                TradeReddeerCount = 100,
-                TradeReddeerSubmittedCount = 50,
-                StockTickReddeerCount = 150,
-                StockMarketOpenCount = 400,
-                StockMarketCloseCount = 400,
-                UniqueTradersCount = 30,
-                UniqueSecuritiesCount = 100,
-                UniqueMarketsTradedOnCount = 20,
-                SystemProcessOperationId = 1
+                SystemProcessOperationId = 12,
+                GenesisEventCount = 2,
+                EschatonEventCount = 3,
+                TradeReddeerCount = 4,
+                TradeReddeerSubmittedCount = 5,
+                StockTickReddeerCount = 6,
+                StockMarketOpenCount = 7,
+                StockMarketCloseCount = 8,
+                UniqueTradersCount = 9,
+                UniqueSecuritiesCount = 10,
+                UniqueMarketsTradedOnCount = 11,
             };
 
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new RuleAnalyticsUniverseRepository(factory, _logger);
 
             await repo.Create(universeAnalytics);

@@ -37,13 +37,10 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
         public async Task<int> LatestMigrationVersion()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 _logger.LogTrace($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
                     var highestMigrationExecuted = await conn;
@@ -55,11 +52,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"Error in migration repository get latest version - {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             _logger.LogError($"MigrationRepository LatestMigrationVersion returning 0 on a bad code path");
@@ -171,14 +163,12 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             }
 
             _logger.LogInformation($"MigrationRepository get script and execute for migration {name.ScriptIndex} {name.FileName}");
-            var dbConnection = _dbConnectionFactory.BuildConn();
 
             try
             {
                 var file = File.ReadAllText(Path.Combine(MigrationFolders(), name.FileName));
-
-                dbConnection.Open();
-
+                
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(file))
                 {
                     await conn;
@@ -188,11 +178,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"MigrationRepository IMPORTANT something went wrong reading and writing the file {name.FileName}" + e.Message);
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
         }
 

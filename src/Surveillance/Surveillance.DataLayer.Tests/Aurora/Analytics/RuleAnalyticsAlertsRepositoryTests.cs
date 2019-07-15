@@ -1,27 +1,57 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Analytics;
-using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Analytics
 {
     [TestFixture]
     public class RuleAnalyticsAlertsRepositoryTests
     {
+        private IDataLayerConfiguration _configuration;
+        private IConnectionStringFactory _connectionStringFactory;
         private ILogger<RuleAnalyticsAlertsRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _configuration = TestHelpers.Config();
+            _connectionStringFactory = A.Fake<IConnectionStringFactory>();
             _logger = A.Fake<ILogger<RuleAnalyticsAlertsRepository>>();
         }
 
         [Test]
+        public void Ctor_NullConnectionStringFactory_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsAlertsRepository(null, _logger));
+        }
+
+        [Test]
+        public void Ctor_NullLogger_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new RuleAnalyticsAlertsRepository(_connectionStringFactory, null));
+        }
+
+        [Test]
+        public void Does_SaveNull_DoesNotThrow()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new RuleAnalyticsAlertsRepository(factory, _logger);
+
+            Assert.DoesNotThrowAsync(() => repo.Create(null));
+        }
+
+        [Test]
         [Explicit]
-        public async Task Does_Save()
+        public async Task Does_Save_ValidDto()
         {
             var alertAnalytics = new AlertAnalytics
             {
@@ -45,15 +75,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
                 FixedIncomeHighVolumeIssuanceAlertsAdjusted = 9,
                 FixedIncomeHighVolumeIssuanceAlertsRaw = 10,
                 FixedIncomeWashTradeAlertsRaw = 5,
-                FixedIncomeWashTradeAlertsAdjusted = 4
+                FixedIncomeWashTradeAlertsAdjusted = 4,
+                RampingAlertsRaw = 99,
+                RampingAlertsAdjusted = 100,
+                PlacingOrdersAlertsRaw = 88,
+                PlacingOrdersAlertsAdjusted = 89
             };
 
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new RuleAnalyticsAlertsRepository(factory, _logger);
 
             await repo.Create(alertAnalytics);

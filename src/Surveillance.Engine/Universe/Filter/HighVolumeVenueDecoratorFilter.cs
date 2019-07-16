@@ -13,7 +13,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighVolumeVenueDecoratorFilter : IUniverseFilterService
     {
         private readonly Queue<IUniverseEvent> _universeCache;
-        private readonly TimeWindows _timeWindows;
+
+        private readonly TimeWindows _ruleTimeWindows;
         private DateTime _windowTime;
         private bool _eschaton;
         private readonly IUniverseFilterService _baseService;
@@ -28,7 +29,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
             ILogger<IHighVolumeVenueFilter> logger)
         {
-            _timeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
+            _ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
             _baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
             _universeCache = new Queue<IUniverseEvent>();
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
@@ -93,7 +94,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             while (_universeCache.Any()
                    && 
-                    ((_universeCache.Peek().EventTime + _timeWindows.BackwardWindowSize) <= _windowTime
+                    (_universeCache.Peek().EventTime <= FilterTime()
                      || _eschaton))
             {
                 var value = _universeCache.Dequeue();
@@ -103,6 +104,20 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     obs.Value.OnNext(value);
                 }
             }
+        }
+
+        /// <summary>
+        /// Alice: “How long is forever?"
+        /// White Rabbit: “Sometimes, just one second."
+        /// </summary>
+        private DateTime FilterTime()
+        {
+            if (_ruleTimeWindows == null)
+            {
+                return _windowTime;
+            }
+
+            return _windowTime - _ruleTimeWindows.BackwardWindowSize;
         }
     }
 }

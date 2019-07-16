@@ -2,7 +2,7 @@
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface ILayeringRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable
+    public interface ILayeringRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable, IVenueVolumeFilterable
     {
         TimeWindows Windows { get; }
         decimal? PercentageOfMarketDailyVolume { get; }

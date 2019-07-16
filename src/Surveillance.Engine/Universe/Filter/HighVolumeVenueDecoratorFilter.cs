@@ -13,21 +13,28 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighVolumeVenueDecoratorFilter : IUniverseFilterService
     {
         private readonly Queue<IUniverseEvent> _universeCache;
+        private readonly HashSet<UniverseStateEvent> _orderEvents = new HashSet<UniverseStateEvent>
+        {
+            UniverseStateEvent.Order,
+            UniverseStateEvent.OrderFilled,
+            UniverseStateEvent.OrderPlaced
+        };
 
         private readonly TimeWindows _ruleTimeWindows;
         private DateTime _windowTime;
         private bool _eschaton;
+        private readonly object _lock = new object();
         private readonly IUniverseFilterService _baseService;
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
-        private readonly ILogger<IHighVolumeVenueFilter> _logger;
+        private readonly ILogger<HighVolumeVenueFilter> _logger;
 
         public HighVolumeVenueDecoratorFilter(
             TimeWindows timeWindows,
             IUniverseFilterService baseService,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
-            ILogger<IHighVolumeVenueFilter> logger)
+            ILogger<HighVolumeVenueFilter> logger)
         {
             _ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
             _baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
@@ -74,15 +81,30 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            _universeCache.Enqueue(value);
-            _windowTime = value.EventTime;
-
-            if (value.StateChange == UniverseStateEvent.Eschaton)
+            lock (_lock)
             {
-                _eschaton = true;
-            }
+                _universeCache.Enqueue(value);
+                _windowTime = value.EventTime;
 
-            ProcessCache();
+                if (value.StateChange == UniverseStateEvent.Eschaton)
+                {
+                    _eschaton = true;
+                }
+
+                if (_orderEvents.Contains(value.StateChange))
+                {
+                    // perform filtering @ trade time
+                    // perform filtering against cached history at market close for each day
+                    // so we imagine there being a separate class that is fed these events as they occur
+                    // in alignment with real time
+
+                    // a separate class holds the filtering
+                    
+
+                }
+
+                ProcessCache();
+            }
         }
 
         private void ProcessCache()

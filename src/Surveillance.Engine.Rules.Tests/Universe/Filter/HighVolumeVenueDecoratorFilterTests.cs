@@ -15,14 +15,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
     [TestFixture]
     public class HighVolumeVenueDecoratorFilterTests
     {
-        private ILogger<IHighVolumeVenueFilter> _logger;
+        private ILogger<HighVolumeVenueFilter> _logger;
         private IUniverseFilterService _baseService;
         private IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
 
         [SetUp]
         public void Setup()
         {
-            _logger = A.Fake<ILogger<IHighVolumeVenueFilter>>();
+            _logger = A.Fake<ILogger<HighVolumeVenueFilter>>();
             _baseService = A.Fake<IUniverseFilterService>();
             _universeUnsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
         }
@@ -160,11 +160,16 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void OnNext_SubscribeObserverAndOnNextValid_ReturnsNonNullAndCallsFactory()
         {
+            var baseDate = new DateTime(2018, 01, 01);
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
             var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
+
             var onNext1 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext1.EventTime).Returns(baseDate);
+
             var onNext2 = A.Fake<IUniverseEvent>();
+            A.CallTo(() => onNext2.EventTime).Returns(baseDate);
             A.CallTo(() => onNext2.StateChange).Returns(UniverseStateEvent.Eschaton);
 
             var result = venueFilter.Subscribe(anObserver);
@@ -271,7 +276,5 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             A.CallTo(() => anObserver.OnNext(onNext3)).MustHaveHappenedOnceExactly();
             A.CallTo(() => anObserver.OnNext(onNext4)).MustHaveHappenedOnceExactly();
         }
-
-
     }
 }

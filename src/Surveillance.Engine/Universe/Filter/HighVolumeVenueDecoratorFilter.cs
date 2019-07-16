@@ -13,12 +13,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighVolumeVenueDecoratorFilter : IUniverseFilterService
     {
         private readonly Queue<IUniverseEvent> _universeCache;
-        private readonly HashSet<UniverseStateEvent> _orderEvents = new HashSet<UniverseStateEvent>
-        {
-            UniverseStateEvent.Order,
-            UniverseStateEvent.OrderFilled,
-            UniverseStateEvent.OrderPlaced
-        };
+        private readonly HashSet<UniverseStateEvent> _orderEvents =
+            new HashSet<UniverseStateEvent>
+            {
+                UniverseStateEvent.Order,
+                UniverseStateEvent.OrderFilled,
+                UniverseStateEvent.OrderPlaced
+            };
 
         private readonly TimeWindows _ruleTimeWindows;
         private DateTime _windowTime;

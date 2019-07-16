@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -58,28 +59,30 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            // perform calculation
-            
+            var activeHistory = history.ActiveTradeHistory();
 
-        }
-
-        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
-        {
-            if (history == null)
+            if (activeHistory == null
+                || !activeHistory.Any())
             {
-                _logger.LogInformation($"null history received by run post order event delayed");
                 return;
             }
 
-            RunPostOrderEvent(history);
+            var volumeTraded = activeHistory.Sum(_ => _.OrderFilledVolume ?? 0);
+
+
         }
 
-        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
-        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
@@ -103,6 +106,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         {
             _logger.LogInformation("Market Close occurred");
 
+            // will call run post order event via proxy
             RunRuleForAllTradingHistoriesInMarket(exchange);
         }
 

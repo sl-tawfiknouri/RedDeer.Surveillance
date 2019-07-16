@@ -5,6 +5,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -18,6 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         private ILogger<HighVolumeVenueFilter> _logger;
         private IUniverseFilterService _baseService;
         private IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
+        private DecimalRangeRuleFilter _decimalRangeRuleFilter;
 
         [SetUp]
         public void Setup()
@@ -25,6 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             _logger = A.Fake<ILogger<HighVolumeVenueFilter>>();
             _baseService = A.Fake<IUniverseFilterService>();
             _universeUnsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
+            _decimalRangeRuleFilter = new DecimalRangeRuleFilter();
         }
 
         [Test]
@@ -36,6 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     null,
                     _baseService,
                     _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
                     _logger));
         }
 
@@ -50,6 +54,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
                     null));
         }
 
@@ -57,7 +62,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Subscribe_SubscribeObserver_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter = 
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
 
             var result = venueFilter.Subscribe(anObserver);
@@ -76,7 +88,13 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Subscribe_SubscribeNullObserver_ReturnsNullAndDoesNotCallFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter = 
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows, 
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
 
             var result = venueFilter.Subscribe(null);
 
@@ -94,7 +112,13 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Rule_DelegatesCallToDecoratee()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter = 
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
 
             var result = venueFilter.Rule;
 
@@ -105,7 +129,13 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void Version_DelegatesCallToDecoratee()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService, 
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
 
             var result = venueFilter.Version;
 
@@ -116,7 +146,13 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void OnCompleted_DelegatesCallToSubscriber()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
 
             venueFilter.OnCompleted();
             
@@ -127,7 +163,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void OnError_DelegatesCallToSubscriber()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var error = new Exception();
 
             venueFilter.OnError(error);
@@ -139,7 +182,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void OnNext_SubscribeObserverAndOnNextNull_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
 
             var result = venueFilter.Subscribe(anObserver);
@@ -162,7 +212,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         {
             var baseDate = new DateTime(2018, 01, 01);
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
 
             var onNext1 = A.Fake<IUniverseEvent>();
@@ -193,7 +250,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void OnNext_SubscribeObserverAndOnNextValidWaitsLengthOfWindow_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter =
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
             var baseDate = new DateTime(2018, 01, 01);
 
@@ -239,7 +303,14 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void OnNext_SubscribeObserverAndOnNextValidWaitsLengthOfWindowWithEschaton_ReturnsNonNullAndCallsFactory()
         {
             var timeWindows = new TimeWindows("1", TimeSpan.FromDays(1));
-            var venueFilter = new HighVolumeVenueDecoratorFilter(timeWindows, _baseService, _universeUnsubscriberFactory, _logger);
+            var venueFilter = 
+                new HighVolumeVenueDecoratorFilter(
+                    timeWindows,
+                    _baseService,
+                    _universeUnsubscriberFactory,
+                    _decimalRangeRuleFilter,
+                    _logger);
+
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
             var baseDate = new DateTime(2018, 01, 01);
 

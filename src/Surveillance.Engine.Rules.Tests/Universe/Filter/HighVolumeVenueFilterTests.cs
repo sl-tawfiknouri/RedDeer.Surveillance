@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter;
@@ -20,6 +21,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         private RuleRunMode _ruleRunMode;
         private IUniverseOrderFilter _universeOrderFilter;
         private TimeWindows _timeWindows;
+        private DecimalRangeRuleFilter _decimalRangeRuleFilter;
         private ILogger _baseLogger;
         private ILogger<TradingHistoryStack> _tradingLogger;
         private ILogger<HighVolumeVenueFilter> _logger;
@@ -32,6 +34,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             _ruleRunMode = RuleRunMode.ValidationRun;
             _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
             _timeWindows = new TimeWindows("id-1", TimeSpan.FromDays(1));
+            _decimalRangeRuleFilter = new DecimalRangeRuleFilter();
             _baseLogger = A.Fake<ILogger>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
             _logger = A.Fake<ILogger<HighVolumeVenueFilter>>();
@@ -44,6 +47,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             Assert.Throws<ArgumentNullException>(() =>
                 new HighVolumeVenueFilter(
                     _timeWindows,
+                    _decimalRangeRuleFilter,
                     _universeOrderFilter,
                     _ruleRunContext,
                     _universeMarketCacheFactory,

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -17,11 +18,14 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighVolumeVenueFilter : BaseUniverseRule
     {
         public readonly Dictionary<DateTime, HashSet<IUniverseEvent>> EventDictionary;
+
+        private readonly DecimalRangeRuleFilter _decimalRangeRuleFilter;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger<HighVolumeVenueFilter> _logger;
 
         public HighVolumeVenueFilter(
             TimeWindows timeWindows,
+            DecimalRangeRuleFilter decimalRangeRuleFilter,
             IUniverseOrderFilter universeOrderFilter,
             ISystemProcessOperationRunRuleContext runRuleContext,
             IUniverseMarketCacheFactory universeMarketCacheFactory,
@@ -42,6 +46,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 stackLogger)
         {
             EventDictionary = new Dictionary<DateTime, HashSet<IUniverseEvent>>();
+
+            _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
             _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -56,6 +62,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             if (history == null)
             {
                 _logger.LogInformation($"null history received by run post order event");
+                return;
+            }
+
+            if (_decimalRangeRuleFilter.Type == RuleFilterType.None)
+            {
                 return;
             }
 

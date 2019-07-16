@@ -5,6 +5,7 @@ using System.Linq;
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
@@ -35,6 +36,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             TimeWindows timeWindows,
             IUniverseFilterService baseService,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
+            DecimalRangeRuleFilter decimalRangeRuleFilter,
             ILogger<HighVolumeVenueFilter> logger)
         {
             _ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));

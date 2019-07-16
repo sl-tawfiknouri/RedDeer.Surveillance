@@ -47,26 +47,26 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new SpoofingRuleEquitiesParameters(
-                    dto.Id,
-                    dto.WindowSize,
-                    dto.CancellationThreshold,
-                    dto.RelativeSizeMultipleForSpoofExceedingReal,
-                    _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                    _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                    _ruleProjector.Project(dto.Accounts),
-                    _ruleProjector.Project(dto.Traders),
-                    _ruleProjector.Project(dto.Markets),
-                    _ruleProjector.Project(dto.Funds),
-                    _ruleProjector.Project(dto.Strategies),
-                    _ruleProjector.Project(dto.Sectors),
-                    _ruleProjector.Project(dto.Industries),
-                    _ruleProjector.Project(dto.Regions),
-                    _ruleProjector.Project(dto.Countries),
-                    _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                    dto.AggregateNonFactorableIntoOwnCategory,
-                    dto.PerformTuning))
+                    _.Id,
+                    _.WindowSize,
+                    _.CancellationThreshold,
+                    _.RelativeSizeMultipleForSpoofExceedingReal,
+                    _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                    _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                    _ruleProjector.Project(_.Accounts),
+                    _ruleProjector.Project(_.Traders),
+                    _ruleProjector.Project(_.Markets),
+                    _ruleProjector.Project(_.Funds),
+                    _ruleProjector.Project(_.Strategies),
+                    _ruleProjector.Project(_.Sectors),
+                    _ruleProjector.Project(_.Industries),
+                    _ruleProjector.Project(_.Regions),
+                    _ruleProjector.Project(_.Countries),
+                    _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                    _.AggregateNonFactorableIntoOwnCategory,
+                    _.PerformTuning))
                 .ToList();
         }
 
@@ -80,28 +80,28 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new CancelledOrderRuleEquitiesParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        dto.CancelledOrderPercentagePositionThreshold,
-                        dto.CancelledOrderCountPercentageThreshold,
-                        dto.MinimumNumberOfTradesToApplyRuleTo,
-                        dto.MaximumNumberOfTradesToApplyRuleTo,
-                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                        _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _ruleProjector.Project(dto.Sectors),
-                        _ruleProjector.Project(dto.Industries),
-                        _ruleProjector.Project(dto.Regions),
-                        _ruleProjector.Project(dto.Countries),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _.CancelledOrderPercentagePositionThreshold,
+                        _.CancelledOrderCountPercentageThreshold,
+                        _.MinimumNumberOfTradesToApplyRuleTo,
+                        _.MaximumNumberOfTradesToApplyRuleTo,
+                        _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                        _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _ruleProjector.Project(_.Sectors),
+                        _ruleProjector.Project(_.Industries),
+                        _ruleProjector.Project(_.Regions),
+                        _ruleProjector.Project(_.Countries),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 
@@ -115,31 +115,31 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new HighProfitsRuleEquitiesParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        dto.ForwardWindow,
-                        dto.PerformHighProfitWindowAnalysis,
-                        dto.PerformHighProfitDailyAnalysis,
-                        dto.HighProfitPercentageThreshold,
-                        dto.HighProfitAbsoluteThreshold,
-                        dto.UseCurrencyConversions,
-                        dto.HighProfitCurrencyConversionTargetCurrency,
-                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                        _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _ruleProjector.Project(dto.Sectors),
-                        _ruleProjector.Project(dto.Industries),
-                        _ruleProjector.Project(dto.Regions),
-                        _ruleProjector.Project(dto.Countries),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _.ForwardWindow,
+                        _.PerformHighProfitWindowAnalysis,
+                        _.PerformHighProfitDailyAnalysis,
+                        _.HighProfitPercentageThreshold,
+                        _.HighProfitAbsoluteThreshold,
+                        _.UseCurrencyConversions,
+                        _.HighProfitCurrencyConversionTargetCurrency,
+                        _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                        _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _ruleProjector.Project(_.Sectors),
+                        _ruleProjector.Project(_.Industries),
+                        _ruleProjector.Project(_.Regions),
+                        _ruleProjector.Project(_.Countries),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 
@@ -153,27 +153,27 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new MarkingTheCloseEquitiesParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        dto.PercentageThresholdDailyVolume,
-                        dto.PercentageThresholdWindowVolume,
-                        dto.PercentThresholdOffTouch,
-                        _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                        _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _ruleProjector.Project(dto.Sectors),
-                        _ruleProjector.Project(dto.Industries),
-                        _ruleProjector.Project(dto.Regions),
-                        _ruleProjector.Project(dto.Countries),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _.PercentageThresholdDailyVolume,
+                        _.PercentageThresholdWindowVolume,
+                        _.PercentThresholdOffTouch,
+                        _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                        _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _ruleProjector.Project(_.Sectors),
+                        _ruleProjector.Project(_.Industries),
+                        _ruleProjector.Project(_.Regions),
+                        _ruleProjector.Project(_.Countries),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 
@@ -188,27 +188,27 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return
                 dtos
-                    .Select(dto =>
+                    .Select(_ =>
                         new LayeringRuleEquitiesParameters(
-                            dto.Id,
-                            dto.WindowSize,
-                            dto.PercentageOfMarketDailyVolume,
-                            dto.PercentageOfMarketWindowVolume,
-                            dto.CheckForCorrespondingPriceMovement,
-                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                            _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                            _ruleProjector.Project(dto.Accounts),
-                            _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets),
-                            _ruleProjector.Project(dto.Funds),
-                            _ruleProjector.Project(dto.Strategies),
-                            _ruleProjector.Project(dto.Sectors),
-                            _ruleProjector.Project(dto.Industries),
-                            _ruleProjector.Project(dto.Regions),
-                            _ruleProjector.Project(dto.Countries),
-                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory,
-                            dto.PerformTuning))
+                            _.Id,
+                            _.WindowSize,
+                            _.PercentageOfMarketDailyVolume,
+                            _.PercentageOfMarketWindowVolume,
+                            _.CheckForCorrespondingPriceMovement,
+                            _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                            _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                            _ruleProjector.Project(_.Accounts),
+                            _ruleProjector.Project(_.Traders),
+                            _ruleProjector.Project(_.Markets),
+                            _ruleProjector.Project(_.Funds),
+                            _ruleProjector.Project(_.Strategies),
+                            _ruleProjector.Project(_.Sectors),
+                            _ruleProjector.Project(_.Industries),
+                            _ruleProjector.Project(_.Regions),
+                            _ruleProjector.Project(_.Countries),
+                            _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                            _.AggregateNonFactorableIntoOwnCategory,
+                            _.PerformTuning))
                     .ToList();
         }
 
@@ -223,27 +223,27 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return 
                 dtos
-                    .Select(dto => 
+                    .Select(_ => 
                         new HighVolumeRuleEquitiesParameters(
-                            dto.Id,
-                            dto.WindowSize,
-                            dto.HighVolumePercentageDaily,
-                            dto.HighVolumePercentageWindow,
-                            dto.HighVolumePercentageMarketCap,
-                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                            _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                            _ruleProjector.Project(dto.Accounts),
-                            _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets),
-                            _ruleProjector.Project(dto.Funds),
-                            _ruleProjector.Project(dto.Strategies),
-                            _ruleProjector.Project(dto.Sectors),
-                            _ruleProjector.Project(dto.Industries),
-                            _ruleProjector.Project(dto.Regions),
-                            _ruleProjector.Project(dto.Countries),
-                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory,
-                            dto.PerformTuning))
+                            _.Id,
+                            _.WindowSize,
+                            _.HighVolumePercentageDaily,
+                            _.HighVolumePercentageWindow,
+                            _.HighVolumePercentageMarketCap,
+                            _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                            _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                            _ruleProjector.Project(_.Accounts),
+                            _ruleProjector.Project(_.Traders),
+                            _ruleProjector.Project(_.Markets),
+                            _ruleProjector.Project(_.Funds),
+                            _ruleProjector.Project(_.Strategies),
+                            _ruleProjector.Project(_.Sectors),
+                            _ruleProjector.Project(_.Industries),
+                            _ruleProjector.Project(_.Regions),
+                            _ruleProjector.Project(_.Countries),
+                            _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                            _.AggregateNonFactorableIntoOwnCategory,
+                            _.PerformTuning))
                     .ToList();
 
         }
@@ -259,32 +259,32 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return
                 dtos
-                    .Select(dto =>
+                    .Select(_ =>
                         new WashTradeRuleEquitiesParameters(
-                            dto.Id,
-                            dto.WindowSize,
-                            dto.PerformAveragePositionAnalysis,
-                            dto.PerformClusteringPositionAnalysis,
-                            dto.AveragePositionMinimumNumberOfTrades,
-                            dto.AveragePositionMaximumPositionValueChange,
-                            dto.AveragePositionMaximumAbsoluteValueChangeAmount,
-                            dto.AveragePositionMaximumAbsoluteValueChangeCurrency,
-                            dto.ClusteringPositionMinimumNumberOfTrades,
-                            dto.ClusteringPercentageValueDifferenceThreshold,
-                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                            _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                            _ruleProjector.Project(dto.Accounts),
-                            _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets),
-                            _ruleProjector.Project(dto.Funds),
-                            _ruleProjector.Project(dto.Strategies),
-                            _ruleProjector.Project(dto.Sectors),
-                            _ruleProjector.Project(dto.Industries),
-                            _ruleProjector.Project(dto.Regions),
-                            _ruleProjector.Project(dto.Countries),
-                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory,
-                            dto.PerformTuning))
+                            _.Id,
+                            _.WindowSize,
+                            _.PerformAveragePositionAnalysis,
+                            _.PerformClusteringPositionAnalysis,
+                            _.AveragePositionMinimumNumberOfTrades,
+                            _.AveragePositionMaximumPositionValueChange,
+                            _.AveragePositionMaximumAbsoluteValueChangeAmount,
+                            _.AveragePositionMaximumAbsoluteValueChangeCurrency,
+                            _.ClusteringPositionMinimumNumberOfTrades,
+                            _.ClusteringPercentageValueDifferenceThreshold,
+                            _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                            _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                            _ruleProjector.Project(_.Accounts),
+                            _ruleProjector.Project(_.Traders),
+                            _ruleProjector.Project(_.Markets),
+                            _ruleProjector.Project(_.Funds),
+                            _ruleProjector.Project(_.Strategies),
+                            _ruleProjector.Project(_.Sectors),
+                            _ruleProjector.Project(_.Industries),
+                            _ruleProjector.Project(_.Regions),
+                            _ruleProjector.Project(_.Countries),
+                            _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                            _.AggregateNonFactorableIntoOwnCategory,
+                            _.PerformTuning))
                     .ToList();
         }
 
@@ -299,27 +299,27 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return
                 dtos
-                    .Select(dto =>
+                    .Select(_ =>
                         new RampingRuleEquitiesParameters(
-                            dto.Id,
-                            dto.WindowSize,
-                            dto.AutoCorrelationCoefficient,
-                            dto.ThresholdOrdersExecutedInWindow,
-                            dto.ThresholdVolumePercentageWindow,
-                            _decimalRangeRuleFilterProjector.Project(dto.MarketCap),
-                            _decimalRangeRuleFilterProjector.Project(dto.Turnover),
-                            _ruleProjector.Project(dto.Accounts),
-                            _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets),
-                            _ruleProjector.Project(dto.Funds),
-                            _ruleProjector.Project(dto.Strategies),
-                            _ruleProjector.Project(dto.Sectors),
-                            _ruleProjector.Project(dto.Industries),
-                            _ruleProjector.Project(dto.Regions),
-                            _ruleProjector.Project(dto.Countries),
-                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                            dto.AggregateNonFactorableIntoOwnCategory,
-                            dto.PerformTuning))
+                            _.Id,
+                            _.WindowSize,
+                            _.AutoCorrelationCoefficient,
+                            _.ThresholdOrdersExecutedInWindow,
+                            _.ThresholdVolumePercentageWindow,
+                            _decimalRangeRuleFilterProjector.Project(_.MarketCap),
+                            _decimalRangeRuleFilterProjector.Project(_.Turnover),
+                            _ruleProjector.Project(_.Accounts),
+                            _ruleProjector.Project(_.Traders),
+                            _ruleProjector.Project(_.Markets),
+                            _ruleProjector.Project(_.Funds),
+                            _ruleProjector.Project(_.Strategies),
+                            _ruleProjector.Project(_.Sectors),
+                            _ruleProjector.Project(_.Industries),
+                            _ruleProjector.Project(_.Regions),
+                            _ruleProjector.Project(_.Countries),
+                            _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                            _.AggregateNonFactorableIntoOwnCategory,
+                            _.PerformTuning))
                     .ToList();
         }
 
@@ -333,26 +333,26 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new WashTradeRuleFixedIncomeParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        dto.PerformAveragePositionAnalysis,
-                        dto.PerformClusteringPositionAnalysis,
-                        dto.AveragePositionMinimumNumberOfTrades,
-                        dto.AveragePositionMaximumPositionValueChange,
-                        dto.AveragePositionMaximumAbsoluteValueChangeAmount,
-                        dto.AveragePositionMaximumAbsoluteValueChangeCurrency,
-                        dto.ClusteringPositionMinimumNumberOfTrades,
-                        dto.ClusteringPercentageValueDifferenceThreshold,
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _.PerformAveragePositionAnalysis,
+                        _.PerformClusteringPositionAnalysis,
+                        _.AveragePositionMinimumNumberOfTrades,
+                        _.AveragePositionMaximumPositionValueChange,
+                        _.AveragePositionMaximumAbsoluteValueChangeAmount,
+                        _.AveragePositionMaximumAbsoluteValueChangeCurrency,
+                        _.ClusteringPositionMinimumNumberOfTrades,
+                        _.ClusteringPercentageValueDifferenceThreshold,
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 
@@ -366,18 +366,18 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new HighProfitsRuleFixedIncomeParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 
@@ -391,18 +391,18 @@ namespace Surveillance.Engine.Rules.RuleParameters
             }
 
             return dtos
-                .Select(dto =>
+                .Select(_ =>
                     new HighVolumeIssuanceRuleFixedIncomeParameters(
-                        dto.Id,
-                        dto.WindowSize,
-                        _ruleProjector.Project(dto.Accounts),
-                        _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets),
-                        _ruleProjector.Project(dto.Funds),
-                        _ruleProjector.Project(dto.Strategies),
-                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
-                        dto.AggregateNonFactorableIntoOwnCategory,
-                        dto.PerformTuning))
+                        _.Id,
+                        _.WindowSize,
+                        _ruleProjector.Project(_.Accounts),
+                        _ruleProjector.Project(_.Traders),
+                        _ruleProjector.Project(_.Markets),
+                        _ruleProjector.Project(_.Funds),
+                        _ruleProjector.Project(_.Strategies),
+                        _organisationalFactorMapper.Map(_.OrganisationalFactors),
+                        _.AggregateNonFactorableIntoOwnCategory,
+                        _.PerformTuning))
                 .ToList();
         }
 

@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         private ILogger<HighVolumeVenueFilter> _logger;
         private IUniverseFilterService _baseService;
         private IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
-        private DecimalRangeRuleFilter _decimalRangeRuleFilter;
+        private IHighVolumeVenueFilter _highVolumeVenueFilter;
 
         [SetUp]
         public void Setup()
@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             _logger = A.Fake<ILogger<HighVolumeVenueFilter>>();
             _baseService = A.Fake<IUniverseFilterService>();
             _universeUnsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
-            _decimalRangeRuleFilter = new DecimalRangeRuleFilter();
+            _highVolumeVenueFilter = A.Fake<IHighVolumeVenueFilter>();
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     null,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger));
         }
 
@@ -54,7 +54,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     null));
         }
 
@@ -67,7 +67,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows, 
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var result = venueFilter.Subscribe(null);
@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var result = venueFilter.Rule;
@@ -134,7 +134,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService, 
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var result = venueFilter.Version;
@@ -151,7 +151,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             venueFilter.OnCompleted();
@@ -168,7 +168,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var error = new Exception();
@@ -187,7 +187,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
@@ -217,7 +217,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
@@ -255,7 +255,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();
@@ -308,7 +308,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     timeWindows,
                     _baseService,
                     _universeUnsubscriberFactory,
-                    _decimalRangeRuleFilter,
+                    _highVolumeVenueFilter,
                     _logger);
 
             var anObserver = A.Fake<IObserver<IUniverseEvent>>();

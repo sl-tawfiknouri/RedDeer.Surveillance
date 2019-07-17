@@ -5,13 +5,12 @@ using System.Linq;
 using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Filter
 {
-    public class HighVolumeVenueDecoratorFilter : IUniverseFilterService
+    public class HighVolumeVenueDecoratorFilter : IHighVolumeVenueDecoratorFilter
     {
         private readonly Queue<IUniverseEvent> _universeCache;
         private readonly HashSet<UniverseStateEvent> _orderEvents =
@@ -27,6 +26,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private bool _eschaton;
         private readonly object _lock = new object();
         private readonly IUniverseFilterService _baseService;
+        private readonly IHighVolumeVenueFilter _highVolumeVenueFilter;
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             TimeWindows timeWindows,
             IUniverseFilterService baseService,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
-            DecimalRangeRuleFilter decimalRangeRuleFilter,
+            IHighVolumeVenueFilter highVolumeVenueFilter,
             ILogger<HighVolumeVenueFilter> logger)
         {
             _ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
@@ -44,6 +44,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _universeCache = new Queue<IUniverseEvent>();
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = universeUnsubscriberFactory ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
+            _highVolumeVenueFilter = highVolumeVenueFilter;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -69,11 +70,17 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public void OnCompleted()
         {
+            foreach (var sub in _universeObservers)
+                sub.Key.OnCompleted();
+
             _baseService.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
+            foreach (var sub in _universeObservers)
+                sub.Key.OnError(error);
+
             _baseService.OnError(error);
         }
 
@@ -86,24 +93,14 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             lock (_lock)
             {
+                _highVolumeVenueFilter.OnNext(value);
+
                 _universeCache.Enqueue(value);
                 _windowTime = value.EventTime;
 
                 if (value.StateChange == UniverseStateEvent.Eschaton)
                 {
                     _eschaton = true;
-                }
-
-                if (_orderEvents.Contains(value.StateChange))
-                {
-                    // perform filtering @ trade time
-                    // perform filtering against cached history at market close for each day
-                    // so we imagine there being a separate class that is fed these events as they occur
-                    // in alignment with real time
-
-                    // a separate class holds the filtering
-                    
-
                 }
 
                 ProcessCache();
@@ -118,16 +115,27 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             }
 
             while (_universeCache.Any()
-                   && 
-                    (_universeCache.Peek().EventTime <= FilterTime()
-                     || _eschaton))
+                   && (_universeCache.Peek().EventTime <= FilterTime()
+                        || _eschaton))
             {
                 var value = _universeCache.Dequeue();
-                
+
+                if (_orderEvents.Contains(value.StateChange)
+                && !_highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
+                {
+                    // this event was not verified by the filter
+                    continue;
+                }
+
                 foreach (var obs in _universeObservers)
                 {
                     obs.Value.OnNext(value);
                 }
+            }
+
+            if (_eschaton)
+            {
+                _highVolumeVenueFilter.UniverseEventsPassedFilter.Clear();
             }
         }
 

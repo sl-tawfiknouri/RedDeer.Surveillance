@@ -275,6 +275,9 @@ namespace Surveillance.Engine.Rules
 
             For<IHighMarketCapFilterFactory>().Use<HighMarketCapFilterFactory>();
             For<IRuleParameterToRulesMapperDecorator>().Use<RuleParameterToRulesMapperTuningDecorator>();
+
+            For<IHighVolumeVenueFilter>().Use<HighVolumeVenueFilter>();
+            For<IHighVolumeVenueDecoratorFilter>().Use<HighVolumeVenueDecoratorFilter>();
         }
     }
 }

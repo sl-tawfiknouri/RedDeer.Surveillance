@@ -16,12 +16,12 @@ Scenario: Empty Universe yields no alerts
 	When I run the high volume venue filter
 	Then I will have 0 filter passed orders
 
-Scenario: One Trade For Vodafone yields passed order with no market data
+Scenario: One Trade For Vodafone yields no passed order with no market data on validation run
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
 	When I run the high volume venue filter
-	Then I will have 3 filter passed orders
+	Then I will have 0 filter passed orders
 
 Scenario: One Trade For Vodafone and within range yields one passed orders
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

@@ -43,6 +43,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
 
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
         private IMarketTradingHoursService _tradingHoursService;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -60,6 +61,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
             _scenarioContext = scenarioContext;
             _universeSelectionState = universeSelectionState;
             _observer = A.Fake<IObserver<IUniverseEvent>>();
+            _universeDataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecorator>();
             
@@ -163,6 +165,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
                         new NullLogger<UniverseMarketCacheFactory>()),
                     RuleRunMode.ValidationRun,
                     _tradingHoursService,
+                    _universeDataRequestsSubscriber,
                     new NullLogger<ILogger>(),
                     new NullLogger<TradingHistoryStack>(),
                     new NullLogger<Engine.Rules.Universe.Filter.HighVolumeVenueFilter>());

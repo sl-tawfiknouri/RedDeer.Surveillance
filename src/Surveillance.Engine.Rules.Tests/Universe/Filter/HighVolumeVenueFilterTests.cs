@@ -8,6 +8,7 @@ using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
@@ -37,6 +38,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         private IMarketTradingHoursService _marketTradingHoursService;
         // populated with mocked ops
         private IMarketTradingHoursService _tradingHoursService;
+        private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger _baseLogger;
         private ILogger<TradingHistoryStack> _tradingLogger;
         private ILogger<HighVolumeVenueFilter> _logger;
@@ -51,6 +53,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             _timeWindows = new TimeWindows("id-1", TimeSpan.FromDays(1));
             _decimalRangeRuleFilter = new DecimalRangeRuleFilter();
             _marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
+            _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _baseLogger = A.Fake<ILogger>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
             _logger = A.Fake<ILogger<HighVolumeVenueFilter>>();
@@ -110,6 +113,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     _universeMarketCacheFactory,
                     _ruleRunMode,
                     _marketTradingHoursService,
+                    _dataRequestSubscriber,
                     _baseLogger,
                     _tradingLogger,
                     null));

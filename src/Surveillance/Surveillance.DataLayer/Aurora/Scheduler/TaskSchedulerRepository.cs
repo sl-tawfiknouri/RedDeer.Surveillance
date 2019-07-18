@@ -42,13 +42,12 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             }
 
             var dto = new TaskSchedulerDto(request);
-            var dbConnection = _dbConnectionFactory.BuildConn();
 
             try
             {
-                dbConnection.Open();
                 _logger?.LogInformation($"saving ad hod schedule request");
 
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(SaveTaskScheduler, dto))
                 {
                     await conn;
@@ -59,11 +58,6 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             {
                 _logger.LogError($"SaveTask encountered error {e.Message} {e.InnerException?.Message}", e);
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         /// <summary>
@@ -73,13 +67,11 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
         {
             _logger?.LogInformation($"due to read unprocessed tasks with cut off date of {dueBy}");
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
             var tasks = new List<AdHocScheduleRequest>();
 
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<TaskSchedulerDto>(ReadTaskScheduler, new { @DueBy = dueBy }))
                 {
                     var result = await conn;
@@ -91,11 +83,6 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             catch (Exception e)
             {
                 _logger?.LogError($"ReadUnprocessedTasks encountered an error for date {dueBy} {e.Message} {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return tasks;
@@ -111,12 +98,9 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(MarkTaskAsProcessed, requests))
                 {
                     await conn;
@@ -125,11 +109,6 @@ namespace Surveillance.DataLayer.Aurora.Scheduler
             catch (Exception e)
             {
                 _logger?.LogError($"MarkTasksProcessed failed with exception {e.Message} {e?.InnerException?.Message}", e);
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
         }
 

@@ -69,15 +69,75 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
+        public async Task CreateDataRequest(MarketDataRequest request)
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
+            _logger.LogInformation($"repository recording request for {request.MarketIdentifierCode} from {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo} for {request.Identifiers}.");
+
+            if (string.IsNullOrWhiteSpace(request.Identifiers.Id)
+                || string.IsNullOrWhiteSpace(request.SystemProcessOperationRuleRunId))
+            {
+                _logger.LogError($"CreateDataRequest had a null or empty id for identifiers for financial instrument. {request.Identifiers.Id} - {request.SystemProcessOperationRuleRunId}");
+                return;
+            }
 
             try
             {
-                dbConnection.Open();
+                _logger.LogTrace($"CreateDataRequest about to save request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                var dtoRequest = new MarketDataRequestDto(request);
 
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConnection.ExecuteAsync(CreateDataRequestSql, dtoRequest))
+                {
+                    await conn;
+                    _logger.LogTrace($"CreateDataRequest has saved request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+            }
+        }
+
+        public async Task<bool> HasDataRequestForRuleRun(string ruleRunId)
+        {
+            if (string.IsNullOrWhiteSpace(ruleRunId))
+            {
+                _logger.LogTrace($"checked for null or empty {ruleRunId}");
+                return false;
+            }
+
+            try
+            {
+                _logger.LogInformation($"checking if there's any market data requests from rule run {ruleRunId}");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConnection.QueryFirstAsync<bool>(CheckDataRequestSql, new { ruleRunId }))
+                {
+                    var result = await conn;
+
+                    _logger.LogTrace($"checked if there's any market data requests and it was {result} for {ruleRunId}");
+
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+            }
+
+            return false;
+        }
+
+        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
+        {
+            if (string.IsNullOrWhiteSpace(systemOperationId))
+            {
+                return new MarketDataRequest[0];
+            }
+
+            try
+            {
                 _logger.LogInformation($"fetching market data requests for operation {systemOperationId}");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(GetDataRequestSql, new { SystemOperationId = systemOperationId }))
                 {
                     var result = (await conn).ToList();
@@ -102,11 +162,6 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 _logger.LogError($"Bmll data request repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
 
             return new MarketDataRequest[0];
         }
@@ -120,14 +175,17 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
+                var requestDtos =
+                    requests
+                        .Where(i => !string.IsNullOrWhiteSpace(i.Id))
+                        .Select(req => new MarketDataRequestDto(req))
+                        .ToList();
 
-                var requestDtos = requests.Where(i => !string.IsNullOrWhiteSpace(i.Id)).Select(req => new MarketDataRequestDto(req)).ToList();
                 _logger.LogInformation($"updating market data requests to set them to complete");
+
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(UpdateDataRequestAndDuplicatesSqlToComplete, requestDtos))
                 {
                      await conn;
@@ -139,76 +197,6 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 _logger.LogError($"repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
-        }
-
-        public async Task CreateDataRequest(MarketDataRequest request)
-        {
-            _logger.LogInformation($"repository recording request for {request.MarketIdentifierCode} from {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo} for {request.Identifiers}.");
-
-            if (string.IsNullOrWhiteSpace(request.Identifiers.Id)
-                || string.IsNullOrWhiteSpace(request.SystemProcessOperationRuleRunId))
-            {
-                _logger.LogError($"CreateDataRequest had a null or empty id for identifiers for financial instrument. {request.Identifiers.Id} - {request.SystemProcessOperationRuleRunId}");
-                return;
-            }
-
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
-            {
-                dbConnection.Open();
-
-                _logger.LogTrace($"CreateDataRequest about to save request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
-                var dtoRequest = new MarketDataRequestDto(request);
-                using (var conn = dbConnection.ExecuteAsync(CreateDataRequestSql, dtoRequest))
-                {
-                    await conn;
-                    _logger.LogTrace($"CreateDataRequest has saved request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
-        }
-
-        public async Task<bool> HasDataRequestForRuleRun(string ruleRunId)
-        {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
-            {
-                dbConnection.Open();
-
-                _logger.LogInformation($"checking if there's any market data requests from rule run {ruleRunId}");
-                using (var conn = dbConnection.QueryFirstAsync<bool>(CheckDataRequestSql, new { ruleRunId }))
-                {
-                    var result = await conn;
-
-                    _logger.LogTrace($"checked if there's any market data requests and it was {result} for {ruleRunId}");
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
-
-            return false;
         }
 
         private MarketDataRequest Map(MarketDataRequestDto re)

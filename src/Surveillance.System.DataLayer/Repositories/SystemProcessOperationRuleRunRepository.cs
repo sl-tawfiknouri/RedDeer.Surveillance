@@ -13,6 +13,7 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationRuleRunRepository : ISystemProcessOperationRuleRunRepository
     {
+        private readonly object _lock = new object();
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationRuleRunRepository> _logger;
 
@@ -20,7 +21,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
         private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd, RuleParameterId = @RuleParameterId, RuleTypeId = @RuleTypeId, IsBackTest = @IsBackTest, IsForceRun = @IsForceRun;";
 
         private const string GetSql = "SELECT * FROM SystemProcessOperationRuleRun WHERE SystemProcessOperationId = @Id;";
-
 
         private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationRuleRun ORDER BY Id DESC LIMIT 100;";
 
@@ -42,26 +42,21 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
-
-                _logger.LogInformation($"SystemProcessOperationRuleRunRepository SAVING {entity}");
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                try
                 {
-                    entity.Id = await conn;
+                    _logger.LogInformation($"SystemProcessOperationRuleRunRepository SAVING {entity}");
+                    using (var dbConnection = _dbConnectionFactory.BuildConn())
+                    using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
+                    {
+                        entity.Id = conn.Result;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"System Process Operation Rule Run Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                catch (Exception e)
+                {
+                    _logger.LogError($"System Process Operation Rule Run Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                }
             }
         }
 
@@ -72,12 +67,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(UpdateSql, entity))
                 {
                     await conn;
@@ -87,21 +79,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         public async Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> GetDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -111,11 +95,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Get Dashboard method {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperationRuleRun[0];
@@ -129,12 +108,9 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 return new ISystemProcessOperationRuleRun[0];
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetSql, new {Id = systemProcessOperationIds}))
                 {
                     var result = await conn;
@@ -144,11 +120,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Get method {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ISystemProcessOperationRuleRun[0];

@@ -5,6 +5,7 @@ using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
@@ -25,8 +26,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private readonly DecimalRangeRuleFilter _decimalRangeRuleFilter;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursService _tradingHoursService;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger<HighVolumeVenueFilter> _logger;
         private readonly TimeSpan _eventExpiration;
+
+        private bool _hadMissingData;
 
         public HighVolumeVenueFilter(
             TimeWindows timeWindows,
@@ -36,6 +40,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             IUniverseMarketCacheFactory universeMarketCacheFactory,
             RuleRunMode ruleRunMode,
             IMarketTradingHoursService marketTradingHoursService,
+            IUniverseDataRequestsSubscriber dataRequestsSubscriber,
             ILogger baseLogger,
             ILogger<TradingHistoryStack> stackLogger,
             ILogger<HighVolumeVenueFilter> logger) 
@@ -55,6 +60,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _tradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
             _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
+            _dataRequestSubscriber = dataRequestsSubscriber ?? throw new ArgumentNullException(nameof(dataRequestsSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             UniverseEventsPassedFilter = new HashSet<Order>();
         }
@@ -111,9 +117,16 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             var securityResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
 
-            if (securityResult.HadMissingData)
+            if (securityResult.HadMissingData && RunMode == RuleRunMode.ForceRun)
             {
                 UpdatePassedFilterWithOrders(activeHistory);
+                return;
+            }
+
+            if (securityResult.HadMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                _logger.LogInformation($"market traded volume was not calculable for {mostRecentTrade.Instrument.Identifiers} due to missing data");
+                _hadMissingData = true;
                 return;
             }
 
@@ -203,6 +216,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         protected override void EndOfUniverse()
         {
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                _dataRequestSubscriber.SubmitRequest();
+            }
+
             _logger.LogInformation("Eschaton occurred");
         }
 

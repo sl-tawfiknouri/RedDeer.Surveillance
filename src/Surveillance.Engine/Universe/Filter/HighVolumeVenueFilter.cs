@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 baseLogger,
                 stackLogger)
         {
-            _eventExpiration = BackwardWindowSize + BackwardWindowSize + TimeSpan.FromMinutes(1);
+            _eventExpiration = BackwardWindowSize + BackwardWindowSize + TimeSpan.FromDays(3);
             _tradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
             _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));

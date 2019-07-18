@@ -278,6 +278,8 @@ namespace Surveillance.Engine.Rules
 
             For<IHighVolumeVenueFilter>().Use<HighVolumeVenueFilter>();
             For<IHighVolumeVenueDecoratorFilter>().Use<HighVolumeVenueDecoratorFilter>();
+
+            For<IHighVolumeVenueDecoratorFilterFactory>().Use<HighVolumeVenueDecoratorFilterFactory>();
         }
     }
 }

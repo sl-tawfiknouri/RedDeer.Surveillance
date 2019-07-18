@@ -41,7 +41,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             RuleRunMode ruleRunMode,
             IMarketTradingHoursService marketTradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestsSubscriber,
-            ILogger baseLogger,
             ILogger<TradingHistoryStack> stackLogger,
             ILogger<HighVolumeVenueFilter> logger) 
             : base(
@@ -53,7 +52,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 runRuleContext,
                 universeMarketCacheFactory,
                 ruleRunMode,
-                baseLogger,
+                logger,
                 stackLogger)
         {
             _eventExpiration = BackwardWindowSize + BackwardWindowSize + TimeSpan.FromDays(3);

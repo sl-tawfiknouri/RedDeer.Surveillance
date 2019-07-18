@@ -26,6 +26,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
+        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<MarkingTheCloseEquitySubscriber> _logger;
 
@@ -33,6 +34,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IEquityRuleMarkingTheCloseFactory equityRuleMarkingTheCloseFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<MarkingTheCloseEquitySubscriber> logger)
         {
@@ -40,6 +42,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
+            _decoratorFilterFactory = decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -136,7 +139,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
+            if (param.HasInternalFilters()
+                || param.HasReferenceDataFilters()
+                || param.HasMarketCapFilters()
+                || param.HasVenueVolumeFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -155,9 +161,23 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     "Marking The Close Equity",
                     universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
-                filteredUniverse.Subscribe(markingTheClose);
 
-                return filteredUniverse;
+                var decoratedFilter = filteredUniverse;
+
+                if (param.HasVenueVolumeFilters())
+                {
+                    decoratedFilter =
+                        _decoratorFilterFactory.Build(
+                            param.Windows,
+                            filteredUniverse,
+                            param.VenueVolumeFilter,
+                            processOperationRunRuleContext,
+                            ruleRunMode);
+                }
+
+                decoratedFilter.Subscribe(markingTheClose);
+
+                return decoratedFilter;
             }
             else
             {

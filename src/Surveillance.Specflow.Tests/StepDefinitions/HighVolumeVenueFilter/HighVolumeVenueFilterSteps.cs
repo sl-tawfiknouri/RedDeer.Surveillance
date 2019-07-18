@@ -43,6 +43,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
 
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private IUniverseFilterService _baseUniverseFilterService;
         private IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
         private IMarketTradingHoursService _tradingHoursService;
         private ILogger<HighVolumeRule> _logger;
@@ -166,17 +167,16 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
                     RuleRunMode.ValidationRun,
                     _tradingHoursService,
                     _universeDataRequestsSubscriber,
-                    new NullLogger<ILogger>(),
                     new NullLogger<TradingHistoryStack>(),
                     new NullLogger<Engine.Rules.Universe.Filter.HighVolumeVenueFilter>());
+
+            _baseUniverseFilterService = A.Fake<IUniverseFilterService>();
 
             var filterDecorator =
                 new HighVolumeVenueDecoratorFilter(
                     _timeWindows,
-                    A.Fake<IUniverseFilterService>(),
-                    A.Fake<IUnsubscriberFactory<IUniverseEvent>>(),
-                    _filter,
-                    new NullLogger<Engine.Rules.Universe.Filter.HighVolumeVenueFilter>());
+                    _baseUniverseFilterService,
+                    _filter);
 
             filterDecorator.Subscribe(_observer);
 
@@ -188,7 +188,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
         public void ThenIWillHavePassedOrders(int expectedPassedItemCount)
         {
             A
-                .CallTo(() => _observer.OnNext(A<IUniverseEvent>.That.Matches(_ => _.StateChange.IsOrderType())))
+                .CallTo(() => _baseUniverseFilterService.OnNext(A<IUniverseEvent>.That.Matches(_ => _.StateChange.IsOrderType())))
                 .MustHaveHappenedANumberOfTimesMatching(_ => _ == expectedPassedItemCount);
         }
     }

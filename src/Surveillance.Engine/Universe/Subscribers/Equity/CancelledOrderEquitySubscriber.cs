@@ -27,6 +27,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
         private readonly ILogger<CancelledOrderEquitySubscriber> _logger;
 
         public CancelledOrderEquitySubscriber(
@@ -34,12 +35,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
+            IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<CancelledOrderEquitySubscriber> logger)
         {
             _equityRuleCancelledOrderFactory = equityRuleCancelledOrderFactory;
             _ruleParameterMapper = ruleParameterMapper;
             _universeFilterFactory = universeFilterFactory;
             _brokerServiceFactory = brokerServiceFactory;
+            _decoratorFilterFactory = decoratorFilterFactory;
             _logger = logger;
         }
 
@@ -130,9 +133,13 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
+            if (param.HasInternalFilters() 
+                || param.HasReferenceDataFilters() 
+                || param.HasMarketCapFilters() 
+                || param.HasVenueVolumeFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+
                 var filteredUniverse = _universeFilterFactory.Build(
                     param.Accounts,
                     param.Traders,
@@ -148,9 +155,23 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     "Cancelled Order Equity",
                     universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
-                filteredUniverse.Subscribe(cancelledOrderRule);
 
-                return filteredUniverse;
+                var decoratedFilteredUniverse = filteredUniverse;
+
+                if (param.HasVenueVolumeFilters())
+                {
+                    decoratedFilteredUniverse = 
+                        _decoratorFilterFactory.Build(
+                            param.Windows,
+                            filteredUniverse, 
+                            param.VenueVolumeFilter,
+                            processOperationRunRuleContext, 
+                            ruleRunMode);
+                }
+
+                decoratedFilteredUniverse.Subscribe(cancelledOrderRule);
+
+                return decoratedFilteredUniverse;
             }
 
             return cancelledOrderRule;

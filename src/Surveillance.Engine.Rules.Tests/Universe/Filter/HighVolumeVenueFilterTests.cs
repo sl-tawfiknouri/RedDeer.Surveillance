@@ -114,7 +114,6 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     _ruleRunMode,
                     _marketTradingHoursService,
                     _dataRequestSubscriber,
-                    _baseLogger,
                     _tradingLogger,
                     null));
         }

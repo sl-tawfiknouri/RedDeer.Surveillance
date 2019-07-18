@@ -13,14 +13,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighVolumeVenueDecoratorFilter : IHighVolumeVenueDecoratorFilter
     {
         private readonly Queue<IUniverseEvent> _universeCache;
-        private readonly HashSet<UniverseStateEvent> _orderEvents =
-            new HashSet<UniverseStateEvent>
-            {
-                UniverseStateEvent.Order,
-                UniverseStateEvent.OrderFilled,
-                UniverseStateEvent.OrderPlaced
-            };
-
         private readonly TimeWindows _ruleTimeWindows;
         private DateTime _windowTime;
         private bool _eschaton;
@@ -120,8 +112,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             {
                 var value = _universeCache.Dequeue();
 
-                if (_orderEvents.Contains(value.StateChange)
-                && !_highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
+                if (value.StateChange.IsOrderType()
+                   && !_highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
                 {
                     // this event was not verified by the filter
                     continue;
@@ -135,7 +127,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (_eschaton)
             {
-                _highVolumeVenueFilter.UniverseEventsPassedFilter.Clear();
+                _highVolumeVenueFilter?.UniverseEventsPassedFilter.Clear();
             }
         }
 

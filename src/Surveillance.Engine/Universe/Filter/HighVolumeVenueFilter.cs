@@ -56,6 +56,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
             _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            UniverseEventsPassedFilter = new HashSet<Order>();
         }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
@@ -136,13 +137,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             }
 
             var proportionOfTradedVolume = (volumeTraded / (decimal)marketTradedVolume);
-
-            if (proportionOfTradedVolume < 0)
-            {
-                UpdatePassedFilterWithOrders(activeHistory);
-
-                throw new InvalidOperationException($"HighVolumeVenueFilter ended up with a proportion of traded volume that was negative {proportionOfTradedVolume} vol traded {volumeTraded} market traded vol {marketTradedVolume}");
-            }
 
             var passedFilter = false;
 
@@ -239,7 +233,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             UniverseEventsPassedFilter
                 .RemoveWhere(_ =>
                     _ == null
-                    || _.MostRecentDateEvent() < (UniverseDateTime + _eventExpiration));
+                    || _.MostRecentDateEvent() < (UniverseDateTime - _eventExpiration));
         }
     }
 }

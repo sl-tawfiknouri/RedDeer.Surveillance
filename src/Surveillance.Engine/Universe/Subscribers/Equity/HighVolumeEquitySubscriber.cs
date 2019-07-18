@@ -175,6 +175,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             filteredUniverse,
                             param.VenueVolumeFilter, 
                             processOperationRunRuleContext,
+                            dataRequestSubscriber,
                             ruleRunMode);
                 }
 

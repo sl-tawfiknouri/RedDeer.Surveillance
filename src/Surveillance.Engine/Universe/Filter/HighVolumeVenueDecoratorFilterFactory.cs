@@ -17,7 +17,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private readonly IUniverseEquityOrderFilterService _equityOrderFilterService;
         private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private readonly IMarketTradingHoursService _marketTradingHoursService;
-        private readonly IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
 
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
         private readonly ILogger<HighVolumeVenueFilter> _venueLogger;
@@ -26,14 +25,12 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             IUniverseEquityOrderFilterService equityOrderFilterService,
             IUniverseMarketCacheFactory universeMarketCacheFactory,
             IMarketTradingHoursService marketTradingHoursService,
-            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ILogger<TradingHistoryStack> tradingHistoryLogger,
             ILogger<HighVolumeVenueFilter> venueLogger)
         {
             _equityOrderFilterService = equityOrderFilterService ?? throw new ArgumentNullException(nameof(equityOrderFilterService));
             _universeMarketCacheFactory = universeMarketCacheFactory ?? throw new ArgumentNullException(nameof(universeMarketCacheFactory));
             _marketTradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
-            _universeDataRequestsSubscriber = universeDataRequestsSubscriber ?? throw new ArgumentNullException(nameof(universeDataRequestsSubscriber));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _venueLogger = venueLogger ?? throw new ArgumentNullException(nameof(venueLogger));
         }
@@ -43,6 +40,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             IUniverseFilterService baseService, 
             DecimalRangeRuleFilter venueVolumeFilterSetting,
             ISystemProcessOperationRunRuleContext ruleRunContext,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode ruleRunMode)
         {
             var filterRule =
@@ -54,7 +52,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     _universeMarketCacheFactory,
                     ruleRunMode,
                     _marketTradingHoursService,
-                    _universeDataRequestsSubscriber,
+                    dataRequestSubscriber,
                     _tradingHistoryLogger,
                     _venueLogger);
 

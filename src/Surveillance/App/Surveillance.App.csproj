@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>RedDeer.Surveillance.App</AssemblyName>
     <RootNamespace>RedDeer.Surveillance.App</RootNamespace>
-    <UserSecretsId>0b5c1e08-7219-4db3-af51-771cb4c2ab43</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

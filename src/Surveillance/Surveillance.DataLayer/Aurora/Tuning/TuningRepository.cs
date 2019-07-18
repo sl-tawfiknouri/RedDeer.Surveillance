@@ -38,13 +38,11 @@ namespace Surveillance.DataLayer.Aurora.Tuning
             }
 
             var dtos = tuningRuns.Select(_ => new TuningDto(_.TunedParam, _.TunedJson)).ToList();
-            var dbConnection = _dbConnectionFactory.BuildConn();
 
             try
             {
-                dbConnection.Open();
                 _logger?.LogInformation($"SaveTasks opened db connection and about to save {tuningRuns.Count} tuning runs");
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(SaveTuning, dtos))
                 {
                     await conn;
@@ -54,11 +52,6 @@ namespace Surveillance.DataLayer.Aurora.Tuning
             catch (Exception e)
             {
                 _logger?.LogError($"exception in save tasks for tuning runs {e.Message} {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             _logger?.LogInformation($"Completed saving a parameter tuning run");

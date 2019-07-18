@@ -9,7 +9,6 @@
         public int SystemProcessOperationId { get; set;}
 
         // event counts
-        public int UnknownEventCount { get; set; }
         public int GenesisEventCount { get; set; }
         public int EschatonEventCount { get; set; }
         public int TradeReddeerCount { get; set; }

@@ -86,13 +86,10 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return null;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 _logger.LogInformation($"RuleBreachOrdersRepository fetching rule breaches");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<RuleBreachOrderDto>(GetRuleBreachSql, new { RuleBreachId = ruleBreachId }))
                 {
                     var result = await conn;
@@ -107,11 +104,6 @@ namespace Surveillance.DataLayer.Aurora.Rules
             catch (Exception e)
             {
                 _logger.LogError($"RuleBreachOrdersRepository error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return null;

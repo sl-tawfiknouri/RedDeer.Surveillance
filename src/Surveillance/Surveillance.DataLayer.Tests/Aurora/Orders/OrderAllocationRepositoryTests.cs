@@ -11,7 +11,7 @@ using Surveillance.DataLayer.Aurora.Orders;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
-namespace Surveillance.DataLayer.Tests.Aurora.Trade
+namespace Surveillance.DataLayer.Tests.Aurora.Orders
 {
     [TestFixture]
     public class OrderAllocationRepositoryTests

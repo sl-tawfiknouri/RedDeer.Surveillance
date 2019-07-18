@@ -80,8 +80,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 case UniverseStateEvent.OrderPlaced:
                     Analytics.TradeReddeerSubmittedCount += 1;
                     break;
-                case UniverseStateEvent.Unknown:
-                    Analytics.UnknownEventCount += 1;
+                default:
                     break;
             }
         }

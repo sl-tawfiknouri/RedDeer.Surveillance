@@ -34,14 +34,11 @@ namespace Surveillance.Auditing.DataLayer.Repositories.Exceptions
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 _logger.LogError($"ExceptionRepository SAVING {dto}");
 
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteAsync(ExceptionInsertSql, dto))
                 {
                     conn.Wait();
@@ -51,21 +48,13 @@ namespace Surveillance.Auditing.DataLayer.Repositories.Exceptions
             {
                 _logger.LogError($"Exception in the Exception Repository {e.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
         }
 
         public async Task<IReadOnlyCollection<ExceptionDto>> GetForDashboard()
         {
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<ExceptionDto>(ExceptionDashboardSql))
                 {
                     var result = await conn;
@@ -75,11 +64,6 @@ namespace Surveillance.Auditing.DataLayer.Repositories.Exceptions
             catch (Exception e)
             {
                 _logger.LogError($"Exception in the Exception Repository {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return new ExceptionDto[0];

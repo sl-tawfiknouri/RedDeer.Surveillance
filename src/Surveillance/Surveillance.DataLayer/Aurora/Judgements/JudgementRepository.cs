@@ -47,7 +47,7 @@ namespace Surveillance.DataLayer.Aurora.Judgements
             }
             catch (Exception e)
             {
-                _logger?.LogError($"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
+                _logger?.LogError(e, $"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
             }
         }
         

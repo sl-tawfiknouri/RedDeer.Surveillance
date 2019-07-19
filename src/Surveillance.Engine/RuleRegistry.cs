@@ -174,7 +174,6 @@ namespace Surveillance.Engine.Rules
             For<IEquityRuleHighProfitFactory>().Use<EquityRuleHighProfitFactory>();
             For<IHighProfitJudgementMapper>().Use<HighProfitJudgementMapper>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
-            For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
             For<ICostCalculatorFactory>().Use<CostCalculatorFactory>();
             For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 

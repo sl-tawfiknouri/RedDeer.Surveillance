@@ -11,6 +11,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -27,19 +28,22 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
+        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
         private readonly ILogger _logger;
 
         public HighProfitsEquitySubscriber(
             IEquityRuleHighProfitFactory equityRuleHighProfitFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
-            IOrganisationalFactorBrokerServiceFactory brokerServiceFactor,
+            IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
+            IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _equityRuleHighProfitFactory = equityRuleHighProfitFactory ?? throw new ArgumentNullException(nameof(equityRuleHighProfitFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            _brokerServiceFactory = brokerServiceFactor ?? throw new ArgumentNullException(nameof(brokerServiceFactor));
+            _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
+            _decoratorFilterFactory = decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -147,7 +151,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
+            if (param.HasInternalFilters()
+                || param.HasReferenceDataFilters() 
+                || param.HasMarketCapFilters() 
+                || param.HasVenueVolumeFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -166,9 +173,24 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     "High Profits Equity",
                     universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
-                filteredUniverse.Subscribe(highProfitsRule);
 
-                return filteredUniverse;
+                var decoratedFilter = filteredUniverse;
+
+                if (param.HasVenueVolumeFilters())
+                {
+                    decoratedFilter =
+                        _decoratorFilterFactory.Build(
+                            param.Windows,
+                            filteredUniverse, 
+                            param.VenueVolumeFilter,
+                            processOperationRunRuleContext,
+                            universeDataRequestsSubscriber,
+                            ruleRunMode);
+                }
+
+                decoratedFilter.Subscribe(highProfitsRule);
+
+                return decoratedFilter;
             }
             else
             {

@@ -5,7 +5,6 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
@@ -36,6 +35,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             MarketCapFilter = DecimalRangeRuleFilter.None();
+            VenueVolumeFilter = DecimalRangeRuleFilter.None();
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -65,6 +65,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool useCurrencyConversions,
             string highProfitCurrencyConversionTargetCurrency,
             DecimalRangeRuleFilter marketCapFilter,
+            DecimalRangeRuleFilter highVolumeFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -88,6 +89,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PerformHighProfitDailyAnalysis = performHighProfitDailyAnalysis;
 
             MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
+            VenueVolumeFilter = highVolumeFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -134,6 +136,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public string HighProfitCurrencyConversionTargetCurrency { get; }
 
         public DecimalRangeRuleFilter MarketCapFilter { get; }
+        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -157,6 +160,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public bool HasReferenceDataFilters()
             => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+
+        public bool HasVenueVolumeFilters()
+            => IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
 
         public bool Valid()
         {
@@ -200,5 +206,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+
     }
 }

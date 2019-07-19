@@ -27,6 +27,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
         private readonly ILogger _logger;
 
         public SpoofingEquitySubscriber(
@@ -34,12 +35,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
+            IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _equityRuleSpoofingFactory = equityRuleSpoofingFactory ?? throw new ArgumentNullException(nameof(equityRuleSpoofingFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
+            _decoratorFilterFactory = decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
@@ -143,7 +146,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters())
+            if (param.HasInternalFilters() 
+                || param.HasReferenceDataFilters() 
+                || param.HasMarketCapFilters() 
+                || param.HasVenueVolumeFilters())
             {
                 _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
@@ -162,9 +168,23 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     "Spoofing Equity",
                     universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
-                filteredUniverse.Subscribe(spoofingRule);
 
-                return filteredUniverse;
+                var decoratedFilter = filteredUniverse;
+
+                if (param.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = _decoratorFilterFactory.Build(
+                        param.Windows,
+                        filteredUniverse,
+                        param.VenueVolumeFilter,
+                        processOperationRunRuleContext,
+                        universeDataRequestsSubscriber,
+                        ruleRunMode);
+                }
+
+                decoratedFilter.Subscribe(spoofingRule);
+
+                return decoratedFilter;
             }
             else
             {

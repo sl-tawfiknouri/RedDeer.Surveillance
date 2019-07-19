@@ -4,7 +4,6 @@ using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Domain.Surveillance.Rules.Tuning;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities
@@ -30,6 +29,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PercentThresholdOffTouch = percentThresholdOffTouch;
 
             MarketCapFilter = DecimalRangeRuleFilter.None();
+            VenueVolumeFilter = DecimalRangeRuleFilter.None();
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -55,6 +55,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             decimal? percentageThresholdWindowVolume,
             decimal? percentThresholdOffTouch,
             DecimalRangeRuleFilter marketCapFilter,
+            DecimalRangeRuleFilter venueVolumeFilter,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -76,6 +77,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PercentThresholdOffTouch = percentThresholdOffTouch;
 
             MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
+            VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -119,6 +121,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public decimal? PercentThresholdOffTouch { get; set; }
 
         public DecimalRangeRuleFilter MarketCapFilter { get; }
+        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
@@ -143,6 +146,9 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         public bool HasReferenceDataFilters()
             => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+
+        public bool HasVenueVolumeFilters() 
+            => IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
 
         public bool Valid()
         {

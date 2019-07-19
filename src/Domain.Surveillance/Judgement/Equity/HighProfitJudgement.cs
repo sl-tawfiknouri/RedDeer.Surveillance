@@ -16,8 +16,8 @@ namespace Domain.Surveillance.Judgement.Equity
             bool hadMissingMarketData,
             bool noAnalysis)
         {
-            RuleRunId = ruleRunId ?? string.Empty;
-            RuleRunCorrelationId = ruleRunCorrelationId ?? string.Empty;
+            RuleRunId = ruleRunId;
+            RuleRunCorrelationId = ruleRunCorrelationId;
             OrderId = orderId;
             ClientOrderId = clientOrderId;
 
@@ -25,7 +25,7 @@ namespace Domain.Surveillance.Judgement.Equity
             AbsoluteHighProfitCurrency = absoluteHighProfitCurrency;
             PercentageHighProfit = percentageHighProfit;
 
-            Parameters = parameters ?? string.Empty;
+            Parameters = parameters;
             HadMissingMarketData = hadMissingMarketData;
             NoAnalysis = noAnalysis;
         }

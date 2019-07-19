@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Judgements
         {
             _ruleViolations = new Stack<IRuleBreach>();
             _deduplicatedRuleViolations = new Queue<RuleViolationIdPair>();
-
+            
             _queueCasePublisher =
                 queueCasePublisher 
                 ?? throw new ArgumentNullException(nameof(queueCasePublisher));
@@ -87,9 +87,6 @@ namespace Surveillance.Engine.Rules.Judgements
                 while (_ruleViolations.Any())
                 {
                     var ruleViolation = _ruleViolations.Pop();
-
-                    if (ruleViolation == null)
-                        continue;
 
                     if (ruleViolation?.Trades?.Get() == null 
                         || (!ruleViolation?.Trades.Get().Any() ?? true))
@@ -155,7 +152,7 @@ namespace Surveillance.Engine.Rules.Judgements
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError($"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus {e}");
+                        _logger.LogError(e, $"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus {e}");
                     }
                 }
 

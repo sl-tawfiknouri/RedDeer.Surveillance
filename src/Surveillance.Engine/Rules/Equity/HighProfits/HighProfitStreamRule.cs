@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected readonly ILogger<HighProfitsRule> Logger;
         protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        protected readonly IJudgementService _judgementService;
+        protected readonly IHighProfitJudgementService _judgementService;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IJudgementService judgementService,
+            IHighProfitJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)

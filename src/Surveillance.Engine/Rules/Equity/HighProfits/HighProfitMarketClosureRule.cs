@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IJudgementService judgementService,
+            IHighProfitJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)

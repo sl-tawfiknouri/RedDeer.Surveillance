@@ -287,6 +287,15 @@ namespace Surveillance.Engine.Rules
             For<IJudgementRepository>().Use<JudgementRepository>();
             For<IJudgementServiceFactory>().Use<JudgementServiceFactory>();
             For<IRuleViolationServiceFactory>().Use<RuleViolationServiceFactory>();
+
+            For<ICancelledOrderJudgementService>().Use<JudgementService>();
+            For<IHighProfitJudgementService>().Use<JudgementService>();
+            For<IHighVolumeJudgementService>().Use<JudgementService>();
+            For<ILayeringJudgementService>().Use<JudgementService>();
+            For<IMarkingTheCloseJudgementService>().Use<JudgementService>();
+            For<IPlacingOrdersJudgementService>().Use<JudgementService>();
+            For<IRampingJudgementService>().Use<JudgementService>();
+            For<ISpoofingJudgementService>().Use<JudgementService>();
         }
     }
 }

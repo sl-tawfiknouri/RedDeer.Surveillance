@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Filter
                 return DecimalRangeRuleFilter.None();
             }
 
-            if(filter.LowerBoundary == null && filter.LowerBoundary == null)
+            if(filter.LowerBoundary == null && filter.UpperBoundary == null)
             {
                 return DecimalRangeRuleFilter.None();
             }

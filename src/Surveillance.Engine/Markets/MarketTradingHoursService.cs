@@ -167,6 +167,13 @@ namespace Surveillance.Engine.Rules.Markets
                 return null;
             }
 
+            if (string.Equals(marketIdentifierCode, "na", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(marketIdentifierCode, "n/a", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogDebug($"received an na or n/a MIC {marketIdentifierCode}");
+                return null;
+            }
+
             var resultTask = _repository.Get();
             var result = resultTask.Result;
 
@@ -175,7 +182,6 @@ namespace Surveillance.Engine.Rules.Markets
             if (exchange == null)
             {
                 _logger.LogError($"could not find a match for {marketIdentifierCode}");
-
                 return null;               
             }
 

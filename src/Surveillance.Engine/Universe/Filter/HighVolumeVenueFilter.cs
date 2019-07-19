@@ -155,14 +155,14 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             if (_decimalRangeRuleFilter.Type == RuleFilterType.Include)
             {
                 passedFilter =
-                    proportionOfTradedVolume <= _decimalRangeRuleFilter.Max.GetValueOrDefault(1)
-                    && proportionOfTradedVolume >= _decimalRangeRuleFilter.Min.GetValueOrDefault(0);
+                   (_decimalRangeRuleFilter.Max == null || proportionOfTradedVolume <= _decimalRangeRuleFilter.Max)
+                    && (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume >= _decimalRangeRuleFilter.Min);
             }
             else if (_decimalRangeRuleFilter.Type == RuleFilterType.Exclude)
             {
-                 passedFilter =
-                    proportionOfTradedVolume > _decimalRangeRuleFilter.Max.GetValueOrDefault(1)
-                    || proportionOfTradedVolume < _decimalRangeRuleFilter.Min.GetValueOrDefault(0);
+                passedFilter =
+                    (_decimalRangeRuleFilter.Max == null || proportionOfTradedVolume > _decimalRangeRuleFilter.Max)
+                    || (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume < _decimalRangeRuleFilter.Min);
             }
 
             if (passedFilter)

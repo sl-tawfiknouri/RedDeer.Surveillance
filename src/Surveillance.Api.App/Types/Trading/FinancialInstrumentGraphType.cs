@@ -32,19 +32,19 @@ namespace Surveillance.Api.App.Types.Trading
                     return loader.LoadAsync();
                 });
 
-            Field(i => i.ClientIdentifier).Description("The client identifier for the instrument in question");
-            Field(i => i.Sedol).Description("Sedol for the instrument");
-            Field(i => i.Isin).Description("Isin for the instrument");
-            Field(i => i.Figi).Description("Figi for the instrument");
-            Field(i => i.Cusip).Description("Cusip for the instrument");
-            Field(i => i.Lei).Description("Lei for the instrument");
-            Field(i => i.ExchangeSymbol).Description("Exchange symbol for the instrument");
-            Field(i => i.BloombergTicker).Description("Bloomberg Ticker for the instrument");
+            Field(i => i.ClientIdentifier, nullable: true).Description("The client identifier for the instrument in question");
+            Field(i => i.Sedol, nullable: true).Description("Sedol for the instrument");
+            Field(i => i.Isin, nullable: true).Description("Isin for the instrument");
+            Field(i => i.Figi, nullable: true).Description("Figi for the instrument");
+            Field(i => i.Cusip, nullable: true).Description("Cusip for the instrument");
+            Field(i => i.Lei, nullable: true).Description("Lei for the instrument");
+            Field(i => i.ExchangeSymbol, nullable: true).Description("Exchange symbol for the instrument");
+            Field(i => i.BloombergTicker, nullable: true).Description("Bloomberg Ticker for the instrument");
             Field(i => i.SecurityName).Description("Security name for the instrument");
-            Field(i => i.Cfi).Description("Classification for Financial Instruments");
-            Field(i => i.IssuerIdentifier).Description("Issuer identifier");
-            Field(i => i.SecurityCurrency).Description("The currency the security is traded in");
-            Field(i => i.ReddeerId).Description("The reddeer id (security master list) for the instrument");
+            Field(i => i.Cfi, nullable: true).Description("Classification for Financial Instruments");
+            Field(i => i.IssuerIdentifier, nullable: true).Description("Issuer identifier");
+            Field(i => i.SecurityCurrency, nullable: true).Description("The currency the security is traded in");
+            Field(i => i.ReddeerId, nullable: true).Description("The reddeer id (security master list) for the instrument");
             Field(i => i.Enrichment, nullable: true).Type(new DateTimeGraphType()).Description("The date the security was enriched on in UTC and in UK time format");
 
             Field<InstrumentTypeGraphType>("instrumentType", description: "The type of the instrument");

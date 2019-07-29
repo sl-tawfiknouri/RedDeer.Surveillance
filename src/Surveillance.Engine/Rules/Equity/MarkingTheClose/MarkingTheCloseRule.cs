@@ -128,6 +128,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             }
 
             var position = new TradePosition(marketSecurities.ToList());
+
+            // wrong but should be a judgement
             var breach = new MarkingTheCloseBreach(
                 OrganisationFactorValue,
                 _ruleCtx.SystemProcessOperationContext(),
@@ -139,6 +141,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 _equitiesParameters,
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach(),
+                "desc",
+                "title",
                 UniverseDateTime);
 
             _logger.LogInformation($"had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");

@@ -171,6 +171,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
             var tradePosition = new TradePosition(tradeWindow.ToList());
 
+            // wrong but should be a judgement
             var breach =
                 new RampingRuleBreach(
                     BackwardWindowSize,
@@ -182,6 +183,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     OrganisationFactorValue,
                     rampingAnalysisResults.Last(),
                     _rampingParameters,
+                    "desc",
+                    "title",
                     UniverseDateTime);
 
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");

@@ -11,6 +11,8 @@ using RedDeer.Contracts.SurveillanceService.Interfaces;
 using SharedKernel.Contracts.Queues;
 using SharedKernel.Contracts.Queues.Interfaces;
 using StructureMap;
+using Surveillance.DataLayer.Aurora.Judgements;
+using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Analysis;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Factory;
@@ -103,6 +105,8 @@ using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;
 using Surveillance.Engine.Rules.Utility.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.Judgements;
 
 namespace Surveillance.Engine.Rules
 {
@@ -168,9 +172,8 @@ namespace Surveillance.Engine.Rules
             For<IEquityRuleCancelledOrderFactory>().Use<EquityRuleCancelledOrderFactory>();
 
             For<IEquityRuleHighProfitFactory>().Use<EquityRuleHighProfitFactory>();
-            For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
+            For<IHighProfitJudgementMapper>().Use<HighProfitJudgementMapper>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
-            For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
             For<ICostCalculatorFactory>().Use<CostCalculatorFactory>();
             For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 
@@ -277,9 +280,22 @@ namespace Surveillance.Engine.Rules
             For<IRuleParameterToRulesMapperDecorator>().Use<RuleParameterToRulesMapperTuningDecorator>();
 
             For<IHighVolumeVenueFilter>().Use<HighVolumeVenueFilter>();
+            For<IJudgementService>().Use<JudgementService>();
             For<IHighVolumeVenueDecoratorFilter>().Use<HighVolumeVenueDecoratorFilter>();
 
             For<IHighVolumeVenueDecoratorFilterFactory>().Use<HighVolumeVenueDecoratorFilterFactory>();
+            For<IJudgementRepository>().Use<JudgementRepository>();
+            For<IJudgementServiceFactory>().Use<JudgementServiceFactory>();
+            For<IRuleViolationServiceFactory>().Use<RuleViolationServiceFactory>();
+
+            For<ICancelledOrderJudgementService>().Use<JudgementService>();
+            For<IHighProfitJudgementService>().Use<JudgementService>();
+            For<IHighVolumeJudgementService>().Use<JudgementService>();
+            For<ILayeringJudgementService>().Use<JudgementService>();
+            For<IMarkingTheCloseJudgementService>().Use<JudgementService>();
+            For<IPlacingOrdersJudgementService>().Use<JudgementService>();
+            For<IRampingJudgementService>().Use<JudgementService>();
+            For<ISpoofingJudgementService>().Use<JudgementService>();
         }
     }
 }

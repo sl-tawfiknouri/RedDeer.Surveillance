@@ -20,6 +20,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             IFactorValue factorValue,
             IRampingStrategySummaryPanel summaryPanel,
             IRampingRuleEquitiesParameters parameters,
+            string description,
+            string caseTitle,
             DateTime universeDateTime)
         {
             Window = window;
@@ -31,6 +33,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             FactorValue = factorValue;
             SummaryPanel = summaryPanel;
             RuleParameters = parameters;
+            Description = description ?? string.Empty;
+            CaseTitle = caseTitle ?? string.Empty;
             UniverseDateTime = universeDateTime;
         }
 
@@ -44,6 +48,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         public IFactorValue FactorValue { get; set; }
         public IRuleParameter RuleParameters { get; set; }
         public DateTime UniverseDateTime { get; set; }
+        public string Description { get; set; }
+        public string CaseTitle { get; set; }
         public IRampingStrategySummaryPanel SummaryPanel { get; set; }
     }
 }

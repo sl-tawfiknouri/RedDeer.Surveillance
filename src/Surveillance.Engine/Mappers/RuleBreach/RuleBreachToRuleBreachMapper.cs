@@ -7,7 +7,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
 {
     public class RuleBreachToRuleBreachMapper : IRuleBreachToRuleBreachMapper
     {
-        public Domain.Surveillance.Rules.RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description, string caseTitle)
+        public Domain.Surveillance.Rules.RuleBreach RuleBreachItem(IRuleBreach ruleBreach)
         {
             var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.MostRecentDateEvent());
             var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.MostRecentDateEvent());
@@ -31,9 +31,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
 
             if (ruleBreach.UniverseDateTime > latestPositionValue)
                 latestPositionValue = ruleBreach.UniverseDateTime;
-
-            description = description ?? string.Empty;
-
+            
             var trades =
                 ruleBreach
                     .Trades
@@ -50,8 +48,8 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
                     ruleBreach.CorrelationId,
                     ruleBreach.IsBackTestRun,
                     DateTime.UtcNow,
-                    caseTitle,
-                    description,
+                    ruleBreach.CaseTitle ?? string.Empty,
+                    ruleBreach.Description ?? string.Empty,
                     venue,
                     oldestPositionValue,
                     latestPositionValue,

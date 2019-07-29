@@ -10,6 +10,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.FixedIncome;
 using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -48,6 +49,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades) ?? true)

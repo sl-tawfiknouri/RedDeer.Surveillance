@@ -2,10 +2,9 @@
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
@@ -23,7 +22,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public HighProfitMarketClosureRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -31,13 +29,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IHighProfitJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters, 
                 ruleCtx,
-                alertStream,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
@@ -45,6 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 marketCacheFactory,
                 marketDataCacheFactory,
                 dataRequestSubscriber,
+                judgementService,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -60,6 +59,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             {
                 return false;
             }
+
+            var baseOrder = activeWindow.Any() ? activeWindow.Peek() : null;
 
             var tradeBuy =
                 activeWindow
@@ -82,17 +83,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (securitiesBrought > securitiesSold)
             {
                 Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded securities sold {securitiesSold}. Proceeding to evaluate market closure rule.");
+
                 return true;
             }
 
-            if (_equitiesParameters.PerformHighProfitWindowAnalysis)
-            {
-                var position = new TradePosition(activeWindow.ToList());
-                var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
-                _alertStream.Add(message);
-            }
+            Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equaled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
-            Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
+            SetNoLiveTradesJudgement(baseOrder);
 
             return false;
         }

@@ -2,10 +2,10 @@
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -55,8 +55,8 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
-            IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             ScheduledExecution scheduledExecution)
         {
             var runMode = scheduledExecution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
@@ -64,7 +64,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             var stream = new HighProfitStreamRule(
                 equitiesParameters,
                 ruleCtxStream,
-                alertStream,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
@@ -72,6 +71,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,
+                judgementService,
                 runMode,
                 _logger,
                 _tradingHistoryLogger);
@@ -79,7 +79,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             var marketClosure = new HighProfitMarketClosureRule(
                 equitiesParameters,
                 ruleCtxMarket,
-                alertStream,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
@@ -87,6 +86,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,
+                judgementService,
                 runMode,
                 _logger,
                 _tradingHistoryLogger);

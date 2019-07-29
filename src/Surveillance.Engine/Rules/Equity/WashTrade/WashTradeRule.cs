@@ -118,6 +118,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             _logger.LogInformation($"incrementing alerts because of security {security?.Name} at {UniverseDateTime}");
 
+            // wrong but should be a judgement anyway
             var breach =
                 new WashTradeRuleBreach(
                     _equitiesParameters.Windows.BackwardWindowSize,
@@ -129,6 +130,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     security,
                     averagePositionCheck,
                     clusteringPositionCheck,
+                    "desc",
+                    "title",
                     UniverseDateTime);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.WashTrade, breach, RuleCtx);

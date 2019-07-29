@@ -285,7 +285,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
             var order = new Order(
                 security.Instrument,
                 security.Market,
-                null,
+                0,
                 orderParam.OrderId,
                 orderParam.PlacedDate,
                 null,

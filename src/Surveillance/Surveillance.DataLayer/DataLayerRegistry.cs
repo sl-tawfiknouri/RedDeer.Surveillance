@@ -25,6 +25,8 @@ using Surveillance.DataLayer.Aurora.Scheduler;
 using Surveillance.DataLayer.Aurora.Scheduler.Interfaces;
 using Surveillance.DataLayer.Aurora.Tuning;
 using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
+using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
+using Surveillance.DataLayer.Aurora.Judgements;
 
 namespace Surveillance.DataLayer
 {
@@ -54,6 +56,7 @@ namespace Surveillance.DataLayer
             For<IHttpClientFactory>().Use<HttpClientFactory>();
             For<ITuningRepository>().Use<TuningRepository>();
             For<IOrderBrokerRepository>().Use<OrderBrokerRepository>();
+            For<IJudgementRepository>().Use<JudgementRepository>();
         }
     }
 }

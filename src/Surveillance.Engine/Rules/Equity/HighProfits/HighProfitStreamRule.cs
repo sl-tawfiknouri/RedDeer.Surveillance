@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Judgement.Equity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
@@ -29,7 +30,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected readonly ILogger<HighProfitsRule> Logger;
         protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        protected readonly IUniverseAlertStream _alertStream;
+        protected readonly IHighProfitJudgementService _judgementService;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -44,7 +45,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public HighProfitStreamRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -52,6 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IHighProfitJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -69,7 +70,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         {
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
             _marketDataCacheFactory = marketDataCacheFactory ?? throw new ArgumentNullException(nameof(marketDataCacheFactory));
@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
-
+            _judgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -111,14 +111,23 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
+            var orderUnderAnalysis = UniverseEvent.UnderlyingEvent as Order;
+
             var activeTrades = history.ActiveTradeHistory();
 
             var liveTrades = activeTrades
                 .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
+            if (orderUnderAnalysis == null)
+            {
+                orderUnderAnalysis = activeTrades.LastOrDefault();
+            }
+
             if (!liveTrades.Any())
             {
+                SetNoLiveTradesJudgement(orderUnderAnalysis);
+
                 return;
             }
 
@@ -148,29 +157,29 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             if (revenueResponse.HadMissingMarketData)
             {
+                SetMissingMarketDataJudgement(orderUnderAnalysis);
                 _hasMissingData = true;
+
                 return;
             }
 
             var revenue = revenueResponse.Money;
 
-            if (revenue == null)
+            if (revenue == null
+                || revenue.Value.Value <= 0)
             {
                 Logger.LogInformation($"rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
 
+                NoRevenueOrCostJudgement(orderUnderAnalysis);
                 return;
             }
 
-            if (cost == null)
-            {
-                Logger.LogError($"something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
-                return;
-            }
-
-            if (revenue.Value.Value <= 0
+            if (cost == null
                 || cost.Value.Value <= 0)
             {
-                Logger.LogInformation($"had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
+                Logger.LogError($"something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
+
+                NoRevenueOrCostJudgement(orderUnderAnalysis);
                 return;
             }
 
@@ -190,21 +199,146 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
 
+            RuleBreachContext ruleBreachContext = null;
+
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
                 Logger.LogInformation($"had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
 
-                WriteAlertToMessageSender(
-                    activeTrades,
+                ruleBreachContext =
+                    new RuleBreachContext(
+                        _equitiesParameters.Windows.BackwardWindowSize + _equitiesParameters.Windows.FutureWindowSize,
+                        new TradePosition(liveTrades),
+                        liveTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
+                        _ruleCtx.IsBackTest(),
+                        _ruleCtx.RuleParameterId(),
+                        _ruleCtx.SystemProcessOperationContext().Id.ToString(),
+                        _ruleCtx.CorrelationId(),
+                        OrganisationFactorValue,
+                        _equitiesParameters,
+                        UniverseDateTime);
+            }
+
+            SetJudgementForFullAnalysis(
+                absoluteProfit,
+                profitRatio,
+                hasHighProfitAbsolute,
+                hasHighProfitPercentage,
+                exchangeRateProfits,
+                ruleBreachContext,
+                orderUnderAnalysis);
+        }
+
+        private void SetJudgementForFullAnalysis(
+            Money absoluteProfit,
+            decimal profitRatio,
+            bool hasHighProfitAbsolute,
+            bool hasHighProfitPercentage,
+            IExchangeRateProfitBreakdown exchangeRateProfits,
+            RuleBreachContext ruleBreachContext,
+            Order orderUnderAnalysis)
+        {
+            var absoluteHighProfit =
+                hasHighProfitAbsolute
+                ? absoluteProfit.Value
+                : (decimal?)null;
+
+            var absoluteHighProfitCurrency =
+                hasHighProfitAbsolute
+                    ? absoluteProfit.Currency.Code
+                    : null;
+
+            var percentageHighProfit =
+                hasHighProfitPercentage
+                    ? profitRatio
+                    : (decimal?)null;
+
+            var jsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var judgement =
+                new HighProfitJudgement(
+                    _ruleCtx.RuleParameterId(),
+                    _ruleCtx.CorrelationId(),
+                    orderUnderAnalysis?.ReddeerOrderId?.ToString(),
+                    orderUnderAnalysis?.OrderId,
+                    absoluteHighProfit,
+                    absoluteHighProfitCurrency,
+                    percentageHighProfit,
+                    jsonParameters,
+                    false,
+                    false);
+
+            _judgementService.Judgement(
+                new HighProfitJudgementContext(
+                    judgement,
+                    hasHighProfitAbsolute || hasHighProfitPercentage,
+                    ruleBreachContext,
+                    _equitiesParameters,
                     absoluteProfit,
+                    absoluteProfit.Currency.Symbol,
                     profitRatio,
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
-                    exchangeRateProfits);
-            }
+                    exchangeRateProfits));
         }
 
+        private void NoRevenueOrCostJudgement(Order orderUnderAnalysis)
+        {
+            var noRevenueJsonParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noRevenueJudgement =
+                new HighProfitJudgement(
+                    _ruleCtx.RuleParameterId(),
+                    _ruleCtx.CorrelationId(),
+                    orderUnderAnalysis?.ReddeerOrderId?.ToString(),
+                    orderUnderAnalysis?.OrderId,
+                    null,
+                    null,
+                    null,
+                    noRevenueJsonParameters,
+                    false,
+                    false);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
+        }
+
+        private void SetMissingMarketDataJudgement(Order orderUnderAnalysis)
+        {
+            var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noTradesJudgement =
+                new HighProfitJudgement(
+                    _ruleCtx.RuleParameterId(),
+                    _ruleCtx.CorrelationId(),
+                    orderUnderAnalysis?.ReddeerOrderId?.ToString(),
+                    orderUnderAnalysis?.OrderId,
+                    null,
+                    null,
+                    null,
+                    noTradesParameters,
+                    true,
+                    false);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+        }
+
+        protected void SetNoLiveTradesJudgement(Order orderUnderAnalysis)
+        {
+            var noTradesParameters = JsonConvert.SerializeObject(_equitiesParameters);
+            var noTradesJudgement =
+                new HighProfitJudgement(
+                    _ruleCtx.RuleParameterId(),
+                    _ruleCtx.CorrelationId(),
+                    orderUnderAnalysis?.ReddeerOrderId?.ToString(),
+                    orderUnderAnalysis?.OrderId,
+                    null,
+                    null,
+                    null,
+                    noTradesParameters,
+                    false,
+                    true);
+
+            _judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+        }
+        
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
             var currency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
@@ -290,40 +424,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             // do nothing
         }
 
-        private void WriteAlertToMessageSender(
-            Stack<Order> activeTrades,
-            Money absoluteProfit,
-            decimal profitRatio,
-            bool hasHighProfitAbsolute,
-            bool hasHighProfitPercentage,
-            IExchangeRateProfitBreakdown breakdown)
-        {
-            var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
-
-            Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
-
-            var position = new TradePosition(activeTrades.ToList());
-            var breach =
-                new HighProfitRuleBreach(
-                    OrganisationFactorValue,
-                    _ruleCtx.SystemProcessOperationContext(),
-                    _ruleCtx.CorrelationId(),
-                    _equitiesParameters,
-                    absoluteProfit.Value,
-                    absoluteProfit.Currency.Code,
-                    profitRatio,
-                    security,
-                    hasHighProfitAbsolute,
-                    hasHighProfitPercentage,
-                    position,
-                    MarketClosureRule,
-                    breakdown,
-                    UniverseDateTime);
-
-            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
-            _alertStream.Add(alertEvent);
-        }
-
         private bool HasHighProfitPercentage(decimal profitRatio)
         {
             return _equitiesParameters.HighProfitPercentageThreshold.HasValue
@@ -379,11 +479,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 Logger.LogInformation($"Deleting alerts off the message sender");
-                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
-                _alertStream.Add(alert);
-
                 _dataRequestSubscriber.SubmitRequest();
-
                 _ruleCtx?.EndEvent();
             }
             else

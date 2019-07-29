@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
+using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -12,6 +13,8 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Judgements;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
@@ -21,6 +24,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates;
@@ -37,7 +41,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private HighProfitsRuleEquitiesParameters _highProfitRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
+        private JudgementService _judgementService;
 
+        private IJudgementRepository _judgementRepository;
+        private IRuleViolationService _ruleViolationService;
+
+        private IJudgementServiceFactory _judgementServiceFactory;
         private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
@@ -98,6 +107,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            _judgementServiceFactory = A.Fake<IJudgementServiceFactory>();
+
+            _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
             _costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverterService>()),
@@ -112,10 +125,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                         new NullLogger<CurrencyConverterService>()),
                     new NullLogger<RevenueCurrencyConvertingCalculator>(),
                     new NullLogger<RevenueCalculator>());
-
-            _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
-
+            
             _equityRuleHighProfitFactory = new EquityRuleHighProfitFactory(
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
@@ -125,6 +135,19 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _marketDataCacheStrategyFactory,
                 _logger,
                 _tradingLogger);
+
+            _judgementRepository = A.Fake<IJudgementRepository>();
+            _ruleViolationService = A.Fake<IRuleViolationService>();
+
+            _judgementService =
+                new JudgementService(
+                    _judgementRepository,
+                    _ruleViolationService,
+                    new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
+                    new NullLogger<JudgementService>());
+
+            _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
         }
 
         [Given(@"I have the high profit rule parameter values")]
@@ -157,7 +180,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         public void WhenIRunTheHighProfitRule()
         {
             var scheduledExecution = new ScheduledExecution { IsForceRerun = true };
-
+            
             Setup();
 
             var highProfitRule =
@@ -165,8 +188,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                     _highProfitRuleEquitiesParameters,
                     _ruleCtx,
                     _ruleCtx,
-                    _alertStream,
                     _dataRequestSubscriber,
+                    _judgementService,
                     scheduledExecution);
 
             foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
@@ -176,7 +199,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         [Then(@"I will have (.*) high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent))).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A.CallTo(() => _ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(_ => _ == alertCount);
         }
     }
 }

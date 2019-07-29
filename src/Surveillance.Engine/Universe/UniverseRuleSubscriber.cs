@@ -8,6 +8,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
@@ -86,6 +87,7 @@ namespace Surveillance.Engine.Rules.Universe
              IUniversePlayer player,
              IUniverseAlertStream alertStream,
              IUniverseDataRequestsSubscriber dataRequestSubscriber,
+             IJudgementService judgementService,
              ISystemProcessOperationContext opCtx,
              RuleParameterDto ruleParameters)
         {
@@ -99,39 +101,39 @@ namespace Surveillance.Engine.Rules.Universe
             // EQUITY
 
             var highVolumeSubscriptions =
-                _highVolumeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highVolumeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var washTradeSubscriptions =
-                _washTradeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _washTradeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var highProfitSubscriptions =
-                _highProfitEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highProfitEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var cancelledSubscriptions =
-                _cancelledOrderEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _cancelledOrderEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var markingTheCloseSubscriptions =
-                _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var spoofingSubscriptions =
-                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var rampingSubscriptions =
-                _rampingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _rampingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
                 
             var placingOrdersSubscriptions =
-                _placingOrdersEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _placingOrdersEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             // FIXED INCOME
 
             var washTradeFixedIncomeSubscriptions =
-                _washTradeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _washTradeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var highVolumeFixedIncomeSubscriptions =
-                _highVolumeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highVolumeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             var highProfitFixedIncomeSubscriptions =
-                _highProfitFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highProfitFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             // EQUITY
 
@@ -229,11 +231,12 @@ namespace Surveillance.Engine.Rules.Universe
             IUniversePlayer player,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             ISystemProcessOperationContext opCtx)
         {
 
             var layeringSubscriptions =
-                _layeringEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _layeringEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
 
             foreach (var sub in layeringSubscriptions)
                 player.Subscribe(sub);

@@ -151,6 +151,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             var cancelledPositionOrders = tradingPosition.Get().Count(tp => tp.OrderStatus() == OrderStatus.Cancelled);
             var totalPositionOrders = tradingPosition.Get().Count;
 
+            // wrong should use a judgement
             return new CancelledOrderRuleBreach(
                 OrganisationFactorValue,
                 _opCtx.SystemProcessOperationContext(),
@@ -164,6 +165,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 totalPositionOrders,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount,
+                "desc",
+                "case",
                 UniverseDateTime);
         }
 

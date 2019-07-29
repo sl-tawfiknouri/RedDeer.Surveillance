@@ -28,6 +28,8 @@ namespace Surveillance.Engine.Rules.Rules
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
 
+        protected IUniverseEvent UniverseEvent;
+
         /// <summary>
         /// These are paid up with the delayed trading histories to create the illusion of future data analysis
         /// whilst maintaining a singular set of abstractions around the backward aspect of analysis
@@ -123,6 +125,7 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
+            UniverseEvent = value;
             _logger?.LogTrace($"{value} universe event passed to {_name} at universe time {value.EventTime}.");
 
             lock (_lock)

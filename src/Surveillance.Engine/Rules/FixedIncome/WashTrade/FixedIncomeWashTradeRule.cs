@@ -90,6 +90,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             var security = filteredOrders?.FirstOrDefault()?.Instrument;
 
+            // wrong but should be a judgement anyway
             var breach =
                 new WashTradeRuleBreach(
                     _parameters.Windows.BackwardWindowSize,
@@ -101,6 +102,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     security,
                     averageNettingAnalysis,
                     clusteringAnalysis,
+                    "desc",
+                    "title",
                     UniverseDateTime);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);

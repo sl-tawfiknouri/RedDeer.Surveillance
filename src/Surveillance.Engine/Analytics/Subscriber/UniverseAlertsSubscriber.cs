@@ -4,7 +4,6 @@ using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
@@ -13,7 +12,6 @@ using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Inter
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Analytics.Subscriber
 {
@@ -26,7 +24,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
     public class UniverseAlertsSubscriber : IUniverseAlertSubscriber
     {
         private readonly ICancelledOrderRuleCachedMessageSender _cancelledOrderMessageSender;
-        private readonly IHighProfitRuleCachedMessageSender _highProfitMessageSender;
         private readonly IHighVolumeRuleCachedMessageSender _highVolumeMessageSender;
         private readonly ILayeringCachedMessageSender _layeringCachedMessageSender;
         private readonly IMarkingTheCloseMessageSender _markingTheCloseMessageSender;
@@ -38,13 +35,11 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
-        private bool _hasHighProfitDeleteRequest;
 
         public UniverseAlertsSubscriber(
             int opCtxId,
             bool isBackTest,
             ICancelledOrderRuleCachedMessageSender cancelledOrderMessageSender,
-            IHighProfitRuleCachedMessageSender highProfitMessageSender,
             IHighVolumeRuleCachedMessageSender highVolumeMessageSender,
             ILayeringCachedMessageSender layeringMessageSender,
             IMarkingTheCloseMessageSender markingTheCloseMessageSender,
@@ -60,10 +55,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _cancelledOrderMessageSender =
                 cancelledOrderMessageSender
                 ?? throw new ArgumentNullException(nameof(cancelledOrderMessageSender));
-
-            _highProfitMessageSender =
-                highProfitMessageSender
-                ?? throw new ArgumentNullException(nameof(highProfitMessageSender));
 
             _highVolumeMessageSender =
                 highVolumeMessageSender
@@ -119,9 +110,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             {
                 case Domain.Surveillance.Scheduling.Rules.CancelledOrders:
                     CancelledOrders(value);
-                    break;
-                case Domain.Surveillance.Scheduling.Rules.HighProfits:
-                    HighProfits(value);
                     break;
                 case Domain.Surveillance.Scheduling.Rules.HighVolume:
                     HighVolume(value);
@@ -221,49 +209,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         {
             _logger.LogInformation($"cancelled orders flushing alerts");
             Analytics.CancelledOrderAlertsAdjusted += _cancelledOrderMessageSender.Flush();
-        }
-
-        private void HighProfits(IUniverseAlertEvent alert)
-        {
-            _hasHighProfitDeleteRequest = alert.IsDeleteEvent || _hasHighProfitDeleteRequest;
-
-            if (_hasHighProfitDeleteRequest)
-            {
-                _highProfitMessageSender.Delete();
-                return;
-            }
-
-            if (alert.IsFlushEvent)
-            {
-                return;
-            }
-
-            if (alert.IsRemoveEvent)
-            {
-                _logger.LogInformation($"high profits noted alert is duplicated and removing it");
-                _highProfitMessageSender.Remove((ITradePosition)alert.UnderlyingAlert);
-                return;
-            }
-
-            var ruleBreach = (IHighProfitRuleBreach) alert.UnderlyingAlert;
-            SetIsBackTest(ruleBreach);
-
-            _logger.LogInformation($"high profits adding alert to high profits message sender");
-            _highProfitMessageSender.Send(ruleBreach);
-
-            _logger.LogInformation($"high profits incrementing raw alert count by 1");
-            Analytics.HighProfitAlertsRaw += 1;
-        }
-
-        private void HighProfitsFlush()
-        {
-            if (_hasHighProfitDeleteRequest)
-            {
-                return;
-            }
-
-            _logger.LogInformation($"high profits flushing alerts");
-            Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush();
         }
 
         private void HighVolume(IUniverseAlertEvent alert)
@@ -435,7 +380,6 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             LayeringFlush();
 
             HighVolumeFlush();
-            HighProfitsFlush();
 
             RampingFlush();
             CancelledOrdersFlush();

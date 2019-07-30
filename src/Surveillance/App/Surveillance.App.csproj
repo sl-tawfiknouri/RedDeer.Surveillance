@@ -156,6 +156,9 @@
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\44 - Judgements.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\43 - Add broker enrichment flag.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

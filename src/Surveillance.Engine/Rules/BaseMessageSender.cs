@@ -21,6 +21,7 @@ namespace Surveillance.Engine.Rules.Rules
         private readonly IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
         private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
         private readonly string _messageSenderName;
+        private readonly string _caseTitle;
         protected readonly ILogger Logger;
 
         protected BaseMessageSender(
@@ -40,6 +41,7 @@ namespace Surveillance.Engine.Rules.Rules
             _ruleBreachToRuleBreachOrdersMapper = ruleBreachToRuleBreachOrdersMapper ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachOrdersMapper));
             _ruleBreachToRuleBreachMapper = ruleBreachToRuleBreachMapper ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachMapper));
 
+            _caseTitle = caseTitle ?? string.Empty;
             _messageSenderName = messageSenderName ?? "unknown message sender";
         }
 
@@ -54,6 +56,16 @@ namespace Surveillance.Engine.Rules.Rules
             Logger.LogInformation($"received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
             // Save the rule breach
+            if (string.IsNullOrWhiteSpace(ruleBreach.CaseTitle))
+            {
+                ruleBreach.CaseTitle = _caseTitle;
+            }
+
+            if (string.IsNullOrWhiteSpace(ruleBreach.Description))
+            {
+                ruleBreach.Description = description;
+            }
+
             var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleBreach);
             var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
 

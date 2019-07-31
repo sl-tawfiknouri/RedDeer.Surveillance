@@ -198,8 +198,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     lastTrade.Instrument, 
                     lastTrade,
                     _equitiesParameters,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);

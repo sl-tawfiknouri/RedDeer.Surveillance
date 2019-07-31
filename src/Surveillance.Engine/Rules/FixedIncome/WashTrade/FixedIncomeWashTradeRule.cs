@@ -102,8 +102,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     security,
                     averageNettingAnalysis,
                     clusteringAnalysis,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);

@@ -141,8 +141,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 _equitiesParameters,
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach(),
-                "desc",
-                "title",
+                null,
+                null,
                 UniverseDateTime);
 
             _logger.LogInformation($"had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");

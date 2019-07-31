@@ -223,8 +223,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     hasDailyVolumeBreach,
                     hasWindowVolumeBreach,
                     priceMovementBreach,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime)
                 : null;
         }

@@ -120,8 +120,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     windowBreach,
                     marketCapBreach,
                     tradedVolume,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             _logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");

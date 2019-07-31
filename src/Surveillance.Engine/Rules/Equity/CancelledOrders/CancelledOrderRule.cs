@@ -165,8 +165,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 totalPositionOrders,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount,
-                "desc",
-                "case",
+                null,
+                null,
                 UniverseDateTime);
         }
 

@@ -169,8 +169,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                     poe,
                     _parameters,
                     _ruleCtx,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, _ruleCtx);

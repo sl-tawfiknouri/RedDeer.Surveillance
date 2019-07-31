@@ -183,8 +183,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     OrganisationFactorValue,
                     rampingAnalysisResults.Last(),
                     _rampingParameters,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");

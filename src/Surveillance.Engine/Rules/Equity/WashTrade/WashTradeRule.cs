@@ -130,8 +130,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     security,
                     averagePositionCheck,
                     clusteringPositionCheck,
-                    "desc",
-                    "title",
+                    null,
+                    null,
                     UniverseDateTime);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.WashTrade, breach, RuleCtx);

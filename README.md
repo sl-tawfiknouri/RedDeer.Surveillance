@@ -31,6 +31,8 @@
 |AuroraConnectionString|server=0.0.0.0; port=0000;uid=any;pwd='any';database={env}_{dbname}; Allow User Variables=True|
 
 #### Pre-requisite configuration settings
+|Configuration Setting|Example value|
+|--|--|
 | AutoScheduleRules | true |
 
 
@@ -136,16 +138,24 @@ Port 5000 or port 5001.
 |SurveillanceApiConnectionString|server=0.0.0.0; port=0000;uid=any;pwd='any';database={env}_{dbname}; Allow User Variables=True|
 
 #### Pre-requisite configuration settings
-| AutoScheduleRules | true |
-| Secret-Key-Jwt | JWT secret key! |
-| IpRateLimiting |   "IpRateLimiting": {
-    "EnableEndpointRateLimiting": false,
-    "StackBlockedRequests": false,
-    "RealIpHeader": "X-Real-IP",
-    "ClientIdHeader": "X-ClientId",
-    "HttpStatusCode": 429,
+|Configuration Setting|Example value| Comment | 
+|--|--|--|
+| AutoScheduleRules | true | |
+| Secret-Key-Jwt | JWT secret key! | There must be a secret key jwt provided or the application will crash |
+| IpRateLimitPolicies |   "IpRateLimitPolicies": { "IpRules": []  } | |
+| SurveillanceApiUrl | https://localhost:1234 | SurveillanceApiUrl needs to be HTTPS |
+| IpRateLimiting | "IpRateLimiting": {} |  |
+
+##### Example IpRateLimiting JSON
+```
+"IpRateLimiting": {
+  "EnableEndpointRateLimiting": false,
+  "StackBlockedRequests": false,
+  "RealIpHeader": "X-Real-IP",
+  "ClientIdHeader": "X-ClientId",
+  "HttpStatusCode": 429,
     "GeneralRules": [
-      {
+      { 
         "Endpoint": "*",
         "Period": "10s",
         "Limit": 100
@@ -166,13 +176,9 @@ Port 5000 or port 5001.
         "Limit": 1500000
       }
     ]
-  },|
-  | IpRateLimitPolicies |   "IpRateLimitPolicies": {
-    "IpRules": []
-  } |
-  | SurveillanceApiUrl | https://localhost:1234 |
+  }
+```
 
-Note - SurveillanceApiUrl needs to be HTTPS | There must be a secret key jwt provided or the application will crash
 
 
 ==================== Surveillance analysis components ====================

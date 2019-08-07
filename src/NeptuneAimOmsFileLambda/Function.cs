@@ -11,7 +11,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Util;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
-    [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace AimOmsFileHeaderTrimmerLambda
 {
@@ -58,6 +58,16 @@ namespace AimOmsFileHeaderTrimmerLambda
                 LambdaLogger.Log($"Did not recognise {aimOmsDirectory}");
                 throw new ArgumentOutOfRangeException(nameof(aimOmsDirectory));
             }
+
+            var aimOmsKey = Environment.GetEnvironmentVariable("AimOmsWriteKey");
+
+            if (string.IsNullOrWhiteSpace(aimOmsKey))
+            {
+                LambdaLogger.Log($"Did not recognise {aimOmsKey}");
+                throw new ArgumentOutOfRangeException(nameof(aimOmsKey));
+            }
+
+            aimOmsKey = aimOmsKey.Trim('/').Trim('\\');
 
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
@@ -116,7 +126,7 @@ namespace AimOmsFileHeaderTrimmerLambda
                     AutoCloseStream = true,
                     AutoResetStreamPosition = true,
                     BucketName = aimOmsDirectory,
-                    Key = $"trimmed-header-{s3Event.Object.Key}",
+                    Key = $"{aimOmsKey}/trimmed-{s3Event.Object.Key}",
                     InputStream = wStream,
                 };
 

@@ -119,6 +119,7 @@ _via direct access to Surveillance Db and via queues_
 #### No service dependencies
 Lambda Configuration Environment Variable 
 AimOmsWriteDirectory | "some-aws-bucket"
+AimOmsWriteKey | "some key prefix for output destination"
 
 ## Surveillance GraphQL API Service
 ### Dependencies

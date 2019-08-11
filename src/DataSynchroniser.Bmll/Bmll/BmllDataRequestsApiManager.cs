@@ -101,9 +101,9 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             var policyWrap =
                 _policyFactory.PolicyTimeoutGeneric<BmllStatusMinuteBarResult>(
-                    TimeSpan.FromMinutes(20),
+                    TimeSpan.FromMinutes(10),
                     i => i == BmllStatusMinuteBarResult.InProgress,
-                    15,
+                    9,
                     TimeSpan.FromMinutes(1));
 
             var minuteBarResult = BmllStatusMinuteBarResult.InProgress;

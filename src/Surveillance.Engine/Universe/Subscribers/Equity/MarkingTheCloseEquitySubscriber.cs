@@ -22,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class MarkingTheCloseEquitySubscriber : IMarkingTheCloseEquitySubscriber
+    public class MarkingTheCloseEquitySubscriber : BaseSubscriber, IMarkingTheCloseEquitySubscriber
     {
         private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -175,6 +175,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter,
                             processOperationRunRuleContext,
                             universeDataRequestsSubscriber,
+                            DataSourceForWindow(param.Windows),
                             ruleRunMode);
                 }
 

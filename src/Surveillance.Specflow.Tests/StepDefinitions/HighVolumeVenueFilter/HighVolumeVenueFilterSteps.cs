@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -167,6 +168,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighVolumeVenueFilter
                     RuleRunMode.ValidationRun,
                     _tradingHoursService,
                     _universeDataRequestsSubscriber,
+                    DataSource.AllIntraday,
                     new NullLogger<TradingHistoryStack>(),
                     new NullLogger<Engine.Rules.Universe.Filter.HighVolumeVenueFilter>());
 

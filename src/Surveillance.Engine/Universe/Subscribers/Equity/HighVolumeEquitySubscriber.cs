@@ -22,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class HighVolumeEquitySubscriber : IHighVolumeEquitySubscriber
+    public class HighVolumeEquitySubscriber : BaseSubscriber, IHighVolumeEquitySubscriber
     {
         private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -178,6 +178,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter, 
                             processOperationRunRuleContext,
                             dataRequestSubscriber,
+                            DataSourceForWindow(param.Windows),
                             ruleRunMode);
                 }
 

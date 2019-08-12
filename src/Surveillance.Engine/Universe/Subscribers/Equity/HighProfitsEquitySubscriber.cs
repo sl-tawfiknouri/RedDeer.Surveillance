@@ -12,7 +12,6 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -23,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class HighProfitsEquitySubscriber : IHighProfitsEquitySubscriber
+    public class HighProfitsEquitySubscriber : BaseSubscriber, IHighProfitsEquitySubscriber
     {
         private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -195,6 +194,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter,
                             processOperationRunRuleContext,
                             universeDataRequestsSubscriber,
+                            DataSourceForWindow(param.Windows),
                             ruleRunMode);
                 }
 

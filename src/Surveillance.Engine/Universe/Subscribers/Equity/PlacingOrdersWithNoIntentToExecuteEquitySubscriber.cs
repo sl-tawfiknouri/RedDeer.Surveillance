@@ -22,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
+    public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : BaseSubscriber, IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
     {
         private readonly IEquityRulePlacingOrdersWithoutIntentToExecuteFactory _equityRulePlacingOrdersFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -181,6 +181,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                         param.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
+                        DataSourceForWindow(param.Windows),
                         ruleRunMode);
                 }
 

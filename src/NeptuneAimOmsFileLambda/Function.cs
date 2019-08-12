@@ -121,12 +121,14 @@ namespace AimOmsFileHeaderTrimmerLambda
                 var swriter = new StreamWriter(wStream);
                 swriter.Write(clientData);
 
+                var adjustedKey = s3Event.Object.Key.Split("/").LastOrDefault() ?? string.Empty;
+
                 var putObjectRequest = new PutObjectRequest()
                 {
                     AutoCloseStream = true,
                     AutoResetStreamPosition = true,
                     BucketName = aimOmsDirectory,
-                    Key = $"{aimOmsKey}/trimmed-{s3Event.Object.Key}",
+                    Key = $"{aimOmsKey}/{adjustedKey}",
                     InputStream = wStream,
                 };
 

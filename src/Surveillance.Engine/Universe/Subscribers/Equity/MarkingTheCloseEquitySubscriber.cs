@@ -5,6 +5,7 @@ using Domain.Surveillance.Scheduling;
 using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -175,7 +176,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter,
                             processOperationRunRuleContext,
                             universeDataRequestsSubscriber,
-                            DataSourceForWindow(param.Windows),
+                            MarkingTheCloseDataSource(param),
                             ruleRunMode);
                 }
 
@@ -187,6 +188,26 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 return markingTheClose;
             }
+        }
+
+        private DataSource MarkingTheCloseDataSource(IMarkingTheCloseEquitiesParameters parameters)
+        {
+            if (parameters == null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            if (parameters.PercentageThresholdWindowVolume != null)
+            {
+                return DataSource.AllIntraday;
+            }
+
+            if (parameters.PercentageThresholdDailyVolume != null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            return DataSourceForWindow(parameters.Windows);
         }
     }
 }

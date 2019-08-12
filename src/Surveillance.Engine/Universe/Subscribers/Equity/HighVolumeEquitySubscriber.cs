@@ -5,6 +5,7 @@ using Domain.Surveillance.Scheduling;
 using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -178,7 +179,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter, 
                             processOperationRunRuleContext,
                             dataRequestSubscriber,
-                            DataSourceForWindow(param.Windows),
+                            HighVolumeDataSource(param),
                             ruleRunMode);
                 }
 
@@ -190,6 +191,31 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 return highVolume;
             }
+        }
+
+        private DataSource HighVolumeDataSource(IHighVolumeRuleEquitiesParameters parameters)
+        {
+            if (parameters == null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            if (parameters.HighVolumePercentageWindow != null)
+            {
+                return DataSource.AllIntraday;
+            }
+
+            if (parameters.HighVolumePercentageDaily != null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            if (parameters.HighVolumePercentageMarketCap != null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            return DataSourceForWindow(parameters.Windows);
         }
     }
 }

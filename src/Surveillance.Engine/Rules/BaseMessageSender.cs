@@ -80,6 +80,18 @@ namespace Surveillance.Engine.Rules.Rules
             await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
 
             // Check for duplicates
+            if (ruleBreach.IsBackTestRun)
+            {
+                var hasBackTestDuplicates = await _ruleBreachRepository.HasDuplicateBackTest(ruleBreachId?.ToString(), ruleBreach.CorrelationId);
+
+                if (hasBackTestDuplicates)
+                {
+                    Logger.LogInformation($"was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate back test case creation");
+
+                    return;
+                }
+            }
+
             var hasDuplicates = await _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
 
             if (hasDuplicates && !ruleBreach.IsBackTestRun)

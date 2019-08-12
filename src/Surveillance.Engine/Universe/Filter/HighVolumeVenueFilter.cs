@@ -158,13 +158,18 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         private long? RetrieveMarketTradedVolume(Order mostRecentTrade, ITradingHours tradingHours, Stack<Order> activeHistory)
         {
+            var closeTime =
+                _source == DataSource.AllIntraday
+                    ? UniverseDateTime
+                    : tradingHours.ClosingInUtcForDay(UniverseDateTime);
+
              var marketDataRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
-                    tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                    closeTime,
                     RuleCtx.Id(),
                     _source);
             

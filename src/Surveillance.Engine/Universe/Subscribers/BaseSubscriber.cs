@@ -15,9 +15,9 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                 return DataSource.AllInterday;
             }
 
-            return (windows.BackwardWindowSize.Hours >= 0
-                    || windows.BackwardWindowSize.Minutes >= 0)
-                   || windows.BackwardWindowSize.Days < 1
+            return ((windows.BackwardWindowSize.Hours > 0
+                    || windows.BackwardWindowSize.Minutes > 0)
+                   || windows.BackwardWindowSize.Days < 1)
                 ? DataSource.AllIntraday
                 : DataSource.AllInterday;
         }

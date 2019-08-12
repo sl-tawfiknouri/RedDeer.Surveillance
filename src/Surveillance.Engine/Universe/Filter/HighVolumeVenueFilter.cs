@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         private long? RetrieveMarketTradedVolume(Order mostRecentTrade, ITradingHours tradingHours, Stack<Order> activeHistory)
         {
-            var marketDataRequest =
+             var marketDataRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,

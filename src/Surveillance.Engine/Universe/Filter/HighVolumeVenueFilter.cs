@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Markets.Timebars;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;
@@ -24,6 +25,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         public HashSet<Order> UniverseEventsPassedFilter { get; set; }
 
         private readonly DecimalRangeRuleFilter _decimalRangeRuleFilter;
+        private readonly DataSource _source;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -41,6 +43,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             RuleRunMode ruleRunMode,
             IMarketTradingHoursService marketTradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestsSubscriber,
+            DataSource source,
             ILogger<TradingHistoryStack> stackLogger,
             ILogger<HighVolumeVenueFilter> logger) 
             : base(
@@ -62,6 +65,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _dataRequestSubscriber = dataRequestsSubscriber ?? throw new ArgumentNullException(nameof(dataRequestsSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             UniverseEventsPassedFilter = new HashSet<Order>();
+            _source = source;
         }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
@@ -104,32 +108,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            var marketDataRequest =
-                new MarketDataRequest(
-                    mostRecentTrade.Market?.MarketIdentifierCode,
-                    mostRecentTrade.Instrument.Cfi,
-                    mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
-                    tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                    RuleCtx.Id(),
-                    DataSource.AllIntraday);
+            var marketTradedVolume = RetrieveMarketTradedVolume(mostRecentTrade, tradingHours, activeHistory);
 
-            var securityResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
-
-            if (securityResult.HadMissingData && RunMode == RuleRunMode.ForceRun)
+            if (marketTradedVolume == null)
             {
-                UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
 
-            if (securityResult.HadMissingData && RunMode == RuleRunMode.ValidationRun)
-            {
-                _logger.LogInformation($"market traded volume was not calculable for {mostRecentTrade.Instrument.Identifiers} due to missing data");
-                _hadMissingData = true;
-                return;
-            }
-
-            var marketTradedVolume = securityResult.Response.Sum(_ => _.SpreadTimeBar.Volume.Traded);
             var volumeTraded = activeHistory.Sum(_ => _.OrderFilledVolume ?? 0);
 
             if (marketTradedVolume <= 0)
@@ -155,13 +140,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             if (_decimalRangeRuleFilter.Type == RuleFilterType.Include)
             {
                 passedFilter =
-                   (_decimalRangeRuleFilter.Max == null || proportionOfTradedVolume <= _decimalRangeRuleFilter.Max)
+                   (_decimalRangeRuleFilter.Max == null || _decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume <= _decimalRangeRuleFilter.Max)
                     && (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume >= _decimalRangeRuleFilter.Min);
             }
             else if (_decimalRangeRuleFilter.Type == RuleFilterType.Exclude)
             {
                 passedFilter =
-                    (_decimalRangeRuleFilter.Max == null || proportionOfTradedVolume > _decimalRangeRuleFilter.Max)
+                    (_decimalRangeRuleFilter.Max == null || _decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume > _decimalRangeRuleFilter.Max)
                     || (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume < _decimalRangeRuleFilter.Min);
             }
 
@@ -169,6 +154,71 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             {
                 UpdatePassedFilterWithOrders(activeHistory);
             }
+        }
+
+        private long? RetrieveMarketTradedVolume(Order mostRecentTrade, ITradingHours tradingHours, Stack<Order> activeHistory)
+        {
+            var marketDataRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market?.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
+                    mostRecentTrade.Instrument.Identifiers,
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                    tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                    RuleCtx.Id(),
+                    _source);
+            
+            var hadMissingData = false;
+            long? marketTradedVolume = null;
+
+            switch (_source)
+            {
+                case DataSource.AllInterday:
+                    var securityResultInterday = UniverseEquityInterdayCache.GetMarkets(marketDataRequest);
+                    hadMissingData = securityResultInterday.HadMissingData;
+
+                    if (!hadMissingData)
+                        marketTradedVolume = InterdayMarketTradedVolume(securityResultInterday);
+
+                    break;
+                case DataSource.AllIntraday:
+                    var securityResultIntraday = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+                    hadMissingData = securityResultIntraday.HadMissingData;
+
+                    if (!hadMissingData)
+                        marketTradedVolume = IntradayMarketTradedVolume(securityResultIntraday);
+
+                    break;
+            }
+
+            if (hadMissingData && RunMode == RuleRunMode.ForceRun)
+            {
+                UpdatePassedFilterWithOrders(activeHistory);
+                return null;
+            }
+
+            if (hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                _logger.LogInformation($"market traded volume was not calculable for {mostRecentTrade.Instrument.Identifiers} due to missing data");
+                _hadMissingData = true;
+                return null;
+            }
+
+            return marketTradedVolume;
+        }
+
+        private long IntradayMarketTradedVolume(MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> securityResult)
+        {
+            var marketTradedVolume = securityResult.Response.Sum(_ => _.SpreadTimeBar.Volume.Traded);
+
+            return marketTradedVolume;
+        }
+
+        private long InterdayMarketTradedVolume(MarketDataResponse<List<EquityInstrumentInterDayTimeBar>> securityResult)
+        {
+            var marketTradedVolume = securityResult.Response.Sum(_ => _.DailySummaryTimeBar.DailyVolume.Traded);
+
+            return marketTradedVolume;
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)

@@ -5,12 +5,14 @@ using Domain.Surveillance.Scheduling;
 using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -173,6 +175,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                         param.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
+                        DataSourceForWindow(param.Windows),
                         ruleRunMode);
                 }
 
@@ -184,6 +187,23 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 return washTrade;
             }
+        }
+
+        /// <summary>
+        /// Used to figure out if we can use factset or not
+        /// </summary>
+        private DataSource DataSourceForWindow(TimeWindows windows)
+        {
+            if (windows == null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            return (windows.BackwardWindowSize.Hours >= 0
+                 || windows.BackwardWindowSize.Minutes >= 0)
+                || windows.BackwardWindowSize.Days < 1
+                ? DataSource.AllIntraday
+                : DataSource.AllInterday;
         }
     }
 }

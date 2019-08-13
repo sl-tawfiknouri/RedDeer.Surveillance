@@ -107,9 +107,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             var securityResult = _universeEquityInterdayCache.Get(marketDataRequest);
 
-            if (securityResult.HadMissingData)
+            if (securityResult.HadMissingData && _ruleRunMode == RuleRunMode.ValidationRun)
             {
                 _requestData = true;
+            }
+
+            if (securityResult.HadMissingData)
+            {
                 _logger.LogInformation($"Missing data for {marketDataRequest}.");
                 return true;
             }

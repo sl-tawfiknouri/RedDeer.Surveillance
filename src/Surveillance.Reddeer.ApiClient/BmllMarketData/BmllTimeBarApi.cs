@@ -146,6 +146,7 @@ namespace Surveillance.Reddeer.ApiClient.BmllMarketData
                     {
                         MinuteBarRequestStatus.Completed,
                         MinuteBarRequestStatus.Failed,
+                        MinuteBarRequestStatus.NotFound,
                         MinuteBarRequestStatus.Requeued // agreed with test team to ignore requeuing until we do further work on the BMLL service
                     };
 

@@ -22,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class RampingEquitySubscriber : IRampingEquitySubscriber
+    public class RampingEquitySubscriber : BaseSubscriber, IRampingEquitySubscriber
     {
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
@@ -167,6 +167,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                         param.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
+                        DataSourceForWindow(param.Windows),
                         ruleRunMode);
                 }
 

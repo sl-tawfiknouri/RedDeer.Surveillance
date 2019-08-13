@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -41,6 +42,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             DecimalRangeRuleFilter venueVolumeFilterSetting,
             ISystemProcessOperationRunRuleContext ruleRunContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            DataSource dataSource,
             RuleRunMode ruleRunMode)
         {
             var filterRule =
@@ -53,6 +55,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     ruleRunMode,
                     _marketTradingHoursService,
                     dataRequestSubscriber,
+                    dataSource,
                     _tradingHistoryLogger,
                     _venueLogger);
 

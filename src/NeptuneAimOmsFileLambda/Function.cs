@@ -61,7 +61,7 @@ namespace AimOmsFileHeaderTrimmerLambda
             }
 
             aimOmsKey = aimOmsKey.Trim('/').Trim('\\');
-            var splitKey = aimOmsKey.Split('/');
+            var splitKey = aimOmsKey.Split(':').Last().Split('/');
 
             var aimOmsKeyBucket = splitKey.First();
             var aimOmsKeyPath = splitKey.Skip(1).Aggregate((a, b) => a + '/' + b);

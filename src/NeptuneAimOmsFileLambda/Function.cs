@@ -119,6 +119,7 @@ namespace AimOmsFileHeaderTrimmerLambda
                 var wStream = new MemoryStream();
                 var swriter = new StreamWriter(wStream);
                 swriter.Write(clientData);
+                swriter.Flush();
 
                 var adjustedKey = s3Event.Object.Key.Split("/").LastOrDefault() ?? string.Empty;
 

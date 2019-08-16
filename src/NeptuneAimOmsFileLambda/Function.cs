@@ -51,13 +51,6 @@ namespace AimOmsFileHeaderTrimmerLambda
         {
             LambdaLogger.Log($"Function handler for aim oms file lambda invoked. Invoked function arn - {context.InvokedFunctionArn}");
             LambdaLogger.Log($"Function invoked for event {evnt.Records.FirstOrDefault().EventName} {evnt.Records.FirstOrDefault().EventSource}");
-            var aimOmsDirectory = Environment.GetEnvironmentVariable("AimOmsWriteDirectory");
-
-            if (string.IsNullOrWhiteSpace(aimOmsDirectory))
-            {
-                LambdaLogger.Log($"Did not recognise {aimOmsDirectory}");
-                throw new ArgumentOutOfRangeException(nameof(aimOmsDirectory));
-            }
 
             var aimOmsKey = Environment.GetEnvironmentVariable("AimOmsWriteKey");
 
@@ -68,6 +61,12 @@ namespace AimOmsFileHeaderTrimmerLambda
             }
 
             aimOmsKey = aimOmsKey.Trim('/').Trim('\\');
+            var splitKey = aimOmsKey.Split(':').Last().Split('/');
+
+            var aimOmsKeyBucket = splitKey.First();
+            var aimOmsKeyPath = splitKey.Skip(1).Aggregate((a, b) => a + '/' + b);
+
+            LambdaLogger.Log($"Function handler for aim oms file lambda invoked. This is the output bucket {aimOmsKeyBucket} and this is the output key path {aimOmsKeyPath}");
 
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
@@ -93,7 +92,7 @@ namespace AimOmsFileHeaderTrimmerLambda
 
             try
             {
-                LambdaLogger.Log($"S3 event get object request built {s3Event.Bucket.Name} target");
+                LambdaLogger.Log($"S3 event get object request built {s3Event.Bucket.Name} target key {s3Event.Object.Key}");
                 var getObjectRequest = new GetObjectRequest() { BucketName = s3Event.Bucket.Name, Key = s3Event.Object.Key };
                 LambdaLogger.Log($"S3 event get object request start {s3Event.Bucket.Name} target");
                 var s3Object = await this.S3Client.GetObjectAsync(getObjectRequest);
@@ -128,8 +127,8 @@ namespace AimOmsFileHeaderTrimmerLambda
                 {
                     AutoCloseStream = true,
                     AutoResetStreamPosition = true,
-                    BucketName = aimOmsDirectory,
-                    Key = $"{aimOmsKey}/{adjustedKey}",
+                    BucketName = aimOmsKeyBucket,
+                    Key = $"{aimOmsKeyPath}/{adjustedKey}",
                     InputStream = wStream,
                 };
 

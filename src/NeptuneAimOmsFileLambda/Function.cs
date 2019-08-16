@@ -51,13 +51,6 @@ namespace AimOmsFileHeaderTrimmerLambda
         {
             LambdaLogger.Log($"Function handler for aim oms file lambda invoked. Invoked function arn - {context.InvokedFunctionArn}");
             LambdaLogger.Log($"Function invoked for event {evnt.Records.FirstOrDefault().EventName} {evnt.Records.FirstOrDefault().EventSource}");
-            var aimOmsDirectory = Environment.GetEnvironmentVariable("AimOmsWriteDirectory");
-
-            if (string.IsNullOrWhiteSpace(aimOmsDirectory))
-            {
-                LambdaLogger.Log($"Did not recognise {aimOmsDirectory}");
-                throw new ArgumentOutOfRangeException(nameof(aimOmsDirectory));
-            }
 
             var aimOmsKey = Environment.GetEnvironmentVariable("AimOmsWriteKey");
 
@@ -68,6 +61,10 @@ namespace AimOmsFileHeaderTrimmerLambda
             }
 
             aimOmsKey = aimOmsKey.Trim('/').Trim('\\');
+            var splitKey = aimOmsKey.Split('/');
+
+            var aimOmsKeyBucket = splitKey.First();
+            var aimOmsKeyPath = splitKey.Skip(1).Aggregate((a, b) => a + '/' + b);
 
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
@@ -127,8 +124,8 @@ namespace AimOmsFileHeaderTrimmerLambda
                 {
                     AutoCloseStream = true,
                     AutoResetStreamPosition = true,
-                    BucketName = aimOmsDirectory,
-                    Key = $"{aimOmsKey}/{adjustedKey}",
+                    BucketName = aimOmsKeyBucket,
+                    Key = $"{aimOmsKeyPath}/{adjustedKey}",
                     InputStream = wStream,
                 };
 

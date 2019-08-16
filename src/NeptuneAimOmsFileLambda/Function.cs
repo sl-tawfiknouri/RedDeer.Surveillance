@@ -66,6 +66,8 @@ namespace AimOmsFileHeaderTrimmerLambda
             var aimOmsKeyBucket = splitKey.First();
             var aimOmsKeyPath = splitKey.Skip(1).Aggregate((a, b) => a + '/' + b);
 
+            LambdaLogger.Log($"Function handler for aim oms file lambda invoked. This is the output bucket {aimOmsKeyBucket} and this is the output key path {aimOmsKeyPath}");
+
             var s3Event = evnt.Records?[0].S3;
             if(s3Event == null)
             {
@@ -90,7 +92,7 @@ namespace AimOmsFileHeaderTrimmerLambda
 
             try
             {
-                LambdaLogger.Log($"S3 event get object request built {s3Event.Bucket.Name} target");
+                LambdaLogger.Log($"S3 event get object request built {s3Event.Bucket.Name} target key {s3Event.Object.Key}");
                 var getObjectRequest = new GetObjectRequest() { BucketName = s3Event.Bucket.Name, Key = s3Event.Object.Key };
                 LambdaLogger.Log($"S3 event get object request start {s3Event.Bucket.Name} target");
                 var s3Object = await this.S3Client.GetObjectAsync(getObjectRequest);

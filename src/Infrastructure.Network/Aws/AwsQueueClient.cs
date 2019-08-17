@@ -20,15 +20,37 @@ namespace Infrastructure.Network.Aws
 
         public AwsQueueClient(ILogger<AwsQueueClient> logger)
         {
-
-            _sqsClient = new AmazonSQSClient(
-                new AmazonSQSConfig
-                {
-                    RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                    ProxyCredentials = CredentialCache.DefaultCredentials
-                });
-
             _logger = logger;
+            _sqsClient = BuildSqsClient();
+        }
+
+        /// <summary>
+        /// We have temporary credentials for AWS on EC2 instances
+        /// Using explicit config prevents credential recycling
+        /// Therefore only use it where we need it - on developer instances
+        /// </summary>
+        private AmazonSQSClient BuildSqsClient()
+        {
+            AmazonSQSClient client;
+
+            if (Amazon.Util.EC2InstanceMetadata.InstanceId != null)
+            {
+                _logger.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is on EC2 use aws environmental credentials only.");
+                client = new AmazonSQSClient();
+            }
+            else
+            {
+                _logger.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is not on EC2 using hybrid of proxy/euwest1 and local machine config");
+
+                client = new AmazonSQSClient(
+                    new AmazonSQSConfig
+                    {
+                        RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                        ProxyCredentials = CredentialCache.DefaultCredentials
+                    });
+            }
+
+            return client;
         }
 
         public ICoreAmazonSQS SqsClient => _sqsClient;

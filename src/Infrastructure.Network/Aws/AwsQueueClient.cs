@@ -35,12 +35,12 @@ namespace Infrastructure.Network.Aws
 
             if (Amazon.Util.EC2InstanceMetadata.InstanceId != null)
             {
-                _logger.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is on EC2 use aws environmental credentials only.");
+                _logger?.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is on EC2 use aws environmental credentials only.");
                 client = new AmazonSQSClient();
             }
             else
             {
-                _logger.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is not on EC2 using hybrid of proxy/euwest1 and local machine config");
+                _logger?.LogInformation($"{nameof(AwsQueueClient)} building sqs client. Detected local instance is not on EC2 using hybrid of proxy/euwest1 and local machine config");
 
                 client = new AmazonSQSClient(
                     new AmazonSQSConfig

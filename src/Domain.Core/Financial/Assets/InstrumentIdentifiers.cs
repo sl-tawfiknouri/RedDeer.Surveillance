@@ -128,7 +128,7 @@ namespace Domain.Core.Financial.Assets
                 return 0;
             }
 
-            return ReddeerId.GetHashCode();
+            return ReddeerId.ToLower().GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -158,12 +158,6 @@ namespace Domain.Core.Financial.Assets
                 return true;
             }
 
-            if (!string.IsNullOrWhiteSpace(Isin)
-                && string.Equals(Isin, otherId.Isin, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
             if (!string.IsNullOrWhiteSpace(Figi)
                 && string.Equals(Figi, otherId.Figi, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -172,6 +166,12 @@ namespace Domain.Core.Financial.Assets
 
             if (!string.IsNullOrWhiteSpace(Cusip)
                 && string.Equals(Cusip, otherId.Cusip, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Isin)
+                && string.Equals(Isin, otherId.Isin, StringComparison.InvariantCultureIgnoreCase))
             {
                 return true;
             }

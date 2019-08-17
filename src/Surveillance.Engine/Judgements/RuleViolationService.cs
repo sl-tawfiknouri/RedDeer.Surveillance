@@ -114,6 +114,19 @@ namespace Surveillance.Engine.Rules.Judgements
                     _ruleBreachOrdersRepository.Create(ruleBreachOrderItems).Wait();
 
                     // Check for duplicates
+                    if (ruleViolation.IsBackTestRun)
+                    {
+                        var hasBackTestDuplicatesTask = _ruleBreachRepository.HasDuplicateBackTest(ruleBreachId?.ToString(), ruleViolation.CorrelationId);
+                        hasBackTestDuplicatesTask.Wait();
+
+                        if (hasBackTestDuplicatesTask.Result)
+                        {
+                            _logger.LogInformation($"was going to send for rule breach correlation id {ruleViolation.CorrelationId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate back test case creation");
+
+                            return;
+                        }
+                    }
+                    
                     var hasDuplicatesTask = _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
                     hasDuplicatesTask.Wait();
                     var hasDuplicates = hasDuplicatesTask.Result;

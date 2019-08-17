@@ -15,22 +15,22 @@ namespace Domain.Core.Financial.Cfis
 
             cfi = cfi.ToLower();
 
-            if (cfi.Take(1).ToString() == "e")
+            if (new string(cfi.Take(1).ToArray()) == "e")
             {
                 return InstrumentTypes.Equity;
             }
 
-            if (cfi.Take(2).ToString() == "db")
+            if (new string(cfi.Take(2).ToArray()) == "db")
             {
                 return InstrumentTypes.Bond;
             }
 
-            if (cfi.Take(2).ToString() == "oc")
+            if (new string(cfi.Take(2).ToArray()) == "oc")
             {
                 return InstrumentTypes.OptionCall;
             }
 
-            if (cfi.Take(2).ToString() == "op")
+            if (new string(cfi.Take(2).ToArray()) == "op")
             {
                 return InstrumentTypes.OptionPut;
             }

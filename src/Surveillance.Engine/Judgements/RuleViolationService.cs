@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules.Judgements
                         || (!ruleViolation?.Trades.Get().Any() ?? true))
                     {
                         _logger.LogInformation($"{ruleViolation.RuleParameterId} had null trades. Returning.");
-                        return;
+                        continue;
                     }
 
                     _logger.LogInformation($"received message to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name}");
@@ -106,7 +106,7 @@ namespace Surveillance.Engine.Rules.Judgements
                     if (ruleBreachId == null)
                     {
                         _logger.LogError($"{ruleViolation.RuleParameterId} encountered an error saving the case message. Will not transmit to bus");
-                        return;
+                        continue;
                     }
 
                     // Save the rule breach orders
@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Judgements
                         {
                             _logger.LogInformation($"was going to send for rule breach correlation id {ruleViolation.CorrelationId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate back test case creation");
 
-                            return;
+                            continue;
                         }
                     }
                     
@@ -134,13 +134,13 @@ namespace Surveillance.Engine.Rules.Judgements
                     if (hasDuplicates && !ruleViolation.IsBackTestRun)
                     {
                         _logger.LogInformation($"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
-                        return;
+                        continue;
                     }
 
                     if (ruleViolation.RuleParameters.TunedParam != null)
                     {
                         _logger.LogInformation($"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected run was a tuning run");
-                        return;
+                        continue;
                     }
 
                     var violationPair = new RuleViolationIdPair(ruleBreachId.GetValueOrDefault(0), ruleViolation);

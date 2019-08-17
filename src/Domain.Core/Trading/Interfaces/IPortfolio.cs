@@ -11,8 +11,6 @@ namespace Domain.Core.Trading.Interfaces
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossTotal();
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span);
 
-        BalanceSheetStatement BalanceSheets();
-
         void Add(IReadOnlyCollection<Order> orders);
         void Add(Order order);
     }

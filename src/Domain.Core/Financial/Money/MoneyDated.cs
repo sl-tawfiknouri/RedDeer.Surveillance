@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Domain.Core.Financial.Money
+﻿namespace Domain.Core.Financial.Money
 {
+    using System;
+
     /// <summary>
     /// Extended money amount with a date for exchange rate conversions
     /// </summary>
@@ -10,12 +10,6 @@ namespace Domain.Core.Financial.Money
         public MoneyDated(decimal value, string currency, DateTime date)
         {
             Amount = new Money(value, new Currency(currency ?? string.Empty));
-            Date = date;
-        }
-
-        public MoneyDated(decimal value, Currency currency, DateTime date)
-        {
-            Amount = new Money(value, currency);
             Date = date;
         }
 

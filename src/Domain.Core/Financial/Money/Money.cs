@@ -1,19 +1,9 @@
 ﻿namespace Domain.Core.Financial.Money
 {
+    using System;
+
     public struct Money
     {
-        public Money(decimal value, string currency)
-        {
-            Value = value;
-            Currency = new Currency(currency ?? string.Empty);
-        }
-
-        public Money(decimal value, Currency currency)
-        {
-            Value = value;
-            Currency = currency;
-        }
-
         public Money(decimal? value, string currency)
         {
             Value = value.GetValueOrDefault(0);
@@ -36,11 +26,21 @@
 
         public static Money operator +(Money a, Money b)
         {
+            if (!a.DenominatedInCommonCurrency(b))
+            {
+                throw new ArgumentException($"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
+            }
+
             return new Money(a.Value + b.Value, a.Currency);
         }
 
         public static Money operator -(Money a, Money b)
         {
+            if (!a.DenominatedInCommonCurrency(b))
+            {
+                throw new ArgumentException($"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
+            }
+
             return new Money(a.Value - b.Value, a.Currency);
         }
 

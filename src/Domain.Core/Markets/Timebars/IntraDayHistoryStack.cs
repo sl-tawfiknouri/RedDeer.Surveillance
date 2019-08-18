@@ -29,7 +29,7 @@ namespace Domain.Core.Markets.Timebars
 
             lock (_lock)
             {
-                if (currentTime.Subtract((DateTime) frame.Epoch) <= _activeTradeDuration)
+                if (currentTime.Subtract((DateTime)frame.Epoch) <= _activeTradeDuration)
                 {
                     _activeStack.Push(frame);
                 }

@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(29));
+            Assert.That(result.Count, Is.EqualTo(27));
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(23));
+            Assert.That(result.Count, Is.EqualTo(22));
         }
 
         [Test]
@@ -202,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(17));
+            Assert.That(result.Count, Is.EqualTo(16));
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(35));
+            Assert.That(result.Count, Is.EqualTo(31));
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Tuning
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(35));
+            Assert.That(result.Count, Is.EqualTo(26));
         }
     }
 }

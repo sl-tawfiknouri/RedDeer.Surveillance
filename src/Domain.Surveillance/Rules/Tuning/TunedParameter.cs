@@ -33,6 +33,11 @@ namespace Domain.Surveillance.Rules.Tuning
         public TuningDirection TuningDirection { get; set; }
         public TuningStrength TuningStrength { get; set; }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null)

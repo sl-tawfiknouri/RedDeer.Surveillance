@@ -131,7 +131,7 @@ namespace DataImport.Disk_IO.EtlFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
-            var orders = _omsVersioner.ProjectOmsVersion(csvReadResults.SuccessfulReads);
+            var orders = _omsVersioner.ProjectOmsVersion(csvReadResults.SuccessfulReads) ?? new Order[0];
             _logger.LogInformation($"{path} is about to submit {orders?.Count} records to the orders repository.");
 
             foreach (var item in orders)

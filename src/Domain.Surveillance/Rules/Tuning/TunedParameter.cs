@@ -32,7 +32,7 @@ namespace Domain.Surveillance.Rules.Tuning
         public string TuningParameterId { get; set; }
         public TuningDirection TuningDirection { get; set; }
         public TuningStrength TuningStrength { get; set; }
-        
+
         public override bool Equals(object obj)
         {
             if (obj == null)

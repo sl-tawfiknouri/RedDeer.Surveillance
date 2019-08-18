@@ -45,7 +45,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             var staleOrderAllocations = await _orderAllocationsRepository.GetStaleOrderAllocations(stalenessIndicator);
             _logger.LogInformation($"completed fetching stale orders unlivened and older then {stalenessIndicator}");
 
-            if (staleOrders?.Any() ?? false)
+            if (staleOrders != null && staleOrders.Any())
             {
                 _logger.LogWarning($"scan found {staleOrders.Count} orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
 
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                     _logger.LogWarning($"scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations. CLIENTSERVICES");
             }
 
-            if (staleOrderAllocations?.Any() ?? false)
+            if (staleOrderAllocations != null && staleOrderAllocations.Any())
             {
                 _logger.LogWarning($"scan found {staleOrderAllocations.Count} order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
 

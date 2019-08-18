@@ -51,7 +51,7 @@ namespace Domain.Core.Trading
             if (profitAndLossAccounts == null
                 || !profitAndLossAccounts.Any())
             {
-                profitAndLossAccounts.Add(Accounts.ProfitAndLossStatement.Empty());
+                profitAndLossAccounts?.Add(Accounts.ProfitAndLossStatement.Empty());
             }
 
             return profitAndLossAccounts;

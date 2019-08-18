@@ -742,7 +742,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 var tradeIds = new List<string>();
                 var tradeDtos = new List<DealerOrdersDto>();
 
-                if (orderIds?.Any() ?? false)
+                if (orderIds != null
+                    && orderIds.Any())
                 {
                     _logger.LogInformation($"ReddeerTradeRepository getting trades from {start} to {end} for system process operation {opCtx?.Id}");
                     using (var conn = dbConnection.QueryAsync<DealerOrdersDto>(GetDealerOrdersSql, new { OrderIds = orderIds }))
@@ -775,7 +776,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             catch (Exception e)
             {
                 _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
-                opCtx.EventError(e);
+                opCtx?.EventError(e);
             }
             finally
             {

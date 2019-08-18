@@ -185,7 +185,7 @@ namespace Surveillance.Api.App.Configuration
 
             var tags = describeTagsResponse?.Tags?.Select(s => s.Value).ToList();
 
-            Logger.Log(NLog.LogLevel.Info, $"Describe Tags for ResourceId '{instanceId}' with key '{name}' returned tags {string.Join(",", tags ?? new List<string>())}. Response HttpCode '{describeTagsResponse.HttpStatusCode}'.");
+            Logger.Log(NLog.LogLevel.Info, $"Describe Tags for ResourceId '{instanceId}' with key '{name}' returned tags {string.Join(",", tags ?? new List<string>())}. Response HttpCode '{describeTagsResponse?.HttpStatusCode}'.");
 
             return tags?.FirstOrDefault();
         }

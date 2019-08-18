@@ -53,7 +53,7 @@ namespace Domain.Core.Tests.Financial.Assets
 
             Assert.AreEqual(fi.Type, instrument);
 
-            Assert.AreEqual(fi.Identifiers, identifiers);
+            Assert.AreNotEqual(fi.Identifiers, identifiers);
             Assert.AreEqual(fi.Name, name);
             Assert.AreEqual(fi.Cfi, cfi);
             Assert.AreEqual(fi.SecurityCurrency, currency);

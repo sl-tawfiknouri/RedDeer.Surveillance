@@ -88,6 +88,11 @@ namespace Surveillance.Engine.Rules.Judgements
                 {
                     var ruleViolation = _ruleViolations.Pop();
 
+                    if (ruleViolation == null)
+                    {
+                        continue;
+                    }
+
                     if (ruleViolation?.Trades?.Get() == null 
                         || (!ruleViolation?.Trades.Get().Any() ?? true))
                     {
@@ -105,7 +110,7 @@ namespace Surveillance.Engine.Rules.Judgements
 
                     if (ruleBreachId == null)
                     {
-                        _logger.LogError($"{ruleViolation.RuleParameterId} encountered an error saving the case message. Will not transmit to bus");
+                        _logger.LogError($"{ruleViolation?.RuleParameterId} encountered an error saving the case message. Will not transmit to bus");
                         return;
                     }
 

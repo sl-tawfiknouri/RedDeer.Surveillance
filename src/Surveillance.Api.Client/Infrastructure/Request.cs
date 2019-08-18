@@ -31,13 +31,18 @@ namespace RedDeer.Surveillance.Api.Client.Infrastructure
             {
                 throw new Exception("No response from graphql request");
             }
-            if (response.Errors?.Any() ?? false)
+
+            if (response.Errors == null)
+            {
+                return response;
+            }
+
+            if (response.Errors.Any())
             {
                 throw new Exception($"GraphQL Request Errors ({response.Errors.Length}) {JsonConvert.SerializeObject(response.Errors)}");
             }
 
             return response;
         }
-
     }
 }

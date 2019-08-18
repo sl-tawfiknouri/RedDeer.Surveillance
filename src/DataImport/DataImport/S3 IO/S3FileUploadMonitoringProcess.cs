@@ -197,6 +197,12 @@ namespace DataImport.S3_IO
 
         private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)
         {
+            if (dto == null)
+            {
+                this._logger.LogError($"File upload dto was null, exiting process file");
+                return;
+            }
+
             var versionId = string.IsNullOrWhiteSpace(dto?.VersionId) ? "" : $"{dto?.VersionId}-";
             var fileName = Path.GetFileName(dto.FileName) ?? string.Empty;
 

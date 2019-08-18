@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
 
-                if (duplicates?.Any() ?? false)
+                if (duplicates != null && duplicates.Any())
                 {
                     _logger.LogInformation($"Cancelled Order Rule Cached Message Sender removing {duplicates.Count} duplicates for  {ruleBreach.Security.Identifiers}");
                 }

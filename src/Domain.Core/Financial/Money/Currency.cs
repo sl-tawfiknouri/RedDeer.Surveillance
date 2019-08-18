@@ -56,7 +56,7 @@ namespace Domain.Core.Financial.Money
                 return false;
             }
 
-            var currencyObj = (Currency) obj;
+            var currencyObj = (Currency)obj;
 
             return string.Equals(currencyObj.Code, Code, StringComparison.InvariantCultureIgnoreCase);
         }

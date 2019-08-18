@@ -46,7 +46,7 @@ namespace Domain.Core.Markets.Collections
 
             if (Securities != null)
             {
-                str += $"Securities({Securities.Count})  ";
+                str += $"Securities({Securities.Count})";
             }
 
             return str;

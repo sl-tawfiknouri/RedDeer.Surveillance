@@ -35,7 +35,7 @@ namespace Domain.Surveillance.Rules.Tuning
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return 0;
         }
 
         public override bool Equals(object obj)

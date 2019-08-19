@@ -213,7 +213,7 @@ namespace Domain.Core.Tests.Trading.Orders
             Assert.AreEqual(string.Empty, order.OrderClientAccountAttributionId);
             Assert.AreEqual(false, order.IsInputBatch);
             Assert.AreEqual(0, order.BatchSize);
-            Assert.AreEqual(string.Empty, order.InputBatchId);
+            Assert.AreEqual(null, order.InputBatchId);
         }
 
         [Test]

@@ -22,7 +22,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class SpoofingEquitySubscriber : ISpoofingEquitySubscriber
+    public class SpoofingEquitySubscriber : BaseSubscriber, ISpoofingEquitySubscriber
     {
         private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -181,6 +181,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                         param.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
+                        DataSourceForWindow(param.Windows),
                         ruleRunMode);
                 }
 
@@ -195,3 +196,4 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         }
     }
 }
+

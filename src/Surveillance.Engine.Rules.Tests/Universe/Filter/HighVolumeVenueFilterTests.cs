@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -114,6 +115,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                     _ruleRunMode,
                     _marketTradingHoursService,
                     _dataRequestSubscriber,
+                    DataSource.AllInterday,
                     _tradingLogger,
                     null));
         }

@@ -5,6 +5,7 @@ using Domain.Surveillance.Scheduling;
 using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -12,7 +13,6 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Extensions;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -23,7 +23,7 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class HighProfitsEquitySubscriber : IHighProfitsEquitySubscriber
+    public class HighProfitsEquitySubscriber : BaseSubscriber, IHighProfitsEquitySubscriber
     {
         private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
@@ -195,6 +195,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                             param.VenueVolumeFilter,
                             processOperationRunRuleContext,
                             universeDataRequestsSubscriber,
+                            HighProfitDataSourceForWindow(param),
                             ruleRunMode);
                 }
 
@@ -206,6 +207,26 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 return highProfitsRule;
             }
+        }
+
+        private DataSource HighProfitDataSourceForWindow(IHighProfitsRuleEquitiesParameters parameters)
+        {
+            if (parameters == null)
+            {
+                return DataSource.AllInterday;
+            }
+
+            if (parameters.PerformHighProfitWindowAnalysis)
+            {
+                return DataSource.AllIntraday;
+            }
+
+            if (parameters.PerformHighProfitDailyAnalysis)
+            {
+                return DataSource.AllInterday;
+            }
+
+            return DataSourceForWindow(parameters.Windows);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Surveillance.Auditing.Context.Interfaces;
+﻿using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
@@ -14,6 +15,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
             DecimalRangeRuleFilter venueVolumeFilterSetting,
             ISystemProcessOperationRunRuleContext ruleRunContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            DataSource dataSource,
             RuleRunMode ruleRunMode);
     }
 }

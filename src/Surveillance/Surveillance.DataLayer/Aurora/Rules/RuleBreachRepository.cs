@@ -70,6 +70,28 @@ namespace Surveillance.DataLayer.Aurora.Rules
 		            GROUP BY rbo.RuleBreachId) AS InnerCounts
             WHERE InnerCounts.CNT = (SELECT COUNT(*) FROM RuleBreach AS rb RIGHT OUTER JOIN RuleBreachOrders AS rbo ON rb.Id = rbo.RuleBreachId WHERE rb.Id = @ruleBreachId);";
 
+        private const string HasDuplicateBackTestSql = @"
+            SET @RuleId = (SELECT RuleId FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorType = (SELECT OrganisationalFactorType FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorValue = (SELECT OrganisationalFactorValue FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+
+            SELECT COUNT(*) FROM (
+	            SELECT COUNT(*) AS CNT FROM RuleBreach AS rb
+	            RIGHT OUTER JOIN RuleBreachOrders AS rbo
+	            ON rb.Id = rbo.RuleBreachId
+	            WHERE rb.Id <> @ruleBreachId
+	            AND rb.RuleId = @RuleId
+	            AND rb.OrganisationalFactorType = @OrganisationalFactorType
+	            AND rb.OrganisationalFactorValue = @OrganisationalFactorValue
+                AND rb.CorrelationId = @CorrelationId
+	            AND rbo.OrderId = ANY (
+		            SELECT rbo.OrderId FROM RuleBreach AS rb
+		            RIGHT OUTER JOIN RuleBreachOrders AS rbo
+		            ON rb.Id = rbo.RuleBreachId
+		            WHERE rb.Id = @ruleBreachId)
+		            GROUP BY rbo.RuleBreachId) AS InnerCounts
+            WHERE InnerCounts.CNT = (SELECT COUNT(*) FROM RuleBreach AS rb RIGHT OUTER JOIN RuleBreachOrders AS rbo ON rb.Id = rbo.RuleBreachId WHERE rb.Id = @ruleBreachId);";
+
         private const string GetRuleBreachSql = @"SELECT * FROM RuleBreach WHERE Id = @Id";
 
         public RuleBreachRepository(
@@ -157,6 +179,34 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 _logger.LogInformation($"checking duplicates");
                 using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateSql, new { RuleBreachId = ruleId }))
+                {
+                    var result = await conn;
+
+                    _logger.LogInformation($"completed checking duplicates");
+
+                    return result != 0;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+            }
+
+            return false;
+        }
+
+        public async Task<bool> HasDuplicateBackTest(string ruleId, string correlationId)
+        {
+            if (string.IsNullOrWhiteSpace(ruleId))
+            {
+                return false;
+            }
+
+            try
+            {
+                _logger.LogInformation($"checking duplicates");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateBackTestSql, new { RuleBreachId = ruleId, CorrelationId = correlationId }))
                 {
                     var result = await conn;
 

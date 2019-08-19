@@ -3,6 +3,7 @@
     public interface IWashTradeCachedMessageSender
     {
         int Flush();
+
         void Send(IWashTradeRuleBreach ruleBreach);
     }
 }

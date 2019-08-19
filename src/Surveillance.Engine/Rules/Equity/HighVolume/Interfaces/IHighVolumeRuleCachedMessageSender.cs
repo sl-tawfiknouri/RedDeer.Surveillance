@@ -2,8 +2,10 @@
 {
     public interface IHighVolumeRuleCachedMessageSender
     {
-        void Send(IHighVolumeRuleBreach ruleBreach);
-        int Flush();
         void Delete();
+
+        int Flush();
+
+        void Send(IHighVolumeRuleBreach ruleBreach);
     }
 }

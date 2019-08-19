@@ -1,17 +1,16 @@
-﻿using DataSynchroniser.Api.Bmll.Filters.Interfaces;
-using Domain.Core.Financial.Cfis;
-using SharedKernel.Contracts.Markets;
-
-namespace DataSynchroniser.Api.Bmll.Filters
+﻿namespace DataSynchroniser.Api.Bmll.Filters
 {
+    using DataSynchroniser.Api.Bmll.Filters.Interfaces;
+
+    using Domain.Core.Financial.Cfis;
+
+    using SharedKernel.Contracts.Markets;
+
     public class BmllDataRequestFilter : IBmllDataRequestFilter
     {
         public bool ValidAssetType(MarketDataRequest request)
         {
-            if (request == null)
-            {
-                return false;
-            }
+            if (request == null) return false;
 
             var cfi = new Cfi(request.Cfi);
 

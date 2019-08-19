@@ -3,6 +3,7 @@
     public interface ILayeringCachedMessageSender
     {
         int Flush();
+
         void Send(ILayeringRuleBreach ruleBreach);
     }
 }

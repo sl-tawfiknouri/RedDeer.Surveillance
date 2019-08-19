@@ -1,23 +1,45 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using Surveillance.Api.DataAccess.Abstractions.Services;
-using Surveillance.Api.DataAccess.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Surveillance.Api.Tests.Tests
+﻿namespace Surveillance.Api.Tests.Tests
 {
+    using System;
+    using System.Linq;
+
+    using FluentAssertions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Api.DataAccess.Abstractions.Services;
+    using Surveillance.Api.DataAccess.Services;
+
     [TestFixture]
     public class TimeZoneServiceTests
     {
         private ITimeZoneService _timeZoneService;
 
-        [SetUp]
-        public void SetUp()
+        [Test]
+        public void CanGenerateOffsetSegments_London()
         {
-            _timeZoneService = new TimeZoneService();
+            // arrange
+            var from = new DateTime(2019, 06, 01, 00, 00, 00, DateTimeKind.Utc);
+            var to = new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+            var tzName = "Europe/London";
+
+            // act
+            var segments = this._timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
+
+            // assert
+            segments.Should().HaveCount(2);
+
+            segments[0].FromUtc.Should().Be(new DateTime(2019, 06, 01, 00, 00, 00, DateTimeKind.Utc));
+            segments[0].FromIncluding.Should().Be(true);
+            segments[0].ToUtc.Should().Be(new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc));
+            segments[0].ToIncluding.Should().Be(false);
+            segments[0].HourOffset.Should().Be(1);
+
+            segments[1].FromUtc.Should().Be(new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc));
+            segments[1].FromIncluding.Should().Be(true);
+            segments[1].ToUtc.Should().Be(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc));
+            segments[1].ToIncluding.Should().Be(true);
+            segments[1].HourOffset.Should().Be(0);
         }
 
         [Test]
@@ -29,7 +51,7 @@ namespace Surveillance.Api.Tests.Tests
             var tzName = "America/Los_Angeles";
 
             // act
-            var segments = _timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
+            var segments = this._timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
 
             // assert
             segments.Should().HaveCount(3);
@@ -62,7 +84,7 @@ namespace Surveillance.Api.Tests.Tests
             var tzName = "America/Phoenix";
 
             // act
-            var segments = _timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
+            var segments = this._timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
 
             // assert
             segments.Should().HaveCount(1);
@@ -74,31 +96,10 @@ namespace Surveillance.Api.Tests.Tests
             segments[0].HourOffset.Should().Be(-7);
         }
 
-        [Test]
-        public void CanGenerateOffsetSegments_London()
+        [SetUp]
+        public void SetUp()
         {
-            // arrange
-            var from = new DateTime(2019, 06, 01, 00, 00, 00, DateTimeKind.Utc);
-            var to = new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-            var tzName = "Europe/London";
-
-            // act
-            var segments = _timeZoneService.GetOffsetSegments(from, to, tzName).ToList();
-
-            // assert
-            segments.Should().HaveCount(2);
-
-            segments[0].FromUtc.Should().Be(new DateTime(2019, 06, 01, 00, 00, 00, DateTimeKind.Utc));
-            segments[0].FromIncluding.Should().Be(true);
-            segments[0].ToUtc.Should().Be(new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc));
-            segments[0].ToIncluding.Should().Be(false);
-            segments[0].HourOffset.Should().Be(1);
-
-            segments[1].FromUtc.Should().Be(new DateTime(2019, 10, 27, 01, 00, 00, DateTimeKind.Utc));
-            segments[1].FromIncluding.Should().Be(true);
-            segments[1].ToUtc.Should().Be(new DateTime(2020, 01, 01, 00, 00, 00, DateTimeKind.Utc));
-            segments[1].ToIncluding.Should().Be(true);
-            segments[1].HourOffset.Should().Be(0);
+            this._timeZoneService = new TimeZoneService();
         }
     }
 }

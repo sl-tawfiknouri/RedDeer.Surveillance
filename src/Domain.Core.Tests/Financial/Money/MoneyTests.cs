@@ -3,11 +3,23 @@
     using System;
 
     using Domain.Core.Financial.Money;
+
     using NUnit.Framework;
 
     [TestFixture]
     public class MoneyTests
     {
+        [Test]
+        public void Ctor_AssignsVariables_Correctly()
+        {
+            var currency = new Currency("GBP");
+
+            var money = new Money(100, currency);
+
+            Assert.AreEqual(100, money.Value);
+            Assert.AreEqual(money.Currency, currency);
+        }
+
         [Test]
         public void Ctor_BuildsMoneyWithNull_Currency()
         {
@@ -22,17 +34,6 @@
 
             // ReSharper disable once ObjectCreationAsStatement
             Assert.DoesNotThrow(() => new Money(0, currency));
-        }
-
-        [Test]
-        public void Ctor_AssignsVariables_Correctly()
-        {
-            var currency = new Currency("GBP");
-
-            var money = new Money(100, currency);
-
-            Assert.AreEqual(100, money.Value);
-            Assert.AreEqual(money.Currency, currency);
         }
 
         [Test]
@@ -53,10 +54,11 @@
             var moneyA = new Money(100, "GBP");
             var moneyB = new Money(50, "XOX");
 
-            Assert.Throws<ArgumentException>(() =>
-                {
-                    var _ = moneyA + moneyB;
-                });
+            Assert.Throws<ArgumentException>(
+                () =>
+                    {
+                        var _ = moneyA + moneyB;
+                    });
         }
 
         [Test]
@@ -77,10 +79,11 @@
             var moneyA = new Money(100, "GBP");
             var moneyB = new Money(50, "XOX");
 
-            Assert.Throws<ArgumentException>(() =>
-                {
-                    var _ = moneyA - moneyB;
-                });
+            Assert.Throws<ArgumentException>(
+                () =>
+                    {
+                        var _ = moneyA - moneyB;
+                    });
         }
 
         [Test]

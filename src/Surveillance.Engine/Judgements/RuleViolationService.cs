@@ -1,28 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService;
-using Surveillance.DataLayer.Aurora.Rules.Interfaces;
-using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-
-namespace Surveillance.Engine.Rules.Judgements
+﻿namespace Surveillance.Engine.Rules.Judgements
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService;
+
+    using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+
     public class RuleViolationService : IRuleViolationService
     {
-        private readonly IRuleBreachRepository _ruleBreachRepository;
-        private readonly IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
-        private readonly IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
-        private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
+        private readonly Queue<RuleViolationIdPair> _deduplicatedRuleViolations;
 
         private readonly object _lock = new object();
-        private readonly Stack<IRuleBreach> _ruleViolations;
-        private readonly Queue<RuleViolationIdPair> _deduplicatedRuleViolations;
-        private readonly IQueueCasePublisher _queueCasePublisher;
+
         private readonly ILogger<RuleViolationService> _logger;
+
+        private readonly IQueueCasePublisher _queueCasePublisher;
+
+        private readonly IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
+
+        private readonly IRuleBreachRepository _ruleBreachRepository;
+
+        private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
+
+        private readonly IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
+
+        private readonly Stack<IRuleBreach> _ruleViolations;
 
         public RuleViolationService(
             IQueueCasePublisher queueCasePublisher,
@@ -32,164 +42,169 @@ namespace Surveillance.Engine.Rules.Judgements
             IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper,
             ILogger<RuleViolationService> logger)
         {
-            _ruleViolations = new Stack<IRuleBreach>();
-            _deduplicatedRuleViolations = new Queue<RuleViolationIdPair>();
-            
-            _queueCasePublisher =
-                queueCasePublisher 
-                ?? throw new ArgumentNullException(nameof(queueCasePublisher));
+            this._ruleViolations = new Stack<IRuleBreach>();
+            this._deduplicatedRuleViolations = new Queue<RuleViolationIdPair>();
 
-            _ruleBreachRepository =
-                ruleBreachRepository
-                ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
+            this._queueCasePublisher =
+                queueCasePublisher ?? throw new ArgumentNullException(nameof(queueCasePublisher));
 
-            _ruleBreachOrdersRepository =
-                ruleBreachOrdersRepository
-                ?? throw new ArgumentNullException(nameof(ruleBreachOrdersRepository));
+            this._ruleBreachRepository =
+                ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
 
-            _ruleBreachToRuleBreachOrdersMapper =
-                ruleBreachToRuleBreachOrdersMapper
-                ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachOrdersMapper));
+            this._ruleBreachOrdersRepository = ruleBreachOrdersRepository
+                                               ?? throw new ArgumentNullException(nameof(ruleBreachOrdersRepository));
 
-            _ruleBreachToRuleBreachMapper =
-                ruleBreachToRuleBreachMapper
-                ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachMapper));
+            this._ruleBreachToRuleBreachOrdersMapper = ruleBreachToRuleBreachOrdersMapper
+                                                       ?? throw new ArgumentNullException(
+                                                           nameof(ruleBreachToRuleBreachOrdersMapper));
 
-            _logger =
-                logger
-                ?? throw new ArgumentNullException(nameof(logger));
+            this._ruleBreachToRuleBreachMapper = ruleBreachToRuleBreachMapper
+                                                 ?? throw new ArgumentNullException(
+                                                     nameof(ruleBreachToRuleBreachMapper));
+
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void AddRuleViolation(IRuleBreach ruleBreach)
         {
             if (ruleBreach == null)
             {
-                _logger?.LogError($"received a null rule breach in add rule violations");
+                this._logger?.LogError("received a null rule breach in add rule violations");
                 return;
             }
 
-            lock (_lock)
+            lock (this._lock)
             {
-                _ruleViolations.Push(ruleBreach);
+                this._ruleViolations.Push(ruleBreach);
             }
         }
 
         public void ProcessRuleViolationCache()
         {
-            SaveRuleViolations();
-            PublishRuleViolation();
-        }
-
-        private void SaveRuleViolations()
-        {
-            lock (_lock)
-            {
-                while (_ruleViolations.Any())
-                {
-                    var ruleViolation = _ruleViolations.Pop();
-
-                    if (ruleViolation == null)
-                    {
-                        continue;
-                    }
-
-                    if (ruleViolation?.Trades?.Get() == null 
-                        || (!ruleViolation?.Trades.Get().Any() ?? true))
-                    {
-                        _logger.LogInformation($"{ruleViolation.RuleParameterId} had null trades. Returning.");
-                        continue;
-                    }
-
-                    _logger.LogInformation($"received message to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name}");
-
-                    // Save the rule breach
-                    var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleViolation);
-                    var ruleBreachIdTask = _ruleBreachRepository.Create(ruleBreachItem);
-                    ruleBreachIdTask.Wait();
-                    var ruleBreachId = ruleBreachIdTask.Result;
-
-                    if (ruleBreachId == null)
-                    {
-                        _logger.LogError($"{ruleViolation?.RuleParameterId} encountered an error saving the case message. Will not transmit to bus");
-                        continue;
-                    }
-
-                    // Save the rule breach orders
-                    var ruleBreachOrderItems = _ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(ruleViolation, ruleBreachId?.ToString());
-                    _ruleBreachOrdersRepository.Create(ruleBreachOrderItems).Wait();
-
-                    // Check for duplicates
-                    if (ruleViolation.IsBackTestRun)
-                    {
-                        var hasBackTestDuplicatesTask = _ruleBreachRepository.HasDuplicateBackTest(ruleBreachId?.ToString(), ruleViolation.CorrelationId);
-                        hasBackTestDuplicatesTask.Wait();
-
-                        if (hasBackTestDuplicatesTask.Result)
-                        {
-                            _logger.LogInformation($"was going to send for rule breach correlation id {ruleViolation.CorrelationId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate back test case creation");
-
-                            continue;
-                        }
-                    }
-                    
-                    var hasDuplicatesTask = _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
-                    hasDuplicatesTask.Wait();
-                    var hasDuplicates = hasDuplicatesTask.Result;
-
-                    if (hasDuplicates && !ruleViolation.IsBackTestRun)
-                    {
-                        _logger.LogInformation($"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
-                        continue;
-                    }
-
-                    if (ruleViolation.RuleParameters.TunedParam != null)
-                    {
-                        _logger.LogInformation($"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected run was a tuning run");
-                        continue;
-                    }
-
-                    var violationPair = new RuleViolationIdPair(ruleBreachId.GetValueOrDefault(0), ruleViolation);
-                    _deduplicatedRuleViolations.Enqueue(violationPair);
-                }
-            }
+            this.SaveRuleViolations();
+            this.PublishRuleViolation();
         }
 
         private void PublishRuleViolation()
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                foreach (var ruleViolation in _deduplicatedRuleViolations)
+                foreach (var ruleViolation in this._deduplicatedRuleViolations)
                 {
                     var caseMessage = new CaseMessage { RuleBreachId = ruleViolation.RuleViolationId };
 
                     try
                     {
-                        _logger.LogInformation($"about to send for {ruleViolation.RuleBreach.RuleParameterId} | security {ruleViolation.RuleBreach.Security.Name}");
-                        _queueCasePublisher.Send(caseMessage).Wait(); // prefer synchronrous send within a foreach loop
-                        _logger.LogInformation($"sent for {ruleViolation.RuleBreach.RuleParameterId} | security {ruleViolation.RuleBreach.Security.Name}");
+                        this._logger.LogInformation(
+                            $"about to send for {ruleViolation.RuleBreach.RuleParameterId} | security {ruleViolation.RuleBreach.Security.Name}");
+                        this._queueCasePublisher.Send(caseMessage)
+                            .Wait(); // prefer synchronrous send within a foreach loop
+                        this._logger.LogInformation(
+                            $"sent for {ruleViolation.RuleBreach.RuleParameterId} | security {ruleViolation.RuleBreach.Security.Name}");
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e, $"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus {e}");
+                        this._logger.LogError(
+                            e,
+                            $"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus {e}");
                     }
                 }
 
-                _deduplicatedRuleViolations.Clear();
+                this._deduplicatedRuleViolations.Clear();
+            }
+        }
+
+        private void SaveRuleViolations()
+        {
+            lock (this._lock)
+            {
+                while (this._ruleViolations.Any())
+                {
+                    var ruleViolation = this._ruleViolations.Pop();
+
+                    if (ruleViolation == null) continue;
+
+                    if (ruleViolation?.Trades?.Get() == null || (!ruleViolation?.Trades.Get().Any() ?? true))
+                    {
+                        this._logger.LogInformation($"{ruleViolation.RuleParameterId} had null trades. Returning.");
+                        continue;
+                    }
+
+                    this._logger.LogInformation(
+                        $"received message to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name}");
+
+                    // Save the rule breach
+                    var ruleBreachItem = this._ruleBreachToRuleBreachMapper.RuleBreachItem(ruleViolation);
+                    var ruleBreachIdTask = this._ruleBreachRepository.Create(ruleBreachItem);
+                    ruleBreachIdTask.Wait();
+                    var ruleBreachId = ruleBreachIdTask.Result;
+
+                    if (ruleBreachId == null)
+                    {
+                        this._logger.LogError(
+                            $"{ruleViolation?.RuleParameterId} encountered an error saving the case message. Will not transmit to bus");
+                        continue;
+                    }
+
+                    // Save the rule breach orders
+                    var ruleBreachOrderItems =
+                        this._ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
+                            ruleViolation,
+                            ruleBreachId?.ToString());
+                    this._ruleBreachOrdersRepository.Create(ruleBreachOrderItems).Wait();
+
+                    // Check for duplicates
+                    if (ruleViolation.IsBackTestRun)
+                    {
+                        var hasBackTestDuplicatesTask = this._ruleBreachRepository.HasDuplicateBackTest(
+                            ruleBreachId?.ToString(),
+                            ruleViolation.CorrelationId);
+                        hasBackTestDuplicatesTask.Wait();
+
+                        if (hasBackTestDuplicatesTask.Result)
+                        {
+                            this._logger.LogInformation(
+                                $"was going to send for rule breach correlation id {ruleViolation.CorrelationId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate back test case creation");
+
+                            continue;
+                        }
+                    }
+
+                    var hasDuplicatesTask = this._ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
+                    hasDuplicatesTask.Wait();
+                    var hasDuplicates = hasDuplicatesTask.Result;
+
+                    if (hasDuplicates && !ruleViolation.IsBackTestRun)
+                    {
+                        this._logger.LogInformation(
+                            $"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
+                        continue;
+                    }
+
+                    if (ruleViolation.RuleParameters.TunedParam != null)
+                    {
+                        this._logger.LogInformation(
+                            $"was going to send for {ruleViolation.RuleParameterId} | security {ruleViolation.Security.Name} | rule breach {ruleBreachId} but detected run was a tuning run");
+                        continue;
+                    }
+
+                    var violationPair = new RuleViolationIdPair(ruleBreachId.GetValueOrDefault(0), ruleViolation);
+                    this._deduplicatedRuleViolations.Enqueue(violationPair);
+                }
             }
         }
 
         private class RuleViolationIdPair
         {
-            public RuleViolationIdPair(
-                long ruleViolationId, 
-                IRuleBreach ruleBreach)
+            public RuleViolationIdPair(long ruleViolationId, IRuleBreach ruleBreach)
             {
-                RuleViolationId = ruleViolationId;
-                RuleBreach = ruleBreach ?? throw new ArgumentNullException(nameof(ruleBreach));
+                this.RuleViolationId = ruleViolationId;
+                this.RuleBreach = ruleBreach ?? throw new ArgumentNullException(nameof(ruleBreach));
             }
 
+            public IRuleBreach RuleBreach { get; }
+
             public long RuleViolationId { get; }
-            public IRuleBreach RuleBreach { get;  }
         }
     }
 }

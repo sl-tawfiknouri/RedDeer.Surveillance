@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
-
-namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
+﻿namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Rules.Tuning;
+
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+
     [Serializable]
     public class HighVolumeIssuanceRuleFixedIncomeParameters : IHighVolumeIssuanceRuleFixedIncomeParameters
     {
@@ -23,73 +24,72 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
-            Windows = new TimeWindows(id, windowSize);
-            Accounts = accounts ?? RuleFilter.None();
-            Traders = traders ?? RuleFilter.None();
-            Markets = markets ?? RuleFilter.None();
-            Funds = funds ?? RuleFilter.None();
-            Strategies = strategies ?? RuleFilter.None();
-            
-            Factors = factors ?? new List<ClientOrganisationalFactors>();
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Id = id ?? string.Empty;
+            this.Windows = new TimeWindows(id, windowSize);
+            this.Accounts = accounts ?? RuleFilter.None();
+            this.Traders = traders ?? RuleFilter.None();
+            this.Markets = markets ?? RuleFilter.None();
+            this.Funds = funds ?? RuleFilter.None();
+            this.Strategies = strategies ?? RuleFilter.None();
 
-            PerformTuning = performTuning;
+            this.Factors = factors ?? new List<ClientOrganisationalFactors>();
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            this.PerformTuning = performTuning;
         }
+
+        public RuleFilter Accounts { get; set; }
+
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+
+        public RuleFilter Funds { get; set; }
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; set; }
-        public RuleFilter Accounts { get; set; }
-        public RuleFilter Traders { get; set; }
+
         public RuleFilter Markets { get; set; }
-        public RuleFilter Funds { get; set; }
+
+        public bool PerformTuning { get; set; }
+
         public RuleFilter Strategies { get; set; }
 
-        public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None
-                || Funds?.Type != RuleFilterType.None
-                || Strategies?.Type != RuleFilterType.None;
-        }
+        public RuleFilter Traders { get; set; }
 
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
 
-        public bool Valid()
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+
+        public override bool Equals(object obj)
         {
-            return !string.IsNullOrWhiteSpace(Id);
+            if (obj == null) return false;
+
+            var castObj = obj as HighVolumeIssuanceRuleFixedIncomeParameters;
+
+            if (castObj == null) return false;
+
+            return castObj.Windows == this.Windows;
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode();
+            return this.Windows.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public bool HasInternalFilters()
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            var castObj = obj as HighVolumeIssuanceRuleFixedIncomeParameters;
-
-            if (castObj == null)
-            {
-                return false;
-            }
-
-            return castObj.Windows == Windows;
+            return this.Accounts?.Type != RuleFilterType.None || this.Traders?.Type != RuleFilterType.None
+                                                              || this.Markets?.Type != RuleFilterType.None
+                                                              || this.Funds?.Type != RuleFilterType.None
+                                                              || this.Strategies?.Type != RuleFilterType.None;
         }
 
-        public bool PerformTuning { get; set; }
-
-        [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Id);
+        }
     }
 }

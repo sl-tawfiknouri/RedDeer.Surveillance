@@ -1,87 +1,137 @@
-﻿using System;
-using Domain.Core.Trading.Execution.Interfaces;
-using Domain.Core.Trading.Factories.Interfaces;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories.Equities
+﻿namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
+    using System;
+
+    using Domain.Core.Trading.Execution.Interfaces;
+    using Domain.Core.Trading.Factories.Interfaces;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+
     [TestFixture]
     public class SpoofingRuleFactoryTests
     {
-        private IUniverseEquityOrderFilterService _orderFilterService;
-        private IUniverseMarketCacheFactory _factory;
-        private IPortfolioFactory _portfolioFactory;
-        private IOrderAnalysisService _orderAnalysisService;
-        private ILogger<SpoofingRule> _logger;
-        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
-
-        private ISpoofingRuleEquitiesParameters _spoofingEquitiesParameters;
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        [SetUp]
-        public void Setup()
-        {
-            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _portfolioFactory = A.Fake<IPortfolioFactory>();
-            _orderAnalysisService = A.Fake<IOrderAnalysisService>();
-            _logger = new NullLogger<SpoofingRule>();
-            _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+        private IUniverseMarketCacheFactory _factory;
 
-            _spoofingEquitiesParameters = A.Fake<ISpoofingRuleEquitiesParameters>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
+        private ILogger<SpoofingRule> _logger;
+
+        private IOrderAnalysisService _orderAnalysisService;
+
+        private IUniverseEquityOrderFilterService _orderFilterService;
+
+        private IPortfolioFactory _portfolioFactory;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private ISpoofingRuleEquitiesParameters _spoofingEquitiesParameters;
+
+        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
+
+        [Test]
+        public void Build_Returns_Non_Null_Rule()
+        {
+            var factory = new EquityRuleSpoofingFactory(
+                this._factory,
+                this._orderFilterService,
+                this._portfolioFactory,
+                this._orderAnalysisService,
+                this._logger,
+                this._tradingHistoryLogger);
+
+            var result = factory.Build(
+                this._spoofingEquitiesParameters,
+                this._ruleCtx,
+                this._alertStream,
+                RuleRunMode.ForceRun);
+
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void Constructor_Null_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(null, _orderFilterService, _portfolioFactory, _orderAnalysisService, _logger, _tradingHistoryLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_OrderFilter_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, null, _portfolioFactory, _orderAnalysisService, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleSpoofingFactory(
+                    null,
+                    this._orderFilterService,
+                    this._portfolioFactory,
+                    this._orderAnalysisService,
+                    this._logger,
+                    this._tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilterService, _portfolioFactory, _orderAnalysisService, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleSpoofingFactory(
+                    this._factory,
+                    this._orderFilterService,
+                    this._portfolioFactory,
+                    this._orderAnalysisService,
+                    null,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Null_OrderFilter_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleSpoofingFactory(
+                    this._factory,
+                    null,
+                    this._portfolioFactory,
+                    this._orderAnalysisService,
+                    this._logger,
+                    this._tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_TradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilterService, _portfolioFactory, _orderAnalysisService, _logger, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleSpoofingFactory(
+                    this._factory,
+                    this._orderFilterService,
+                    this._portfolioFactory,
+                    this._orderAnalysisService,
+                    this._logger,
+                    null));
         }
 
-        [Test]
-        public void Build_Returns_Non_Null_Rule()
+        [SetUp]
+        public void Setup()
         {
-            var factory = new EquityRuleSpoofingFactory(_factory, _orderFilterService, _portfolioFactory, _orderAnalysisService, _logger, _tradingHistoryLogger);
+            this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._portfolioFactory = A.Fake<IPortfolioFactory>();
+            this._orderAnalysisService = A.Fake<IOrderAnalysisService>();
+            this._logger = new NullLogger<SpoofingRule>();
+            this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
 
-            var result = factory.Build(_spoofingEquitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
-
-            Assert.IsNotNull(result);
+            this._spoofingEquitiesParameters = A.Fake<ISpoofingRuleEquitiesParameters>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
         }
     }
 }

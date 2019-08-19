@@ -10,237 +10,224 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <meta http-equiv="Refresh" content="10">
     <title>Dashboard</title>
-    
+
     <style>
-import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100);
+        import url( 
 
-body {
-  background-color: #3e94ec;
-  font-family: "Roboto", helvetica, arial, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  text-rendering: optimizeLegibility;
-}
+        https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100
 
-div.table-title {
-   display: block;
-  margin: auto;
-  max-width: 600px;
-  padding:5px;
-  width: 100%;
-}
+        )
 
-.table-title h3 {
-   color: #fafafa;
-   font-size: 30px;
-   font-weight: 400;
-   font-style:normal;
-   font-family: "Roboto", helvetica, arial, sans-serif;
-   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
-   text-transform:uppercase;
-}
+        ;
+
+        body {
+            background-color: #3e94ec;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            text-rendering: optimizeLegibility;
+        }
+
+        div.table-title {
+            display: block;
+            margin: auto;
+            max-width: 600px;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .table-title h3 {
+            color: #fafafa;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            font-size: 30px;
+            font-style: normal;
+            font-weight: 400;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+        }
 
 
-/*** Table Styles **/
+        /*** Table Styles **/
 
-.table-fill {
-  background: white;
-  border-radius:3px;
-  border-collapse: collapse;
-  height: 320px;
-  margin: auto;
-  max-width: 600px;
-  padding:5px;
-  width: 100%;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  animation: float 5s infinite;
-}
+        .table-fill {
+            animation: float 5s infinite;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 3px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            height: 320px;
+            margin: auto;
+            max-width: 600px;
+            padding: 5px;
+            width: 100%;
+        }
 
-th {
-  color:#D5DDE5;;
-  background:#1b1e24;
-  border-bottom:4px solid #9ea7af;
-  border-right: 1px solid #343a45;
-  font-size:23px;
-  font-weight: 100;
-  padding:24px;
-  text-align:left;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  vertical-align:middle;
-}
+        th {
+            background: #1b1e24;
+            ;
+            border-bottom: 4px solid #9ea7af;
+            border-right: 1px solid #343a45;
+            color: #D5DDE5;
+            font-size: 23px;
+            font-weight: 100;
+            padding: 24px;
+            text-align: left;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
 
-th:first-child {
-  border-top-left-radius:3px;
-}
+        th:first-child { border-top-left-radius: 3px; }
 
-th:last-child {
-  border-top-right-radius:3px;
-  border-right:none;
-}
+        th:last-child {
+            border-right: none;
+            border-top-right-radius: 3px;
+        }
 
-tr {
-  border-top: 1px solid #C1C3D1;
-  border-bottom-: 1px solid #C1C3D1;
-  color:#666B85;
-  font-size:16px;
-  font-weight:normal;
-  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
-}
+        tr {
+            border-bottom-: 1px solid #C1C3D1;
+            border-top: 1px solid #C1C3D1;
+            color: #666B85;
+            font-size: 16px;
+            font-weight: normal;
+            text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+        }
 
-tr:hover td {
-  background:#4E5066;
-  color:#FFFFFF;
-  border-top: 1px solid #22262e;
-}
+        tr:hover td {
+            background: #4E5066;
+            border-top: 1px solid #22262e;
+            color: #FFFFFF;
+        }
 
-tr:first-child {
-  border-top:none;
-}
+        tr:first-child { border-top: none; }
 
-tr:last-child {
-  border-bottom:none;
-}
+        tr:last-child { border-bottom: none; }
 
-tr:nth-child(odd) td {
-  background:#EBEBEB;
-}
+        tr:nth-child(odd) td { background: #EBEBEB; }
 
-tr:nth-child(odd):hover td {
-  background:#4E5066;
-}
+        tr:nth-child(odd):hover td { background: #4E5066; }
 
-tr:last-child td:first-child {
-  border-bottom-left-radius:3px;
-}
+        tr:last-child td:first-child { border-bottom-left-radius: 3px; }
 
-tr:last-child td:last-child {
-  border-bottom-right-radius:3px;
-}
+        tr:last-child td:last-child { border-bottom-right-radius: 3px; }
 
-td {
-  background:#FFFFFF;
-  padding:20px;
-  text-align:left;
-  vertical-align:middle;
-  font-weight:300;
-  font-size:18px;
-  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
-  border-right: 1px solid #C1C3D1;
-}
+        td {
+            background: #FFFFFF;
+            border-right: 1px solid #C1C3D1;
+            font-size: 18px;
+            font-weight: 300;
+            padding: 20px;
+            text-align: left;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
 
-td:last-child {
-  border-right: 0px;
-}
+        td:last-child { border-right: 0px; }
 
-th.text-left {
-  text-align: left;
-}
+        th.text-left { text-align: left; }
 
-th.text-center {
-  text-align: center;
-}
+        th.text-center { text-align: center; }
 
-th.text-right {
-  text-align: right;
-}
+        th.text-right { text-align: right; }
 
-td.text-left {
-  text-align: left;
-}
+        td.text-left { text-align: left; }
 
-td.text-center {
-  text-align: center;
-}
+        td.text-center { text-align: center; }
 
-td.text-right {
-  text-align: right;
-}
+        td.text-right { text-align: right; }
 
-table {
-    float: none;
-}
+        table { float: none; }
 
     </style>
 
 </head>
 <body>
-    <p>
-        <h1 style="text-align: center">
-            SURVEILLANCE SERVICE DASHBOARD
-        </h1>
-    </p>
-    <hr />
-    
+<p>
+    <h1 style="text-align: center">
+        SURVEILLANCE SERVICE DASHBOARD
+    </h1>
+</p>
+<hr/>
+
 
 @if (!Model.ApiHeartbeat)
 {
-    <h1 style="text-align: center; color: red">
+    <h1 style="color: red; text-align: center;">
         SURVEILLANCE SERVICE UNABLE TO ACCESS CLIENT SERVICE API
     </h1>
 }
-    
+
 <h1>Process Information</h1>
 <table>
     <tr>
         <th>Property</th>
         <th>Value</th>
     </tr>
-    <tr><td>Process Id</td><td>@Model.ProcessId</td></tr>
-    <tr><td>Process Machine Name</td><td>@Model.ProcessMachineName</td></tr>
-    <tr><td>Process Start Time</td><td>@Model.ProcessStartTime</td></tr>
-    <tr><td>Process Peak Working Set</td><td>@Model.ProcessPeakWorkingSet</td></tr>
-    <tr><td>Process Processor Time</td><td>@Model.ProcessProcessorTime</td></tr>
+    <tr>
+        <td>Process Id</td><td>@Model.ProcessId</td>
+    </tr>
+    <tr>
+        <td>Process Machine Name</td><td>@Model.ProcessMachineName</td>
+    </tr>
+    <tr>
+        <td>Process Start Time</td><td>@Model.ProcessStartTime</td>
+    </tr>
+    <tr>
+        <td>Process Peak Working Set</td><td>@Model.ProcessPeakWorkingSet</td>
+    </tr>
+    <tr>
+        <td>Process Processor Time</td><td>@Model.ProcessProcessorTime</td>
+    </tr>
 </table>
-<hr />
+<hr/>
 
 <h1>System Processes</h1>
-    <table>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Heartbeat</th>
+        <th>Instance Initiated</th>
+        <th>Machine Id</th>
+        <th>Process Id</th>
+        <th>Process Type</th>
+    </tr>
+    @foreach (var row in Model.SystemProcesses)
+    {
         <tr>
-            <th>Id</th>
-            <th>Heartbeat</th>
-            <th>Instance Initiated</th>
-            <th>Machine Id</th>
-            <th>Process Id</th>
-            <th>Process Type</th>
+            <td>@row.Id</td>
+            <td>@row.Heartbeat</td>
+            <td>@row.InstanceInitiated</td>
+            <td>@row.MachineId</td>
+            <td>@row.ProcessId</td>
+            <td>@row.SystemProcessType.ToString()</td>
         </tr>
-        @foreach (var row in Model.SystemProcesses)
-        {
-            <tr>
-                <td>@row.Id</td>
-                <td>@row.Heartbeat</td>
-                <td>@row.InstanceInitiated</td>
-                <td>@row.MachineId</td>
-                <td>@row.ProcessId</td>
-                <td>@row.SystemProcessType.ToString()</td>
-            </tr>
-        }
-    </table>
-    <hr />
+    }
+</table>
+<hr/>
 
-    <h1>System Processes Operation</h1>
-    <table>
+<h1>System Processes Operation</h1>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>System Process Id</th>
+        <th>Operation Start</th>
+        <th>Operation End</th>
+        <th>Operation State</th>
+    </tr>
+    @foreach (var row in Model.SystemProcessOperation)
+    {
         <tr>
-            <th>Id</th>
-            <th>System Process Id</th>
-            <th>Operation Start</th>
-            <th>Operation End</th>
-            <th>Operation State</th>
+            <td>@row.Id</td>
+            <td>@row.SystemProcessId</td>
+            <td>@row.OperationStart</td>
+            <td>@row.OperationEnd</td>
+            <td>@row.OperationState.GetDescription()</td>
         </tr>
-        @foreach (var row in Model.SystemProcessOperation)
-        {
-            <tr>
-                <td>@row.Id</td>
-                <td>@row.SystemProcessId</td>
-                <td>@row.OperationStart</td>
-                <td>@row.OperationEnd</td>
-                <td>@row.OperationState.GetDescription()</td>
-            </tr>
-        }
-    </table>
-    <hr />
+    }
+</table>
+<hr/>
 
 <h1>Rule Distributions</h1>
 <table>
@@ -264,33 +251,33 @@ table {
     }
 
 </table>
-<hr />
+<hr/>
 
 <h1>Rule Runs</h1>
-    <table>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Op Id</th>
+        <th>Schedule Start</th>
+        <th>Schedule End</th>
+        <th>Rule Version</th>
+        <th>Rule Description</th>
+    </tr>
+
+    @foreach (var row in Model.SystemProcessRuleRun)
+    {
         <tr>
-            <th>Id</th>
-            <th>Op Id</th>
-            <th>Schedule Start</th>
-            <th>Schedule End</th>
-            <th>Rule Version</th>
-            <th>Rule Description</th>
+            <td>@row.Id</td>
+            <td>@row.SystemProcessOperationId</td>
+            <td>@row.ScheduleRuleStart</td>
+            <td>@row.ScheduleRuleEnd</td>
+            <td>@row.RuleVersion</td>
+            <td>@row.RuleDescription</td>
         </tr>
+    }
 
-        @foreach (var row in Model.SystemProcessRuleRun)
-        {
-            <tr>
-                <td>@row.Id</td>
-                <td>@row.SystemProcessOperationId</td>
-                <td>@row.ScheduleRuleStart</td>
-                <td>@row.ScheduleRuleEnd</td>
-                <td>@row.RuleVersion</td>
-                <td>@row.RuleDescription</td>
-            </tr>
-        }
-
-    </table>
-<hr />
+</table>
+<hr/>
 
 <h1>File Uploads</h1>
 <table>
@@ -312,7 +299,7 @@ table {
     }
 
 </table>
-<hr />
+<hr/>
 
 <h1>Audit Exceptions</h1>
 <table>
@@ -343,7 +330,7 @@ table {
     }
 
 </table>
-<hr />
+<hr/>
 
 </body>
 </html>

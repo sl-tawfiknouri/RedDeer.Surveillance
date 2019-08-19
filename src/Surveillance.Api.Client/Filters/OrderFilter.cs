@@ -1,24 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using RedDeer.Surveillance.Api.Client.Enums;
-using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Filters
+﻿namespace RedDeer.Surveillance.Api.Client.Filters
 {
-    public class OrderFilter<T> : Filter<OrderFilter<T>, T> where T : Parent
-    {
-        public OrderFilter(T node) : base(node) { }
+    using System;
+    using System.Collections.Generic;
 
-        public OrderFilter<T> ArgumentIds(List<int> ids) => AddArgument("ids", ids);
-        public OrderFilter<T> ArgumentTraderIds(HashSet<string> traderIds) => AddArgument("traderIds", traderIds);
-        public OrderFilter<T> ArgumentExcludeTraderIds(HashSet<string> excludeTraderIds) => AddArgument("excludeTraderIds", excludeTraderIds);
-        public OrderFilter<T> ArgumentReddeerIds(List<string> reddeerIds) => AddArgument("reddeerIds", reddeerIds);
-        public OrderFilter<T> ArgumentDirections(List<OrderDirection> directions) => AddArgument("directions", directions);
-        public OrderFilter<T> ArgumentTypes(List<OrderType> types) => AddArgument("types", types);
-        public OrderFilter<T> ArgumentStatuses(List<OrderStatus> statuses) => AddArgument("statuses", statuses);
-        public OrderFilter<T> ArgumentPlacedDateFrom(DateTime dateTime) => AddArgument("placedDateFrom", dateTime);
-        public OrderFilter<T> ArgumentPlacedDateTo(DateTime dateTime) => AddArgument("placedDateTo", dateTime);
-        public OrderFilter<T> ArgumentTake(int count) => AddArgument("take", count);
-        public OrderFilter<T> ArgumentTzName(string tzName) => AddArgument("tzName", tzName);
+    using RedDeer.Surveillance.Api.Client.Enums;
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
+    public class OrderFilter<T> : Filter<OrderFilter<T>, T>
+        where T : Parent
+    {
+        public OrderFilter(T node)
+            : base(node)
+        {
+        }
+
+        public OrderFilter<T> ArgumentDirections(List<OrderDirection> directions)
+        {
+            return this.AddArgument("directions", directions);
+        }
+
+        public OrderFilter<T> ArgumentExcludeTraderIds(HashSet<string> excludeTraderIds)
+        {
+            return this.AddArgument("excludeTraderIds", excludeTraderIds);
+        }
+
+        public OrderFilter<T> ArgumentIds(List<int> ids)
+        {
+            return this.AddArgument("ids", ids);
+        }
+
+        public OrderFilter<T> ArgumentPlacedDateFrom(DateTime dateTime)
+        {
+            return this.AddArgument("placedDateFrom", dateTime);
+        }
+
+        public OrderFilter<T> ArgumentPlacedDateTo(DateTime dateTime)
+        {
+            return this.AddArgument("placedDateTo", dateTime);
+        }
+
+        public OrderFilter<T> ArgumentReddeerIds(List<string> reddeerIds)
+        {
+            return this.AddArgument("reddeerIds", reddeerIds);
+        }
+
+        public OrderFilter<T> ArgumentStatuses(List<OrderStatus> statuses)
+        {
+            return this.AddArgument("statuses", statuses);
+        }
+
+        public OrderFilter<T> ArgumentTake(int count)
+        {
+            return this.AddArgument("take", count);
+        }
+
+        public OrderFilter<T> ArgumentTraderIds(HashSet<string> traderIds)
+        {
+            return this.AddArgument("traderIds", traderIds);
+        }
+
+        public OrderFilter<T> ArgumentTypes(List<OrderType> types)
+        {
+            return this.AddArgument("types", types);
+        }
+
+        public OrderFilter<T> ArgumentTzName(string tzName)
+        {
+            return this.AddArgument("tzName", tzName);
+        }
     }
 }

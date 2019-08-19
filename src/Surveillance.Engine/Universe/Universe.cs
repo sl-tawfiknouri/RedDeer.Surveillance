@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Engine.Rules.Universe
 {
+    using System.Collections.Generic;
+
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     public class Universe : IUniverse
     {
         public Universe(IEnumerable<IUniverseEvent> universeEvents)
         {
-            UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
+            this.UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
         }
 
-        public IEnumerable<IUniverseEvent> UniverseEvents { get; private set; }
+        public IEnumerable<IUniverseEvent> UniverseEvents { get; }
     }
 }

@@ -1,8 +1,9 @@
-﻿using NUnit.Framework;
-using TestHarness.Commands;
-
-namespace TestHarness.Tests.Commands
+﻿namespace TestHarness.Tests.Commands
 {
+    using NUnit.Framework;
+
+    using TestHarness.Commands;
+
     [TestFixture]
     public class HelpCommandTests
     {

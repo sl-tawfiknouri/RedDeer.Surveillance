@@ -1,67 +1,75 @@
-﻿using System;
-using DataSynchroniser.Queues.Interfaces;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Utilities.Interfaces;
-
-namespace DataSynchroniser.Tests
+﻿namespace DataSynchroniser.Tests
 {
+    using System;
+
+    using DataSynchroniser.Queues.Interfaces;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Utilities.Interfaces;
+
     [TestFixture]
     public class MediatorTests
     {
-        private ILogger<Mediator> _logger;
-        private IDataRequestSubscriber _dataRequestService;
         private IApplicationHeartbeatService _applicationHeartbeatService;
 
-        [SetUp]
-        public void Setup()
-        {
-            _logger = A.Fake<ILogger<Mediator>>();
-            _dataRequestService = A.Fake<IDataRequestSubscriber>();
-            _applicationHeartbeatService = A.Fake<IApplicationHeartbeatService>();
-        }
-        
-        [Test]
-        public void Constructor_NullDataRequestsService_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _applicationHeartbeatService, _logger));
-        }
+        private IDataRequestSubscriber _dataRequestService;
+
+        private ILogger<Mediator> _logger;
 
         [Test]
         public void Constructor_NullApplicationHeartbeatService_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(this._dataRequestService, null, this._logger));
+        }
+
+        [Test]
+        public void Constructor_NullDataRequestsService_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new Mediator(null, this._applicationHeartbeatService, this._logger));
         }
 
         [Test]
         public void Constructor_NullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, _applicationHeartbeatService, null));
-        }
-
-        [Test]
-        public void Initiate_Calls_DataRequestServiceInitiate()
-        {
-            var mediator = new Mediator(_dataRequestService, _applicationHeartbeatService, _logger);
-
-            mediator.Initiate();
-
-            A.CallTo(() => _dataRequestService.Initiate()).MustHaveHappenedOnceExactly();
+            Assert.Throws<ArgumentNullException>(
+                () => new Mediator(this._dataRequestService, this._applicationHeartbeatService, null));
         }
 
         [Test]
         public void Initiate_Calls_ApplicationHeartbeatServiceInitiate()
         {
-            var mediator = new Mediator(_dataRequestService, _applicationHeartbeatService, _logger);
+            var mediator = new Mediator(this._dataRequestService, this._applicationHeartbeatService, this._logger);
 
             mediator.Initiate();
 
-            A.CallTo(() => _applicationHeartbeatService.Initialise()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._applicationHeartbeatService.Initialise()).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void Initiate_Calls_DataRequestServiceInitiate()
+        {
+            var mediator = new Mediator(this._dataRequestService, this._applicationHeartbeatService, this._logger);
+
+            mediator.Initiate();
+
+            A.CallTo(() => this._dataRequestService.Initiate()).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._logger = A.Fake<ILogger<Mediator>>();
+            this._dataRequestService = A.Fake<IDataRequestSubscriber>();
+            this._applicationHeartbeatService = A.Fake<IApplicationHeartbeatService>();
+        }
     }
 }

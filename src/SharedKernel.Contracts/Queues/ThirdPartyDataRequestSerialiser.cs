@@ -1,18 +1,19 @@
-﻿using Newtonsoft.Json;
-using SharedKernel.Contracts.Queues.Interfaces;
-
-namespace SharedKernel.Contracts.Queues
+﻿namespace SharedKernel.Contracts.Queues
 {
+    using Newtonsoft.Json;
+
+    using SharedKernel.Contracts.Queues.Interfaces;
+
     public class ThirdPartyDataRequestSerialiser : IThirdPartyDataRequestSerialiser
     {
-        public string Serialise(ThirdPartyDataRequestMessage message)
-        {
-            return JsonConvert.SerializeObject(message);
-        }
-
         public ThirdPartyDataRequestMessage Deserialise(string message)
         {
             return JsonConvert.DeserializeObject<ThirdPartyDataRequestMessage>(message);
+        }
+
+        public string Serialise(ThirdPartyDataRequestMessage message)
+        {
+            return JsonConvert.SerializeObject(message);
         }
     }
 }

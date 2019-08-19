@@ -1,26 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Streams.Interfaces;
-using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Factory.EquitiesFactory;
-using TestHarness.Factory.EquitiesFactory.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Streams.Interfaces;
+
+    using TestHarness.Engine.OrderGenerator.Interfaces;
+    using TestHarness.Factory.EquitiesFactory.Interfaces;
+
     public class OrderDataGeneratorSedolFilteringDecorator : IOrderDataGenerator
     {
         private readonly IOrderDataGenerator _baseGenerator;
-        private readonly IReadOnlyCollection<string> _sedols;
-        private readonly IStockExchangeStreamFactory _streamFactory;
+
         private readonly bool _inclusive;
 
-        private IDisposable _unsubscriber;
+        private readonly IReadOnlyCollection<string> _sedols;
+
+        private readonly IStockExchangeStreamFactory _streamFactory;
 
         private IStockExchangeStream _stream;
+
+        private IDisposable _unsubscriber;
 
         public OrderDataGeneratorSedolFilteringDecorator(
             IStockExchangeStreamFactory streamFactory,
@@ -28,53 +32,52 @@ namespace TestHarness.Engine.OrderGenerator
             IReadOnlyCollection<string> sedols,
             bool inclusive)
         {
-            _streamFactory = streamFactory ?? throw new ArgumentNullException(nameof(streamFactory));
-            _baseGenerator = baseGenerator ?? throw new ArgumentNullException(nameof(baseGenerator));
-            _sedols = sedols?.Where(sed => !string.IsNullOrWhiteSpace(sed)).ToList() ?? new List<string>();
-            _inclusive = inclusive;
+            this._streamFactory = streamFactory ?? throw new ArgumentNullException(nameof(streamFactory));
+            this._baseGenerator = baseGenerator ?? throw new ArgumentNullException(nameof(baseGenerator));
+            this._sedols = sedols?.Where(sed => !string.IsNullOrWhiteSpace(sed)).ToList() ?? new List<string>();
+            this._inclusive = inclusive;
+        }
+
+        public void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream)
+        {
+            this._unsubscriber = stockStream.Subscribe(this);
+            this._stream = this._streamFactory.Create();
+            this._baseGenerator.InitiateTrading(this._stream, tradeStream);
         }
 
         public void OnCompleted()
         {
-            _baseGenerator.OnCompleted();
+            this._baseGenerator.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _baseGenerator.OnError(error);
+            this._baseGenerator.OnError(error);
         }
 
         public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
-                _baseGenerator.OnNext(null);
+                this._baseGenerator.OnNext(null);
                 return;
             }
 
             var filteredSecurities =
-                value
-                    .Securities
-                    ?.Where(sec =>
-                        _sedols.Contains(sec?.Security.Identifiers.Sedol, StringComparer.CurrentCultureIgnoreCase) == _inclusive)
-                    .ToList()
+                value.Securities?.Where(
+                    sec => this._sedols.Contains(
+                               sec?.Security.Identifiers.Sedol,
+                               StringComparer.CurrentCultureIgnoreCase) == this._inclusive).ToList()
                 ?? new List<EquityInstrumentIntraDayTimeBar>();
 
             var filteredFrame = new EquityIntraDayTimeBarCollection(value.Exchange, value.Epoch, filteredSecurities);
 
-            _baseGenerator.OnNext(filteredFrame);
-        }
-
-        public void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream)
-        {
-            _unsubscriber = stockStream.Subscribe(this);
-            _stream = _streamFactory.Create();
-            _baseGenerator.InitiateTrading(_stream, tradeStream);
+            this._baseGenerator.OnNext(filteredFrame);
         }
 
         public void TerminateTrading()
         {
-            _baseGenerator.TerminateTrading();
+            this._baseGenerator.TerminateTrading();
         }
     }
 }

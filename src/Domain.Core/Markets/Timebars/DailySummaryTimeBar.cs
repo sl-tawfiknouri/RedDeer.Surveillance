@@ -1,44 +1,45 @@
-﻿using System;
-
-namespace Domain.Core.Markets.Timebars
+﻿namespace Domain.Core.Markets.Timebars
 {
+    using System;
+
     public class DailySummaryTimeBar
     {
         public DailySummaryTimeBar(
             decimal? marketCap,
-            IntradayPrices intradayPrices, 
+            IntradayPrices intradayPrices,
             long? listedSecurities,
-            Volume dailyVolume, 
+            Volume dailyVolume,
             DateTime timeStamp)
         {
-            MarketCapCents = marketCap;
-            IntradayPrices = intradayPrices;
-            ListedSecurities = listedSecurities;
-            DailyVolume = dailyVolume;
-            TimeStamp = timeStamp;
+            this.MarketCapCents = marketCap;
+            this.IntradayPrices = intradayPrices;
+            this.ListedSecurities = listedSecurities;
+            this.DailyVolume = dailyVolume;
+            this.TimeStamp = timeStamp;
         }
 
         /// <summary>
-        /// Valuation of the security in full USD
+        ///     The daily volume traded of the security on the exchange
         /// </summary>
-        public decimal? MarketCap => MarketCapCents.GetValueOrDefault(0) > 0 ? MarketCapCents / 100 : MarketCapCents;
-
-        public decimal? MarketCapCents { get; }
+        public Volume DailyVolume { get; }
 
         public IntradayPrices IntradayPrices { get; }
 
         /// <summary>
-        /// The number of the listed security on the exchange
+        ///     The number of the listed security on the exchange
         /// </summary>
         public long? ListedSecurities { get; }
 
         /// <summary>
-        /// The daily volume traded of the security on the exchange
+        ///     Valuation of the security in full USD
         /// </summary>
-        public Volume DailyVolume { get; }
+        public decimal? MarketCap =>
+            this.MarketCapCents.GetValueOrDefault(0) > 0 ? this.MarketCapCents / 100 : this.MarketCapCents;
+
+        public decimal? MarketCapCents { get; }
 
         /// <summary>
-        /// The time point at which the data was canonical
+        ///     The time point at which the data was canonical
         /// </summary>
         public DateTime TimeStamp { get; }
     }

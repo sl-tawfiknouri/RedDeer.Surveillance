@@ -1,23 +1,39 @@
-﻿using System;
-using Domain.Core.Trading.Orders;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Tests.Helpers;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Filter;
-
-namespace Surveillance.Engine.Rules.Tests.Universe.Filter
+﻿namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 {
+    using System;
+
+    using Domain.Core.Trading.Orders;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Tests.Helpers;
+    using Surveillance.Engine.Rules.Universe;
+    using Surveillance.Engine.Rules.Universe.Filter;
+
     [TestFixture]
     public class UniverseOrderFilterTests
     {
         private ILogger<UniverseEquityOrderFilterService> _logger;
 
-        [SetUp]
-        public void Setup()
+        [TestCase("e")]
+        [TestCase("E")]
+        [TestCase("entspb")]
+        [TestCase("ENTSPB")]
+        [TestCase("eNt")]
+        public void Filter_DoesNotFiltersOutEquity_Cfi(string equityCfi)
         {
-            _logger = A.Fake<ILogger<UniverseEquityOrderFilterService>>();
+            var orderFilter = new UniverseEquityOrderFilterService(this._logger);
+            var order = ((Order)null).Random();
+            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
+            order.Instrument.Cfi = equityCfi;
+
+            var filteredEvent = orderFilter.Filter(universeEvent);
+
+            Assert.AreEqual(universeEvent, filteredEvent);
         }
 
         [TestCase("d")]
@@ -28,8 +44,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [TestCase(null)]
         public void Filter_FiltersOutCredit_Cfi(string nonEquityCfi)
         {
-            var orderFilter = new UniverseEquityOrderFilterService(_logger);
-            var order = ((Order) null).Random();
+            var orderFilter = new UniverseEquityOrderFilterService(this._logger);
+            var order = ((Order)null).Random();
             var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
             order.Instrument.Cfi = nonEquityCfi;
 
@@ -38,32 +54,21 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             Assert.IsNull(filteredEvent);
         }
 
-        [TestCase("e")]
-        [TestCase("E")]
-        [TestCase("entspb")]
-        [TestCase("ENTSPB")]
-        [TestCase("eNt")]
-        public void Filter_DoesNotFiltersOutEquity_Cfi(string equityCfi)
+        [Test]
+        public void Filter_NonOrderEvent_ReturnsEvent()
         {
-            var orderFilter = new UniverseEquityOrderFilterService(_logger);
-            var order = ((Order)null).Random();
-            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
-            order.Instrument.Cfi = equityCfi;
+            var orderFilter = new UniverseEquityOrderFilterService(this._logger);
+            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, "not-an-order");
 
             var filteredEvent = orderFilter.Filter(universeEvent);
 
             Assert.AreEqual(universeEvent, filteredEvent);
         }
 
-        [Test]
-        public void Filter_NonOrderEvent_ReturnsEvent()
+        [SetUp]
+        public void Setup()
         {
-            var orderFilter = new UniverseEquityOrderFilterService(_logger);
-            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, "not-an-order");
-
-            var filteredEvent = orderFilter.Filter(universeEvent);
-
-            Assert.AreEqual(universeEvent, filteredEvent);
+            this._logger = A.Fake<ILogger<UniverseEquityOrderFilterService>>();
         }
     }
 }

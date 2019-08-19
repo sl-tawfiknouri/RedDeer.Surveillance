@@ -1,6 +1,7 @@
 ﻿namespace Domain.Core.Tests.Markets.Timebars
 {
     using Domain.Core.Markets.Timebars;
+
     using NUnit.Framework;
 
     [TestFixture]

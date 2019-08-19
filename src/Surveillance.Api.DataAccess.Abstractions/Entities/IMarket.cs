@@ -3,7 +3,9 @@
     public interface IMarket
     {
         int Id { get; set; }
+
         string MarketId { get; set; }
+
         string MarketName { get; set; }
     }
 }

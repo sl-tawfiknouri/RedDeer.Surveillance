@@ -1,9 +1,11 @@
-﻿using System;
-using Domain.Core.Trading.Orders;
-using SharedKernel.Files.Allocations.Interfaces;
-
-namespace SharedKernel.Files.Allocations
+﻿namespace SharedKernel.Files.Allocations
 {
+    using System;
+
+    using Domain.Core.Trading.Orders;
+
+    using SharedKernel.Files.Allocations.Interfaces;
+
     public class AllocationFileCsvToOrderAllocationSerialiser : IAllocationFileCsvToOrderAllocationSerialiser
     {
         public int FailedParseTotal { get; set; }
@@ -12,16 +14,16 @@ namespace SharedKernel.Files.Allocations
         {
             if (contract == null)
             {
-                FailedParseTotal += 1;
+                this.FailedParseTotal += 1;
                 return null;
             }
 
-            return MapAllocation(contract);    
+            return this.MapAllocation(contract);
         }
 
         private OrderAllocation MapAllocation(AllocationFileContract contract)
         {
-            var orderFilledVolume = MapDecimal(contract.OrderFilledVolume);
+            var orderFilledVolume = this.MapDecimal(contract.OrderFilledVolume);
 
             var allocation = new OrderAllocation(
                 null,
@@ -37,10 +39,7 @@ namespace SharedKernel.Files.Allocations
 
         private decimal? MapDecimal(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
+            if (string.IsNullOrWhiteSpace(value)) return null;
 
             var success = decimal.TryParse(value, out var result);
 

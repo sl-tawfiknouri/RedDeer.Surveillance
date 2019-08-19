@@ -1,18 +1,16 @@
-﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Filter
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Filter
 {
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
+    using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
+
     public class RuleProjector : IRuleProjector
     {
-        public RuleFilter Project(RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter filter)
+        public RuleFilter Project(Filter filter)
         {
-            if (filter == null)
-            {
-                return RuleFilter.None();
-            }
+            if (filter == null) return RuleFilter.None();
 
-            RuleFilterType type = RuleFilterType.None;
+            var type = RuleFilterType.None;
             switch (filter.Type)
             {
                 case FilterType.None:
@@ -26,7 +24,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Filter
                     break;
             }
 
-            return new RuleFilter {Type = type, Ids = filter.Ids ?? new string[0]};
+            return new RuleFilter { Type = type, Ids = filter.Ids ?? new string[0] };
         }
     }
 }

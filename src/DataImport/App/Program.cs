@@ -1,42 +1,56 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Loader;
-using System.Text.RegularExpressions;
-using System.Threading;
-using DasMulli.Win32.ServiceUtils;
-using DataImport;
-using DataImport.Configuration;
-using DataImport.Configuration.Interfaces;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Configuration;
-using NLog;
-using StructureMap;
-using Surveillance.Auditing;
-using Surveillance.Auditing.Context;
-using Surveillance.Auditing.DataLayer;
-using Surveillance.Auditing.DataLayer.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.DataLayer;
-using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Reddeer.ApiClient;
-using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+﻿
 
 // ReSharper disable UnusedParameter.Local
 namespace RedDeer.DataImport.DataImport.App
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Runtime.Loader;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+
+    using DasMulli.Win32.ServiceUtils;
+
+    using global::DataImport;
+    using global::DataImport.Configuration;
+    using global::DataImport.Configuration.Interfaces;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Configuration;
+
+    using NLog;
+
+    using StructureMap;
+
+    using Surveillance.Auditing;
+    using Surveillance.Auditing.Context;
+    using Surveillance.Auditing.DataLayer;
+    using Surveillance.Auditing.DataLayer.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes;
+    using Surveillance.DataLayer;
+    using Surveillance.DataLayer.Configuration.Interfaces;
+    using Surveillance.Reddeer.ApiClient;
+    using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+
     public class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        internal const string ServiceName = "RedDeer.DataImportService";
+
+        private const string RegisterServiceFlag = "--register-service";
 
         private const string RunAsServiceFlag = "--run-as-service";
+
         private const string RunAsSystemServiceFlag = "--systemd-service";
-        private const string RegisterServiceFlag = "--register-service";
+
+        private const string ServiceDescription = "RedDeer Data Import Service";
+
+        private const string ServiceDisplayName = "RedDeer Data Import Service";
+
         private const string UnRegisterServiceFlag = "--unregister-service";
 
-        internal const string ServiceName = "RedDeer.DataImportService";
-        private const string ServiceDisplayName = "RedDeer Data Import Service";
-        private const string ServiceDescription = "RedDeer Data Import Service";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static Container Container { get; set; }
 
@@ -58,15 +72,16 @@ namespace RedDeer.DataImport.DataImport.App
                 var builtApiClientConfig = BuildApiClientConfiguration();
                 Container.Inject(typeof(IApiClientConfiguration), builtApiClientConfig);
 
-                Container.Configure(config =>
-                {
-                    config.IncludeRegistry<DataImportRegistry>();
-                    config.IncludeRegistry<AppRegistry>();
-                    config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                    config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                    config.IncludeRegistry<DataLayerRegistry>();
-                    config.IncludeRegistry<ReddeerApiClientRegistry>();
-                });
+                Container.Configure(
+                    config =>
+                        {
+                            config.IncludeRegistry<DataImportRegistry>();
+                            config.IncludeRegistry<AppRegistry>();
+                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                            config.IncludeRegistry<DataLayerRegistry>();
+                            config.IncludeRegistry<ReddeerApiClientRegistry>();
+                        });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
 
@@ -82,12 +97,20 @@ namespace RedDeer.DataImport.DataImport.App
             }
         }
 
+        private static IApiClientConfiguration BuildApiClientConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true).Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+
+            return builder.BuildApi(configurationBuilder);
+        }
+
         private static Configuration BuildConfiguration()
         {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
+            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true).Build();
 
             var builder = new ConfigBuilder.ConfigBuilder();
 
@@ -96,26 +119,26 @@ namespace RedDeer.DataImport.DataImport.App
 
         private static IDataLayerConfiguration BuildDataLayerConfiguration()
         {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
+            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true).Build();
 
             var builder = new ConfigBuilder.ConfigBuilder();
 
             return builder.BuildData(configurationBuilder);
         }
 
-        private static IApiClientConfiguration BuildApiClientConfiguration()
+        private static void DisableConsoleLog()
         {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
+            LogManager.Configuration.RemoveTarget("console");
+            LogManager.Configuration.Reload();
+        }
 
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.BuildApi(configurationBuilder);
+        private static string EscapeCommandLineArgument(string arg)
+        {
+            // http://stackoverflow.com/a/6040946/784387
+            arg = Regex.Replace(arg, @"(\\*)" + "\"", @"$1$1\" + "\"");
+            arg = "\"" + Regex.Replace(arg, @"(\\+)$", @"$1$1") + "\"";
+            return arg;
         }
 
         private static void ProcessArguments(string[] args)
@@ -139,7 +162,7 @@ namespace RedDeer.DataImport.DataImport.App
             {
                 Logger.Info($"Unregister Service Flag Found ({UnRegisterServiceFlag}).");
                 UnRegisterService();
-            }           
+            }
             else
             {
                 Logger.Info("No Flags Found.");
@@ -147,16 +170,35 @@ namespace RedDeer.DataImport.DataImport.App
             }
         }
 
-        private static void SetSysLogSettingIfService(string[] args)
+        private static void RegisterService()
         {
-            if (args.Contains(RunAsServiceFlag))
-            {
-                DisableConsoleLog();
-            }
-            else if (args.Contains(RunAsSystemServiceFlag))
-            {
-                DisableConsoleLog();
-            }
+            Logger.Log(LogLevel.Info, "Program registering as service");
+
+            // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
+            var remainingArgs = Environment.GetCommandLineArgs().Where(arg => arg != RegisterServiceFlag)
+                .Select(EscapeCommandLineArgument).Append(RunAsServiceFlag);
+
+            var host = Process.GetCurrentProcess().MainModule.FileName;
+
+            if (!host.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase)) remainingArgs = remainingArgs.Skip(1);
+
+            var fullServiceCommand = host + " " + string.Join(" ", remainingArgs);
+
+            // Do not use LocalSystem in production.. but this is good for demos as LocalSystem will have access to some random git-clone path
+            // Note that when the service is already registered and running, it will be reconfigured but not restarted
+            var serviceDefinition = new ServiceDefinitionBuilder(ServiceName).WithDisplayName(ServiceDisplayName)
+                .WithDescription(ServiceDescription).WithBinaryPath(fullServiceCommand)
+                .WithCredentials(Win32ServiceCredentials.LocalSystem).WithAutoStart(true).Build();
+
+            Console.WriteLine(ServiceName);
+            Console.WriteLine(ServiceDisplayName);
+            Console.WriteLine(ServiceDescription);
+            Console.WriteLine(fullServiceCommand);
+
+            new Win32ServiceManager().CreateOrUpdateService(serviceDefinition, true);
+
+            Console.WriteLine(
+                $@"Successfully registered and started service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
 
         private static void RunAsService(string[] args)
@@ -170,10 +212,11 @@ namespace RedDeer.DataImport.DataImport.App
         {
             // Register sigterm event handler. 
             var sigterm = new ManualResetEventSlim();
-            AssemblyLoadContext.Default.Unloading += x => {
-                Logger.Info("Sigterm triggered.");
-                sigterm.Set();
-            };
+            AssemblyLoadContext.Default.Unloading += x =>
+                {
+                    Logger.Info("Sigterm triggered.");
+                    sigterm.Set();
+                };
 
             var service = Container.GetInstance<Service>();
             service.Start(new string[0], () => { });
@@ -190,65 +233,18 @@ namespace RedDeer.DataImport.DataImport.App
             service.Stop();
         }
 
-        private static void RegisterService()
+        private static void SetSysLogSettingIfService(string[] args)
         {
-            Logger.Log(LogLevel.Info, $"Program registering as service");
-            // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
-            var remainingArgs = Environment.GetCommandLineArgs()
-                .Where(arg => arg != RegisterServiceFlag)
-                .Select(EscapeCommandLineArgument)
-                .Append(RunAsServiceFlag);
-
-            var host = Process.GetCurrentProcess().MainModule.FileName;
-
-            if (!host.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase))
-            {
-                // For self-contained apps, skip the dll path
-                remainingArgs = remainingArgs.Skip(1);
-            }
-
-            var fullServiceCommand = host + " " + string.Join(" ", remainingArgs);
-
-            // Do not use LocalSystem in production.. but this is good for demos as LocalSystem will have access to some random git-clone path
-            // Note that when the service is already registered and running, it will be reconfigured but not restarted
-            var serviceDefinition = new ServiceDefinitionBuilder(ServiceName)
-                .WithDisplayName(ServiceDisplayName)
-                .WithDescription(ServiceDescription)
-                .WithBinaryPath(fullServiceCommand)
-                .WithCredentials(Win32ServiceCredentials.LocalSystem)
-                .WithAutoStart(true)
-                .Build();
-
-            Console.WriteLine(ServiceName);
-            Console.WriteLine(ServiceDisplayName);
-            Console.WriteLine(ServiceDescription);
-            Console.WriteLine(fullServiceCommand);
-
-            new Win32ServiceManager().CreateOrUpdateService(serviceDefinition, startImmediately: true);
-
-            Console.WriteLine($@"Successfully registered and started service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
+            if (args.Contains(RunAsServiceFlag)) DisableConsoleLog();
+            else if (args.Contains(RunAsSystemServiceFlag)) DisableConsoleLog();
         }
 
         private static void UnRegisterService()
         {
-            new Win32ServiceManager()
-                .DeleteService(ServiceName);
+            new Win32ServiceManager().DeleteService(ServiceName);
 
-            Console.WriteLine($@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
-        }
-
-        private static string EscapeCommandLineArgument(string arg)
-        {
-            // http://stackoverflow.com/a/6040946/784387
-            arg = Regex.Replace(arg, @"(\\*)" + "\"", @"$1$1\" + "\"");
-            arg = "\"" + Regex.Replace(arg, @"(\\+)$", @"$1$1") + "\"";
-            return arg;
-        }
-
-        private static void DisableConsoleLog()
-        {
-            LogManager.Configuration.RemoveTarget("console");
-            LogManager.Configuration.Reload();
+            Console.WriteLine(
+                $@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
     }
 }

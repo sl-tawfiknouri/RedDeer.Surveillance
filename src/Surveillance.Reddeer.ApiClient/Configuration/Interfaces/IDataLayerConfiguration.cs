@@ -1,11 +1,13 @@
-﻿using Infrastructure.Network.Aws.Interfaces;
-
-namespace Surveillance.Reddeer.ApiClient.Configuration.Interfaces
+﻿namespace Surveillance.Reddeer.ApiClient.Configuration.Interfaces
 {
+    using Infrastructure.Network.Aws.Interfaces;
+
     public interface IApiClientConfiguration : IAwsConfiguration
     {
-        string SurveillanceUserApiAccessToken { get; set; }
-        string ClientServiceUrl { get; set; }
         string BmllServiceUrl { get; set; }
+
+        string ClientServiceUrl { get; set; }
+
+        string SurveillanceUserApiAccessToken { get; set; }
     }
 }

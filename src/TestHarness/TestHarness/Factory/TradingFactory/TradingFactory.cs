@@ -1,51 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.Heartbeat;
-using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator;
-using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-using TestHarness.Factory.EquitiesFactory.Interfaces;
-using TestHarness.Factory.TradingFactory.Interfaces;
-using ICompleteSelector = TestHarness.Factory.TradingFactory.Interfaces.ICompleteSelector;
-
-namespace TestHarness.Factory.TradingFactory
+﻿namespace TestHarness.Factory.TradingFactory
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.Heartbeat;
+    using TestHarness.Engine.Heartbeat.Interfaces;
+    using TestHarness.Engine.OrderGenerator;
+    using TestHarness.Engine.OrderGenerator.Interfaces;
+    using TestHarness.Engine.OrderGenerator.Strategies;
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+    using TestHarness.Factory.EquitiesFactory.Interfaces;
+    using TestHarness.Factory.TradingFactory.Interfaces;
+
+    using ICompleteSelector = TestHarness.Factory.TradingFactory.Interfaces.ICompleteSelector;
+
     /// <summary>
-    /// Keep the complexity of building these objects
-    /// inside of factories or it will spread throughout the application
+    ///     Keep the complexity of building these objects
+    ///     inside of factories or it will spread throughout the application
     /// </summary>
-    public class TradingFactory 
-        : ITradingFactory, 
-        ITradingFactoryHeartbeatOrMarketUpdateSelector,
-        ITradingFactoryHeartbeatSelector,
-        ITradingFactoryVolumeStrategySelector,
-        ITradingFactoryFilterStrategySelector,
-        ICompleteSelector
+    public class TradingFactory : ITradingFactory,
+                                  ITradingFactoryHeartbeatOrMarketUpdateSelector,
+                                  ITradingFactoryHeartbeatSelector,
+                                  ITradingFactoryVolumeStrategySelector,
+                                  ITradingFactoryFilterStrategySelector,
+                                  ICompleteSelector
     {
         private readonly ILogger _logger;
-
-        // trade process selection
-        private bool _heartbeatSelected;
-        private bool _marketUpdateSelected;
 
         // heartbeat selection
         private IHeartbeat _heartbeat;
 
+        // trade process selection
+        private bool _heartbeatSelected;
+
+        private bool _inclusive;
+
+        private bool _marketUpdateSelected;
+
+        private IReadOnlyCollection<string> _sedolFilter;
+
+        private readonly IStockExchangeStreamFactory _streamFactory;
+
         // volume strategy
         private ITradeVolumeStrategy _volumeStrategy;
 
-        private IStockExchangeStreamFactory _streamFactory;
-        private IReadOnlyCollection<string> _sedolFilter;
-        private bool _inclusive;
-
         public TradingFactory(IStockExchangeStreamFactory streamFactory, ILogger logger)
         {
-            _streamFactory = streamFactory ?? throw new ArgumentNullException(nameof(streamFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._streamFactory = streamFactory ?? throw new ArgumentNullException(nameof(streamFactory));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public ITradingFactoryHeartbeatOrMarketUpdateSelector Create()
@@ -53,91 +58,96 @@ namespace TestHarness.Factory.TradingFactory
             return this;
         }
 
-        // Trading update process selector
-        public ITradingFactoryVolumeStrategySelector MarketUpdate()
+        // Assemble choices
+        public IOrderDataGenerator Finish()
         {
-            _marketUpdateSelected = true;
-            return this;
+            if (this._heartbeatSelected)
+            {
+                var strategy = new MarkovTradeStrategy(this._logger, this._volumeStrategy);
+                IOrderDataGenerator process = new TradingHeartBeatDrivenProcess(
+                    this._logger,
+                    strategy,
+                    this._heartbeat);
+
+                if (this._sedolFilter != null && this._sedolFilter.Any())
+                    process = new OrderDataGeneratorSedolFilteringDecorator(
+                        this._streamFactory,
+                        process,
+                        this._sedolFilter,
+                        this._inclusive);
+
+                return process;
+            }
+
+            if (this._marketUpdateSelected)
+            {
+                var strategy = new MarkovTradeStrategy(this._logger, this._volumeStrategy);
+                IOrderDataGenerator process = new TradingMarketUpdateDrivenProcess(this._logger, strategy);
+
+                if (this._sedolFilter != null && this._sedolFilter.Any())
+                    process = new OrderDataGeneratorSedolFilteringDecorator(
+                        this._streamFactory,
+                        process,
+                        this._sedolFilter,
+                        this._inclusive);
+
+                return process;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(this._marketUpdateSelected));
         }
 
         public ITradingFactoryHeartbeatSelector Heartbeat()
         {
-            _heartbeatSelected = true;
+            this._heartbeatSelected = true;
+            return this;
+        }
+
+        public ITradingFactoryVolumeStrategySelector Irregular(TimeSpan frequency, int sd)
+        {
+            this._heartbeat = new IrregularHeartbeat(frequency, sd);
+            return this;
+        }
+
+        // Trading update process selector
+        public ITradingFactoryVolumeStrategySelector MarketUpdate()
+        {
+            this._marketUpdateSelected = true;
             return this;
         }
 
         // Heartbeat details
         public ITradingFactoryVolumeStrategySelector Regular(TimeSpan frequency)
         {
-            _heartbeat = new Heartbeat(frequency);
+            this._heartbeat = new Heartbeat(frequency);
             return this;
         }
 
-        public ITradingFactoryVolumeStrategySelector Irregular(TimeSpan frequency, int sd)
+        public ICompleteSelector SetFilterNone()
         {
-            _heartbeat = new IrregularHeartbeat(frequency, sd);
-            return this;
-        }
-        
-        // Trading volume picker
-        public ITradingFactoryFilterStrategySelector TradingFixedVolume(int fixedVolume)
-        {
-            _volumeStrategy = new TradeVolumeFixedStrategy(fixedVolume);
-            return this;
-        }
-
-        public ITradingFactoryFilterStrategySelector TradingNormalDistributionVolume(int sd)
-        {
-            _volumeStrategy = new TradeVolumeNormalDistributionStrategy(sd);
+            this._sedolFilter = new List<string>();
             return this;
         }
 
         // Sedol filter selector
         public ICompleteSelector SetFilterSedol(IReadOnlyCollection<string> sedols, bool inclusive)
         {
-            _sedolFilter = sedols ?? new List<string>();
-            _inclusive = inclusive;
+            this._sedolFilter = sedols ?? new List<string>();
+            this._inclusive = inclusive;
             return this;
         }
 
-        public ICompleteSelector SetFilterNone()
+        // Trading volume picker
+        public ITradingFactoryFilterStrategySelector TradingFixedVolume(int fixedVolume)
         {
-            _sedolFilter = new List<string>();
+            this._volumeStrategy = new TradeVolumeFixedStrategy(fixedVolume);
             return this;
         }
 
-        // Assemble choices
-        public IOrderDataGenerator Finish()
+        public ITradingFactoryFilterStrategySelector TradingNormalDistributionVolume(int sd)
         {
-            if (_heartbeatSelected)
-            {
-                var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
-                IOrderDataGenerator process = new TradingHeartBeatDrivenProcess(_logger, strategy, _heartbeat);
-
-                if (this._sedolFilter != null
-                    && this._sedolFilter.Any())
-                {
-                    process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
-                }
-
-                return process;
-            }
-
-            if (_marketUpdateSelected)
-            {
-                var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
-                IOrderDataGenerator process = new TradingMarketUpdateDrivenProcess(_logger, strategy);
-
-                if (this._sedolFilter != null
-                    && this._sedolFilter.Any())
-                {
-                    process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
-                }
-
-                return process;
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(_marketUpdateSelected));
+            this._volumeStrategy = new TradeVolumeNormalDistributionStrategy(sd);
+            return this;
         }
     }
 }

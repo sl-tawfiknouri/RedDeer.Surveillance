@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Subscribers;
-
-namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
+﻿namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
 {
+    using System;
+    using System.Collections.Generic;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Universe;
+    using Surveillance.Engine.Rules.Universe.Subscribers;
+
     [TestFixture]
     public class UniversePercentageOfEventCompletionLoggerTests
     {
         private ILogger<UniversePercentageOfEventCompletionLogger> _logger;
-
-        [SetUp]
-        public void Setup()
-        {
-            _logger = A.Fake<ILogger<UniversePercentageOfEventCompletionLogger>>();
-        }
 
         [Test]
         [Explicit]
@@ -34,30 +30,35 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
             var event7 = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow.AddMinutes(6), new object());
             var event8 = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow.AddMinutes(7), new object());
             var event9 = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow.AddMinutes(8), new object());
-            var event10 = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow.AddMinutes(9),new object());
-
+            var event10 = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow.AddMinutes(9), new object());
 
             var universeEvents = new List<UniverseEvent>
-            {
-                event1,
-                event2,
-                event3,
-                event4,
-                event5,
-                event6,
-                event7,
-                event8,
-                event9,
-                event10,
-            };
+                                     {
+                                         event1,
+                                         event2,
+                                         event3,
+                                         event4,
+                                         event5,
+                                         event6,
+                                         event7,
+                                         event8,
+                                         event9,
+                                         event10
+                                     };
 
-            var loggerUniverse = new Engine.Rules.Universe.Universe(universeEvents);
+            var loggerUniverse = new Universe(universeEvents);
 
-            var logger = new UniversePercentageOfEventCompletionLogger(_logger);
+            var logger = new UniversePercentageOfEventCompletionLogger(this._logger);
             logger.InitiateEventLogger(loggerUniverse);
 
             foreach (var item in universeEvents)
                 logger.OnNext(item);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._logger = A.Fake<ILogger<UniversePercentageOfEventCompletionLogger>>();
         }
     }
 }

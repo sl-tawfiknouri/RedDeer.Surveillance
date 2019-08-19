@@ -1,14 +1,32 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class ProcessOperationNode : Node<ProcessOperationNode>
     {
-        public ProcessOperationNode(Parent parent) : base(parent) { }
+        public ProcessOperationNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public ProcessOperationNode FieldId() => AddField("id");
-        public ProcessOperationNode FieldOperationStart() => AddField("operationStart");
-        public ProcessOperationNode FieldOperationEnd() => AddField("operationEnd");
-        public ProcessOperationNode FieldOperationState() => AddField("operationState");
+        public ProcessOperationNode FieldId()
+        {
+            return this.AddField("id");
+        }
+
+        public ProcessOperationNode FieldOperationEnd()
+        {
+            return this.AddField("operationEnd");
+        }
+
+        public ProcessOperationNode FieldOperationStart()
+        {
+            return this.AddField("operationStart");
+        }
+
+        public ProcessOperationNode FieldOperationState()
+        {
+            return this.AddField("operationState");
+        }
     }
 }

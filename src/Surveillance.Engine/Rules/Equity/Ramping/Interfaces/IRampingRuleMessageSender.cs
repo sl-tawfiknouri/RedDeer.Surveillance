@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface IRampingRuleMessageSender
     {
-        Task Send(IRampingRuleBreach breach);
         int Flush();
+
+        Task Send(IRampingRuleBreach breach);
     }
 }

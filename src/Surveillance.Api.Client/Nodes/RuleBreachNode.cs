@@ -1,24 +1,82 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class RuleBreachNode : Node<RuleBreachNode>
     {
-        public RuleBreachNode(Parent parent) : base(parent) {}
+        public RuleBreachNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public RuleBreachNode FieldId() => AddField("id");
-        public RuleBreachNode FieldStartOfPeriodUnderInvestigation() => AddField("startOfPeriodUnderInvestigation");
-        public RuleBreachNode FieldEndOfPeriodUnderInvestigation() => AddField("endOfPeriodUnderInvestigation");
-        public RuleBreachNode FieldReddeerEnrichmentId() => AddField("reddeerEnrichmentId");
-        public RuleBreachNode FieldTitle() => AddField("title");
-        public RuleBreachNode FieldDescription() => AddField("description");
-        public RuleBreachNode FieldVenue() => AddField("venue");
-        public RuleBreachNode FieldAssetCfi() => AddField("assetCfi");
-        public RuleBreachNode FieldCreatedOn() => AddField("createdOn");
-        public RuleBreachNode FieldRuleId() => AddField("ruleId");
-        public RuleBreachNode FieldCorrelationId() => AddField("correlationId");
-        public RuleBreachNode FieldIsBackTest() => AddField("isBackTest");
-        public RuleBreachNode FieldSystemOperationId() => AddField("systemOperationId");
-        public OrderNode FieldOrders() => AddChild("orders", new OrderNode(this));
+        public RuleBreachNode FieldAssetCfi()
+        {
+            return this.AddField("assetCfi");
+        }
+
+        public RuleBreachNode FieldCorrelationId()
+        {
+            return this.AddField("correlationId");
+        }
+
+        public RuleBreachNode FieldCreatedOn()
+        {
+            return this.AddField("createdOn");
+        }
+
+        public RuleBreachNode FieldDescription()
+        {
+            return this.AddField("description");
+        }
+
+        public RuleBreachNode FieldEndOfPeriodUnderInvestigation()
+        {
+            return this.AddField("endOfPeriodUnderInvestigation");
+        }
+
+        public RuleBreachNode FieldId()
+        {
+            return this.AddField("id");
+        }
+
+        public RuleBreachNode FieldIsBackTest()
+        {
+            return this.AddField("isBackTest");
+        }
+
+        public OrderNode FieldOrders()
+        {
+            return this.AddChild("orders", new OrderNode(this));
+        }
+
+        public RuleBreachNode FieldReddeerEnrichmentId()
+        {
+            return this.AddField("reddeerEnrichmentId");
+        }
+
+        public RuleBreachNode FieldRuleId()
+        {
+            return this.AddField("ruleId");
+        }
+
+        public RuleBreachNode FieldStartOfPeriodUnderInvestigation()
+        {
+            return this.AddField("startOfPeriodUnderInvestigation");
+        }
+
+        public RuleBreachNode FieldSystemOperationId()
+        {
+            return this.AddField("systemOperationId");
+        }
+
+        public RuleBreachNode FieldTitle()
+        {
+            return this.AddField("title");
+        }
+
+        public RuleBreachNode FieldVenue()
+        {
+            return this.AddField("venue");
+        }
     }
 }

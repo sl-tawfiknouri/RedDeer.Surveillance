@@ -1,8 +1,9 @@
-﻿using Domain.Core.Extensions;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Extensions
+﻿namespace Domain.Core.Tests.Extensions
 {
+    using Domain.Core.Extensions;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class CultureInfoConstantsTests
     {

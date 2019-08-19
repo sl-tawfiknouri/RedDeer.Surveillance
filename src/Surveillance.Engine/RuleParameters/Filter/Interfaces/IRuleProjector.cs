@@ -1,7 +1,9 @@
 ﻿namespace Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces
 {
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
     public interface IRuleProjector
     {
-        RuleFilter Project(RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter filter);
+        RuleFilter Project(Filter filter);
     }
 }

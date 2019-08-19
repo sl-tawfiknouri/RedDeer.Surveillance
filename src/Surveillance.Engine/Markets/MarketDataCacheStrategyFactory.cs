@@ -1,7 +1,7 @@
-﻿using Surveillance.Engine.Rules.Markets.Interfaces;
-
-namespace Surveillance.Engine.Rules.Markets
+﻿namespace Surveillance.Engine.Rules.Markets
 {
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+
     public class MarketDataCacheStrategyFactory : IMarketDataCacheStrategyFactory
     {
         public IMarketDataCacheStrategy InterdayStrategy(IUniverseEquityInterDayCache cache)

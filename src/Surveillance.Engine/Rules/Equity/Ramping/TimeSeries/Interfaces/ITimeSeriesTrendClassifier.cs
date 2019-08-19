@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Core.Financial.Assets.Interfaces;
-using Domain.Core.Markets.Timebars;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Core.Financial.Assets.Interfaces;
+    using Domain.Core.Markets.Timebars;
+
     public interface ITimeSeriesTrendClassifier
     {
         ITimeSeriesTrendClassification Classify(

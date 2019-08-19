@@ -1,11 +1,14 @@
-﻿using System.Linq;
-using Amazon.S3.Util;
-using Amazon.SimpleNotificationService.Util;
-using DataImport.S3_IO.Interfaces;
-using Newtonsoft.Json;
-
-namespace DataImport.S3_IO
+﻿namespace DataImport.S3_IO
 {
+    using System.Linq;
+
+    using Amazon.S3.Util;
+    using Amazon.SimpleNotificationService.Util;
+
+    using DataImport.S3_IO.Interfaces;
+
+    using Newtonsoft.Json;
+
     public class FileUploadMessageMapper : IFileUploadMessageMapper
     {
         public FileUploadMessageDto Map(string json)
@@ -15,12 +18,12 @@ namespace DataImport.S3_IO
             var record = s3Event.Records.Single();
 
             return new FileUploadMessageDto
-            {
-                FileName = record.S3.Object.Key,
-                FileSize = record.S3.Object.Size,
-                VersionId = record.S3.Object.VersionId,
-                Bucket = record.S3.Bucket.Name
-            };
+                       {
+                           FileName = record.S3.Object.Key,
+                           FileSize = record.S3.Object.Size,
+                           VersionId = record.S3.Object.VersionId,
+                           Bucket = record.S3.Bucket.Name
+                       };
         }
     }
 }

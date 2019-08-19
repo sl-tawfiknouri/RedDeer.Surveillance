@@ -1,22 +1,14 @@
-﻿using Domain.Core.Financial.Assets;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Financial.Assets
+﻿namespace Domain.Core.Tests.Financial.Assets
 {
+    using Domain.Core.Financial.Assets;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class FinancialInstrumentTests
     {
-        [Test]
-        public void FinancialInstruments_MustHaveA_ParameterLessConstructor()
-        {
-            // do not remove this
-
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.DoesNotThrow(() => new FinancialInstrument());
-        }
-
         /// <summary>
-        /// Not a great test but this is a value type (DDD) i.e. just holds data
+        ///     Not a great test but this is a value type (DDD) i.e. just holds data
         /// </summary>
         [Test]
         public void FinancialInstruments_Ctor_AssignsValuesCorrectly()
@@ -35,21 +27,20 @@ namespace Domain.Core.Tests.Financial.Assets
             var regCode = "reg-100";
             var countryCode = "count-100";
 
-            var fi =
-                new FinancialInstrument(
-                    instrument,
-                    identifiers,
-                    name,
-                    cfi,
-                    currency,
-                    issuerId,
-                    underlyingName,
-                    underlyingCfi,
-                    underlyingIssuerId,
-                    sectorCode,
-                    indCode,
-                    regCode,
-                    countryCode);
+            var fi = new FinancialInstrument(
+                instrument,
+                identifiers,
+                name,
+                cfi,
+                currency,
+                issuerId,
+                underlyingName,
+                underlyingCfi,
+                underlyingIssuerId,
+                sectorCode,
+                indCode,
+                regCode,
+                countryCode);
 
             Assert.AreEqual(fi.Type, instrument);
 
@@ -66,6 +57,15 @@ namespace Domain.Core.Tests.Financial.Assets
             Assert.AreEqual(fi.IndustryCode, indCode);
             Assert.AreEqual(fi.RegionCode, regCode);
             Assert.AreEqual(fi.CountryCode, countryCode);
+        }
+
+        [Test]
+        public void FinancialInstruments_MustHaveA_ParameterLessConstructor()
+        {
+            // do not remove this
+
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.DoesNotThrow(() => new FinancialInstrument());
         }
     }
 }

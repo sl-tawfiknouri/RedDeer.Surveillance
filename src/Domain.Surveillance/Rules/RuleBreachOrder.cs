@@ -4,11 +4,12 @@
     {
         public RuleBreachOrder(string ruleBreachId, string orderId)
         {
-            RuleBreachId = ruleBreachId ?? string.Empty;
-            OrderId = orderId ?? string.Empty;
+            this.RuleBreachId = ruleBreachId ?? string.Empty;
+            this.OrderId = orderId ?? string.Empty;
         }
 
-        public string RuleBreachId { get; }
         public string OrderId { get; }
+
+        public string RuleBreachId { get; }
     }
 }

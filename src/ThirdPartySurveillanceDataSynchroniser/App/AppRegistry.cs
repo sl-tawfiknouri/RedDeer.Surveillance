@@ -1,18 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
-using StructureMap;
-
-namespace DataSynchroniser.App
+﻿namespace DataSynchroniser.App
 {
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Extensions.Logging;
+
+    using StructureMap;
+
     public class AppRegistry : Registry
     {
         public AppRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
-            For(typeof(ILoggerFactory)).Use(loggerFactory);
-            For(typeof(ILogger<>)).Use(typeof(Logger<>));
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<IStartUpTaskRunner>().Use<DataSynchroniserRunner>();
+            this.For<IStartUpTaskRunner>().Use<DataSynchroniserRunner>();
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces
+﻿namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces
 {
+    using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
+
     public interface IHighProfitsEquitySubscriber : IRuleSubscriber
     {
     }

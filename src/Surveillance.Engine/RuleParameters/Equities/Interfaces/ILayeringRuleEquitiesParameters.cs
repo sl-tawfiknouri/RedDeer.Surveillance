@@ -1,12 +1,20 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface ILayeringRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable, IVenueVolumeFilterable
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+
+    public interface ILayeringRuleEquitiesParameters : IFilterableRule,
+                                                       IRuleParameter,
+                                                       IOrganisationalFactorable,
+                                                       IReferenceDataFilterable,
+                                                       IMarketCapFilterable,
+                                                       IVenueVolumeFilterable
     {
-        TimeWindows Windows { get; }
-        decimal? PercentageOfMarketDailyVolume { get; }
-        decimal? PercentageOfMarketWindowVolume { get; }
         bool? CheckForCorrespondingPriceMovement { get; }
+
+        decimal? PercentageOfMarketDailyVolume { get; }
+
+        decimal? PercentageOfMarketWindowVolume { get; }
+
+        TimeWindows Windows { get; }
     }
 }

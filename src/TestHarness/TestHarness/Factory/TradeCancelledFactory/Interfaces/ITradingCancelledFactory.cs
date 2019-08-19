@@ -1,7 +1,7 @@
-﻿using TestHarness.Engine.OrderGenerator.Interfaces;
-
-namespace TestHarness.Factory.TradeCancelledFactory.Interfaces
+﻿namespace TestHarness.Factory.TradeCancelledFactory.Interfaces
 {
+    using TestHarness.Engine.OrderGenerator.Interfaces;
+
     public interface ITradingCancelledFactory
     {
         IOrderDataGenerator Create();

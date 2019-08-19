@@ -1,24 +1,28 @@
-﻿using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
-using RedDeer.Surveillance.App.Interfaces;
-using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
-using StructureMap;
-using Surveillance.Auditing.Context;
-using Surveillance.Auditing.DataLayer.Processes;
-
-namespace RedDeer.Surveillance.App
+﻿namespace RedDeer.Surveillance.App
 {
+    using global::Surveillance.Auditing.Context;
+    using global::Surveillance.Auditing.DataLayer.Processes;
+
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Extensions.Logging;
+
+    using RedDeer.Surveillance.App.Interfaces;
+    using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
+
+    using StructureMap;
+
     public class AppRegistry : Registry
     {
         public AppRegistry()
         {
             SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
             var loggerFactory = new NLogLoggerFactory();
-            For(typeof(ILoggerFactory)).Use(loggerFactory);
-            For(typeof(ILogger<>)).Use(typeof(Logger<>));
-            
-            For<IStartUpTaskRunner>().Use<MediatorBootstrapper>();
-            For<IScriptRunner>().Use<ScriptRunner.ScriptRunner>();
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
+
+            this.For<IStartUpTaskRunner>().Use<MediatorBootstrapper>();
+            this.For<IScriptRunner>().Use<ScriptRunner.ScriptRunner>();
         }
     }
 }

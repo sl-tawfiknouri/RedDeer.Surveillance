@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Surveillance.Api.App.Logging
+﻿namespace Surveillance.Api.App.Logging
 {
+    using Microsoft.Extensions.DependencyInjection;
+
     public static class LoggingServiceCollectionExtensions
     {
         public static IServiceCollection AddRequestResponseLoggingMiddleware(this IServiceCollection services)
-            => services.AddTransient<RequestResponseLoggingMiddleware>();
+        {
+            return services.AddTransient<RequestResponseLoggingMiddleware>();
+        }
     }
 }

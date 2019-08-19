@@ -1,89 +1,138 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories.Equities
+﻿namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+
     [TestFixture]
     public class LayeringFactoryTests
     {
-        private IMarketTradingHoursService _tradingHoursService;
-        private IUniverseMarketCacheFactory _factory;
-        private IUniverseEquityOrderFilterService _orderFilterService;
-        private ILogger<EquityRuleLayeringFactory> _logger;
-        private ILogger<TradingHistoryStack> _tradingLogger;
-
-        private ILayeringRuleEquitiesParameters _equitiesParameters;
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        [SetUp]
-        public void Setup()
-        {
-            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
-            _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
+        private ILayeringRuleEquitiesParameters _equitiesParameters;
 
-            _equitiesParameters = A.Fake<ILayeringRuleEquitiesParameters>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
-        }
+        private IUniverseMarketCacheFactory _factory;
 
-        [Test]
-        public void Constructor_ConsidersNullOrderFilter_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(null, _tradingHoursService, _factory, _logger, _tradingLogger));
-        }
+        private ILogger<EquityRuleLayeringFactory> _logger;
+
+        private IUniverseEquityOrderFilterService _orderFilterService;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private IMarketTradingHoursService _tradingHoursService;
+
+        private ILogger<TradingHistoryStack> _tradingLogger;
 
         [Test]
-        public void Constructor_ConsidersNullMarketTradingHoursManager_Throws_Exception()
+        public void Build_Returns_Non_Null_Layering_Rule()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, null, _factory, _logger, _tradingLogger));
-        }
+            var ruleFactory = new EquityRuleLayeringFactory(
+                this._orderFilterService,
+                this._tradingHoursService,
+                this._factory,
+                this._logger,
+                this._tradingLogger);
 
-        [Test]
-        public void Constructor_ConsidersNullUniverseMarketCacheFactory_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, null, _logger, _tradingLogger));
+            var result = ruleFactory.Build(
+                this._equitiesParameters,
+                this._ruleCtx,
+                this._alertStream,
+                RuleRunMode.ForceRun);
+
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleLayeringFactory(
+                    this._orderFilterService,
+                    this._tradingHoursService,
+                    this._factory,
+                    null,
+                    this._tradingLogger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNullMarketTradingHoursManager_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleLayeringFactory(
+                    this._orderFilterService,
+                    null,
+                    this._factory,
+                    this._logger,
+                    this._tradingLogger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNullOrderFilter_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleLayeringFactory(
+                    null,
+                    this._tradingHoursService,
+                    this._factory,
+                    this._logger,
+                    this._tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullTradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, _logger, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleLayeringFactory(
+                    this._orderFilterService,
+                    this._tradingHoursService,
+                    this._factory,
+                    this._logger,
+                    null));
         }
 
         [Test]
-        public void Build_Returns_Non_Null_Layering_Rule()
+        public void Constructor_ConsidersNullUniverseMarketCacheFactory_Throws_Exception()
         {
-            var ruleFactory = new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, _logger, _tradingLogger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleLayeringFactory(
+                    this._orderFilterService,
+                    this._tradingHoursService,
+                    null,
+                    this._logger,
+                    this._tradingLogger));
+        }
 
-            var result = ruleFactory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+        [SetUp]
+        public void Setup()
+        {
+            this._tradingHoursService = A.Fake<IMarketTradingHoursService>();
+            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
+            this._tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            Assert.IsNotNull(result);
+            this._equitiesParameters = A.Fake<ILayeringRuleEquitiesParameters>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
         }
     }
 }

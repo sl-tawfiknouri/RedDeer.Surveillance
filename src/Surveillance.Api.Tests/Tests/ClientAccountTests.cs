@@ -1,40 +1,32 @@
-﻿using NUnit.Framework;
-using RedDeer.Surveillance.Api.Client.Queries;
-using Surveillance.Api.DataAccess.Entities;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Surveillance.Api.Tests.Tests
+﻿namespace Surveillance.Api.Tests.Tests
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using NUnit.Framework;
+
+    using RedDeer.Surveillance.Api.Client.Queries;
+
+    using Surveillance.Api.DataAccess.Entities;
+
     public class ClientAccountTests : BaseTest
     {
         [Test]
         public async Task CanRequest_ClientAccount_AllFields()
         {
             // arrange
-            _dbContext.DbOrderAllocations.Add(new OrdersAllocation
-            {
-                Id = 1,
-                Live = true,
-                ClientAccountId = "client account id 1",
-            });
-            _dbContext.DbOrderAllocations.Add(new OrdersAllocation
-            {
-                Id = 2,
-                Live = true,
-                ClientAccountId = "client account id 1",
-            });
+            this._dbContext.DbOrderAllocations.Add(
+                new OrdersAllocation { Id = 1, Live = true, ClientAccountId = "client account id 1" });
+            this._dbContext.DbOrderAllocations.Add(
+                new OrdersAllocation { Id = 2, Live = true, ClientAccountId = "client account id 1" });
 
-            await _dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync();
 
             var query = new ClientAccountQuery();
-            query
-                .Filter
-                    .Node
-                        .FieldId();
+            query.Filter.Node.FieldId();
 
             // act
-            var clientAccounts = await _apiClient.QueryAsync(query, CancellationToken.None);
+            var clientAccounts = await this._apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
             Assert.That(clientAccounts, Has.Count.EqualTo(1));

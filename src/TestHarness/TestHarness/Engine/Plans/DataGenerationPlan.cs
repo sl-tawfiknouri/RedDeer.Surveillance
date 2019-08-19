@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace TestHarness.Engine.Plans
+﻿namespace TestHarness.Engine.Plans
 {
+    using System;
+
     public class DataGenerationPlan
     {
-        public DataGenerationPlan(
-            string sedol,
-            IntervalEquityPriceInstruction equityInstructions)
+        public DataGenerationPlan(string sedol, IntervalEquityPriceInstruction equityInstructions)
         {
-            Sedol = sedol ?? string.Empty;
-            EquityInstructions = equityInstructions ?? throw new ArgumentNullException(nameof(equityInstructions));
+            this.Sedol = sedol ?? string.Empty;
+            this.EquityInstructions = equityInstructions ?? throw new ArgumentNullException(nameof(equityInstructions));
         }
 
-        public string Sedol { get; }
-
         public IntervalEquityPriceInstruction EquityInstructions { get; }
+
+        public string Sedol { get; }
     }
 }

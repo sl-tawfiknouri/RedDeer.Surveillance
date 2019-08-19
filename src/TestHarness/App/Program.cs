@@ -1,13 +1,27 @@
-﻿using System.Threading;
-using Microsoft.Extensions.Configuration;
-using NLog;
-
-namespace TestHarness.App
+﻿namespace TestHarness.App
 {
+    using System.Threading;
+
+    using Microsoft.Extensions.Configuration;
+
+    using NLog;
+
+    using TestHarness.Configuration;
+
     public class Program
     {
+        private static Configuration BuildConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true).Build();
+
+            var config = ConfigurationHelper.BuildNetworkConfiguration(configurationBuilder);
+
+            return config;
+        }
+
         // ReSharper disable once UnusedParameter.Local
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var networkConfiguration = BuildConfiguration();
 
@@ -15,18 +29,6 @@ namespace TestHarness.App
             Bootstrapper.Start(networkConfiguration);
 
             Thread.Sleep(50);
-        }
-
-        private static Configuration.Configuration BuildConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-
-            var config = ConfigurationHelper.BuildNetworkConfiguration(configurationBuilder);
-
-            return config;
         }
     }
 }

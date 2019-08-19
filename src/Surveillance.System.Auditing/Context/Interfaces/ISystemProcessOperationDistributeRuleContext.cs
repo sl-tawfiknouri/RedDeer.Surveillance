@@ -1,10 +1,15 @@
 ﻿namespace Surveillance.Auditing.Context.Interfaces
 {
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+
     public interface ISystemProcessOperationDistributeRuleContext
     {
-        ISystemProcessOperationContext EndEvent();
-        void StartEvent(DataLayer.Processes.Interfaces.ISystemProcessOperationDistributeRule distributeRule);
-        void EventError(string message);
         string Id { get; }
+
+        ISystemProcessOperationContext EndEvent();
+
+        void EventError(string message);
+
+        void StartEvent(ISystemProcessOperationDistributeRule distributeRule);
     }
 }

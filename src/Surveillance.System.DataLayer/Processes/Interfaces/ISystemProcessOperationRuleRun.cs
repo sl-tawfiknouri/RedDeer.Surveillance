@@ -1,20 +1,31 @@
-﻿using System;
-
-namespace Surveillance.Auditing.DataLayer.Processes.Interfaces
+﻿namespace Surveillance.Auditing.DataLayer.Processes.Interfaces
 {
+    using System;
+
     public interface ISystemProcessOperationRuleRun
     {
-        int Id { get; set; }
         string CorrelationId { get; set; }
-        string SystemProcessId { get; set; }
-        int SystemProcessOperationId { get; set; }
-        string RuleDescription { get; set; }
-        DateTime? ScheduleRuleStart { get; set; }
-        DateTime? ScheduleRuleEnd { get; set; }
-        string RuleVersion { get; set; }
-        string RuleParameterId { get; set; }
-        int RuleTypeId { get; set; }
+
+        int Id { get; set; }
+
         bool IsBackTest { get; set; }
+
         bool IsForceRun { get; set; }
+
+        string RuleDescription { get; set; }
+
+        string RuleParameterId { get; set; }
+
+        int RuleTypeId { get; set; }
+
+        string RuleVersion { get; set; }
+
+        DateTime? ScheduleRuleEnd { get; set; }
+
+        DateTime? ScheduleRuleStart { get; set; }
+
+        string SystemProcessId { get; set; }
+
+        int SystemProcessOperationId { get; set; }
     }
 }

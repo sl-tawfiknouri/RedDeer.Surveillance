@@ -1,26 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Interfaces;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Interfaces;
+    using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     public class TradingSpoofingProcess : BaseTradingProcess
     {
-        private readonly object _lock = new object();
-        private readonly IReadOnlyCollection<string> _spoofingTargetSedols;
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
 
-        private bool _hasProcessedSpoofingBreaches;
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+
+        private readonly object _lock = new object();
+
+        private readonly IReadOnlyCollection<string> _spoofingTargetSedols;
+
         private DateTime? _executeOn;
+
+        private bool _hasProcessedSpoofingBreaches;
 
         public TradingSpoofingProcess(
             IReadOnlyCollection<string> spoofingTargetSedols,
@@ -28,81 +35,73 @@ namespace TestHarness.Engine.OrderGenerator
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            _spoofingTargetSedols =
-                spoofingTargetSedols
-                    ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
-                    ?.ToList()
-                ?? new List<string>();
+            this._spoofingTargetSedols = spoofingTargetSedols?.Where(cts => !string.IsNullOrWhiteSpace(cts))?.ToList()
+                                         ?? new List<string>();
 
-            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
+            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
         }
-
-        protected override void _InitiateTrading()
-        { }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
-            if (value == null)
+            if (value == null) return;
+
+            this._intraDayHistoryStack.Add(value, value.Epoch);
+
+            if (this._executeOn == null)
             {
+                this._executeOn = value.Epoch.Add(this._executePoint);
                 return;
             }
 
-            _intraDayHistoryStack.Add(value, value.Epoch);
+            if (this._hasProcessedSpoofingBreaches) return;
 
-            if (_executeOn == null)
+            lock (this._lock)
             {
-                _executeOn = value.Epoch.Add(_executePoint);
-                return;
-            }
+                if (this._hasProcessedSpoofingBreaches) return;
 
-            if (_hasProcessedSpoofingBreaches)
-            {
-                return;
-            }
+                if (value.Epoch < this._executeOn.Value) return;
 
-            lock (_lock)
-            {
-                if (_hasProcessedSpoofingBreaches)
-                {
-                    return;
-                }
-
-                if (value.Epoch < _executeOn.Value)
-                {
-                    return;
-                }
-
-                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
+                this._intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = this._intraDayHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
-                foreach (var sedol in _spoofingTargetSedols)
+                foreach (var sedol in this._spoofingTargetSedols)
                 {
                     switch (i)
                     {
                         case 0:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 10);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 10);
                             break;
                         case 1:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 7);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 7);
                             break;
                         case 2:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 5);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 5);
                             break;
                         case 3:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 4);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 4);
                             break;
                         case 4:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 3);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 3);
                             break;
                         case 5:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 2);
+                            this.CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 2);
                             break;
                     }
+
                     i++;
                 }
-                _hasProcessedSpoofingBreaches = true;
+
+                this._hasProcessedSpoofingBreaches = true;
             }
+        }
+
+        protected override void _InitiateTrading()
+        {
+        }
+
+        protected override void _TerminateTradingStrategy()
+        {
         }
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
@@ -111,40 +110,28 @@ namespace TestHarness.Engine.OrderGenerator
             EquityIntraDayTimeBarCollection latestFrame,
             int cancelledTrades)
         {
-            if (string.IsNullOrWhiteSpace(sedol))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(sedol)) return;
 
-            var securities =
-                frames
-                .SelectMany(frame =>
-                    frame.Securities.Where(sec =>
-                        string.Equals(
-                            sec?.Security.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase)))
-                .ToList();
+            var securities = frames.SelectMany(
+                frame => frame.Securities.Where(
+                    sec => string.Equals(
+                        sec?.Security.Identifiers.Sedol,
+                        sedol,
+                        StringComparison.InvariantCultureIgnoreCase))).ToList();
 
-            var headSecurity =
-                latestFrame
-                    .Securities
-                    .FirstOrDefault(fram => 
-                        string.Equals(
-                            fram.Security.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase));
+            var headSecurity = latestFrame.Securities.FirstOrDefault(
+                fram => string.Equals(
+                    fram.Security.Identifiers.Sedol,
+                    sedol,
+                    StringComparison.InvariantCultureIgnoreCase));
 
-            if (!securities.Any())
-            {
-                return;
-            }
+            if (!securities.Any()) return;
 
             // _executeOn
             var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
 
             // select a suitably low % of the traded volume
-            tradedVolume = (int)((decimal)tradedVolume * 0.03m);
+            tradedVolume = (int)(tradedVolume * 0.03m);
 
             for (var i = 0; i < cancelledTrades; i++)
             {
@@ -163,8 +150,8 @@ namespace TestHarness.Engine.OrderGenerator
                     tradeTime.AddSeconds(-i),
                     null,
                     null,
-                    i == 0 ? null : (DateTime?) tradeTime.AddSeconds(i),
-                    i == 0 ? (DateTime?) tradeTime.AddSeconds(i) : null,
+                    i == 0 ? null : (DateTime?)tradeTime.AddSeconds(i),
+                    i == 0 ? (DateTime?)tradeTime.AddSeconds(i) : null,
                     i == 0 ? OrderTypes.MARKET : OrderTypes.LIMIT,
                     i == 0 ? OrderDirections.BUY : OrderDirections.SELL,
                     headSecurity.SpreadTimeBar.Price.Currency,
@@ -173,8 +160,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     new Money(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     new Money(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
-                    (int) tradedVolume,
-                    i == 0 ? (int) tradedVolume : 0,
+                    (int)tradedVolume,
+                    i == 0 ? (int)tradedVolume : 0,
                     null,
                     null,
                     null,
@@ -185,11 +172,8 @@ namespace TestHarness.Engine.OrderGenerator
                     OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
-                TradeStream.Add(volumeOrder);
+                this.TradeStream.Add(volumeOrder);
             }
         }
-
-        protected override void _TerminateTradingStrategy()
-        { }
     }
 }

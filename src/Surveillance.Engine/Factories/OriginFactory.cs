@@ -1,8 +1,9 @@
-﻿using System;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-
-namespace Surveillance.Engine.Rules.Factories
+﻿namespace Surveillance.Engine.Rules.Factories
 {
+    using System;
+
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+
     public class OriginFactory : IOriginFactory
     {
         public string Origin()

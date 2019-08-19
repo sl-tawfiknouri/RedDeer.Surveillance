@@ -1,14 +1,16 @@
-﻿using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
 {
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Universe.MarketEvents;
+
     public interface IMarkingTheCloseBreach : IRuleBreach
     {
-        MarketOpenClose MarketClose { get; }
+        VolumeBreach DailyBreach { get; }
+
         IMarkingTheCloseEquitiesParameters EquitiesParameters { get; }
 
-        VolumeBreach DailyBreach { get; }
+        MarketOpenClose MarketClose { get; }
+
         VolumeBreach WindowBreach { get; }
     }
 }

@@ -1,7 +1,7 @@
-﻿using TestHarness.Engine.EquitiesGenerator.Interfaces;
-
-namespace TestHarness.Factory.EquitiesFactory.Interfaces
+﻿namespace TestHarness.Factory.EquitiesFactory.Interfaces
 {
+    using TestHarness.Engine.EquitiesGenerator.Interfaces;
+
     public interface ICompleteSelector
     {
         IEquityDataGenerator Finish();

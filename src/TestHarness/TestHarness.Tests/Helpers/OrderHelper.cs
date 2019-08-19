@@ -1,29 +1,29 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-
-namespace TestHarness.Tests.Helpers
+﻿namespace TestHarness.Tests.Helpers
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
     public static class OrderHelper
     {
         public static Order GetOrder(int? vol = 1000)
         {
             var stock = new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var securityIdentifiers =
-                new InstrumentIdentifiers(
-                    string.Empty,
-                    string.Empty,
-                    "STAN",
-                    "STAN",
-                    "st12345",
-                    "sta123456789",
-                    "stan",
-                    "sta12345",
-                    "stan",
-                    "stan lei",
-                    "stan");
+            var securityIdentifiers = new InstrumentIdentifiers(
+                string.Empty,
+                string.Empty,
+                "STAN",
+                "STAN",
+                "st12345",
+                "sta123456789",
+                "stan",
+                "sta12345",
+                "stan",
+                "stan lei",
+                "stan");
 
             var sec = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -62,7 +62,7 @@ namespace TestHarness.Tests.Helpers
                 "trader one",
                 "clearing-bank",
                 "deal asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.Now, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

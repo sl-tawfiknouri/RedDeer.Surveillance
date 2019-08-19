@@ -1,22 +1,21 @@
-﻿using Domain.Core.Financial.Assets;
-
-namespace DataSynchroniser.Tests.TestHelpers
+﻿namespace DataSynchroniser.Tests.TestHelpers
 {
+    using Domain.Core.Financial.Assets;
+
     public static class Helpers
     {
         public static FinancialInstrument FinancialInstrument()
         {
-            var instrumentIdentifiers =
-                new InstrumentIdentifiers
-                {
-                    Id = "1",
-                    ReddeerId = "1",
-                    ReddeerEnrichmentId = "1",
-                    ClientIdentifier = "abc",
-                    Sedol = "BSJC723",
-                    Isin = "US8825081040",
-                    Cusip = "882508104"
-                };
+            var instrumentIdentifiers = new InstrumentIdentifiers
+                                            {
+                                                Id = "1",
+                                                ReddeerId = "1",
+                                                ReddeerEnrichmentId = "1",
+                                                ClientIdentifier = "abc",
+                                                Sedol = "BSJC723",
+                                                Isin = "US8825081040",
+                                                Cusip = "882508104"
+                                            };
 
             return new FinancialInstrument(
                 InstrumentTypes.Equity,

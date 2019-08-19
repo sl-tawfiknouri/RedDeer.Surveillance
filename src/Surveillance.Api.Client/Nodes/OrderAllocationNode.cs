@@ -1,27 +1,57 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class OrderAllocationNode : Node<OrderAllocationNode>
     {
-        public OrderAllocationNode(Parent parent) : base(parent) { }
+        public OrderAllocationNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public OrderAllocationNode FieldId() => AddField("id");
+        public OrderAllocationNode FieldAutoScheduled()
+        {
+            return this.AddField("autoScheduled");
+        }
 
-        public OrderAllocationNode FieldOrderId() => AddField("orderId");
+        public OrderAllocationNode FieldClientAccountId()
+        {
+            return this.AddField("clientAccountId");
+        }
 
-        public OrderAllocationNode FieldFund() => AddField("fund");
+        public OrderAllocationNode FieldCreatedDate()
+        {
+            return this.AddField("createdDate");
+        }
 
-        public OrderAllocationNode FieldStrategy() => AddField("strategy");
+        public OrderAllocationNode FieldFund()
+        {
+            return this.AddField("fund");
+        }
 
-        public OrderAllocationNode FieldClientAccountId() => AddField("clientAccountId");
+        public OrderAllocationNode FieldId()
+        {
+            return this.AddField("id");
+        }
 
-        public OrderAllocationNode FieldOrderFilledVolume() => AddField("orderFilledVolume");
+        public OrderAllocationNode FieldLive()
+        {
+            return this.AddField("live");
+        }
 
-        public OrderAllocationNode FieldLive() => AddField("live");
+        public OrderAllocationNode FieldOrderFilledVolume()
+        {
+            return this.AddField("orderFilledVolume");
+        }
 
-        public OrderAllocationNode FieldAutoScheduled() => AddField("autoScheduled");
+        public OrderAllocationNode FieldOrderId()
+        {
+            return this.AddField("orderId");
+        }
 
-        public OrderAllocationNode FieldCreatedDate() => AddField("createdDate");
+        public OrderAllocationNode FieldStrategy()
+        {
+            return this.AddField("strategy");
+        }
     }
 }

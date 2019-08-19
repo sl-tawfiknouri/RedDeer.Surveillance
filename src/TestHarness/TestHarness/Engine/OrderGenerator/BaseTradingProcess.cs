@@ -1,109 +1,123 @@
-﻿using System;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Streams.Interfaces;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-// ReSharper disable InconsistentlySynchronizedField
+﻿
 
+// ReSharper disable InconsistentlySynchronizedField
 namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Streams.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.OrderGenerator.Interfaces;
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     /// <summary>
-    /// Equity update driven trading process
+    ///     Equity update driven trading process
     /// </summary>
     public abstract class BaseTradingProcess : IOrderDataGenerator
     {
-        private IDisposable _unsubscriber;
-        protected IStockExchangeStream StockStream;
-        protected IOrderStream<Order> TradeStream;
+        protected readonly ILogger Logger;
+
         protected ITradeStrategy<Order> OrderStrategy;
 
+        protected IStockExchangeStream StockStream;
+
+        protected IOrderStream<Order> TradeStream;
+
         private readonly object _stateTransition = new object();
+
         private volatile bool _generatorExecuting;
 
-        protected readonly ILogger Logger;
+        private IDisposable _unsubscriber;
 
         protected BaseTradingProcess(ILogger logger, ITradeStrategy<Order> orderStrategy)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            OrderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.OrderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
         }
 
         public void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream)
         {
-            lock (_stateTransition)
+            lock (this._stateTransition)
             {
                 if (stockStream == null)
                 {
-                    Logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null stock stream");
+                    this.Logger.Log(
+                        LogLevel.Error,
+                        "Initiation attempt in order data generator with null stock stream");
                     return;
                 }
 
                 if (tradeStream == null)
                 {
-                    Logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null trade stream");
+                    this.Logger.Log(
+                        LogLevel.Error,
+                        "Initiation attempt in order data generator with null trade stream");
                     return;
                 }
 
-                if (_generatorExecuting)
+                if (this._generatorExecuting)
                 {
-                    Logger.LogInformation("Initiating new trading with predecessor active");
-                    _TerminateTrading();
+                    this.Logger.LogInformation("Initiating new trading with predecessor active");
+                    this._TerminateTrading();
                 }
 
-                Logger.LogInformation("Order data generator initiated with new stock stream");
-                StockStream = stockStream;
-                TradeStream = tradeStream;
-                _unsubscriber = stockStream.Subscribe(this);
-                _generatorExecuting = true;
+                this.Logger.LogInformation("Order data generator initiated with new stock stream");
+                this.StockStream = stockStream;
+                this.TradeStream = tradeStream;
+                this._unsubscriber = stockStream.Subscribe(this);
+                this._generatorExecuting = true;
 
-                _InitiateTrading();
+                this._InitiateTrading();
             }
         }
 
-        protected abstract void _InitiateTrading();
-
         public void OnCompleted()
         {
-            Logger.LogInformation("Order data generator received completed message from stock stream. Terminating order data generation");
-            TerminateTrading();
+            this.Logger.LogInformation(
+                "Order data generator received completed message from stock stream. Terminating order data generation");
+            this.TerminateTrading();
         }
 
         public void OnError(Exception error)
         {
-            Logger.LogError(error?.Message);
+            this.Logger.LogError(error?.Message);
         }
 
         public abstract void OnNext(EquityIntraDayTimeBarCollection value);
 
         /// <summary>
-        /// Avoid calling this from inside another state transition
+        ///     Avoid calling this from inside another state transition
         /// </summary>
         public void TerminateTrading()
         {
-            lock (_stateTransition)
+            lock (this._stateTransition)
             {
-                _TerminateTrading();
+                this._TerminateTrading();
             }
         }
 
+        protected abstract void _InitiateTrading();
+
+        protected abstract void _TerminateTradingStrategy();
+
         /// <summary>
-        /// Avoid dead locks with initiation terminating old trades
+        ///     Avoid dead locks with initiation terminating old trades
         /// </summary>
         private void _TerminateTrading()
         {
-            Logger.LogInformation("Order data generator terminating trading");
+            this.Logger.LogInformation("Order data generator terminating trading");
 
-            _unsubscriber?.Dispose();
+            this._unsubscriber?.Dispose();
 
-            StockStream = null;
-            TradeStream = null;
-            _generatorExecuting = false;
+            this.StockStream = null;
+            this.TradeStream = null;
+            this._generatorExecuting = false;
 
-            _TerminateTradingStrategy();
+            this._TerminateTradingStrategy();
         }
-
-        protected abstract void _TerminateTradingStrategy();
     }
 }

@@ -1,29 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Interfaces;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Interfaces;
+    using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     /// <summary>
-    /// Generate a bunch of high volume orders
+    ///     Generate a bunch of high volume orders
     /// </summary>
     public class TradingHighVolumeTradeProcess : BaseTradingProcess
     {
-        private readonly object _lock = new object();
-        private readonly IReadOnlyCollection<string> _highVolumeTargetSedols;
-        private bool _hasProcessedHighVolumeBreaches;
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
 
+        private readonly IReadOnlyCollection<string> _highVolumeTargetSedols;
+
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+
+        private readonly object _lock = new object();
+
         private DateTime? _executeOn;
+
+        private bool _hasProcessedHighVolumeBreaches;
 
         public TradingHighVolumeTradeProcess(
             IReadOnlyCollection<string> cancelTargetSedols,
@@ -31,150 +38,72 @@ namespace TestHarness.Engine.OrderGenerator
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            _highVolumeTargetSedols =
-                cancelTargetSedols
-                    ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
-                    ?.ToList()
-                ?? new List<string>();
-            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(2));
+            this._highVolumeTargetSedols = cancelTargetSedols?.Where(cts => !string.IsNullOrWhiteSpace(cts))?.ToList()
+                                           ?? new List<string>();
+            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(2));
         }
-
-        protected override void _InitiateTrading()
-        { }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
-            if (value == null)
+            if (value == null) return;
+
+            this._intraDayHistoryStack.Add(value, value.Epoch);
+
+            if (this._executeOn == null)
             {
+                this._executeOn = value.Epoch.Add(this._executePoint);
                 return;
             }
 
-            _intraDayHistoryStack.Add(value, value.Epoch);
+            if (this._hasProcessedHighVolumeBreaches) return;
 
-            if (_executeOn == null)
+            lock (this._lock)
             {
-                _executeOn = value.Epoch.Add(_executePoint);
-                return;
-            }
+                if (this._hasProcessedHighVolumeBreaches) return;
 
-            if (_hasProcessedHighVolumeBreaches)
-            {
-                return;
-            }
+                if (value.Epoch < this._executeOn.Value) return;
 
-            lock (_lock)
-            {
-                if (_hasProcessedHighVolumeBreaches)
-                {
-                    return;
-                }
-
-                if (value.Epoch < _executeOn.Value)
-                {
-                    return;
-                }
-
-                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
+                this._intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = this._intraDayHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
-                foreach (var sedol in _highVolumeTargetSedols)
+                foreach (var sedol in this._highVolumeTargetSedols)
                 {
                     switch (i)
                     {
                         case 0:
-                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.8m);
+                            this.CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.8m);
                             break;
                         case 1:
-                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.8m);
+                            this.CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.8m);
                             break;
                         case 2:
-                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.6m);
+                            this.CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.6m);
                             break;
                         case 3:
-                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.6m);
+                            this.CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.6m);
                             break;
                         case 4:
-                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.4m);
+                            this.CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.4m);
                             break;
                         case 5:
-                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.4m);
+                            this.CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.4m);
                             break;
                     }
+
                     i++;
                 }
-                _hasProcessedHighVolumeBreaches = true;
+
+                this._hasProcessedHighVolumeBreaches = true;
             }
         }
 
-        private void CreateHighVolumeTradesForWindowBreachInSedol(
-            string sedol,
-            Stack<EquityIntraDayTimeBarCollection> frames,
-            decimal percentageOfTraded)
+        protected override void _InitiateTrading()
         {
-            if (string.IsNullOrWhiteSpace(sedol))
-            {
-                return;
-            }
+        }
 
-            var securities = 
-                frames
-                .SelectMany(frame =>
-                    frame.Securities.Where(sec => 
-                        string.Equals(
-                            sec?.Security.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase)))
-                .ToList();
-
-            if (!securities.Any())
-            {
-                return;
-            }
-
-            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
-            var headSecurity = securities.FirstOrDefault();
-            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) +1) * 0.2m;
-
-            for (var i = 0; i < 5; i++)
-            {
-                var volume = new Order(
-                    headSecurity.Security,
-                    headSecurity.Market,
-                    null,
-                    Guid.NewGuid().ToString(),
-                    DateTime.UtcNow,    
-                    "order-v1",
-                    "order-v1",
-                    "order-v1",
-                    headSecurity.TimeStamp.AddSeconds(30 * i),
-                    headSecurity.TimeStamp.AddSeconds(30 * i),
-                    null,
-                    null,
-                    null,
-                    headSecurity.TimeStamp.AddSeconds(30 * i),
-                    OrderTypes.MARKET,
-                    OrderDirections.BUY,
-                    headSecurity.SpreadTimeBar.Price.Currency,
-                    headSecurity.SpreadTimeBar.Price.Currency,
-                    OrderCleanDirty.NONE,
-                    null,
-                    new Money(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
-                    new Money(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    OptionEuropeanAmerican.NONE,
-                    new DealerOrder[0]);
-
-                TradeStream.Add(volume);
-            }
+        protected override void _TerminateTradingStrategy()
+        {
         }
 
         private void CreateHighVolumeTradesForDailyBreachInSedol(
@@ -182,26 +111,18 @@ namespace TestHarness.Engine.OrderGenerator
             EquityIntraDayTimeBarCollection frame,
             decimal percentageOfTraded)
         {
-            if (string.IsNullOrWhiteSpace(sedol))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(sedol)) return;
 
-            var securities =
-                frame
-                    .Securities.FirstOrDefault(sec =>
-                        string.Equals(
-                            sec?.Security.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase));
+            var securities = frame.Securities.FirstOrDefault(
+                sec => string.Equals(
+                    sec?.Security.Identifiers.Sedol,
+                    sedol,
+                    StringComparison.InvariantCultureIgnoreCase));
 
-            if (securities == null)
-            {
-                return;
-            }
+            if (securities == null) return;
 
             var tradedVolume = securities.DailySummaryTimeBar.DailyVolume.Traded;
-            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
+            var volumeForBreachesToTrade = (tradedVolume * percentageOfTraded + 1) * 0.2m;
 
             for (var i = 0; i < 5; i++)
             {
@@ -228,8 +149,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     new Money(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     new Money(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
-                    (int) volumeForBreachesToTrade,
-                    (int) volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
                     null,
                     null,
                     null,
@@ -240,11 +161,73 @@ namespace TestHarness.Engine.OrderGenerator
                     OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
-                TradeStream.Add(volume);
+                this.TradeStream.Add(volume);
             }
         }
 
-        protected override void _TerminateTradingStrategy()
-        { }
+        private void CreateHighVolumeTradesForWindowBreachInSedol(
+            string sedol,
+            Stack<EquityIntraDayTimeBarCollection> frames,
+            decimal percentageOfTraded)
+        {
+            if (string.IsNullOrWhiteSpace(sedol)) return;
+
+            var securities = frames.SelectMany(
+                frame => frame.Securities.Where(
+                    sec => string.Equals(
+                        sec?.Security.Identifiers.Sedol,
+                        sedol,
+                        StringComparison.InvariantCultureIgnoreCase))).ToList();
+
+            if (!securities.Any()) return;
+
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
+            var headSecurity = securities.FirstOrDefault();
+            var volumeForBreachesToTrade = (tradedVolume * percentageOfTraded + 1) * 0.2m;
+
+            for (var i = 0; i < 5; i++)
+            {
+                var volume = new Order(
+                    headSecurity.Security,
+                    headSecurity.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
+                    "order-v1",
+                    "order-v1",
+                    "order-v1",
+                    headSecurity.TimeStamp.AddSeconds(30 * i),
+                    headSecurity.TimeStamp.AddSeconds(30 * i),
+                    null,
+                    null,
+                    null,
+                    headSecurity.TimeStamp.AddSeconds(30 * i),
+                    OrderTypes.MARKET,
+                    OrderDirections.BUY,
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.NONE,
+                    null,
+                    new Money(
+                        headSecurity.SpreadTimeBar.Price.Value * 1.05m,
+                        headSecurity.SpreadTimeBar.Price.Currency),
+                    new Money(
+                        headSecurity.SpreadTimeBar.Price.Value * 1.05m,
+                        headSecurity.SpreadTimeBar.Price.Currency),
+                    (int)volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    OptionEuropeanAmerican.NONE,
+                    new DealerOrder[0]);
+
+                this.TradeStream.Add(volume);
+            }
+        }
     }
 }

@@ -1,28 +1,34 @@
-﻿using System;
-using Surveillance.Auditing.Context;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-using Surveillance.Auditing.Factories.Interfaces;
-using Surveillance.Auditing.Logging.Interfaces;
-
-namespace Surveillance.Auditing.Factories
+﻿namespace Surveillance.Auditing.Factories
 {
-    public class SystemProcessOperationDistributeRuleContextFactory : ISystemProcessOperationDistributeRuleContextFactory
+    using System;
+
+    using Surveillance.Auditing.Context;
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+    using Surveillance.Auditing.Factories.Interfaces;
+    using Surveillance.Auditing.Logging.Interfaces;
+
+    public class
+        SystemProcessOperationDistributeRuleContextFactory : ISystemProcessOperationDistributeRuleContextFactory
     {
-        private readonly ISystemProcessOperationDistributeRuleRepository _repository;
         private readonly IOperationLogging _operationLogging;
+
+        private readonly ISystemProcessOperationDistributeRuleRepository _repository;
 
         public SystemProcessOperationDistributeRuleContextFactory(
             ISystemProcessOperationDistributeRuleRepository repository,
             IOperationLogging operationLogging)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this._operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
         public ISystemProcessOperationDistributeRuleContext Build(ISystemProcessOperationContext operationContext)
         {
-            return new SystemProcessOperationDistributeRuleContext(operationContext, _repository, _operationLogging);
+            return new SystemProcessOperationDistributeRuleContext(
+                operationContext,
+                this._repository,
+                this._operationLogging);
         }
     }
 }

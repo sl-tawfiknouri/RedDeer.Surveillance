@@ -1,53 +1,54 @@
-﻿using System;
-using System.Collections.Concurrent;
-using Domain.Surveillance.Streams.Interfaces;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-
-namespace Surveillance.Engine.Rules.Analytics.Streams
+﻿namespace Surveillance.Engine.Rules.Analytics.Streams
 {
+    using System;
+    using System.Collections.Concurrent;
+
+    using Domain.Surveillance.Streams.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+
     public class UniverseAlertStream : IUniverseAlertStream
     {
-        private readonly ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>> _observers;
         private readonly IUnsubscriberFactory<IUniverseAlertEvent> _factory;
+
         private readonly ILogger<UniverseAlertStream> _logger;
+
+        private readonly ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>> _observers;
 
         public UniverseAlertStream(
             IUnsubscriberFactory<IUniverseAlertEvent> unsubscriberFactory,
             ILogger<UniverseAlertStream> logger)
         {
-            _observers = new ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>>();
-            _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._observers =
+                new ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>>();
+            this._factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Add(IUniverseAlertEvent alertEvent)
         {
-            if (alertEvent == null)
-            {
-                return;
-            }
+            if (alertEvent == null) return;
 
-            _logger.LogInformation($"received a new alert for rule {alertEvent.Rule}. Part of rule run {alertEvent.Context?.Id()}");
+            this._logger.LogInformation(
+                $"received a new alert for rule {alertEvent.Rule}. Part of rule run {alertEvent.Context?.Id()}");
 
-            foreach (var sub in _observers)
+            foreach (var sub in this._observers)
                 sub.Value?.OnNext(alertEvent);
         }
 
         public IDisposable Subscribe(IObserver<IUniverseAlertEvent> observer)
         {
-            if (observer == null)
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
+
+            if (!this._observers.ContainsKey(observer))
             {
-                throw new ArgumentNullException(nameof(observer));
+                this._logger.LogInformation($"added a new observer {observer}");
+                this._observers.TryAdd(observer, observer);
             }
 
-            if (!_observers.ContainsKey(observer))
-            {
-                _logger.LogInformation($"added a new observer {observer}");
-                _observers.TryAdd(observer, observer);
-            }
-
-            return _factory.Create(_observers, observer);
+            return this._factory.Create(this._observers, observer);
         }
     }
 }

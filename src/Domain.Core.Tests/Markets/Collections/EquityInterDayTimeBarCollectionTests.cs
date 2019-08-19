@@ -1,21 +1,16 @@
 ﻿namespace Domain.Core.Tests.Markets.Collections
 {
     using System;
+
     using Domain.Core.Markets;
     using Domain.Core.Markets.Collections;
     using Domain.Core.Markets.Timebars;
+
     using NUnit.Framework;
 
     [TestFixture]
     public class EquityInterDayTimeBarCollectionTests
     {
-        [Test]
-        public void Ctor_DoesNotThrow_WithNulls()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.DoesNotThrow(() => new EquityInterDayTimeBarCollection(null, DateTime.UtcNow, null));
-        }
-
         [Test]
         public void Ctor_AssignsVariables_Correctly()
         {
@@ -28,6 +23,13 @@
             Assert.AreEqual(market, coll.Exchange);
             Assert.AreEqual(date, coll.Epoch);
             Assert.AreEqual(timeBars, coll.Securities);
+        }
+
+        [Test]
+        public void Ctor_DoesNotThrow_WithNulls()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.DoesNotThrow(() => new EquityInterDayTimeBarCollection(null, DateTime.UtcNow, null));
         }
 
         [Test]

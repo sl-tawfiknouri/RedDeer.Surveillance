@@ -1,107 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-using TestHarness.Engine.Plans;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+    using TestHarness.Engine.Plans;
+
     public class TradingWashTradeProcess : BaseTradingProcess
     {
-        private readonly DataGenerationPlan _plan;
-        private readonly DateTime _thirdGroupActivation;
         private readonly object _lock = new object();
-        private bool _initialCluster = false;
-        private bool _secondaryCluster = false;
-        private bool _thirdCluster = false;
 
-        public TradingWashTradeProcess(
-            ITradeStrategy<Order> orderStrategy,
-            DataGenerationPlan plan,
-            ILogger logger)
+        private readonly DataGenerationPlan _plan;
+
+        private readonly DateTime _thirdGroupActivation;
+
+        private bool _initialCluster;
+
+        private bool _secondaryCluster;
+
+        private bool _thirdCluster;
+
+        public TradingWashTradeProcess(ITradeStrategy<Order> orderStrategy, DataGenerationPlan plan, ILogger logger)
             : base(logger, orderStrategy)
         {
-            _plan = plan;
-            _thirdGroupActivation = _plan.EquityInstructions.TerminationInUtc.AddHours(4);
+            this._plan = plan;
+            this._thirdGroupActivation = this._plan.EquityInstructions.TerminationInUtc.AddHours(4);
         }
-
-        protected override void _InitiateTrading()
-        { }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
-            if (value == null)
-            {
-                return;
-            }
+            if (value == null) return;
 
-            if (_plan == null)
-            {
-                return;
-            }
+            if (this._plan == null) return;
 
-            lock (_lock)
+            lock (this._lock)
             {
-                if (!_initialCluster
-                && _plan.EquityInstructions.CommencementInUtc <= value.Epoch)
+                if (!this._initialCluster && this._plan.EquityInstructions.CommencementInUtc <= value.Epoch)
                 {
-                    WashTradeInSecurityWithClustering(_plan.Sedol, value, 20);
+                    this.WashTradeInSecurityWithClustering(this._plan.Sedol, value, 20);
 
-                    _initialCluster = true;
+                    this._initialCluster = true;
                     return;
                 }
 
-                if (!_secondaryCluster
-                    && _plan.EquityInstructions.TerminationInUtc <= value.Epoch)
+                if (!this._secondaryCluster && this._plan.EquityInstructions.TerminationInUtc <= value.Epoch)
                 {
-                    WashTradeInSecurityWithClustering(_plan.Sedol, value, 30);
+                    this.WashTradeInSecurityWithClustering(this._plan.Sedol, value, 30);
 
-                    _secondaryCluster = true;
+                    this._secondaryCluster = true;
                     return;
                 }
 
-                if (!_thirdCluster
-                    && _thirdGroupActivation <= value.Epoch)
+                if (!this._thirdCluster && this._thirdGroupActivation <= value.Epoch)
                 {
-                    WashTradeInSecurityWithClustering(_plan.Sedol, value, 20);
+                    this.WashTradeInSecurityWithClustering(this._plan.Sedol, value, 20);
 
-                    _thirdCluster = true;
-                    return;
+                    this._thirdCluster = true;
                 }
             }
+        }
+
+        protected override void _InitiateTrading()
+        {
         }
 
         protected override void _TerminateTradingStrategy()
         {
-
         }
 
-        private void WashTradeInSecurityWithClustering(string sedol, EquityIntraDayTimeBarCollection value, int clusterSize)
+        private void WashTradeInSecurityWithClustering(
+            string sedol,
+            EquityIntraDayTimeBarCollection value,
+            int clusterSize)
         {
-            if (value == null)
-            {
-                return;
-            }
+            if (value == null) return;
 
-            var correctSecurity =
-                value
-                    .Securities
-                    .Where(sec =>
-                        string.Equals(
-                            sec.Security?.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase))
-                    .ToList();
+            var correctSecurity = value.Securities.Where(
+                sec => string.Equals(
+                    sec.Security?.Identifiers.Sedol,
+                    sedol,
+                    StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (!correctSecurity.Any())
-            {
-                return;
-            }
+            if (!correctSecurity.Any()) return;
 
             var security = correctSecurity.FirstOrDefault();
 
@@ -132,8 +120,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
-                    (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
-                    (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
+                    (int)(security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
+                    (int)(security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
                     null,
                     null,
                     null,
@@ -147,10 +135,7 @@ namespace TestHarness.Engine.OrderGenerator
                 frames.Add(frame2);
             }
 
-            foreach (var trade in frames.OrderBy(i => i.MostRecentDateEvent()))
-            {
-                TradeStream.Add(trade);
-            }
+            foreach (var trade in frames.OrderBy(i => i.MostRecentDateEvent())) this.TradeStream.Add(trade);
         }
     }
 }

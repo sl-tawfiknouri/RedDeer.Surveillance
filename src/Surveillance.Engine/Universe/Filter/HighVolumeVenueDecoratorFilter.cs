@@ -1,121 +1,109 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Surveillance.Engine.Rules.RuleParameters;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Filter
+﻿namespace Surveillance.Engine.Rules.Universe.Filter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Surveillance.Engine.Rules.RuleParameters;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     public class HighVolumeVenueDecoratorFilter : IHighVolumeVenueDecoratorFilter
     {
-        private readonly Queue<IUniverseEvent> _universeCache;
-        private readonly TimeWindows _ruleTimeWindows;
-        private DateTime _windowTime;
-        private bool _eschaton;
-        private readonly object _lock = new object();
         private readonly IUniverseFilterService _baseService;
+
         private readonly IHighVolumeVenueFilter _highVolumeVenueFilter;
-        
+
+        private readonly object _lock = new object();
+
+        private readonly TimeWindows _ruleTimeWindows;
+
+        private readonly Queue<IUniverseEvent> _universeCache;
+
+        private bool _eschaton;
+
+        private DateTime _windowTime;
+
         public HighVolumeVenueDecoratorFilter(
             TimeWindows timeWindows,
             IUniverseFilterService baseService,
             IHighVolumeVenueFilter highVolumeVenueFilter)
         {
-            _ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
-            _baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
-            _universeCache = new Queue<IUniverseEvent>();
-            _highVolumeVenueFilter = highVolumeVenueFilter;
+            this._ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
+            this._baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            this._universeCache = new Queue<IUniverseEvent>();
+            this._highVolumeVenueFilter = highVolumeVenueFilter;
         }
 
-        public Domain.Surveillance.Scheduling.Rules Rule => _baseService.Rule;
-        public string Version => _baseService.Version;
+        public Rules Rule => this._baseService.Rule;
 
-        public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
-        {
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (observer == null)
-            {
-                return null;
-            }
-
-            return _baseService.Subscribe(observer);
-        }
+        public string Version => this._baseService.Version;
 
         public void OnCompleted()
         {
-            _baseService.OnCompleted();
+            this._baseService.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _baseService.OnError(error);
+            this._baseService.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
-            if (value == null)
+            if (value == null) return;
+
+            lock (this._lock)
             {
-                return;
+                this._highVolumeVenueFilter.OnNext(value);
+
+                this._universeCache.Enqueue(value);
+                this._windowTime = value.EventTime;
+
+                if (value.StateChange == UniverseStateEvent.Eschaton) this._eschaton = true;
+
+                this.ProcessCache();
             }
+        }
 
-            lock (_lock)
-            {
-                _highVolumeVenueFilter.OnNext(value);
+        public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (observer == null) return null;
 
-                _universeCache.Enqueue(value);
-                _windowTime = value.EventTime;
+            return this._baseService.Subscribe(observer);
+        }
 
-                if (value.StateChange == UniverseStateEvent.Eschaton)
-                {
-                    _eschaton = true;
-                }
+        /// <summary>
+        ///     Alice: “How long is forever?"
+        ///     White Rabbit: “Sometimes, just one second."
+        /// </summary>
+        private DateTime FilterTime()
+        {
+            if (this._ruleTimeWindows == null) return this._windowTime;
 
-                ProcessCache();
-            }
+            return this._windowTime - this._ruleTimeWindows.BackwardWindowSize;
         }
 
         private void ProcessCache()
         {
-            if (!_universeCache.Any())
-            {
-                return;
-            }
+            if (!this._universeCache.Any()) return;
 
-            while (_universeCache.Any()
-                   && (_universeCache.Peek().EventTime <= FilterTime()
-                        || _eschaton))
+            while (this._universeCache.Any()
+                   && (this._universeCache.Peek().EventTime <= this.FilterTime() || this._eschaton))
             {
-                var value = _universeCache.Dequeue();
+                var value = this._universeCache.Dequeue();
 
                 if (value.StateChange.IsOrderType()
-                   && !_highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
-                {
-                    // this event was not verified by the filter
+                    && !this._highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
                     continue;
-                }
 
-                _baseService.OnNext(value);
+                this._baseService.OnNext(value);
             }
 
-            if (_eschaton)
-            {
-                _highVolumeVenueFilter?.UniverseEventsPassedFilter.Clear();
-            }
-        }
-
-        /// <summary>
-        /// Alice: “How long is forever?"
-        /// White Rabbit: “Sometimes, just one second."
-        /// </summary>
-        private DateTime FilterTime()
-        {
-            if (_ruleTimeWindows == null)
-            {
-                return _windowTime;
-            }
-
-            return _windowTime - _ruleTimeWindows.BackwardWindowSize;
+            if (this._eschaton) this._highVolumeVenueFilter?.UniverseEventsPassedFilter.Clear();
         }
     }
 }

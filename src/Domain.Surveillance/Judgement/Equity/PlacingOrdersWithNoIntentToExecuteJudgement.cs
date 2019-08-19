@@ -1,12 +1,12 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Domain.Surveillance.Judgement.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public class PlacingOrdersWithNoIntentToExecuteJudgement : IPlacingOrdersWithNoIntentToExecuteJudgement
     {
         public PlacingOrdersWithNoIntentToExecuteJudgement(decimal? sigma)
         {
-            Sigma = sigma;
+            this.Sigma = sigma;
         }
 
         public decimal? Sigma { get; }

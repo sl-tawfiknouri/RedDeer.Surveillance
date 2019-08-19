@@ -1,86 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Currency;
-using Surveillance.Engine.Rules.Currency.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.Universe;
-using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
 {
+    using System;
+    using System.Collections.Generic;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Currency;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
+    using Surveillance.Specflow.Tests.StepDefinitions.Universe;
+
+    using TechTalk.SpecFlow;
+    using TechTalk.SpecFlow.Assist;
+
     [Binding]
     public sealed class WashTradeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private WashTradeRuleEquitiesParameters _washTradeRuleEquitiesParameters;
-        private UniverseSelectionState _universeSelectionState;
+
+        private readonly IUniverseAlertStream _alertStream;
 
         // wash trade factory and arguments
-        private ICurrencyConverterService _currencyConverterService;
-        private IClusteringService _washTradeClustering;
-        private IUniverseEquityOrderFilterService _universeOrderFilterService;
-        private IUniverseMarketCacheFactory _universeMarketCacheFactory;
-        private ILogger<WashTradeRule> _logger;
-        private ILogger<TradingHistoryStack> _tradingLogger;
-        private EquityRuleWashTradeFactory _equityRuleWashTradeFactory;
+        private readonly ICurrencyConverterService _currencyConverterService;
+
+        private readonly EquityRuleWashTradeFactory _equityRuleWashTradeFactory;
+
+        private readonly ILogger<WashTradeRule> _logger;
 
         // wash trade run
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private IUniverseAlertStream _alertStream;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private readonly ILogger<TradingHistoryStack> _tradingLogger;
+
+        private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
+
+        private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
+
+        private readonly UniverseSelectionState _universeSelectionState;
+
+        private readonly IClusteringService _washTradeClustering;
+
+        private WashTradeRuleEquitiesParameters _washTradeRuleEquitiesParameters;
 
         public WashTradeSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {
-            _scenarioContext = scenarioContext;
-            _universeSelectionState = universeSelectionState;
+            this._scenarioContext = scenarioContext;
+            this._universeSelectionState = universeSelectionState;
 
             var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecorator>();
 
-            var exchangeRateDto = new ExchangeRateDto { DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 200d };
+            var exchangeRateDto = new ExchangeRateDto
+                                      {
+                                          DateTime = new DateTime(2018, 01, 01),
+                                          Name = "GBX/USD",
+                                          FixedCurrency = "GBX",
+                                          VariableCurrency = "USD",
+                                          Rate = 200d
+                                      };
 
-            A.CallTo(() =>
-                    exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
-                .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
-                        {
-                            { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto }}
-                        });
+            A.CallTo(() => exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
+                new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
+                    {
+                        { new DateTime(2018, 01, 01), new[] { exchangeRateDto } }
+                    });
 
             var currencyLogger = new NullLogger<CurrencyConverterService>();
-            _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
+            this._currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
 
-            _washTradeClustering = new ClusteringService();
-            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            _logger = new NullLogger<WashTradeRule>();
-            _tradingLogger = new NullLogger<TradingHistoryStack>();
+            this._washTradeClustering = new ClusteringService();
+            this._universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._logger = new NullLogger<WashTradeRule>();
+            this._tradingLogger = new NullLogger<TradingHistoryStack>();
 
-            _equityRuleWashTradeFactory =
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    _washTradeClustering,
-                    _universeOrderFilterService,
-                    _universeMarketCacheFactory,
-                    _logger,
-                    _tradingLogger);
+            this._equityRuleWashTradeFactory = new EquityRuleWashTradeFactory(
+                this._currencyConverterService,
+                this._washTradeClustering,
+                this._universeOrderFilterService,
+                this._universeMarketCacheFactory,
+                this._logger,
+                this._tradingLogger);
 
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
         }
 
         [Given(@"I have the wash trade rule parameter values")]
@@ -88,47 +107,46 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
         {
             if (ruleParameters.RowCount != 1)
             {
-                _scenarioContext.Pending();
+                this._scenarioContext.Pending();
                 return;
             }
 
             var parameters = ruleParameters.CreateInstance<WashTradeApiParameters>();
 
-            _washTradeRuleEquitiesParameters =
-                new WashTradeRuleEquitiesParameters(
-                    "0",
-                    new System.TimeSpan(parameters.WindowHours, 0, 0),
-                    parameters.UseAverageNetting.GetValueOrDefault(false),
-                    parameters.UseClustering.GetValueOrDefault(false),
-                    parameters.MinimumNumberOfTrades,
-                    parameters.MaximumPositionChangeValue,
-                    parameters.MaximumAbsoluteValueChange,
-                    parameters.MaximumAbsoluteValueChangeCurrency,
-                    parameters.ClusteringPositionMinimumNumberOfTrades,
-                    parameters.ClusteringPercentageValueDifferenceThreshold,
-                    new[] { ClientOrganisationalFactors.None },
-                    true,
-                    true);
-        }
-
-        [When(@"I run the wash trade rule")]
-        public void WhenIRunTheWashTradeRule()
-        {
-            var washTradeRule = 
-                _equityRuleWashTradeFactory.Build(
-                    _washTradeRuleEquitiesParameters,
-                    _ruleCtx,
-                    _alertStream,
-                    RuleRunMode.ForceRun);
-
-            foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
-                washTradeRule.OnNext(universeEvent);
+            this._washTradeRuleEquitiesParameters = new WashTradeRuleEquitiesParameters(
+                "0",
+                new TimeSpan(parameters.WindowHours, 0, 0),
+                parameters.UseAverageNetting.GetValueOrDefault(false),
+                parameters.UseClustering.GetValueOrDefault(false),
+                parameters.MinimumNumberOfTrades,
+                parameters.MaximumPositionChangeValue,
+                parameters.MaximumAbsoluteValueChange,
+                parameters.MaximumAbsoluteValueChangeCurrency,
+                parameters.ClusteringPositionMinimumNumberOfTrades,
+                parameters.ClusteringPercentageValueDifferenceThreshold,
+                new[] { ClientOrganisationalFactors.None },
+                true,
+                true);
         }
 
         [Then(@"I will have (.*) wash trade alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A.CallTo(() => this._alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+        }
+
+        [When(@"I run the wash trade rule")]
+        public void WhenIRunTheWashTradeRule()
+        {
+            var washTradeRule = this._equityRuleWashTradeFactory.Build(
+                this._washTradeRuleEquitiesParameters,
+                this._ruleCtx,
+                this._alertStream,
+                RuleRunMode.ForceRun);
+
+            foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
+                washTradeRule.OnNext(universeEvent);
         }
     }
 }

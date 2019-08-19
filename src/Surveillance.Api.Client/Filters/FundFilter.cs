@@ -1,9 +1,13 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Filters
+﻿namespace RedDeer.Surveillance.Api.Client.Filters
 {
-    public class FundFilter<T> : Filter<FundFilter<T>, T> where T : Parent
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
+    public class FundFilter<T> : Filter<FundFilter<T>, T>
+        where T : Parent
     {
-        public FundFilter(T node) : base(node) { }
+        public FundFilter(T node)
+            : base(node)
+        {
+        }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Cfis;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Financial.Cfis
+﻿namespace Domain.Core.Tests.Financial.Cfis
 {
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Cfis;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class CfiInstrumentTypeMapperTests
     {
@@ -17,22 +18,6 @@ namespace Domain.Core.Tests.Financial.Cfis
             Assert.AreEqual(result, InstrumentTypes.None);
         }
 
-        [TestCase("e")]
-        [TestCase("E")]
-        [TestCase("e-1")]
-        [TestCase("equi")]
-        [TestCase("ee")]
-        [TestCase("ebamneb aebi=04i3 3kh nm aet[k ")]
-        [TestCase("eaepgoearpgjoreag")]
-        public void MapCfi_StartsWithE_IsEquity(string equityStr)
-        {
-            var mapper = GetMapper();
-
-            var result = mapper.MapCfi(equityStr);
-
-            Assert.AreEqual(result, InstrumentTypes.Equity);
-        }
-
         [TestCase("db")]
         [TestCase("dB")]
         [TestCase("dbe-1")]
@@ -42,11 +27,27 @@ namespace Domain.Core.Tests.Financial.Cfis
         [TestCase("db eaepgoearpgjoreag")]
         public void MapCfi_StartsWithDb_IsBond(string bondStr)
         {
-            var mapper = GetMapper();
+            var mapper = this.GetMapper();
 
             var result = mapper.MapCfi(bondStr);
 
             Assert.AreEqual(result, InstrumentTypes.Bond);
+        }
+
+        [TestCase("e")]
+        [TestCase("E")]
+        [TestCase("e-1")]
+        [TestCase("equi")]
+        [TestCase("ee")]
+        [TestCase("ebamneb aebi=04i3 3kh nm aet[k ")]
+        [TestCase("eaepgoearpgjoreag")]
+        public void MapCfi_StartsWithE_IsEquity(string equityStr)
+        {
+            var mapper = this.GetMapper();
+
+            var result = mapper.MapCfi(equityStr);
+
+            Assert.AreEqual(result, InstrumentTypes.Equity);
         }
 
         [TestCase("oc")]
@@ -58,7 +59,7 @@ namespace Domain.Core.Tests.Financial.Cfis
         [TestCase("oc eaepgoearpgjoreag")]
         public void MapCfi_StartsWithOc_IsOptionCall(string optionCallStr)
         {
-            var mapper = GetMapper();
+            var mapper = this.GetMapper();
 
             var result = mapper.MapCfi(optionCallStr);
 
@@ -74,7 +75,7 @@ namespace Domain.Core.Tests.Financial.Cfis
         [TestCase("Opeaepgoearpgjoreag")]
         public void MapCfi_StartsWithOp_IsOptionPut(string optionPutStr)
         {
-            var mapper = GetMapper();
+            var mapper = this.GetMapper();
 
             var result = mapper.MapCfi(optionPutStr);
 
@@ -87,7 +88,7 @@ namespace Domain.Core.Tests.Financial.Cfis
         [TestCase("£2p4oi24jh")]
         public void MapCfi_StartsWithWhatever_IsUnknown(string unknownStr)
         {
-            var mapper = GetMapper();
+            var mapper = this.GetMapper();
 
             var result = mapper.MapCfi(unknownStr);
 
@@ -95,7 +96,7 @@ namespace Domain.Core.Tests.Financial.Cfis
         }
 
         /// <summary>
-        /// centralise use of ctor for type
+        ///     centralise use of ctor for type
         /// </summary>
         private CfiInstrumentTypeMapper GetMapper()
         {

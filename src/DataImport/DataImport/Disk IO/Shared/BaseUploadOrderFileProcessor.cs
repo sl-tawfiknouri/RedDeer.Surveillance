@@ -1,14 +1,16 @@
-﻿using CsvHelper;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Files.Orders;
-
-namespace DataImport.Disk_IO.Shared
+﻿namespace DataImport.Disk_IO.Shared
 {
+    using CsvHelper;
+
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Files.Orders;
+
     public abstract class BaseUploadOrderFileProcessor : BaseUploadFileProcessor<OrderFileContract, Order>
     {
-        protected BaseUploadOrderFileProcessor(
-            ILogger logger)
+        protected BaseUploadOrderFileProcessor(ILogger logger)
             : base(logger, "Upload Trade File Processor")
         {
         }
@@ -17,115 +19,111 @@ namespace DataImport.Disk_IO.Shared
         {
             if (rawRecord == null)
             {
-                Logger.LogInformation($"Upload Trade File Processor received a null record to map with row id {rowId}");
+                this.Logger.LogInformation(
+                    $"Upload Trade File Processor received a null record to map with row id {rowId}");
                 return null;
             }
 
-            Logger.LogInformation($"Upload Trade File Processor about to map raw record to csv dto");
+            this.Logger.LogInformation("Upload Trade File Processor about to map raw record to csv dto");
             var tradeCsv = new OrderFileContract
-            {
-                MarketType = PreProcess(rawRecord["MarketType"]),
-                MarketIdentifierCode = PreProcess(rawRecord["MarketIdentifierCode"]),
-                MarketName = PreProcess(rawRecord["MarketName"]),
+                               {
+                                   MarketType = this.PreProcess(rawRecord["MarketType"]),
+                                   MarketIdentifierCode = this.PreProcess(rawRecord["MarketIdentifierCode"]),
+                                   MarketName = this.PreProcess(rawRecord["MarketName"]),
+                                   InstrumentName = this.PreProcess(rawRecord["InstrumentName"]),
+                                   InstrumentCfi = this.PreProcess(rawRecord["InstrumentCfi"]),
+                                   InstrumentIssuerIdentifier =
+                                       this.PreProcess(rawRecord["InstrumentIssuerIdentifier"]),
+                                   InstrumentClientIdentifier =
+                                       this.PreProcess(rawRecord["InstrumentClientIdentifier"]),
+                                   InstrumentSedol = this.PreProcess(rawRecord["InstrumentSedol"]),
+                                   InstrumentIsin = this.PreProcess(rawRecord["InstrumentIsin"]),
+                                   InstrumentFigi = this.PreProcess(rawRecord["InstrumentFigi"]),
+                                   InstrumentCusip = this.PreProcess(rawRecord["InstrumentCusip"]),
+                                   InstrumentLei = this.PreProcess(rawRecord["InstrumentLei"]),
+                                   InstrumentExchangeSymbol = this.PreProcess(rawRecord["InstrumentExchangeSymbol"]),
+                                   InstrumentBloombergTicker = this.PreProcess(rawRecord["InstrumentBloombergTicker"]),
+                                   InstrumentUnderlyingName = this.PreProcess(rawRecord["InstrumentUnderlyingName"]),
+                                   InstrumentUnderlyingCfi = this.PreProcess(rawRecord["InstrumentUnderlyingCfi"]),
+                                   InstrumentUnderlyingIssuerIdentifier =
+                                       this.PreProcess(rawRecord["InstrumentUnderlyingIssuerIdentifier"]),
+                                   InstrumentUnderlyingClientIdentifier =
+                                       this.PreProcess(rawRecord["InstrumentUnderlyingClientIdentifier"]),
+                                   InstrumentUnderlyingSedol = this.PreProcess(rawRecord["InstrumentUnderlyingSedol"]),
+                                   InstrumentUnderlyingIsin = this.PreProcess(rawRecord["InstrumentUnderlyingIsin"]),
+                                   InstrumentUnderlyingFigi = this.PreProcess(rawRecord["InstrumentUnderlyingFigi"]),
+                                   InstrumentUnderlyingCusip = this.PreProcess(rawRecord["InstrumentUnderlyingCusip"]),
+                                   InstrumentUnderlyingLei = this.PreProcess(rawRecord["InstrumentUnderlyingLei"]),
+                                   InstrumentUnderlyingExchangeSymbol =
+                                       this.PreProcess(rawRecord["InstrumentUnderlyingExchangeSymbol"]),
+                                   InstrumentUnderlyingBloombergTicker =
+                                       this.PreProcess(rawRecord["InstrumentUnderlyingBloombergTicker"]),
+                                   OrderId = this.PreProcess(rawRecord["OrderId"]),
+                                   OrderVersion = this.PreProcess(rawRecord["OrderVersion"]),
+                                   OrderVersionLinkId = this.PreProcess(rawRecord["OrderVersionLinkId"]),
+                                   OrderGroupId = this.PreProcess(rawRecord["OrderGroupId"]),
+                                   OrderPlacedDate = this.PreProcess(rawRecord["OrderPlacedDate"]),
+                                   OrderBookedDate = this.PreProcess(rawRecord["OrderBookedDate"]),
+                                   OrderAmendedDate = this.PreProcess(rawRecord["OrderAmendedDate"]),
+                                   OrderRejectedDate = this.PreProcess(rawRecord["OrderRejectedDate"]),
+                                   OrderCancelledDate = this.PreProcess(rawRecord["OrderCancelledDate"]),
+                                   OrderFilledDate = this.PreProcess(rawRecord["OrderFilledDate"]),
+                                   OrderBroker = this.PreProcess(rawRecord["OrderBroker"]),
+                                   OrderType = this.PreProcess(rawRecord["OrderType"]),
+                                   OrderDirection = this.PreProcess(rawRecord["OrderDirection"]),
+                                   OrderCurrency = this.PreProcess(rawRecord["OrderCurrency"]),
+                                   OrderSettlementCurrency = this.PreProcess(rawRecord["OrderSettlementCurrency"]),
+                                   OrderCleanDirty = this.PreProcess(rawRecord["OrderCleanDirty"]),
+                                   OrderAccumulatedInterest = this.PreProcess(rawRecord["OrderAccumulatedInterest"]),
+                                   OrderLimitPrice = this.PreProcess(rawRecord["OrderLimitPrice"]),
+                                   OrderAverageFillPrice = this.PreProcess(rawRecord["OrderAverageFillPrice"]),
+                                   OrderOrderedVolume = this.PreProcess(rawRecord["OrderOrderedVolume"]),
+                                   OrderFilledVolume = this.PreProcess(rawRecord["OrderFilledVolume"]),
+                                   OrderTraderId = this.PreProcess(rawRecord["OrderTraderId"]),
+                                   OrderTraderName = this.PreProcess(rawRecord["OrderTraderName"]),
+                                   OrderClearingAgent = this.PreProcess(rawRecord["OrderClearingAgent"]),
+                                   OrderDealingInstructions = this.PreProcess(rawRecord["OrderDealingInstructions"]),
+                                   OrderOptionStrikePrice = this.PreProcess(rawRecord["OrderOptionStrikePrice"]),
+                                   OrderOptionExpirationDate = this.PreProcess(rawRecord["OrderOptionExpirationDate"]),
+                                   OrderOptionEuropeanAmerican =
+                                       this.PreProcess(rawRecord["OrderOptionEuropeanAmerican"]),
+                                   DealerOrderId = this.PreProcess(rawRecord["DealerOrderId"]),
+                                   DealerOrderVersion = this.PreProcess(rawRecord["DealerOrderVersion"]),
+                                   DealerOrderVersionLinkId = this.PreProcess(rawRecord["DealerOrderVersionLinkId"]),
+                                   DealerOrderGroupId = this.PreProcess(rawRecord["DealerOrderGroupId"]),
+                                   DealerOrderPlacedDate = this.PreProcess(rawRecord["DealerOrderPlacedDate"]),
+                                   DealerOrderBookedDate = this.PreProcess(rawRecord["DealerOrderBookedDate"]),
+                                   DealerOrderAmendedDate = this.PreProcess(rawRecord["DealerOrderAmendedDate"]),
+                                   DealerOrderRejectedDate = this.PreProcess(rawRecord["DealerOrderRejectedDate"]),
+                                   DealerOrderCancelledDate = this.PreProcess(rawRecord["DealerOrderCancelledDate"]),
+                                   DealerOrderFilledDate = this.PreProcess(rawRecord["DealerOrderFilledDate"]),
+                                   DealerOrderDealerId = this.PreProcess(rawRecord["DealerOrderDealerId"]),
+                                   DealerOrderDealerName = this.PreProcess(rawRecord["DealerOrderDealerName"]),
+                                   DealerOrderNotes = this.PreProcess(rawRecord["DealerOrderNotes"]),
+                                   DealerOrderCounterParty = this.PreProcess(rawRecord["DealerOrderCounterParty"]),
+                                   DealerOrderType = this.PreProcess(rawRecord["DealerOrderType"]),
+                                   DealerOrderDirection = this.PreProcess(rawRecord["DealerOrderDirection"]),
+                                   DealerOrderCurrency = this.PreProcess(rawRecord["DealerOrderCurrency"]),
+                                   DealerOrderSettlementCurrency =
+                                       this.PreProcess(rawRecord["DealerOrderSettlementCurrency"]),
+                                   DealerOrderCleanDirty = this.PreProcess(rawRecord["DealerOrderCleanDirty"]),
+                                   DealerOrderAccumulatedInterest =
+                                       this.PreProcess(rawRecord["DealerOrderAccumulatedInterest"]),
+                                   DealerOrderLimitPrice = this.PreProcess(rawRecord["DealerOrderLimitPrice"]),
+                                   DealerOrderAverageFillPrice =
+                                       this.PreProcess(rawRecord["DealerOrderAverageFillPrice"]),
+                                   DealerOrderOrderedVolume = this.PreProcess(rawRecord["DealerOrderOrderedVolume"]),
+                                   DealerOrderFilledVolume = this.PreProcess(rawRecord["DealerOrderFilledVolume"]),
+                                   DealerOrderOptionStrikePrice =
+                                       this.PreProcess(rawRecord["DealerOrderOptionStrikePrice"]),
+                                   DealerOrderOptionExpirationDate =
+                                       this.PreProcess(rawRecord["DealerOrderOptionExpirationDate"]),
+                                   DealerOrderOptionEuropeanAmerican =
+                                       this.PreProcess(rawRecord["DealerOrderOptionEuropeanAmerican"]),
+                                   RowId = rowId
+                               };
 
-                InstrumentName = PreProcess(rawRecord["InstrumentName"]),
-                InstrumentCfi = PreProcess(rawRecord["InstrumentCfi"]),
-                InstrumentIssuerIdentifier = PreProcess(rawRecord["InstrumentIssuerIdentifier"]),
-                InstrumentClientIdentifier = PreProcess(rawRecord["InstrumentClientIdentifier"]),
-                InstrumentSedol = PreProcess(rawRecord["InstrumentSedol"]),
-                InstrumentIsin = PreProcess(rawRecord["InstrumentIsin"]),
-                InstrumentFigi = PreProcess(rawRecord["InstrumentFigi"]),
-                InstrumentCusip = PreProcess(rawRecord["InstrumentCusip"]),
-                InstrumentLei = PreProcess(rawRecord["InstrumentLei"]),
-                InstrumentExchangeSymbol = PreProcess(rawRecord["InstrumentExchangeSymbol"]),
-                InstrumentBloombergTicker = PreProcess(rawRecord["InstrumentBloombergTicker"]),
-                InstrumentUnderlyingName = PreProcess(rawRecord["InstrumentUnderlyingName"]),
-                InstrumentUnderlyingCfi = PreProcess(rawRecord["InstrumentUnderlyingCfi"]),
-                InstrumentUnderlyingIssuerIdentifier = PreProcess(rawRecord["InstrumentUnderlyingIssuerIdentifier"]),
-                InstrumentUnderlyingClientIdentifier = PreProcess(rawRecord["InstrumentUnderlyingClientIdentifier"]),
-                InstrumentUnderlyingSedol = PreProcess(rawRecord["InstrumentUnderlyingSedol"]),
-                InstrumentUnderlyingIsin = PreProcess(rawRecord["InstrumentUnderlyingIsin"]),
-                InstrumentUnderlyingFigi = PreProcess(rawRecord["InstrumentUnderlyingFigi"]),
-                InstrumentUnderlyingCusip = PreProcess(rawRecord["InstrumentUnderlyingCusip"]),
-                InstrumentUnderlyingLei = PreProcess(rawRecord["InstrumentUnderlyingLei"]),
-                InstrumentUnderlyingExchangeSymbol = PreProcess(rawRecord["InstrumentUnderlyingExchangeSymbol"]),
-                InstrumentUnderlyingBloombergTicker = PreProcess(rawRecord["InstrumentUnderlyingBloombergTicker"]),
-
-
-                OrderId = PreProcess(rawRecord["OrderId"]),
-                OrderVersion = PreProcess(rawRecord["OrderVersion"]),
-                OrderVersionLinkId = PreProcess(rawRecord["OrderVersionLinkId"]),
-                OrderGroupId = PreProcess(rawRecord["OrderGroupId"]),
-
-                OrderPlacedDate = PreProcess(rawRecord["OrderPlacedDate"]),
-                OrderBookedDate = PreProcess(rawRecord["OrderBookedDate"]),
-                OrderAmendedDate = PreProcess(rawRecord["OrderAmendedDate"]),
-                OrderRejectedDate = PreProcess(rawRecord["OrderRejectedDate"]),
-                OrderCancelledDate = PreProcess(rawRecord["OrderCancelledDate"]),
-                OrderFilledDate = PreProcess(rawRecord["OrderFilledDate"]),
-
-                OrderBroker = PreProcess(rawRecord["OrderBroker"]),
-                OrderType = PreProcess(rawRecord["OrderType"]),
-                OrderDirection = PreProcess(rawRecord["OrderDirection"]),
-                OrderCurrency = PreProcess(rawRecord["OrderCurrency"]),
-                OrderSettlementCurrency = PreProcess(rawRecord["OrderSettlementCurrency"]),
-                OrderCleanDirty = PreProcess(rawRecord["OrderCleanDirty"]),
-                OrderAccumulatedInterest = PreProcess(rawRecord["OrderAccumulatedInterest"]),
-
-                OrderLimitPrice = PreProcess(rawRecord["OrderLimitPrice"]),
-                OrderAverageFillPrice = PreProcess(rawRecord["OrderAverageFillPrice"]),
-                OrderOrderedVolume = PreProcess(rawRecord["OrderOrderedVolume"]),
-                OrderFilledVolume = PreProcess(rawRecord["OrderFilledVolume"]),
-
-                OrderTraderId = PreProcess(rawRecord["OrderTraderId"]),
-                OrderTraderName = PreProcess(rawRecord["OrderTraderName"]),
-                OrderClearingAgent = PreProcess(rawRecord["OrderClearingAgent"]),
-                OrderDealingInstructions = PreProcess(rawRecord["OrderDealingInstructions"]),
-
-                OrderOptionStrikePrice = PreProcess(rawRecord["OrderOptionStrikePrice"]),
-                OrderOptionExpirationDate = PreProcess(rawRecord["OrderOptionExpirationDate"]),
-                OrderOptionEuropeanAmerican = PreProcess(rawRecord["OrderOptionEuropeanAmerican"]),
-
-
-                DealerOrderId = PreProcess(rawRecord["DealerOrderId"]),
-                DealerOrderVersion = PreProcess(rawRecord["DealerOrderVersion"]),
-                DealerOrderVersionLinkId = PreProcess(rawRecord["DealerOrderVersionLinkId"]),
-                DealerOrderGroupId = PreProcess(rawRecord["DealerOrderGroupId"]),
-
-                DealerOrderPlacedDate = PreProcess(rawRecord["DealerOrderPlacedDate"]),
-                DealerOrderBookedDate = PreProcess(rawRecord["DealerOrderBookedDate"]),
-                DealerOrderAmendedDate = PreProcess(rawRecord["DealerOrderAmendedDate"]),
-                DealerOrderRejectedDate = PreProcess(rawRecord["DealerOrderRejectedDate"]),
-                DealerOrderCancelledDate = PreProcess(rawRecord["DealerOrderCancelledDate"]),
-                DealerOrderFilledDate = PreProcess(rawRecord["DealerOrderFilledDate"]),
-
-                DealerOrderDealerId = PreProcess(rawRecord["DealerOrderDealerId"]),
-                DealerOrderDealerName = PreProcess(rawRecord["DealerOrderDealerName"]),
-                DealerOrderNotes = PreProcess(rawRecord["DealerOrderNotes"]),
-
-                DealerOrderCounterParty = PreProcess(rawRecord["DealerOrderCounterParty"]),
-                DealerOrderType = PreProcess(rawRecord["DealerOrderType"]),
-                DealerOrderDirection = PreProcess(rawRecord["DealerOrderDirection"]),
-                DealerOrderCurrency = PreProcess(rawRecord["DealerOrderCurrency"]),
-                DealerOrderSettlementCurrency = PreProcess(rawRecord["DealerOrderSettlementCurrency"]),
-                DealerOrderCleanDirty = PreProcess(rawRecord["DealerOrderCleanDirty"]),
-                DealerOrderAccumulatedInterest = PreProcess(rawRecord["DealerOrderAccumulatedInterest"]),
-
-
-
-                DealerOrderLimitPrice = PreProcess(rawRecord["DealerOrderLimitPrice"]),
-                DealerOrderAverageFillPrice = PreProcess(rawRecord["DealerOrderAverageFillPrice"]),
-                DealerOrderOrderedVolume = PreProcess(rawRecord["DealerOrderOrderedVolume"]),
-                DealerOrderFilledVolume = PreProcess(rawRecord["DealerOrderFilledVolume"]),
-
-                DealerOrderOptionStrikePrice = PreProcess(rawRecord["DealerOrderOptionStrikePrice"]),
-                DealerOrderOptionExpirationDate = PreProcess(rawRecord["DealerOrderOptionExpirationDate"]),
-                DealerOrderOptionEuropeanAmerican = PreProcess(rawRecord["DealerOrderOptionEuropeanAmerican"]),
-
-                RowId = rowId
-            };
-
-            Logger.LogInformation($"Upload Trade File Processor has mapped raw record to csv dto");
+            this.Logger.LogInformation("Upload Trade File Processor has mapped raw record to csv dto");
             return tradeCsv;
         }
     }

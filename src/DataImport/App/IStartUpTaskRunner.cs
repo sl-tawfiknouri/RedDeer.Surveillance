@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace RedDeer.DataImport.DataImport.App
+﻿namespace RedDeer.DataImport.DataImport.App
 {
+    using System.Threading.Tasks;
+
     public interface IStartUpTaskRunner
     {
         Task Run();

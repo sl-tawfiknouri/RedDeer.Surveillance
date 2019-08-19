@@ -3,7 +3,9 @@
     public enum EquityGenerationStrategies
     {
         None,
+
         Markov,
+
         Plan
     }
 }

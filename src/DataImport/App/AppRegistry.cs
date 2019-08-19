@@ -1,21 +1,25 @@
-﻿using DataImport.Configuration;
-using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
-using StructureMap;
-using Surveillance.Auditing.DataLayer.Interfaces;
-
-namespace RedDeer.DataImport.DataImport.App
+﻿namespace RedDeer.DataImport.DataImport.App
 {
+    using global::DataImport.Configuration;
+
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Extensions.Logging;
+
+    using StructureMap;
+
+    using Surveillance.Auditing.DataLayer.Interfaces;
+
     public class AppRegistry : Registry
     {
         public AppRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
-            For(typeof(ILoggerFactory)).Use(loggerFactory);
-            For(typeof(ILogger<>)).Use(typeof(Logger<>));
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<ISystemDataLayerConfig>().Use<Configuration>();
-            For<IStartUpTaskRunner>().Use<DataImportRunner>();
+            this.For<ISystemDataLayerConfig>().Use<Configuration>();
+            this.For<IStartUpTaskRunner>().Use<DataImportRunner>();
         }
     }
 }

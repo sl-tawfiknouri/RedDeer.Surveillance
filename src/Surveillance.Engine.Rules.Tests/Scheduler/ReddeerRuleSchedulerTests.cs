@@ -1,144 +1,169 @@
-﻿using System;
-using Domain.Surveillance.Scheduling.Interfaces;
-using FakeItEasy;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analysis.Interfaces;
-using Surveillance.Engine.Rules.Queues;
-using Surveillance.Engine.Rules.Utility.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Scheduler
+﻿namespace Surveillance.Engine.Rules.Tests.Scheduler
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling.Interfaces;
+
+    using FakeItEasy;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analysis.Interfaces;
+    using Surveillance.Engine.Rules.Queues;
+    using Surveillance.Engine.Rules.Utility.Interfaces;
+
     [TestFixture]
     public class ReddeerRuleSchedulerTests
     {
-        private IApiHeartbeat _apiHeartbeat;
-        private ISystemProcessContext _ctx;
-        private IAwsQueueClient _awsQueueClient;
-        private IAwsConfiguration _awsConfiguration;
-        private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
-
         private IAnalysisEngine _analysisEngine;
+
+        private IApiHeartbeat _apiHeartbeat;
+
+        private IAwsConfiguration _awsConfiguration;
+
+        private IAwsQueueClient _awsQueueClient;
+
+        private ISystemProcessContext _ctx;
+
         private ILogger<QueueRuleSubscriber> _logger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _awsQueueClient = A.Fake<IAwsQueueClient>();
-            _awsConfiguration = A.Fake<IAwsConfiguration>();
-            _messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
-            _apiHeartbeat = A.Fake<IApiHeartbeat>();
-            _ctx = A.Fake<ISystemProcessContext>();
-
-            _analysisEngine = A.Fake<IAnalysisEngine>();
-            _logger = A.Fake <ILogger<QueueRuleSubscriber>>();
-        }
+        private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
 
         [Test]
         public void Constructor_NullAnalysisEngine_ThrowsArgumentNull()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    null,
-                    _awsQueueClient,
-                    _awsConfiguration, 
-                    _messageBusSerialiser,
-                    _apiHeartbeat,
-                    _ctx,
-                    _logger));
-        }
+            Assert.Throws<ArgumentNullException>(
+                () =>
 
-        [Test]
-        public void Constructor_NullQueueClient_ThrowsArgumentNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    null,
-                    _awsConfiguration,
-                    _messageBusSerialiser,
-                    _apiHeartbeat,
-                    _ctx,
-                    _logger));
-        }
-
-        [Test]
-        public void Constructor_NullConfiguration_ThrowsArgumentNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    _awsQueueClient,
-                    null,
-                    _messageBusSerialiser,
-                    _apiHeartbeat,
-                    _ctx,
-                    _logger));
-        }
-
-        [Test]
-        public void Constructor_NullMessageBusSerialiser_ThrowsArgumentNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    _awsQueueClient,
-                    _awsConfiguration,
-                    null,
-                    _apiHeartbeat,
-                    _ctx,
-                    _logger));
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        null,
+                        this._awsQueueClient,
+                        this._awsConfiguration,
+                        this._messageBusSerialiser,
+                        this._apiHeartbeat,
+                        this._ctx,
+                        this._logger));
         }
 
         [Test]
         public void Constructor_NullApiHeartbeat_ThrowsArgumentNull()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    _awsQueueClient,
-                    _awsConfiguration,
-                    _messageBusSerialiser,
-                    null,
-                    _ctx,
-                    _logger));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        this._awsQueueClient,
+                        this._awsConfiguration,
+                        this._messageBusSerialiser,
+                        null,
+                        this._ctx,
+                        this._logger));
+        }
+
+        [Test]
+        public void Constructor_NullConfiguration_ThrowsArgumentNull()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        this._awsQueueClient,
+                        null,
+                        this._messageBusSerialiser,
+                        this._apiHeartbeat,
+                        this._ctx,
+                        this._logger));
         }
 
         [Test]
         public void Constructor_NullCtx_ThrowsArgumentNull()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    _awsQueueClient,
-                    _awsConfiguration,
-                    _messageBusSerialiser,
-                    _apiHeartbeat,
-                    null,
-                    _logger));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        this._awsQueueClient,
+                        this._awsConfiguration,
+                        this._messageBusSerialiser,
+                        this._apiHeartbeat,
+                        null,
+                        this._logger));
         }
 
         [Test]
         public void Constructor_NullLogger_ThrowsArgumentNull()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new QueueRuleSubscriber(
-                    _analysisEngine,
-                    _awsQueueClient,
-                    _awsConfiguration,
-                    _messageBusSerialiser,
-                    _apiHeartbeat,
-                    _ctx,
-                    null));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        this._awsQueueClient,
+                        this._awsConfiguration,
+                        this._messageBusSerialiser,
+                        this._apiHeartbeat,
+                        this._ctx,
+                        null));
+        }
+
+        [Test]
+        public void Constructor_NullMessageBusSerialiser_ThrowsArgumentNull()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        this._awsQueueClient,
+                        this._awsConfiguration,
+                        null,
+                        this._apiHeartbeat,
+                        this._ctx,
+                        this._logger));
+        }
+
+        [Test]
+        public void Constructor_NullQueueClient_ThrowsArgumentNull()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new QueueRuleSubscriber(
+                        this._analysisEngine,
+                        null,
+                        this._awsConfiguration,
+                        this._messageBusSerialiser,
+                        this._apiHeartbeat,
+                        this._ctx,
+                        this._logger));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._awsQueueClient = A.Fake<IAwsQueueClient>();
+            this._awsConfiguration = A.Fake<IAwsConfiguration>();
+            this._messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
+            this._apiHeartbeat = A.Fake<IApiHeartbeat>();
+            this._ctx = A.Fake<ISystemProcessContext>();
+
+            this._analysisEngine = A.Fake<IAnalysisEngine>();
+            this._logger = A.Fake<ILogger<QueueRuleSubscriber>>();
         }
     }
 }

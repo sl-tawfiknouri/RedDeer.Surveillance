@@ -1,26 +1,31 @@
-﻿using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Trading.Orders;
-using Domain.Core.Extensions;
-using Domain.Surveillance.Rules.Interfaces;
-using GraphQL.DataLoader;
-using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Api.App.Types;
-using Surveillance.Api.App.Types.Engine;
-using Surveillance.Api.App.Types.Organisation;
-using Surveillance.Api.App.Types.Rules;
-using Surveillance.Api.App.Types.Trading;
-using Surveillance.Api.DataAccess.Abstractions.Entities;
-using Surveillance.Api.DataAccess.Abstractions.Repositories;
-using System.Collections.Generic;
-using Surveillance.Api.App.Types.Aggregation;
-using Surveillance.Api.DataAccess.Repositories;
-using System;
-
-namespace Surveillance.Api.App.Infrastructure
+﻿namespace Surveillance.Api.App.Infrastructure
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Extensions;
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules.Interfaces;
+
+    using GraphQL.DataLoader;
+    using GraphQL.Types;
+
+    using Microsoft.AspNetCore.Http;
+
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
+    using Surveillance.Api.App.Types;
+    using Surveillance.Api.App.Types.Aggregation;
+    using Surveillance.Api.App.Types.Engine;
+    using Surveillance.Api.App.Types.Organisation;
+    using Surveillance.Api.App.Types.Rules;
+    using Surveillance.Api.App.Types.Trading;
+    using Surveillance.Api.DataAccess.Abstractions.Entities;
+    using Surveillance.Api.DataAccess.Abstractions.Repositories;
+    using Surveillance.Api.DataAccess.Repositories;
+
     public class SurveillanceQuery : ObjectGraphType
     {
         public SurveillanceQuery(
@@ -36,150 +41,186 @@ namespace Surveillance.Api.App.Infrastructure
             IDataLoaderContextAccessor dataAccessor,
             IHttpContextAccessor ctx)
         {
-             Field<ListGraphType<FinancialInstrumentGraphType>>(
+            this.Field<ListGraphType<FinancialInstrumentGraphType>>(
                 "financialInstruments",
                 "The financial instruments known to surveillance",
-                arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<int?>("id");
+                new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<int?>("id");
 
-                    IQueryable<DataAccess.Abstractions.Entities.IFinancialInstrument> IdQuery(IQueryable<DataAccess.Abstractions.Entities.IFinancialInstrument> i)
-                                   => i.Where(x => id == null || x.Id == id);
+                        IQueryable<IFinancialInstrument> IdQuery(IQueryable<IFinancialInstrument> i)
+                        {
+                            return i.Where(x => id == null || x.Id == id);
+                        }
 
-                    return financialInstrumentRepository.Query(IdQuery);
-                });
+                        return financialInstrumentRepository.Query(IdQuery);
+                    });
 
-            Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>(
+            this.Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>(
                 "ruleRuns",
-                description: "The rule runs executed by the system",
-                arguments: new QueryArguments(new QueryArgument<ListGraphType<StringGraphType>> { Name = "correlationIds" }),
-                resolve: context =>
-                {
-                    var correlationIds = context.GetArgument<List<string>>("correlationIds");
+                "The rule runs executed by the system",
+                new QueryArguments(new QueryArgument<ListGraphType<StringGraphType>> { Name = "correlationIds" }),
+                context =>
+                    {
+                        var correlationIds = context.GetArgument<List<string>>("correlationIds");
 
-                    IQueryable<ISystemProcessOperationRuleRun> filter(IQueryable<ISystemProcessOperationRuleRun> i)
-                        => i.Where(x => correlationIds == null || correlationIds.Contains(x.CorrelationId));
+                        IQueryable<ISystemProcessOperationRuleRun> filter(IQueryable<ISystemProcessOperationRuleRun> i)
+                        {
+                            return i.Where(x => correlationIds == null || correlationIds.Contains(x.CorrelationId));
+                        }
 
-                    return ruleRunRepository.Query(filter);
-                });
+                        return ruleRunRepository.Query(filter);
+                    });
 
-            Field<ListGraphType<SystemProcessOperationUploadFileGraphType>>(
+            this.Field<ListGraphType<SystemProcessOperationUploadFileGraphType>>(
                 "uploadFiles",
-                description: "The files uploaded by the system",
+                "The files uploaded by the system",
                 resolve: context =>
-                {
-                    var dataLoader = dataAccessor.Context.GetOrAddLoader("allUploadfiles", fileUploadRepository.GetAllDb);
+                    {
+                        var dataLoader = dataAccessor.Context.GetOrAddLoader(
+                            "allUploadfiles",
+                            fileUploadRepository.GetAllDb);
 
-                    return dataLoader.LoadAsync();
-                });
+                        return dataLoader.LoadAsync();
+                    });
 
-            Field<ListGraphType<SystemProcessOperationDataSynchroniserRequestGraphType>>(
+            this.Field<ListGraphType<SystemProcessOperationDataSynchroniserRequestGraphType>>(
                 "dataSynchroniser",
-                description: "The data synchroniser requests logged by the system",
+                "The data synchroniser requests logged by the system",
                 resolve: context =>
-                {
-                    var dataLoader = dataAccessor.Context.GetOrAddLoader("allDataSynchroniser", dataSynchroniserRepository.GetAllDb);
+                    {
+                        var dataLoader = dataAccessor.Context.GetOrAddLoader(
+                            "allDataSynchroniser",
+                            dataSynchroniserRepository.GetAllDb);
 
-                    return dataLoader.LoadAsync();
-                });
+                        return dataLoader.LoadAsync();
+                    });
 
-            Field<ListGraphType<SystemProcessOperationDistributeRuleGraphType>>(
+            this.Field<ListGraphType<SystemProcessOperationDistributeRuleGraphType>>(
                 "distributeRule",
-                description: "The rules distributed by the schedule disassembler",
+                "The rules distributed by the schedule disassembler",
                 resolve: context =>
-                {
-                    var dataLoader = dataAccessor.Context.GetOrAddLoader("allDistributeRule", distributeRuleRepository.GetAllDb);
+                    {
+                        var dataLoader = dataAccessor.Context.GetOrAddLoader(
+                            "allDistributeRule",
+                            distributeRuleRepository.GetAllDb);
 
-                    return dataLoader.LoadAsync();
-                });
+                        return dataLoader.LoadAsync();
+                    });
 
-            Field<OrderLedgerGraphType>(
+            this.Field<OrderLedgerGraphType>(
                 "metaLedger",
-                description: "Consolidated company portfolio incorporating all funds",
+                "Consolidated company portfolio incorporating all funds",
                 resolve: context =>
-                {
-                    var dataLoader = dataAccessor.Context.GetOrAddLoader("allMetaLedger", orderRepository.QueryUnallocated);
+                    {
+                        var dataLoader = dataAccessor.Context.GetOrAddLoader(
+                            "allMetaLedger",
+                            orderRepository.QueryUnallocated);
 
-                    return dataLoader.LoadAsync();
-                });
+                        return dataLoader.LoadAsync();
+                    });
 
-            Field<ListGraphType<FundGraphType>>(
+            this.Field<ListGraphType<FundGraphType>>(
                 "funds",
-                description: "The list of funds under surveillance",
-                arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<string>("id");
-                    IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i) => i.Where(x => string.IsNullOrWhiteSpace(id) || x.Fund == id);
+                "The list of funds under surveillance",
+                new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<string>("id");
 
-                    return orderRepository.QueryFund(IdQuery);
-                });
+                        IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i)
+                        {
+                            return i.Where(x => string.IsNullOrWhiteSpace(id) || x.Fund == id);
+                        }
 
-            Field<ListGraphType<StrategyGraphType>>(
+                        return orderRepository.QueryFund(IdQuery);
+                    });
+
+            this.Field<ListGraphType<StrategyGraphType>>(
                 "strategies",
-                description: "The list of strategies employed by surveilled orders",
-                arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<string>("id");
-                    IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i) => i.Where(x => string.IsNullOrWhiteSpace(id) || x.Strategy == id);
+                "The list of strategies employed by surveilled orders",
+                new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<string>("id");
 
-                    return orderRepository.QueryStrategy(IdQuery);
-                });
+                        IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i)
+                        {
+                            return i.Where(x => string.IsNullOrWhiteSpace(id) || x.Strategy == id);
+                        }
 
-            Field<ListGraphType<ClientAccountGraphType>>(
+                        return orderRepository.QueryStrategy(IdQuery);
+                    });
+
+            this.Field<ListGraphType<ClientAccountGraphType>>(
                 "clientAccounts",
-                description: "The list of client accounts allocated to by surveilled orders",
-                arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<string>("id");
-                    IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i) => i.Where(x => string.IsNullOrWhiteSpace(id) || x.ClientAccountId == id);
+                "The list of client accounts allocated to by surveilled orders",
+                new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<string>("id");
 
-                    return orderRepository.QueryClientAccount(IdQuery);
-                });
+                        IQueryable<IOrdersAllocation> IdQuery(IQueryable<IOrdersAllocation> i)
+                        {
+                            return i.Where(x => string.IsNullOrWhiteSpace(id) || x.ClientAccountId == id);
+                        }
 
-            Field<ListGraphType<MarketGraphType>>(
+                        return orderRepository.QueryClientAccount(IdQuery);
+                    });
+
+            this.Field<ListGraphType<MarketGraphType>>(
                 "markets",
-                description: "The list of markets that have surveilled orders have been issued against",
-                arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "mic" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<string>("mic");
-                    IQueryable<IMarket> MicQuery(IQueryable<IMarket> i) => i.Where(x => id == null || x.MarketId == id);
+                "The list of markets that have surveilled orders have been issued against",
+                new QueryArguments(new QueryArgument<StringGraphType> { Name = "mic" }),
+                context =>
+                    {
+                        var id = context.GetArgument<string>("mic");
 
-                    return marketRepository.Query(MicQuery);
-                });
+                        IQueryable<IMarket> MicQuery(IQueryable<IMarket> i)
+                        {
+                            return i.Where(x => id == null || x.MarketId == id);
+                        }
 
-            Field<ListGraphType<RuleBreachGraphType>>(
+                        return marketRepository.Query(MicQuery);
+                    });
+
+            this.Field<ListGraphType<RuleBreachGraphType>>(
                 "ruleBreaches",
-                description: "Policy rule violations detected by the surveillance engine",
-                arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<int?>("id");
-                    IQueryable<IRuleBreach> IdQuery(IQueryable<IRuleBreach> i) => i.Where(x => id == null || x.Id == id);
+                "Policy rule violations detected by the surveillance engine",
+                new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<int?>("id");
 
-                    return ruleBreachRepository.Query(IdQuery);
-                });
+                        IQueryable<IRuleBreach> IdQuery(IQueryable<IRuleBreach> i)
+                        {
+                            return i.Where(x => id == null || x.Id == id);
+                        }
 
-            Field<ListGraphType<TraderGraphType>>(
+                        return ruleBreachRepository.Query(IdQuery);
+                    });
+
+            this.Field<ListGraphType<TraderGraphType>>(
                 "traders",
                 "Traders that have been recorded in the orders file",
-                arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
-                resolve: context =>
-                {
-                    var id = context.GetArgument<string>("id");
-                    IQueryable<IOrder> IdQuery(IQueryable<IOrder> i) => i.Where(x => id == null || x.TraderId == id);
+                new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<string>("id");
 
-                    return orderRepository.TradersQuery(IdQuery);
-                });
+                        IQueryable<IOrder> IdQuery(IQueryable<IOrder> i)
+                        {
+                            return i.Where(x => id == null || x.TraderId == id);
+                        }
 
-            Field<ListGraphType<OrderGraphType>>(
+                        return orderRepository.TradersQuery(IdQuery);
+                    });
+
+            this.Field<ListGraphType<OrderGraphType>>(
                 "orders",
-                description: "Orders uploaded by client",
-                arguments: new QueryArguments(
+                "Orders uploaded by client",
+                new QueryArguments(
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<IntGraphType> { Name = "take" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
@@ -189,30 +230,30 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "directions" },
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
                     new QueryArgument<DateTimeGraphType> { Name = "placedDateFrom" },
-                    new QueryArgument<DateTimeGraphType> { Name = "placedDateTo" }
-                    ),
-                resolve: context =>
-                {
-                    var options = new OrderQueryOptions
+                    new QueryArgument<DateTimeGraphType> { Name = "placedDateTo" }),
+                context =>
                     {
-                        Ids = context.GetArgument<List<int>>("ids"),
-                        Take = context.GetArgument<int?>("take"),
-                        TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
-                        ExcludeTraderIds = context.GetArgument<List<string>>("excludeTraderIds")?.ToHashSet(),
-                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
-                        Statuses = context.GetArgument<List<int>>("statuses"),
-                        Directions = context.GetArgument<List<int>>("directions"),
-                        Types = context.GetArgument<List<int>>("types"),
-                        PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
-                        PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo")
-                    };
-                    return orderRepository.Query(options);
-                });
+                        var options = new OrderQueryOptions
+                                          {
+                                              Ids = context.GetArgument<List<int>>("ids"),
+                                              Take = context.GetArgument<int?>("take"),
+                                              TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
+                                              ExcludeTraderIds =
+                                                  context.GetArgument<List<string>>("excludeTraderIds")?.ToHashSet(),
+                                              ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                                              Statuses = context.GetArgument<List<int>>("statuses"),
+                                              Directions = context.GetArgument<List<int>>("directions"),
+                                              Types = context.GetArgument<List<int>>("types"),
+                                              PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
+                                              PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo")
+                                          };
+                        return orderRepository.Query(options);
+                    });
 
-            Field<ListGraphType<AggregationGraphType>>(
+            this.Field<ListGraphType<AggregationGraphType>>(
                 "orderAggregation",
-                description: "Aggregation of orders uploaded by client",
-                arguments: new QueryArguments(
+                "Aggregation of orders uploaded by client",
+                new QueryArguments(
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "traderIds" },
                     new QueryArgument<ListGraphType<StringGraphType>> { Name = "excludeTraderIds" },
@@ -222,46 +263,45 @@ namespace Surveillance.Api.App.Infrastructure
                     new QueryArgument<ListGraphType<IntGraphType>> { Name = "types" },
                     new QueryArgument<DateTimeGraphType> { Name = "placedDateFrom" },
                     new QueryArgument<DateTimeGraphType> { Name = "placedDateTo" },
-                    new QueryArgument<StringGraphType> { Name = "tzName" }
-                    ),
-                resolve: context =>
-                {
-                    var options = new OrderQueryOptions
+                    new QueryArgument<StringGraphType> { Name = "tzName" }),
+                context =>
                     {
-                        Ids = context.GetArgument<List<int>>("ids"),
-                        TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
-                        ExcludeTraderIds = context.GetArgument<List<string>>("excludeTraderIds")?.ToHashSet(),
-                        ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
-                        Statuses = context.GetArgument<List<int>>("statuses"),
-                        Directions = context.GetArgument<List<int>>("directions"),
-                        Types = context.GetArgument<List<int>>("types"),
-                        PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
-                        PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo"),
-                        TzName = context.GetArgument<string>("tzName")
-                    };
-                    return orderRepository.AggregationQuery(options);
-                });
+                        var options = new OrderQueryOptions
+                                          {
+                                              Ids = context.GetArgument<List<int>>("ids"),
+                                              TraderIds = context.GetArgument<List<string>>("traderIds")?.ToHashSet(),
+                                              ExcludeTraderIds =
+                                                  context.GetArgument<List<string>>("excludeTraderIds")?.ToHashSet(),
+                                              ReddeerIds = context.GetArgument<List<string>>("reddeerIds"),
+                                              Statuses = context.GetArgument<List<int>>("statuses"),
+                                              Directions = context.GetArgument<List<int>>("directions"),
+                                              Types = context.GetArgument<List<int>>("types"),
+                                              PlacedDateFrom = context.GetArgument<DateTime?>("placedDateFrom"),
+                                              PlacedDateTo = context.GetArgument<DateTime?>("placedDateTo"),
+                                              TzName = context.GetArgument<string>("tzName")
+                                          };
+                        return orderRepository.AggregationQuery(options);
+                    });
 
-            Field<ListGraphType<RulesTypeEnumGraphType>>(
+            this.Field<ListGraphType<RulesTypeEnumGraphType>>(
                 "rules",
                 "The category of the rule",
                 resolve: context => ruleService.EnabledRules());
 
-            Field<ListGraphType<OrganisationTypeEnumGraphType>>(
+            this.Field<ListGraphType<OrganisationTypeEnumGraphType>>(
                 "organisationFactors",
                 "The type of organisation factors",
                 resolve: context => OrganisationalFactors.None.GetEnumPermutations());
 
-            Field<ListGraphType<OrderTypeGraphType>>(
+            this.Field<ListGraphType<OrderTypeGraphType>>(
                 "orderTypes",
                 "The type of the order given to market",
                 resolve: context => OrderTypes.NONE.GetEnumPermutations());
 
-            Field<ListGraphType<InstrumentTypeGraphType>>(
+            this.Field<ListGraphType<InstrumentTypeGraphType>>(
                 "instrumentTypes",
                 "A primitive perspective on the asset class. To see further details use the CFI code",
                 resolve: context => InstrumentTypes.None.GetEnumPermutations());
-
         }
     }
 }

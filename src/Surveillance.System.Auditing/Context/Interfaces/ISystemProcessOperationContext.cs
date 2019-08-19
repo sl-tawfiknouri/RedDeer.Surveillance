@@ -1,24 +1,22 @@
-﻿using System;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-
-namespace Surveillance.Auditing.Context.Interfaces
+﻿namespace Surveillance.Auditing.Context.Interfaces
 {
+    using System;
+
+    using Surveillance.Auditing.DataLayer.Processes;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+
     public interface ISystemProcessOperationContext
     {
-        ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext();
+        int Id { get; }
 
-        ISystemProcessOperationUploadFileContext CreateUploadFileContext();
-
-        ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(SystemProcessOperationUploadFileType type, string filePath);
-
+        ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
+            string queueMessageId,
+            string ruleId);
 
         ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(
             DateTime? initialStart,
             DateTime? initialEnd,
             string rules);
-
-        ISystemProcessOperationRunRuleContext CreateRuleRunContext();
 
         ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
             string ruleDescription,
@@ -31,17 +29,28 @@ namespace Surveillance.Auditing.Context.Interfaces
             string correlationId,
             bool ruleRunMode);
 
-        ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
-            string queueMessageId,
-            string ruleId);
+        ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(
+            SystemProcessOperationUploadFileType type,
+            string filePath);
+
+        ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext();
+
+        ISystemProcessOperationRunRuleContext CreateRuleRunContext();
+
+        ISystemProcessOperationUploadFileContext CreateUploadFileContext();
 
         ISystemProcessContext EndEvent();
+
         ISystemProcessContext EndEventWithError(string message);
+
         ISystemProcessContext EndEventWithMissingDataError();
-        void StartEvent(ISystemProcessOperation processOperation);
-        ISystemProcessOperationContext UpdateEventState(OperationState state);
+
         void EventError(string message);
+
         void EventError(Exception e);
-        int Id { get; }
+
+        void StartEvent(ISystemProcessOperation processOperation);
+
+        ISystemProcessOperationContext UpdateEventState(OperationState state);
     }
 }

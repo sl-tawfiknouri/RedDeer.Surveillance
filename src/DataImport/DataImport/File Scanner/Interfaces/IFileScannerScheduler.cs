@@ -3,6 +3,7 @@
     public interface IFileScannerScheduler
     {
         void Initialise();
+
         void Terminate();
     }
 }

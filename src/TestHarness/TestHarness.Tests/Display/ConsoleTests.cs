@@ -1,13 +1,17 @@
-﻿using NUnit.Framework;
-using System;
-using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-
-namespace TestHarness.Tests.Display
+﻿namespace TestHarness.Tests.Display
 {
+    using System;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
+    using NUnit.Framework;
+
+    using Console = TestHarness.Display.Console;
+
     [TestFixture]
     public class ConsoleTests
     {
@@ -16,14 +20,11 @@ namespace TestHarness.Tests.Display
         [Description("Used to visually confirm output for display in test output")]
         public void OutputTradeFrame_OutputsAllFive_PushedOrders()
         {
-            var con = new TestHarness.Display.Console();
+            var con = new Console();
 
-            var frames = Enumerable.Range(0, 20).Select(GenerateFrame).ToList();
+            var frames = Enumerable.Range(0, 20).Select(this.GenerateFrame).ToList();
 
-            foreach (var frame in frames)
-            {
-                con.OutputTradeFrame(frame);
-            }
+            foreach (var frame in frames) con.OutputTradeFrame(frame);
 
             Assert.IsTrue(true);
         }
@@ -31,19 +32,18 @@ namespace TestHarness.Tests.Display
         private Order GenerateFrame(int vol)
         {
             var stock = new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var securityIdentifiers =
-                new InstrumentIdentifiers(
-                    string.Empty,
-                    "STAN",
-                    null,
-                    "STAN",
-                    "st12345",
-                    "sta123456789",
-                    "stan",
-                    "sta12345",
-                    "stan",
-                    "stan lei",
-                    "stan");
+            var securityIdentifiers = new InstrumentIdentifiers(
+                string.Empty,
+                "STAN",
+                null,
+                "STAN",
+                "st12345",
+                "sta123456789",
+                "stan",
+                "sta12345",
+                "stan",
+                "stan lei",
+                "stan");
 
             var sec = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -82,7 +82,7 @@ namespace TestHarness.Tests.Display
                 "trader one",
                 "clearing-bank",
                 "deal asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.UtcNow, true),
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.UtcNow, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

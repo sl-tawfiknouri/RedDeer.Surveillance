@@ -1,7 +1,7 @@
-﻿using FluentValidation.Results;
-
-namespace SharedKernel.Files.Allocations.Interfaces
+﻿namespace SharedKernel.Files.Allocations.Interfaces
 {
+    using FluentValidation.Results;
+
     public interface IAllocationFileValidator
     {
         ValidationResult Validate(AllocationFileContract contract);

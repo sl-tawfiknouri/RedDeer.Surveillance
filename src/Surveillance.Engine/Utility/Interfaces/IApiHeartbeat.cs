@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace Surveillance.Engine.Rules.Utility.Interfaces
+﻿namespace Surveillance.Engine.Rules.Utility.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface IApiHeartbeat
     {
         Task<bool> HeartsBeating();

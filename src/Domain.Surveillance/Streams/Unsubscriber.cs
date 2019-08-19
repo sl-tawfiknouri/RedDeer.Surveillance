@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
-
-namespace Domain.Surveillance.Streams
+﻿namespace Domain.Surveillance.Streams
 {
+    using System;
+    using System.Collections.Concurrent;
+
     public class Unsubscriber<T> : IDisposable
     {
         /// <summary>
-        /// Shared by reference
+        ///     Shared by reference
         /// </summary>
         private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observers;
 
@@ -14,17 +14,14 @@ namespace Domain.Surveillance.Streams
 
         public Unsubscriber(ConcurrentDictionary<IObserver<T>, IObserver<T>> observers, IObserver<T> observer)
         {
-            _observers = observers ?? new ConcurrentDictionary<IObserver<T>, IObserver<T>>();
-            _observer = observer ?? throw new ArgumentNullException(nameof(observer));
+            this._observers = observers ?? new ConcurrentDictionary<IObserver<T>, IObserver<T>>();
+            this._observer = observer ?? throw new ArgumentNullException(nameof(observer));
         }
 
         public void Dispose()
         {
-            if (_observers != null 
-                && _observers.ContainsKey(_observer))
-            {
-                _observers.TryRemove(_observer, out _observer);
-            }
+            if (this._observers != null && this._observers.ContainsKey(this._observer))
+                this._observers.TryRemove(this._observer, out this._observer);
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿namespace Domain.Core.Tests.Markets.Timebars
 {
     using System;
+
     using Domain.Core.Financial.Assets;
     using Domain.Core.Markets;
     using Domain.Core.Markets.Timebars;
+
     using NUnit.Framework;
 
     [TestFixture]
@@ -16,12 +18,7 @@
             var prices = new IntradayPrices(null, null, null, null);
             var dates = DateTime.UtcNow;
 
-            var dailyTb = new DailySummaryTimeBar(
-                100,
-                prices,
-                123,
-                new Volume(123),
-                dates);
+            var dailyTb = new DailySummaryTimeBar(100, prices, 123, new Volume(123), dates);
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.DealerBooks);
             var equityTimeBar = new EquityInstrumentInterDayTimeBar(fi, dailyTb, dates, market);

@@ -1,38 +1,37 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules
+﻿namespace Surveillance.Engine.Rules.Rules
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+
     public class RuleBreach : IRuleBreach
     {
-        public RuleBreach(
-            IRuleBreachContext ruleBreachContext,
-            string description,
-            string caseTitle)
+        public RuleBreach(IRuleBreachContext ruleBreachContext, string description, string caseTitle)
         {
             if (ruleBreachContext == null)
             {
-                Description = description;
-                CaseTitle = caseTitle;
+                this.Description = description;
+                this.CaseTitle = caseTitle;
 
                 return;
             }
 
-            Window = ruleBreachContext.Window;
-            Trades = ruleBreachContext.Trades;
-            Security = ruleBreachContext.Security;
-            IsBackTestRun = ruleBreachContext.IsBackTestRun;
-            RuleParameterId = ruleBreachContext.RuleParameterId;
-            SystemOperationId = ruleBreachContext.SystemOperationId;
-            CorrelationId = ruleBreachContext.CorrelationId;
-            FactorValue = ruleBreachContext.FactorValue;
-            RuleParameters = ruleBreachContext.RuleParameters;
-            UniverseDateTime = ruleBreachContext.UniverseDateTime;
-            Description = description;
-            CaseTitle = caseTitle;
+            this.Window = ruleBreachContext.Window;
+            this.Trades = ruleBreachContext.Trades;
+            this.Security = ruleBreachContext.Security;
+            this.IsBackTestRun = ruleBreachContext.IsBackTestRun;
+            this.RuleParameterId = ruleBreachContext.RuleParameterId;
+            this.SystemOperationId = ruleBreachContext.SystemOperationId;
+            this.CorrelationId = ruleBreachContext.CorrelationId;
+            this.FactorValue = ruleBreachContext.FactorValue;
+            this.RuleParameters = ruleBreachContext.RuleParameters;
+            this.UniverseDateTime = ruleBreachContext.UniverseDateTime;
+            this.Description = description;
+            this.CaseTitle = caseTitle;
         }
 
         public RuleBreach(
@@ -49,31 +48,42 @@ namespace Surveillance.Engine.Rules.Rules
             string description,
             string caseTitle)
         {
-            Window = window;
-            Trades = trades;
-            Security = security;
-            IsBackTestRun = isBackTestRun;
-            RuleParameterId = ruleParameterId;
-            SystemOperationId = systemOperationId;
-            CorrelationId = correlationId;
-            FactorValue = factorValue;
-            RuleParameters = ruleParameter;
-            UniverseDateTime = universeDateTime;
-            Description = description;
-            CaseTitle = caseTitle;
+            this.Window = window;
+            this.Trades = trades;
+            this.Security = security;
+            this.IsBackTestRun = isBackTestRun;
+            this.RuleParameterId = ruleParameterId;
+            this.SystemOperationId = systemOperationId;
+            this.CorrelationId = correlationId;
+            this.FactorValue = factorValue;
+            this.RuleParameters = ruleParameter;
+            this.UniverseDateTime = universeDateTime;
+            this.Description = description;
+            this.CaseTitle = caseTitle;
         }
 
-        public TimeSpan Window { get; }
-        public ITradePosition Trades { get; }
-        public FinancialInstrument Security { get; }
-        public bool IsBackTestRun { get; set; }
-        public string RuleParameterId { get; set; }
-        public string SystemOperationId { get; set; }
-        public string CorrelationId { get; set; }
-        public IFactorValue FactorValue { get; set; }
-        public IRuleParameter RuleParameters { get; set; }
-        public DateTime UniverseDateTime { get; set; }
-        public string Description { get; set; }
         public string CaseTitle { get; set; }
+
+        public string CorrelationId { get; set; }
+
+        public string Description { get; set; }
+
+        public IFactorValue FactorValue { get; set; }
+
+        public bool IsBackTestRun { get; set; }
+
+        public string RuleParameterId { get; set; }
+
+        public IRuleParameter RuleParameters { get; set; }
+
+        public FinancialInstrument Security { get; }
+
+        public string SystemOperationId { get; set; }
+
+        public ITradePosition Trades { get; }
+
+        public DateTime UniverseDateTime { get; set; }
+
+        public TimeSpan Window { get; }
     }
 }

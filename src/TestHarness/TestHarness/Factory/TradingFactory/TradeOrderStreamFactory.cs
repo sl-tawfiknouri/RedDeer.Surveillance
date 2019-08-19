@@ -1,12 +1,13 @@
-﻿using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Streams;
-using Domain.Surveillance.Streams.Interfaces;
-using TestHarness.Display.Interfaces;
-using TestHarness.Display.Subscribers;
-using TestHarness.Factory.TradingFactory.Interfaces;
-
-namespace TestHarness.Factory.TradingFactory
+﻿namespace TestHarness.Factory.TradingFactory
 {
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Streams;
+    using Domain.Surveillance.Streams.Interfaces;
+
+    using TestHarness.Display.Interfaces;
+    using TestHarness.Display.Subscribers;
+    using TestHarness.Factory.TradingFactory.Interfaces;
+
     public class TradeOrderStreamFactory : ITradeOrderStreamFactory
     {
         public IOrderStream<Order> Create()
@@ -19,7 +20,7 @@ namespace TestHarness.Factory.TradingFactory
 
         public IOrderStream<Order> CreateDisplayable(IConsole console)
         {
-            var tradeOrderStream = Create();
+            var tradeOrderStream = this.Create();
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(console);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 

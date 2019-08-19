@@ -1,19 +1,20 @@
-﻿using NUnit.Framework;
-using TestHarness.Commands;
-
-namespace TestHarness.Tests.Commands
+﻿namespace TestHarness.Tests.Commands
 {
+    using NUnit.Framework;
+
+    using TestHarness.Commands;
+
     [TestFixture]
     public class UnRecognisedCommandTests
     {
         [Test]
-        public void Handles_Null_Command()
+        public void Handles_DoesNotHandle_NonEmptyCommand()
         {
             var unRecognisedCommand = new UnRecognisedCommand();
 
-            var result = unRecognisedCommand.Handles(null);
+            var result = unRecognisedCommand.Handles("a");
 
-            Assert.IsTrue(result);
+            Assert.IsFalse(result);
         }
 
         [Test]
@@ -27,13 +28,13 @@ namespace TestHarness.Tests.Commands
         }
 
         [Test]
-        public void Handles_DoesNotHandle_NonEmptyCommand()
+        public void Handles_Null_Command()
         {
             var unRecognisedCommand = new UnRecognisedCommand();
 
-            var result = unRecognisedCommand.Handles("a");
+            var result = unRecognisedCommand.Handles(null);
 
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
         }
     }
 }

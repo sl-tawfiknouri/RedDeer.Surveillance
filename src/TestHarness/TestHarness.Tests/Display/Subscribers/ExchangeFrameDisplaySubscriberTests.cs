@@ -1,22 +1,20 @@
-﻿using FakeItEasy;
-using NUnit.Framework;
-using System;
-using Domain.Core.Markets.Collections;
-using TestHarness.Display.Interfaces;
-using TestHarness.Display.Subscribers;
-
-namespace TestHarness.Tests.Display.Subscribers
+﻿namespace TestHarness.Tests.Display.Subscribers
 {
+    using System;
+
+    using Domain.Core.Markets.Collections;
+
+    using FakeItEasy;
+
+    using NUnit.Framework;
+
+    using TestHarness.Display.Interfaces;
+    using TestHarness.Display.Subscribers;
+
     [TestFixture]
     public class ExchangeFrameDisplaySubscriberTests
     {
         private IConsole _console;
-
-        [SetUp]
-        public void Setup()
-        {
-            _console = A.Fake<IConsole>();
-        }
 
         [Test]
         public void Constructor_NullConsole_Throws_Exception()
@@ -28,27 +26,29 @@ namespace TestHarness.Tests.Display.Subscribers
         [Test]
         public void OnError_PassesException_ToConsole()
         {
-            var subscriber = new ExchangeFrameDisplaySubscriber(_console);
+            var subscriber = new ExchangeFrameDisplaySubscriber(this._console);
             var exception = new Exception();
 
             subscriber.OnError(exception);
 
-            A
-                .CallTo(() => _console.OutputException(exception))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._console.OutputException(exception)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void OnNext_PassesFrame_ToConsole()
         {
-            var subscriber = new ExchangeFrameDisplaySubscriber(_console);
+            var subscriber = new ExchangeFrameDisplaySubscriber(this._console);
             var frame = new EquityIntraDayTimeBarCollection(null, DateTime.UtcNow, null);
 
             subscriber.OnNext(frame);
 
-            A
-                .CallTo(() => _console.OutputMarketFrame(frame))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._console.OutputMarketFrame(frame)).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._console = A.Fake<IConsole>();
         }
     }
 }

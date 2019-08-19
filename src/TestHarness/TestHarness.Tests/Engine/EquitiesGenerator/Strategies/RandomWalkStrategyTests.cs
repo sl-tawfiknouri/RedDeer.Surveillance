@@ -1,14 +1,18 @@
-﻿using Newtonsoft.Json;
-using NUnit.Framework;
-using System;
-using TestHarness.Engine.EquitiesGenerator.Strategies;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Markets.Timebars;
-
-namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
+﻿namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Markets.Timebars;
+
+    using Newtonsoft.Json;
+
+    using NUnit.Framework;
+
+    using TestHarness.Engine.EquitiesGenerator.Strategies;
+
     [TestFixture]
     public class RandomWalkStrategyTests
     {
@@ -37,22 +41,37 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
-            var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new SpreadTimeBar(new Money(66, "GBP"), new Money(65, "GBP"), new Money(65, "GBP"), new Volume(20000));
+            var identifiers = new InstrumentIdentifiers(
+                string.Empty,
+                string.Empty,
+                "MSFT",
+                "MSFT",
+                "MS12345",
+                "MSF123456789",
+                "MSFT",
+                "MSF12341234",
+                "MSFT",
+                "MSFT",
+                "MSFT");
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                identifiers,
+                "Microsoft",
+                "CFI",
+                "USD",
+                "Microsoft Company");
+            var spread = new SpreadTimeBar(
+                new Money(66, "GBP"),
+                new Money(65, "GBP"),
+                new Money(65, "GBP"),
+                new Volume(20000));
 
-            var tick =
-                new EquityInstrumentIntraDayTimeBar(
-                    security,
-                    spread,
-                    new DailySummaryTimeBar(
-                        1000,
-                        null,
-                        1000,
-                        new Volume(20000),
-                        DateTime.UtcNow),
-                    DateTime.UtcNow,
-                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
+            var tick = new EquityInstrumentIntraDayTimeBar(
+                security,
+                spread,
+                new DailySummaryTimeBar(1000, null, 1000, new Volume(20000), DateTime.UtcNow),
+                DateTime.UtcNow,
+                new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var result = strategy.AdvanceFrame(tick, DateTime.UtcNow, true);
 
@@ -70,27 +89,42 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, string.Empty, "MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
-            var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new SpreadTimeBar(new Money(66, "GBP"), new Money(65, "GBP"), new Money(65, "GBP"), new Volume(200000));
+            var identifiers = new InstrumentIdentifiers(
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                "MSFT",
+                "MS12345",
+                "MSF123456789",
+                "MSFT",
+                "MSF12341234",
+                "MSFT",
+                "MSFT",
+                "MSFT");
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                identifiers,
+                "Microsoft",
+                "CFI",
+                "USD",
+                "Microsoft Company");
+            var spread = new SpreadTimeBar(
+                new Money(66, "GBP"),
+                new Money(65, "GBP"),
+                new Money(65, "GBP"),
+                new Volume(200000));
 
-            var tick =
-                new EquityInstrumentIntraDayTimeBar(
-                    security,
-                    spread,
-                    new DailySummaryTimeBar(
-                        1000,
-                        null,
-                        1000,
-                        new Volume(200000),
-                        DateTime.UtcNow),
-                    DateTime.UtcNow,
-                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
+            var tick = new EquityInstrumentIntraDayTimeBar(
+                security,
+                spread,
+                new DailySummaryTimeBar(1000, null, 1000, new Volume(200000), DateTime.UtcNow),
+                DateTime.UtcNow,
+                new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);
 
-            for(var i = 0; i < 99; i++)
+            for (var i = 0; i < 99; i++)
             {
                 tick = strategy.AdvanceFrame(tick, DateTime.UtcNow, true);
 

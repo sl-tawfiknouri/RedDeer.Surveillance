@@ -1,18 +1,18 @@
-﻿using System;
-
-namespace Domain.Core.Trading.Orders
+﻿namespace Domain.Core.Trading.Orders
 {
+    using System;
+
     public class OrderAllocationDecorator : Order
     {
-        private readonly OrderAllocation _orderAllocation;
-        private readonly decimal _weighting;
-
         private readonly decimal? _baseOrderFilledVolume;
+
         private readonly decimal? _baseOrderOrderedVolume;
 
-        public OrderAllocationDecorator(
-            Order order, 
-            OrderAllocation orderAllocation)
+        private readonly OrderAllocation _orderAllocation;
+
+        private readonly decimal _weighting;
+
+        public OrderAllocationDecorator(Order order, OrderAllocation orderAllocation)
             : base(
                 order.Instrument,
                 order.Market,
@@ -48,61 +48,61 @@ namespace Domain.Core.Trading.Orders
                 order.OrderOptionEuropeanAmerican,
                 order.DealerOrders)
         {
-            _orderAllocation = orderAllocation ?? throw new ArgumentNullException(nameof(orderAllocation));
-            _baseOrderFilledVolume = order.OrderFilledVolume;
-            _baseOrderOrderedVolume = order.OrderOrderedVolume;
-            _weighting = OrderAllocationWeighting();
-        }
-
-        public override string OrderFund
-        {
-            get => _orderAllocation.Fund;
-            set { }
-        }
-
-        public override string OrderStrategy
-        {
-            get => _orderAllocation.Strategy;
-            set { }
+            this._orderAllocation = orderAllocation ?? throw new ArgumentNullException(nameof(orderAllocation));
+            this._baseOrderFilledVolume = order.OrderFilledVolume;
+            this._baseOrderOrderedVolume = order.OrderOrderedVolume;
+            this._weighting = this.OrderAllocationWeighting();
         }
 
         public override string OrderClientAccountAttributionId
         {
-            get => _orderAllocation.ClientAccountId;
-            set { }
+            get => this._orderAllocation.ClientAccountId;
+            set
+            {
+            }
         }
 
         public override decimal? OrderFilledVolume
         {
-            get => _orderAllocation.OrderFilledVolume;
-            set { }
+            get => this._orderAllocation.OrderFilledVolume;
+            set
+            {
+            }
+        }
+
+        public override string OrderFund
+        {
+            get => this._orderAllocation.Fund;
+            set
+            {
+            }
         }
 
         public override decimal? OrderOrderedVolume
         {
-            get => (long?)(_baseOrderOrderedVolume * _weighting);
-            set { }
+            get => (long?)(this._baseOrderOrderedVolume * this._weighting);
+            set
+            {
+            }
+        }
+
+        public override string OrderStrategy
+        {
+            get => this._orderAllocation.Strategy;
+            set
+            {
+            }
         }
 
         private decimal OrderAllocationWeighting()
         {
-            if (_orderAllocation.OrderFilledVolume == 0)
-            {
-                return 0;
-            }
+            if (this._orderAllocation.OrderFilledVolume == 0) return 0;
 
-            if (!_baseOrderFilledVolume.HasValue
-                || _baseOrderFilledVolume.Value == 0)
-            {
-                return 1;
-            }
+            if (!this._baseOrderFilledVolume.HasValue || this._baseOrderFilledVolume.Value == 0) return 1;
 
-            if (_orderAllocation.OrderFilledVolume > _baseOrderFilledVolume)
-            {
-                return 1;
-            }
+            if (this._orderAllocation.OrderFilledVolume > this._baseOrderFilledVolume) return 1;
 
-            var weighting = (decimal)_orderAllocation.OrderFilledVolume / (decimal)_baseOrderFilledVolume;
+            var weighting = this._orderAllocation.OrderFilledVolume / (decimal)this._baseOrderFilledVolume;
 
             return weighting;
         }

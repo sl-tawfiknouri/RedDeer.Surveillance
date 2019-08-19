@@ -1,19 +1,26 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Domain.Surveillance.Scheduling;
-using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
-
-namespace Surveillance.Engine.RuleDistributor.Queues
+﻿namespace Surveillance.Engine.RuleDistributor.Queues
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Domain.Surveillance.Scheduling;
+    using Domain.Surveillance.Scheduling.Interfaces;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
+
     public class QueueDistributedRulePublisher : IQueueDistributedRulePublisher
     {
-        private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+
+        private readonly IAwsQueueClient _awsQueueClient;
+
         private readonly ILogger<QueueDistributedRulePublisher> _logger;
+
+        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
 
         private CancellationTokenSource _messageBusCts;
 
@@ -23,25 +30,25 @@ namespace Surveillance.Engine.RuleDistributor.Queues
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ILogger<QueueDistributedRulePublisher> logger)
         {
-            _awsQueueClient = awsQueueClient;
-            _awsConfiguration = awsConfiguration;
-            _messageBusSerialiser = messageBusSerialiser;
-            _logger = logger;
+            this._awsQueueClient = awsQueueClient;
+            this._awsConfiguration = awsConfiguration;
+            this._messageBusSerialiser = messageBusSerialiser;
+            this._logger = logger;
         }
 
         public async Task ScheduleExecution(ScheduledExecution distributedExecution)
         {
             var serialisedDistributedExecution =
-                _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
+                this._messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
 
-            _logger.LogInformation($"dispatching distribute message to queue - {serialisedDistributedExecution}");
+            this._logger.LogInformation($"dispatching distribute message to queue - {serialisedDistributedExecution}");
 
-            _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
+            this._messageBusCts = this._messageBusCts ?? new CancellationTokenSource();
 
-            await _awsQueueClient.SendToQueue(
-                _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+            await this._awsQueueClient.SendToQueue(
+                this._awsConfiguration.ScheduleRuleDistributedWorkQueueName,
                 serialisedDistributedExecution,
-                _messageBusCts.Token);
+                this._messageBusCts.Token);
         }
     }
 }

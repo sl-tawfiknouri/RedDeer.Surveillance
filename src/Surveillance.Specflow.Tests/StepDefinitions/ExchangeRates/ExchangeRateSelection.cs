@@ -1,47 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using FakeItEasy;
-using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
 {
+    using System;
+    using System.Collections.Generic;
+
+    using FakeItEasy;
+
+    using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
+
+    using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
+
     public class ExchangeRateSelection
     {
         public ExchangeRateSelection()
         {
-            if (ExchangeRateRepository == null)
+            if (this.ExchangeRateRepository == null)
             {
-                ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecorator>();
+                this.ExchangeRateRepository = A.Fake<IExchangeRateApiCachingDecorator>();
 
                 var exchangeRateDto = new ExchangeRateDto
-                {
-                    DateTime = new DateTime(2018, 01, 01),
-                    Name = "GBX/USD",
-                    FixedCurrency = "GBX",
-                    VariableCurrency = "USD",
-                    Rate = 0.02d
-                };
+                                          {
+                                              DateTime = new DateTime(2018, 01, 01),
+                                              Name = "GBX/USD",
+                                              FixedCurrency = "GBX",
+                                              VariableCurrency = "USD",
+                                              Rate = 0.02d
+                                          };
 
                 var exchangeRateDtoEur = new ExchangeRateDto
-                {
-                    DateTime = new DateTime(2018, 01, 01),
-                    Name = "GBX/EUR",
-                    FixedCurrency = "GBX",
-                    VariableCurrency = "EUR",
-                    Rate = 0.015d
-                };
+                                             {
+                                                 DateTime = new DateTime(2018, 01, 01),
+                                                 Name = "GBX/EUR",
+                                                 FixedCurrency = "GBX",
+                                                 VariableCurrency = "EUR",
+                                                 Rate = 0.015d
+                                             };
 
-                A.CallTo(() =>
-                        ExchangeRateRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
-                    .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
-                    {
-                        { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto, exchangeRateDtoEur }}
-                    });
+                A.CallTo(() => this.ExchangeRateRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
+                    new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
+                        {
+                            { new DateTime(2018, 01, 01), new[] { exchangeRateDto, exchangeRateDtoEur } }
+                        });
             }
         }
 
         public IExchangeRateApiCachingDecorator ExchangeRateRepository { get; set; }
-
     }
 }

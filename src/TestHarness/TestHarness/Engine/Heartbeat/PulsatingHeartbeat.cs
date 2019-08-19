@@ -1,36 +1,41 @@
-﻿using System.Timers;
-using TestHarness.Engine.Heartbeat.Interfaces;
-
-namespace TestHarness.Engine.Heartbeat
+﻿namespace TestHarness.Engine.Heartbeat
 {
+    using System.Timers;
+
+    using TestHarness.Engine.Heartbeat.Interfaces;
+
     public class PulsatingHeartbeat : IPulsatingHeartbeat
     {
-        private ElapsedEventHandler _handler;
         private readonly object _lock = new object();
 
-        public void Pulse()
+        private ElapsedEventHandler _handler;
+
+        public void Dispose()
         {
-            lock (_lock)
-            {
-                _handler?.Invoke(this, null);
-            }
         }
 
         public void OnBeat(ElapsedEventHandler handler)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _handler = handler;
+                this._handler = handler;
             }
         }
- 
+
+        public void Pulse()
+        {
+            lock (this._lock)
+            {
+                this._handler?.Invoke(this, null);
+            }
+        }
+
         public void Start()
-        {}
+        {
+        }
 
         public void Stop()
-        {}
-
-        public void Dispose()
-        {}
+        {
+        }
     }
 }

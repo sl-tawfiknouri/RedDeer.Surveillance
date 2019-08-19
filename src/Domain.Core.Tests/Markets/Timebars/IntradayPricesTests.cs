@@ -2,18 +2,12 @@
 {
     using Domain.Core.Financial.Money;
     using Domain.Core.Markets.Timebars;
+
     using NUnit.Framework;
 
     [TestFixture]
     public class IntradayPricesTests
     {
-        [Test]
-        public void Ctor_HandlesNullArgSet_WithoutThrow()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.DoesNotThrow(() => new IntradayPrices(null, null, null, null));
-        }
-
         [Test]
         public void Ctor_AssignsVariables_Correctly()
         {
@@ -28,6 +22,13 @@
             Assert.AreEqual(close, intradayPrices.Close);
             Assert.AreEqual(high, intradayPrices.High);
             Assert.AreEqual(low, intradayPrices.Low);
+        }
+
+        [Test]
+        public void Ctor_HandlesNullArgSet_WithoutThrow()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.DoesNotThrow(() => new IntradayPrices(null, null, null, null));
         }
     }
 }

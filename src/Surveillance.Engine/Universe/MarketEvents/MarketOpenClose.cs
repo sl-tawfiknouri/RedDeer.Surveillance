@@ -1,46 +1,40 @@
-﻿using System;
-
-namespace Surveillance.Engine.Rules.Universe.MarketEvents
+﻿namespace Surveillance.Engine.Rules.Universe.MarketEvents
 {
+    using System;
+
     public class MarketOpenClose
     {
-        public MarketOpenClose(
-            string marketId,
-            DateTime marketOpen,
-            DateTime marketClose)
+        public MarketOpenClose(string marketId, DateTime marketOpen, DateTime marketClose)
         {
-            MarketId = marketId ?? string.Empty;
-            MarketOpen = marketOpen;
-            MarketClose = marketClose;
+            this.MarketId = marketId ?? string.Empty;
+            this.MarketOpen = marketOpen;
+            this.MarketClose = marketClose;
         }
 
-        public string MarketId { get; }
-        public DateTime MarketOpen { get; }
         public DateTime MarketClose { get; }
 
-        public override int GetHashCode()
-        {
-            return MarketId.GetHashCode() * 17
-                   + MarketOpen.GetHashCode() * 19
-                   + MarketClose.GetHashCode() * 23;
-        }
+        public string MarketId { get; }
+
+        public DateTime MarketOpen { get; }
 
         public override bool Equals(object obj)
         {
-            if (obj == null
-                || !(obj is MarketOpenClose castObj))
-            {
-                return false;
-            }
+            if (obj == null || !(obj is MarketOpenClose castObj)) return false;
 
-            return string.Equals(MarketId, castObj.MarketId, StringComparison.InvariantCultureIgnoreCase)
-               && MarketOpen == castObj.MarketOpen
-               && MarketClose == castObj.MarketClose;
+            return string.Equals(this.MarketId, castObj.MarketId, StringComparison.InvariantCultureIgnoreCase)
+                   && this.MarketOpen == castObj.MarketOpen && this.MarketClose == castObj.MarketClose;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.MarketId.GetHashCode() * 17 + this.MarketOpen.GetHashCode() * 19
+                                                    + this.MarketClose.GetHashCode() * 23;
         }
 
         public override string ToString()
         {
-            return $"Market({MarketId}) Open({MarketOpen.ToShortTimeString()}) Close({MarketClose.ToShortTimeString()})";
+            return
+                $"Market({this.MarketId}) Open({this.MarketOpen.ToShortTimeString()}) Close({this.MarketClose.ToShortTimeString()})";
         }
     }
 }

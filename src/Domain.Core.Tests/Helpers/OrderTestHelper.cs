@@ -1,20 +1,29 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-
-namespace Domain.Core.Tests.Helpers
+﻿namespace Domain.Core.Tests.Helpers
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
     public static class OrderTestHelper
     {
         public static Order Random(this Order frame, int? price = 20)
         {
             var fi = new FinancialInstrument(
                 InstrumentTypes.Equity,
-                new InstrumentIdentifiers(string.Empty, "reddeer-id", null, "client-identifier", "sedol", "isin",
+                new InstrumentIdentifiers(
+                    string.Empty,
+                    "reddeer-id",
+                    null,
+                    "client-identifier",
+                    "sedol",
+                    "isin",
                     "figi",
-                    "cusip", "xlon", "lei",
+                    "cusip",
+                    "xlon",
+                    "lei",
                     "bloomberg"),
                 "random-security",
                 "ENTSPB",
@@ -40,8 +49,8 @@ namespace Domain.Core.Tests.Helpers
                 null,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Money.Currency("GBP"),
-                new Domain.Core.Financial.Money.Currency("GBP"),
+                new Currency("GBP"),
+                new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(price.GetValueOrDefault(20), "GBP"),
@@ -52,7 +61,7 @@ namespace Domain.Core.Tests.Helpers
                 "trader one",
                 "clearing agent",
                 "dealer-instructions",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true), 
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.Now, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

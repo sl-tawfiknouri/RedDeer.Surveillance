@@ -1,19 +1,30 @@
-﻿using System;
-using System.Linq;
-using Domain.Core.Extensions;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Extensions
+﻿namespace Domain.Core.Tests.Extensions
 {
+    using System;
+    using System.Linq;
+
+    using Domain.Core.Extensions;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class EnumExtensionsTests
     {
-        [Test]
-        public void GetDescription_ThrowsArgumentException_ForNonEnum()
+        private enum TestEnum
         {
-            var structs = new TestStruct();
+            Test0,
 
-            Assert.Throws<ArgumentException>(() => structs.GetDescription());
+            [System.ComponentModel.Description("crazy test")]
+            Test1
+        }
+
+        [Test]
+        public void GetDescription_ReturnsExpectedEnumDescriptionForHasADescription()
+        {
+            var enumVal = TestEnum.Test1;
+            var desc = enumVal.GetDescription();
+
+            Assert.AreEqual(desc, "crazy test");
         }
 
         [Test]
@@ -26,12 +37,11 @@ namespace Domain.Core.Tests.Extensions
         }
 
         [Test]
-        public void GetDescription_ReturnsExpectedEnumDescriptionForHasADescription()
+        public void GetDescription_ThrowsArgumentException_ForNonEnum()
         {
-            var enumVal = TestEnum.Test1;
-            var desc = enumVal.GetDescription();
+            var structs = new TestStruct();
 
-            Assert.AreEqual(desc, "crazy test");
+            Assert.Throws<ArgumentException>(() => structs.GetDescription());
         }
 
         [Test]
@@ -76,16 +86,9 @@ namespace Domain.Core.Tests.Extensions
             Assert.IsTrue(success);
             Assert.AreEqual(result, TestEnum.Test1);
         }
-        
+
         private struct TestStruct
         {
-        }
-
-        private enum TestEnum
-        {
-            Test0,
-            [System.ComponentModel.Description("crazy test")]
-            Test1
         }
     }
 }

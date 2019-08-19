@@ -2,9 +2,12 @@
 {
     public interface ITradePositionCancellations : ITradePosition
     {
-        bool HighCancellationRatioByTradeCount();
-        bool HighCancellationRatioByPositionSize();
-        decimal CancellationRatioByTradeCount();
         decimal CancellationRatioByPositionSize();
+
+        decimal CancellationRatioByTradeCount();
+
+        bool HighCancellationRatioByPositionSize();
+
+        bool HighCancellationRatioByTradeCount();
     }
 }

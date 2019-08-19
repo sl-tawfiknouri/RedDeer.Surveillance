@@ -1,73 +1,101 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories.Equities
+﻿namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+
     [TestFixture]
     public class CancelledOrderRuleFactoryTests
     {
-        private IUniverseEquityOrderFilterService _orderFilterService;
-        private IUniverseMarketCacheFactory _factory;
-        private ILogger<CancelledOrderRule> _logger;
-        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
-
-        private ICancelledOrderRuleEquitiesParameters _parameters;
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        [SetUp]
-        public void Setup()
-        {
-            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _logger = A.Fake<ILogger<CancelledOrderRule>>();
-            _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
+        private IUniverseMarketCacheFactory _factory;
 
-            _parameters = A.Fake<ICancelledOrderRuleEquitiesParameters>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
-        }
+        private ILogger<CancelledOrderRule> _logger;
+
+        private IUniverseEquityOrderFilterService _orderFilterService;
+
+        private ICancelledOrderRuleEquitiesParameters _parameters;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         [Test]
-        public void Constructor_Order_Filter_Null_Throws_Exception()
+        public void Build_Returns_A_Cancelled_Order_Rule()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(null, _factory, _logger, _tradingHistoryLogger));
+            var factory = new EquityRuleCancelledOrderFactory(
+                this._orderFilterService,
+                this._factory,
+                this._logger,
+                this._tradingHistoryLogger);
+
+            var result = factory.Build(this._parameters, this._ruleCtx, this._alertStream, RuleRunMode.ForceRun);
+
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void Constructor_Factory_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilterService, null, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleCancelledOrderFactory(
+                    this._orderFilterService,
+                    null,
+                    this._logger,
+                    this._tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilterService, _factory, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleCancelledOrderFactory(
+                    this._orderFilterService,
+                    this._factory,
+                    null,
+                    this._tradingHistoryLogger));
         }
 
         [Test]
-        public void Build_Returns_A_Cancelled_Order_Rule()
+        public void Constructor_Order_Filter_Null_Throws_Exception()
         {
-            var factory = new EquityRuleCancelledOrderFactory(_orderFilterService, _factory, _logger, _tradingHistoryLogger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleCancelledOrderFactory(
+                    null,
+                    this._factory,
+                    this._logger,
+                    this._tradingHistoryLogger));
+        }
 
-            var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+        [SetUp]
+        public void Setup()
+        {
+            this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._logger = A.Fake<ILogger<CancelledOrderRule>>();
+            this._tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            Assert.IsNotNull(result);
+            this._parameters = A.Fake<ICancelledOrderRuleEquitiesParameters>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
         }
     }
 }

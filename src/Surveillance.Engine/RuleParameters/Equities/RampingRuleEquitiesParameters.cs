@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Extensions;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Equities
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Rules.Tuning;
+
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Extensions;
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+
     [Serializable]
     public class RampingRuleEquitiesParameters : IRampingRuleEquitiesParameters
     {
@@ -33,31 +34,31 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id;
-            Windows = new TimeWindows(id, windowSize);
+            this.Id = id;
+            this.Windows = new TimeWindows(id, windowSize);
 
-            AutoCorrelationCoefficient = autoCorrelationCoefficient;
-            ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
-            ThresholdVolumePercentageWindow = thresholdVolumePercentageWindow;
+            this.AutoCorrelationCoefficient = autoCorrelationCoefficient;
+            this.ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
+            this.ThresholdVolumePercentageWindow = thresholdVolumePercentageWindow;
 
-            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
 
-            Accounts = accounts ?? RuleFilter.None();
-            Traders = traders ?? RuleFilter.None();
-            Markets = markets ?? RuleFilter.None();
-            Funds = funds ?? RuleFilter.None();
-            Strategies = strategy ?? RuleFilter.None();
+            this.Accounts = accounts ?? RuleFilter.None();
+            this.Traders = traders ?? RuleFilter.None();
+            this.Markets = markets ?? RuleFilter.None();
+            this.Funds = funds ?? RuleFilter.None();
+            this.Strategies = strategy ?? RuleFilter.None();
 
-            Sectors = sectors ?? RuleFilter.None();
-            Industries = industries ?? RuleFilter.None();
-            Regions = regions ?? RuleFilter.None();
-            Countries = countries ?? RuleFilter.None();
+            this.Sectors = sectors ?? RuleFilter.None();
+            this.Industries = industries ?? RuleFilter.None();
+            this.Regions = regions ?? RuleFilter.None();
+            this.Countries = countries ?? RuleFilter.None();
 
-            Factors = factors;
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Factors = factors;
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            PerformTuning = performTuning;
+            this.PerformTuning = performTuning;
         }
 
         public RampingRuleEquitiesParameters(
@@ -70,115 +71,128 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id;
-            Windows = new TimeWindows(id, windowSize);
+            this.Id = id;
+            this.Windows = new TimeWindows(id, windowSize);
 
-            AutoCorrelationCoefficient = autoCorrelationCoefficient;
-            ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
-            ThresholdVolumePercentageWindow = thresholdVolumePercentageWindow;
+            this.AutoCorrelationCoefficient = autoCorrelationCoefficient;
+            this.ThresholdOrdersExecutedInWindow = thresholdOrdersExecutedInWindow;
+            this.ThresholdVolumePercentageWindow = thresholdVolumePercentageWindow;
 
-            MarketCapFilter = DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = DecimalRangeRuleFilter.None();
 
-            Accounts = RuleFilter.None();
-            Traders = RuleFilter.None();
-            Markets = RuleFilter.None();
-            Funds = RuleFilter.None();
-            Strategies = RuleFilter.None();
+            this.Accounts = RuleFilter.None();
+            this.Traders = RuleFilter.None();
+            this.Markets = RuleFilter.None();
+            this.Funds = RuleFilter.None();
+            this.Strategies = RuleFilter.None();
 
-            Sectors = RuleFilter.None();
-            Industries = RuleFilter.None();
-            Regions = RuleFilter.None();
-            Countries = RuleFilter.None();
+            this.Sectors = RuleFilter.None();
+            this.Industries = RuleFilter.None();
+            this.Regions = RuleFilter.None();
+            this.Countries = RuleFilter.None();
 
-            Factors = factors;
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Factors = factors;
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            PerformTuning = performTuning;
+            this.PerformTuning = performTuning;
         }
+
+        public RuleFilter Accounts { get; set; }
+
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        [TuneableDecimalParameter]
+        public decimal AutoCorrelationCoefficient { get; set; }
+
+        public RuleFilter Countries { get; set; }
+
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+
+        public RuleFilter Funds { get; set; }
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; set; }
+
+        public RuleFilter Industries { get; set; }
+
+        public DecimalRangeRuleFilter MarketCapFilter { get; set; }
+
+        public RuleFilter Markets { get; set; }
+
+        public bool PerformTuning { get; set; }
+
+        public RuleFilter Regions { get; set; }
+
+        public RuleFilter Sectors { get; set; }
+
+        public RuleFilter Strategies { get; set; }
+
         [TuneableIntegerParameter]
         public int? ThresholdOrdersExecutedInWindow { get; set; }
-        [TuneableDecimalParameter]
-        public decimal AutoCorrelationCoefficient { get; set; }
+
         [TuneableDecimalParameter]
         public decimal? ThresholdVolumePercentageWindow { get; set; }
 
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+        public RuleFilter Traders { get; set; }
 
-        public DecimalRangeRuleFilter MarketCapFilter { get; set; }
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
+
         public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
 
-        public RuleFilter Accounts { get; set; }
-        public RuleFilter Traders { get; set; }
-        public RuleFilter Markets { get; set; }
-        public RuleFilter Funds { get; set; }
-        public RuleFilter Strategies { get; set; }
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
 
-        public RuleFilter Sectors { get; set; }
-        public RuleFilter Industries { get; set; }
-        public RuleFilter Regions { get; set; }
-        public RuleFilter Countries { get; set; }
-
-        public bool HasInternalFilters()
-            => IFilterableRuleExtensions.HasInternalFilters(this);
-
-        public bool HasMarketCapFilters()
-            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
-
-        public bool HasReferenceDataFilters()
-            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
-
-        public bool HasVenueVolumeFilters() 
-            => IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
-
-        public bool Valid()
+        public override bool Equals(object obj)
         {
-            return !string.IsNullOrWhiteSpace(Id)
-                && (ThresholdOrdersExecutedInWindow == null
-                    || ThresholdOrdersExecutedInWindow.GetValueOrDefault() >= 0)
-                && AutoCorrelationCoefficient >= 0
-                && (ThresholdVolumePercentageWindow == null
-                    || (ThresholdVolumePercentageWindow >= 0
-                        && ThresholdVolumePercentageWindow <= 1));
+            if (obj == null) return false;
+
+            var castObj = obj as RampingRuleEquitiesParameters;
+
+            if (castObj == null) return false;
+
+            return this.Windows == castObj.Windows
+                   && this.ThresholdOrdersExecutedInWindow == castObj.ThresholdOrdersExecutedInWindow
+                   && this.AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
+                   && this.ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode()
-               * ThresholdOrdersExecutedInWindow.GetHashCode()
-               * AutoCorrelationCoefficient.GetHashCode()
-               * ThresholdVolumePercentageWindow.GetHashCode();
+            return this.Windows.GetHashCode() * this.ThresholdOrdersExecutedInWindow.GetHashCode()
+                                              * this.AutoCorrelationCoefficient.GetHashCode()
+                                              * this.ThresholdVolumePercentageWindow.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public bool HasInternalFilters()
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            var castObj = obj as RampingRuleEquitiesParameters;
-
-            if (castObj == null)
-            {
-                return false;
-            }
-
-            return Windows == castObj.Windows
-                   && ThresholdOrdersExecutedInWindow == castObj.ThresholdOrdersExecutedInWindow
-                   && AutoCorrelationCoefficient == castObj.AutoCorrelationCoefficient
-                   && ThresholdVolumePercentageWindow == castObj.ThresholdVolumePercentageWindow;
+            return IFilterableRuleExtensions.HasInternalFilters(this);
         }
 
-        public bool PerformTuning { get; set; }
+        public bool HasMarketCapFilters()
+        {
+            return IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+        }
 
-        [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public bool HasReferenceDataFilters()
+        {
+            return IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+        }
+
+        public bool HasVenueVolumeFilters()
+        {
+            return IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Id)
+                   && (this.ThresholdOrdersExecutedInWindow == null
+                       || this.ThresholdOrdersExecutedInWindow.GetValueOrDefault() >= 0)
+                   && this.AutoCorrelationCoefficient >= 0
+                   && (this.ThresholdVolumePercentageWindow == null || this.ThresholdVolumePercentageWindow >= 0
+                       && this.ThresholdVolumePercentageWindow <= 1);
+        }
     }
 }

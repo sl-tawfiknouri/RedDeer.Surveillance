@@ -1,36 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.MarketEvents;
+
     /// <summary>
-    /// Cancelled Orders Rule
-    /// Ignores rule run mode as it doesn't use market data
+    ///     Cancelled Orders Rule
+    ///     Ignores rule run mode as it doesn't use market data
     /// </summary>
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
-        private readonly ICancelledOrderRuleEquitiesParameters _parameters;
-        private readonly ISystemProcessOperationRunRuleContext _opCtx;
         private readonly IUniverseAlertStream _alertStream;
-        private readonly IUniverseOrderFilter _orderFilter;
 
         private readonly ILogger _logger;
-        
+
+        private readonly ISystemProcessOperationRunRuleContext _opCtx;
+
+        private readonly IUniverseOrderFilter _orderFilter;
+
+        private readonly ICancelledOrderRuleEquitiesParameters _parameters;
+
         public CancelledOrderRule(
             ICancelledOrderRuleEquitiesParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
@@ -43,7 +50,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             : base(
                 parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(60),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
-                Domain.Surveillance.Scheduling.Rules.CancelledOrders,
+                Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 opCtx,
@@ -52,52 +59,111 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            this._opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (CancelledOrderRule)this.Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
+            var clone = (CancelledOrderRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void EndOfUniverse()
+        {
+            this._logger.LogInformation("Universe Eschaton occurred");
+            this._opCtx?.EndEvent();
+        }
+
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return this._orderFilter.Filter(value);
+        }
+
+        protected override void Genesis()
+        {
+            this._logger.LogInformation("Universe Genesis occurred");
+        }
+
+        protected override void MarketClose(MarketOpenClose exchange)
+        {
+            this._logger.LogInformation($"Trading closed for exchange {exchange.MarketId}");
+        }
+
+        protected override void MarketOpen(MarketOpenClose exchange)
+        {
+            this._logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
+        }
+
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
-            if (tradeWindow == null
-                || !tradeWindow.Any())
-            {
-                return;
-            }
+            if (tradeWindow == null || !tradeWindow.Any()) return;
 
             var mostRecentTrade = tradeWindow.Pop();
 
-            var tradingPosition =
-                new TradePositionCancellations(
-                    new List<Order>(),
-                    _parameters.CancelledOrderPercentagePositionThreshold,
-                    _parameters.CancelledOrderCountPercentageThreshold,
-                    _logger);
+            var tradingPosition = new TradePositionCancellations(
+                new List<Order>(),
+                this._parameters.CancelledOrderPercentagePositionThreshold,
+                this._parameters.CancelledOrderCountPercentageThreshold,
+                this._logger);
 
             tradingPosition.Add(mostRecentTrade);
-            var ruleBreach = CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
+            var ruleBreach = this.CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
 
             if (ruleBreach.HasBreachedRule())
             {
-                _logger.LogInformation($"RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
-                var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
-                _alertStream.Add(message);
+                this._logger.LogInformation(
+                    $"RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
+                var message = new UniverseAlertEvent(Rules.CancelledOrders, ruleBreach, this._opCtx);
+                this._alertStream.Add(message);
             }
             else
             {
-                _logger.LogInformation($"RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
+                this._logger.LogInformation(
+                    $"RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
             }
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
 
         private ICancelledOrderRuleBreach CheckPositionForCancellations(
@@ -126,21 +192,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
 
                 tradingPosition.Add(nextTrade);
 
-                if (_parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
-                    || (_parameters.MaximumNumberOfTradesToApplyRuleTo.HasValue
-                        && _parameters.MaximumNumberOfTradesToApplyRuleTo.Value < tradingPosition.Get().Count))
-                {
-                    continue;
-                }
+                if (this._parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
+                    || this._parameters.MaximumNumberOfTradesToApplyRuleTo.HasValue
+                    && this._parameters.MaximumNumberOfTradesToApplyRuleTo.Value
+                    < tradingPosition.Get().Count) continue;
 
-                if (_parameters.CancelledOrderCountPercentageThreshold != null
+                if (this._parameters.CancelledOrderCountPercentageThreshold != null
                     && tradingPosition.HighCancellationRatioByTradeCount())
                 {
                     hasBreachedRuleByOrderCount = true;
                     cancellationRatioByOrderCount = tradingPosition.CancellationRatioByTradeCount();
                 }
 
-                if (_parameters.CancelledOrderPercentagePositionThreshold != null
+                if (this._parameters.CancelledOrderPercentagePositionThreshold != null
                     && tradingPosition.HighCancellationRatioByPositionSize())
                 {
                     hasBreachedRuleByPositionSize = true;
@@ -153,10 +217,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
 
             // wrong should use a judgement
             return new CancelledOrderRuleBreach(
-                OrganisationFactorValue,
-                _opCtx.SystemProcessOperationContext(),
-                RuleCtx.CorrelationId(),
-                _parameters,
+                this.OrganisationFactorValue,
+                this._opCtx.SystemProcessOperationContext(),
+                this.RuleCtx.CorrelationId(),
+                this._parameters,
                 tradingPosition,
                 tradingPosition?.Get()?.FirstOrDefault()?.Instrument,
                 hasBreachedRuleByPositionSize,
@@ -167,69 +231,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 cancellationRatioByOrderCount,
                 null,
                 null,
-                UniverseDateTime);
-        }
-
-        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        public override void RunOrderFilledEvent(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void Genesis()
-        {
-            _logger.LogInformation("Universe Genesis occurred");
-        }
-
-        protected override void MarketOpen(MarketOpenClose exchange)
-        {
-            _logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
-        }
-
-        protected override void MarketClose(MarketOpenClose exchange)
-        {
-            _logger.LogInformation($"Trading closed for exchange {exchange.MarketId}");
-        }
-
-        protected override void EndOfUniverse()
-        {
-            _logger.LogInformation("Universe Eschaton occurred");
-            _opCtx?.EndEvent();
-        }
-
-        public IUniverseCloneableRule Clone(IFactorValue factor)
-        {
-            var clone = (CancelledOrderRule)Clone();
-            clone.OrganisationFactorValue = factor;
-
-            return clone;
-        }
-
-        public object Clone()
-        {
-            var clone = (CancelledOrderRule)this.MemberwiseClone();
-            clone.BaseClone();
-
-            return clone;
+                this.UniverseDateTime);
         }
     }
 }

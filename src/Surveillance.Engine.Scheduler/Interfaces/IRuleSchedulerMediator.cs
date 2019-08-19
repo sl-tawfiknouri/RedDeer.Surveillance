@@ -1,7 +1,7 @@
-﻿using Surveillance.Engine.Interfaces.Mediator;
-
-namespace Surveillance.Engine.Scheduler.Interfaces
+﻿namespace Surveillance.Engine.Scheduler.Interfaces
 {
+    using Surveillance.Engine.Interfaces.Mediator;
+
     public interface IRuleSchedulerMediator : IMediator
     {
     }

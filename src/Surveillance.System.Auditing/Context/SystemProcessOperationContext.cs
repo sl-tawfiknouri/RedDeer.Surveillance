@@ -1,24 +1,33 @@
-﻿using System;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-using Surveillance.Auditing.Factories.Interfaces;
-using Surveillance.Auditing.Logging.Interfaces;
-
-namespace Surveillance.Auditing.Context
+﻿namespace Surveillance.Auditing.Context
 {
+    using System;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+    using Surveillance.Auditing.Factories.Interfaces;
+    using Surveillance.Auditing.Logging.Interfaces;
+
     public class SystemProcessOperationContext : ISystemProcessOperationContext
     {
-        private ISystemProcessOperation _systemProcessOperation;
-        private readonly ISystemProcessContext _systemProcessContext;
-        private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
-        private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
-        private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
-        private readonly ISystemProcessOperationFileUploadContextFactory _uploadFileFactory;
         private readonly ISystemProcessOperationDataRequestContextFactory _dataRequestFactory;
+
+        private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
+
         private readonly IOperationLogging _operationLogging;
-        private bool _hasEnded = false;
+
+        private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
+
+        private readonly ISystemProcessContext _systemProcessContext;
+
+        private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
+
+        private readonly ISystemProcessOperationFileUploadContextFactory _uploadFileFactory;
+
+        private bool _hasEnded;
+
+        private ISystemProcessOperation _systemProcessOperation;
 
         public SystemProcessOperationContext(
             ISystemProcessContext systemProcessContext,
@@ -29,36 +38,47 @@ namespace Surveillance.Auditing.Context
             ISystemProcessOperationDataRequestContextFactory dataRequestFactory,
             IOperationLogging operationLogging)
         {
-            _systemProcessContext =
-                systemProcessContext
-                ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            this._systemProcessContext =
+                systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
 
-            _systemProcessOperationRepository =
-                systemProcessOperationRepository
-                ?? throw new ArgumentNullException(nameof(systemProcessOperationRepository));
+            this._systemProcessOperationRepository = systemProcessOperationRepository
+                                                     ?? throw new ArgumentNullException(
+                                                         nameof(systemProcessOperationRepository));
 
-            _runRuleContextFactory =
-                runRuleContextFactory
-                ?? throw new ArgumentNullException(nameof(runRuleContextFactory));
+            this._runRuleContextFactory =
+                runRuleContextFactory ?? throw new ArgumentNullException(nameof(runRuleContextFactory));
 
-            _distributeRuleContextFactory =
-                distributeRuleContextFactory
-                ?? throw new ArgumentNullException(nameof(distributeRuleContextFactory));
+            this._distributeRuleContextFactory = distributeRuleContextFactory
+                                                 ?? throw new ArgumentNullException(
+                                                     nameof(distributeRuleContextFactory));
 
-            _uploadFileFactory =
-                uploadFileFactory
-                ?? throw new ArgumentNullException(nameof(uploadFileFactory));
+            this._uploadFileFactory = uploadFileFactory ?? throw new ArgumentNullException(nameof(uploadFileFactory));
 
-            _dataRequestFactory =
-                dataRequestFactory
-                ?? throw new ArgumentNullException(nameof(dataRequestFactory));
+            this._dataRequestFactory =
+                dataRequestFactory ?? throw new ArgumentNullException(nameof(dataRequestFactory));
 
-            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            this._operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
-        public ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext()
+        public int Id => this._systemProcessOperation?.Id ?? 0;
+
+        public ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
+            string queueMessageId,
+            string ruleId)
         {
-            return _distributeRuleContextFactory.Build(this);
+            var ctx = this._dataRequestFactory.Build(this);
+
+            var startEvent = new SystemProcessOperationThirdPartyDataRequest
+                                 {
+                                     SystemProcessId = this._systemProcessOperation.SystemProcessId,
+                                     SystemProcessOperationId = this._systemProcessOperation.Id,
+                                     QueueMessageId = queueMessageId,
+                                     RuleRunId = ruleId
+                                 };
+
+            ctx.StartEvent(startEvent);
+
+            return ctx;
         }
 
         public ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(
@@ -67,44 +87,18 @@ namespace Surveillance.Auditing.Context
             string rules)
         {
             var op = new SystemProcessOperationDistributeRule
-            {
-                SystemProcessId = _systemProcessOperation.SystemProcessId,
-                SystemProcessOperationId = _systemProcessOperation.Id,
-                ScheduleRuleInitialStart = initialStart,
-                ScheduleRuleInitialEnd = initialEnd,
-                RulesDistributed = rules
-            };
+                         {
+                             SystemProcessId = this._systemProcessOperation.SystemProcessId,
+                             SystemProcessOperationId = this._systemProcessOperation.Id,
+                             ScheduleRuleInitialStart = initialStart,
+                             ScheduleRuleInitialEnd = initialEnd,
+                             RulesDistributed = rules
+                         };
 
-            var ctx = _distributeRuleContextFactory.Build(this);
+            var ctx = this._distributeRuleContextFactory.Build(this);
             ctx.StartEvent(op);
 
             return ctx;
-        }
-
-        public ISystemProcessOperationRunRuleContext CreateRuleRunContext()
-        {
-            return _runRuleContextFactory.Build(this);
-        }
-
-        public ISystemProcessOperationUploadFileContext CreateUploadFileContext()
-        {
-            return _uploadFileFactory.Build(this);
-        }
-
-        public ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(
-            SystemProcessOperationUploadFileType type,
-            string filePath)
-        {
-            var upload = _uploadFileFactory.Build(this);
-            upload.StartEvent(new SystemProcessOperationUploadFile
-            {
-                FilePath = filePath,
-                FileType = (int) type,
-                SystemProcessId = _systemProcessOperation.SystemProcessId,
-                SystemProcessOperationId = _systemProcessOperation.Id
-            });
-
-            return upload;
         }
 
         public ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
@@ -118,122 +112,119 @@ namespace Surveillance.Auditing.Context
             string correlationId,
             bool ruleRunMode)
         {
-            var ctx = _runRuleContextFactory.Build(this);
+            var ctx = this._runRuleContextFactory.Build(this);
             var startEvent = new SystemProcessOperationRuleRun
-            {
-                SystemProcessId = _systemProcessOperation.SystemProcessId,
-                SystemProcessOperationId = _systemProcessOperation.Id,
-                RuleDescription = ruleDescription,
-                RuleVersion = ruleVersion,
-                RuleParameterId = ruleParameterId,
-                ScheduleRuleStart = ruleScheduleBegin,
-                ScheduleRuleEnd = ruleScheduleEnd,
-                CorrelationId = correlationId,
-                IsBackTest = isBackTest,
-                RuleTypeId = ruleTypeId,
-                IsForceRun = ruleRunMode
-            };
+                                 {
+                                     SystemProcessId = this._systemProcessOperation.SystemProcessId,
+                                     SystemProcessOperationId = this._systemProcessOperation.Id,
+                                     RuleDescription = ruleDescription,
+                                     RuleVersion = ruleVersion,
+                                     RuleParameterId = ruleParameterId,
+                                     ScheduleRuleStart = ruleScheduleBegin,
+                                     ScheduleRuleEnd = ruleScheduleEnd,
+                                     CorrelationId = correlationId,
+                                     IsBackTest = isBackTest,
+                                     RuleTypeId = ruleTypeId,
+                                     IsForceRun = ruleRunMode
+                                 };
 
             ctx.StartEvent(startEvent);
 
             return ctx;
         }
 
-        public ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
-            string queueMessageId,
-            string ruleId)
+        public ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(
+            SystemProcessOperationUploadFileType type,
+            string filePath)
         {
-            var ctx = _dataRequestFactory.Build(this);
+            var upload = this._uploadFileFactory.Build(this);
+            upload.StartEvent(
+                new SystemProcessOperationUploadFile
+                    {
+                        FilePath = filePath,
+                        FileType = (int)type,
+                        SystemProcessId = this._systemProcessOperation.SystemProcessId,
+                        SystemProcessOperationId = this._systemProcessOperation.Id
+                    });
 
-            var startEvent = new SystemProcessOperationThirdPartyDataRequest
-            {
-                SystemProcessId = _systemProcessOperation.SystemProcessId,
-                SystemProcessOperationId = _systemProcessOperation.Id,
-                QueueMessageId = queueMessageId,
-                RuleRunId = ruleId
-            };
-
-            ctx.StartEvent(startEvent);
-
-            return ctx;
+            return upload;
         }
 
-        public void StartEvent(ISystemProcessOperation processOperation)
+        public ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext()
         {
-            _systemProcessOperation = processOperation;
-            _systemProcessOperationRepository.Create(processOperation);
+            return this._distributeRuleContextFactory.Build(this);
         }
 
-        public ISystemProcessOperationContext UpdateEventState(OperationState state)
+        public ISystemProcessOperationRunRuleContext CreateRuleRunContext()
         {
-            _systemProcessOperation.OperationState = state;
-            _systemProcessOperationRepository.Update(_systemProcessOperation);
+            return this._runRuleContextFactory.Build(this);
+        }
 
-            return this;
+        public ISystemProcessOperationUploadFileContext CreateUploadFileContext()
+        {
+            return this._uploadFileFactory.Build(this);
         }
 
         public ISystemProcessContext EndEvent()
         {
-            if (_hasEnded)
-            {
-                return _systemProcessContext;
-            }
+            if (this._hasEnded) return this._systemProcessContext;
 
-            _hasEnded = true;
-            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
-            _systemProcessOperation.OperationState = OperationState.Completed;
-            _systemProcessOperationRepository.Update(_systemProcessOperation);
-            return _systemProcessContext;
-        }
-
-        public void EventError(string message)
-        {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
-
-            _operationLogging.Log(new Exception(message), _systemProcessOperation);
-        }
-
-        public void EventError(Exception e)
-        {
-            _operationLogging.Log(e, _systemProcessOperation);
+            this._hasEnded = true;
+            this._systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            this._systemProcessOperation.OperationState = OperationState.Completed;
+            this._systemProcessOperationRepository.Update(this._systemProcessOperation);
+            return this._systemProcessContext;
         }
 
         public ISystemProcessContext EndEventWithError(string message)
         {
-            if (_hasEnded)
-            {
-                return _systemProcessContext;
-            }
+            if (this._hasEnded) return this._systemProcessContext;
 
             if (!string.IsNullOrWhiteSpace(message))
-            {
-                _operationLogging.Log(new Exception(message), _systemProcessOperation);
-            }
+                this._operationLogging.Log(new Exception(message), this._systemProcessOperation);
 
-            _hasEnded = true;
-            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
-            _systemProcessOperation.OperationState = OperationState.CompletedWithErrors;
-            _systemProcessOperationRepository.Update(_systemProcessOperation);
-            return _systemProcessContext;
+            this._hasEnded = true;
+            this._systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            this._systemProcessOperation.OperationState = OperationState.CompletedWithErrors;
+            this._systemProcessOperationRepository.Update(this._systemProcessOperation);
+            return this._systemProcessContext;
         }
 
         public ISystemProcessContext EndEventWithMissingDataError()
         {
-            if (_hasEnded)
-            {
-                return _systemProcessContext;
-            }
+            if (this._hasEnded) return this._systemProcessContext;
 
-            _hasEnded = true;
-            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
-            _systemProcessOperation.OperationState = OperationState.IncompleteMissingData;
-            _systemProcessOperationRepository.Update(_systemProcessOperation);
-            return _systemProcessContext;
+            this._hasEnded = true;
+            this._systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            this._systemProcessOperation.OperationState = OperationState.IncompleteMissingData;
+            this._systemProcessOperationRepository.Update(this._systemProcessOperation);
+            return this._systemProcessContext;
         }
 
-        public int Id => _systemProcessOperation?.Id ?? 0;
+        public void EventError(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+
+            this._operationLogging.Log(new Exception(message), this._systemProcessOperation);
+        }
+
+        public void EventError(Exception e)
+        {
+            this._operationLogging.Log(e, this._systemProcessOperation);
+        }
+
+        public void StartEvent(ISystemProcessOperation processOperation)
+        {
+            this._systemProcessOperation = processOperation;
+            this._systemProcessOperationRepository.Create(processOperation);
+        }
+
+        public ISystemProcessOperationContext UpdateEventState(OperationState state)
+        {
+            this._systemProcessOperation.OperationState = state;
+            this._systemProcessOperationRepository.Update(this._systemProcessOperation);
+
+            return this;
+        }
     }
 }

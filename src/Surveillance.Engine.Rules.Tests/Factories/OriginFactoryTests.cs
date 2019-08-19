@@ -1,9 +1,11 @@
-﻿using System;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Factories;
-
-namespace Surveillance.Engine.Rules.Tests.Factories
+﻿namespace Surveillance.Engine.Rules.Tests.Factories
 {
+    using System;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Factories;
+
     [TestFixture]
     public class OriginFactoryTests
     {

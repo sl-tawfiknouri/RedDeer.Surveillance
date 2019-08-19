@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Domain.Core.Tests.Trading.Execution
 {
     [TestFixture]
-    public class OrderPriceSentimentServiceTests
+    public class OrderAnalysisSentimentServiceTests
     {
         [Test]
         public void ResolveSentiment_NullOrders_IsNeutral()

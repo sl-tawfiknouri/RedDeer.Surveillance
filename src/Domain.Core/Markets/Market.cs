@@ -9,8 +9,8 @@
             MarketTypes type)
         {
             Id = id ?? string.Empty;
-            MarketIdentifierCode = marketIdentifierCode;
-            Name = name;
+            MarketIdentifierCode = marketIdentifierCode ?? string.Empty;
+            Name = name ?? string.Empty;
             Type = type;
         }
 

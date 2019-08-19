@@ -27,6 +27,7 @@ namespace Domain.Core.Markets.Timebars
 
             lock (_lock)
             {
+                // Ensure all contents have the same date (may not work well in pacific zone with the international date line ++ trading hours - should be OK for Japan/Tokyo and USA/SanFran) - RT
                 if (currentTime.Date == (frame.Epoch.Date))
                 {
                     _activeStack.Push(frame);

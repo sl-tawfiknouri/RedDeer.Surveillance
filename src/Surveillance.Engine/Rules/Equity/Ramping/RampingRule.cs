@@ -108,6 +108,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var lastTrade = tradeWindow.Any() ? tradeWindow.Peek() : null;
+
+            if (lastTrade == null)
+            {
+                _logger.LogError($"Last trade was null, this is unusual. Returning.");
+                return;
+            }
+
             var tradingHours = _tradingHoursService.GetTradingHoursForMic(lastTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {

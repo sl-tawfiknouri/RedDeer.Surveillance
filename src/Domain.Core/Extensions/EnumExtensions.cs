@@ -7,14 +7,20 @@ namespace Domain.Core.Extensions
 {
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Enumerations only
+        /// Requires c# 7.3+ to resolve fully with enum as a generic constraint
+        /// </summary>
         public static string GetDescription<T>(this T enumerationValue)
           where T : struct
         {
             var type = enumerationValue.GetType();
+
             if (!type.IsEnum)
             {
                 throw new ArgumentException($"{nameof(enumerationValue)} must be of Enum type", nameof(enumerationValue));
             }
+
             var memberInfo = type.GetMember(enumerationValue.ToString());
             if (memberInfo.Length > 0)
             {

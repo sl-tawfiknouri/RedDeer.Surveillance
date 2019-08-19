@@ -86,12 +86,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     MidpointRounding.AwayFromZero);
 
             var windowBuyVolumeMark =
-                ruleBreach?.WindowBreach?.HasBuyVolumeBreach ?? false
+                ruleBreach.WindowBreach.HasBuyVolumeBreach
                 ? BuyVolumeDescription(ruleBreach, windowVolumePercentageSetByUser, windowBuyVolumePercentage, false)
                 : string.Empty;
 
             var windowSellVolumeMark =
-                ruleBreach?.WindowBreach?.HasSellVolumeBreach ?? false
+                ruleBreach.WindowBreach.HasSellVolumeBreach
                 ? SellVolumeDescription(ruleBreach, windowVolumePercentageSetByUser, windowSellVolumePercentage, false)
                 : string.Empty;
 
@@ -126,12 +126,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     MidpointRounding.AwayFromZero);
 
             var dailyBuyVolumeMark =
-                ruleBreach?.DailyBreach?.HasBuyVolumeBreach ?? false
+                ruleBreach.DailyBreach.HasBuyVolumeBreach
                 ? BuyVolumeDescription(ruleBreach, dailyVolumePercentageSetByUser, dailyBuyVolumePercentage, true)
                 : string.Empty;
 
             var dailySellVolumeMark =
-                ruleBreach?.DailyBreach?.HasSellVolumeBreach ?? false
+                ruleBreach.DailyBreach.HasSellVolumeBreach
                 ? SellVolumeDescription(ruleBreach, dailyVolumePercentageSetByUser, dailySellVolumePercentage, true)
                 : string.Empty;
 

@@ -114,7 +114,8 @@ namespace TestHarness.Factory.TradingFactory
                 var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
                 IOrderDataGenerator process = new TradingHeartBeatDrivenProcess(_logger, strategy, _heartbeat);
 
-                if (_sedolFilter?.Any() ?? false)
+                if (this._sedolFilter != null
+                    && this._sedolFilter.Any())
                 {
                     process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
                 }
@@ -127,7 +128,8 @@ namespace TestHarness.Factory.TradingFactory
                 var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
                 IOrderDataGenerator process = new TradingMarketUpdateDrivenProcess(_logger, strategy);
 
-                if (_sedolFilter?.Any() ?? false)
+                if (this._sedolFilter != null
+                    && this._sedolFilter.Any())
                 {
                     process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
                 }

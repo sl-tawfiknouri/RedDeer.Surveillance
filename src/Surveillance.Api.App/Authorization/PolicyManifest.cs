@@ -6,10 +6,10 @@
         public const string AdminReaderPolicy = "AdminReaderPolicy";
         public const string AdminWriterPolicy = "AdminWriterPolicy";
 
-        public static string UserPolicy = "UserPolicy";
-        public static string UserReaderPolicy = "UserReaderPolicy";
-        public static string UserWriterPolicy = "UserWriterPolicy";
+        public const string UserPolicy = "UserPolicy";
+        public const string UserReaderPolicy = "UserReaderPolicy";
+        public const string UserWriterPolicy = "UserWriterPolicy";
 
-        public static string ClaimName = "Reddeer";
+        public const string ClaimName = "Reddeer";
     }
 }

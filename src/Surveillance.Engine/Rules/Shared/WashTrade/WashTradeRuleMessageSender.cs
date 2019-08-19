@@ -49,12 +49,14 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             var positionPaired = string.Empty;
             var positionClustering = string.Empty;
 
-            if (breach.AveragePositionBreach?.AveragePositionRuleBreach ?? false)
+            if (breach.AveragePositionBreach != null
+                && breach.AveragePositionBreach.AveragePositionRuleBreach)
             {
                 positionAverage = BuildAveragePositionDescription(breach);
             }
 
-            if (breach.ClusteringPositionBreach?.ClusteringPositionBreach ?? false)
+            if (breach.ClusteringPositionBreach != null
+                && breach.ClusteringPositionBreach.ClusteringPositionBreach)
             {
                 positionClustering = BuildPositionClusteringDescription(breach);
             }
@@ -109,7 +111,8 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 
             var initial = $" A clustering (k-means) rule breach was found with {breach.ClusteringPositionBreach.AmountOfBreachingClusters} clusters detected to be trading at thin margins per cluster defined as less than a {percentageChangeMax}% difference between cost and revenues when buying and selling a position.";
 
-            if (breach.ClusteringPositionBreach.CentroidsOfBreachingClusters?.Any() ?? false)
+            if (breach.ClusteringPositionBreach != null
+                && breach.ClusteringPositionBreach.CentroidsOfBreachingClusters.Any())
             {
                 initial = $"{initial} The centroids of the clusters were at the prices {centroids.Aggregate(string.Empty, (a, b) => $"{a}{b}")}";
             }

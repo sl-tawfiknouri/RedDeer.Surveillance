@@ -51,7 +51,7 @@ namespace Domain.Core.Trading
             if (profitAndLossAccounts == null
                 || !profitAndLossAccounts.Any())
             {
-                profitAndLossAccounts.Add(Accounts.ProfitAndLossStatement.Empty());
+                profitAndLossAccounts?.Add(Accounts.ProfitAndLossStatement.Empty());
             }
 
             return profitAndLossAccounts;
@@ -108,13 +108,6 @@ namespace Domain.Core.Trading
             var costs = order.Sum(i => (i.OrderAverageFillPrice?.Value ?? 0) * i.OrderFilledVolume);
 
             return new Money(costs, denominatedCurrency);
-        }
-
-        public BalanceSheetStatement BalanceSheets()
-        {
-            // calculate balance sheet in class
-
-            return null;
         }
 
         public void Add(IReadOnlyCollection<Order> orders)

@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                     ? string.Empty 
                     : $"The distribution of trades by standard deviation from the mean was {sdBreakdownText}.";
 
-            var description = $"Placing Orders With No Intent To Execute Rule Breach. Traded {ruleBreach.Trades.Get().Count} trades separately over configured sigma {ruleBreach.Parameters.Sigma} probability of reaching their limit price. The standard deviation for the trading day was {ruleBreach.StandardDeviationPrice} and the mean price was {ruleBreach.MeanPrice}. {fullSdText}";
+            var description = $"Placing Orders With No Intent To Execute Rule Breach. Traded {ruleBreach?.Trades?.Get()?.Count} trades separately over configured sigma {ruleBreach?.Parameters?.Sigma} probability of reaching their limit price. The standard deviation for the trading day was {ruleBreach?.StandardDeviationPrice} and the mean price was {ruleBreach?.MeanPrice}. {fullSdText}";
             
             return description;
         }

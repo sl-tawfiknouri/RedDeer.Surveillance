@@ -127,9 +127,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Schedul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AimOmsFileHeaderTrimmerLambda", "NeptuneAimOmsFileLambda\AimOmsFileHeaderTrimmerLambda.csproj", "{AEDE5A39-FC32-4EFF-8D42-FFDA2E32FB97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.ApiClient", "Surveillance.Reddeer.ApiClient\Surveillance.Reddeer.ApiClient.csproj", "{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.ApiClient", "Surveillance.Reddeer.ApiClient\Surveillance.Reddeer.ApiClient.csproj", "{3B8E3413-4656-45FD-B009-3ECB2B46CAC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.ApiClient.Tests", "Surveillance.Reddeer.ApiClient.Tests\Surveillance.Reddeer.ApiClient.Tests.csproj", "{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.ApiClient.Tests", "Surveillance.Reddeer.ApiClient.Tests\Surveillance.Reddeer.ApiClient.Tests.csproj", "{A9A63EAE-23FA-4541-8ADD-3D4A81F71A14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

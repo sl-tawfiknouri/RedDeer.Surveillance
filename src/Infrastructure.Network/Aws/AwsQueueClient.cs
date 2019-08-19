@@ -63,7 +63,7 @@ namespace Infrastructure.Network.Aws
                 var getQueueUrlResponse = await _sqsClient.GetQueueUrlAsync(getQueueUrlRequest, cancellationToken);
                 _logger?.LogInformation($"Got Queue Url (Name: {name}, Url: {getQueueUrlResponse?.QueueUrl}).");
 
-                return getQueueUrlResponse.QueueUrl;
+                return getQueueUrlResponse?.QueueUrl ?? string.Empty;
             }
             catch (Exception)
             {
@@ -146,6 +146,11 @@ namespace Infrastructure.Network.Aws
                     var result = await _sqsClient.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
                     foreach (var message in result.Messages)
                     {
+                        if (message == null)
+                        {
+                            continue;
+                        }
+
                         var messageId = message?.MessageId ?? string.Empty;
                         _logger?.LogInformation($"Received Message (Queue: {name}, MessageId: {messageId})");
 

@@ -110,7 +110,7 @@ namespace Domain.Core.Trading
             return new Money(costs, denominatedCurrency);
         }
 
- public void Add(IReadOnlyCollection<Order> orders)
+        public void Add(IReadOnlyCollection<Order> orders)
         {
             if (orders == null
                 || !orders.Any())

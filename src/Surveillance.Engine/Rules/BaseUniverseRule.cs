@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentlySynchronizedField
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Engine.Rules.Rules
 {
     using System;

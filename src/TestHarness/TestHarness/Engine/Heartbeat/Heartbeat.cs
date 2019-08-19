@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentlySynchronizedField
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace TestHarness.Engine.Heartbeat
 {
     using System;

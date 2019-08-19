@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedMember.Global
 
-// ReSharper disable UnusedMember.Global
 namespace Infrastructure.Network.Disk.Interfaces
 {
     using System.Collections.Generic;

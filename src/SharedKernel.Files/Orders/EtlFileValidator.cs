@@ -65,14 +65,14 @@
                 .WithMessage("DealerOrderVersionLinkId must have a maximum length of 255 characters");
             this.RuleFor(x => x.DealerOrderGroupId).MaximumLength(255).When(this.HasDealerOrderData)
                 .WithMessage("DealerOrderGroupId must have a maximum length of 255 characters");
-            
+
             this.RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(this.HasDealerOrderData).MaximumLength(255)
                 .When(this.HasDealerOrderData)
                 .WithMessage("DealerOrderDealerId must have a maximum length of 255 characters");
-            
+
             this.RuleFor(x => x.DealerOrderNotes).MaximumLength(4095).When(this.HasDealerOrderData)
                 .WithMessage("DealerOrderNotes must have a maximum length of 4095  characters");
-            
+
             this.RuleFor(x => x.DealerOrderCounterParty).MaximumLength(255).When(this.HasDealerOrderData)
                 .WithMessage("DealerOrderCounterParty must have a maximum length of 255 characters");
             this.RuleFor(x => x.DealerOrderCurrency).Length(3).When(this.HasDealerOrderData)
@@ -80,7 +80,7 @@
             this.RuleFor(x => x.DealerOrderSettlementCurrency).Length(3)
                 .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderSettlementCurrency)).WithMessage(
                     "DealerOrderSettlementCurrency must have a length of 3 characters when it is provided");
-            
+
             this.RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(this.HasDealerOrderData)
                 .WithMessage("DealerOrderDealerName must have a maximum length of 255 characters");
 
@@ -216,18 +216,16 @@
 
             this.RuleFor(x => x.OrderCurrency).NotEmpty().Length(3)
                 .WithMessage("OrderCurrency must have a length of 3 characters");
-            
+
             this.RuleFor(x => x.OrderSettlementCurrency).Length(3)
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency)).WithMessage(
                     "OrderSettlementCurrency must have a length of 3 characters when it is provided");
-            
 
             this.RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"))
                 .WithMessage("Order type was not in a valid range. Order types are a closed set");
             this.RuleFor(x => x.OrderDirection).NotEmpty()
                 .SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition")).WithMessage(
                     "Order position was not in a valid range. Order position are a closed set");
-            
 
             this.RuleFor(x => x.OrderLimitPrice).NotEmpty()
                 .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.OrdinalIgnoreCase))
@@ -237,16 +235,14 @@
                 .SetValidator(new EnumParseableValidator<OrderCleanDirty>("OrderCleanDirty"))
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty)).WithMessage(
                     "Order clean dirty was not in a valid range. Order clean dirty are a closed set");
-            
 
             this.RuleFor(x => x.OrderTraderName).MaximumLength(255)
                 .WithMessage("Order Trader Name should not exceed 255 characters in length");
             this.RuleFor(x => x.OrderClearingAgent).MaximumLength(255)
                 .WithMessage("OrderClearingAgent must have a maximum length of 255 characters");
-            
+
             this.RuleFor(x => x.OrderDealingInstructions).MaximumLength(4095).WithMessage(
                 "OrderDealingInstructions must have a maximum length of 4095 characters");
-            
 
             this.RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"))
                 .WithMessage("Order limit price was not a valid value");

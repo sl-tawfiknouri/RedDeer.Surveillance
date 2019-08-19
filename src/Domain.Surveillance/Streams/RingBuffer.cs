@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentlySynchronizedField
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace Domain.Surveillance.Streams
 {
     using System;

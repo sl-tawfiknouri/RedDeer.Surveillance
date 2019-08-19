@@ -1,16 +1,21 @@
 ﻿namespace Surveillance.Api.Tests.Tests
 {
     using System;
-    using NUnit.Framework;
-    using RedDeer.Surveillance.Api.Client.Enums;
-    using RedDeer.Surveillance.Api.Client.Nodes;
-    using RedDeer.Surveillance.Api.Client.Queries;
-    using Surveillance.Api.DataAccess.Entities;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Domain.Core.Trading.Orders;
+
+    using NUnit.Framework;
+
+    using RedDeer.Surveillance.Api.Client.Enums;
+    using RedDeer.Surveillance.Api.Client.Nodes;
+    using RedDeer.Surveillance.Api.Client.Queries;
+
+    using Surveillance.Api.DataAccess.Entities;
+
     using Order = Surveillance.Api.DataAccess.Entities.Order;
 
     public class OrderTests : BaseTest

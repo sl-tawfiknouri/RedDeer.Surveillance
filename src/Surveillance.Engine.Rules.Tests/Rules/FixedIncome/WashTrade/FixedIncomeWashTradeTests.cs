@@ -25,6 +25,8 @@
     [TestFixture]
     public class FixedIncomeWashTradeTests
     {
+        private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
+
         private IUniverseAlertStream _alertStream;
 
         private IClusteringService _clusteringService;
@@ -40,8 +42,6 @@
         private IPortfolioFactory _portfolioFactory;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-
-        private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
 
         private ILogger<TradingHistoryStack> _tradingStackLogger;
 

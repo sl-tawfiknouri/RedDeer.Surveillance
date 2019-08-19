@@ -123,11 +123,7 @@
 
             if (dtAdjustmentStart >= asOfTime) return (dtAdjustmentStart, adjustment.DaylightDelta);
 
-            if (dtAdjustmentEnd >= asOfTime)
-            {
-                // otherwise adjustment end date should be the next transition date
-                return (dtAdjustmentEnd, -adjustment.DaylightDelta);
-            }
+            if (dtAdjustmentEnd >= asOfTime) return (dtAdjustmentEnd, -adjustment.DaylightDelta);
 
             // then it should be the next year's DaylightTransitionStart
             year++;

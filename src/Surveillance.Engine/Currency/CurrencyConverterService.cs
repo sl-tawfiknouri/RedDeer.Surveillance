@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable MemberCanBeMadeStatic.Local
 
-// ReSharper disable MemberCanBeMadeStatic.Local
 namespace Surveillance.Engine.Rules.Currency
 {
     using System;

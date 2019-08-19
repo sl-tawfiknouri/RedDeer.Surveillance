@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedMember.Global
 
-// ReSharper disable UnusedMember.Global
 namespace TestHarness.Display.Interfaces
 {
     using System;

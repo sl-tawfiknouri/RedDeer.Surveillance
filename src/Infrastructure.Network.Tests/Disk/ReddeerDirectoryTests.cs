@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable StringLiteralTypo
 
-// ReSharper disable StringLiteralTypo
 namespace Infrastructure.Network.Tests.Disk
 {
     using System;

@@ -1,5 +1,5 @@
-﻿
-// ReSharper disable UnusedMember.Global
+﻿// ReSharper disable UnusedMember.Global
+
 namespace TestHarness.Commands
 {
     using TestHarness.Commands.Interfaces;

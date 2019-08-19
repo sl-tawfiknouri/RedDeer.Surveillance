@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedMember.Global
 
-// ReSharper disable UnusedMember.Global
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces
 {
     using Domain.Core.Trading.Orders;

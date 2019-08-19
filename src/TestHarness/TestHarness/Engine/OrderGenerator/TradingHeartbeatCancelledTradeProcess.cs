@@ -23,25 +23,25 @@
     /// </summary>
     public class TradingHeartbeatCancelledTradeProcess : BaseTradingProcess
     {
-        private readonly IPulsatingHeartbeat _heartbeat;
-
-        private readonly object _lock = new object();
-
         private readonly decimal _cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
 
         private readonly decimal
             _cancellationOfPositionVolumeThresholdPercentage =
                 0.8m; // % of position cancelled aggregated over all trades in a given direction
 
-        private volatile bool _initiated;
+        private readonly IPulsatingHeartbeat _heartbeat;
 
-        private EquityIntraDayTimeBarCollection _lastFrame;
+        private readonly object _lock = new object();
 
         private readonly int _valueOfCancelledTradeRatioThreshold = 200000; // currency value for ratio cancellations
 
         private readonly int _valueOfCancelledTradeThreshold = 1000000; // currency value, aggregate over many trades
 
         private readonly int _valueOfSingularCancelledTradeThreshold = 5000000; // currency value
+
+        private volatile bool _initiated;
+
+        private EquityIntraDayTimeBarCollection _lastFrame;
 
         public TradingHeartbeatCancelledTradeProcess(
             ILogger logger,

@@ -1,14 +1,15 @@
 ﻿namespace Surveillance.Api.Tests.Tests
 {
-
-    using NUnit.Framework;
-    using RedDeer.Surveillance.Api.Client.Queries;
-    using Surveillance.Api.DataAccess.Entities;
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using NUnit.Framework;
+
+    using RedDeer.Surveillance.Api.Client.Queries;
+
+    using Surveillance.Api.DataAccess.Entities;
 
     public class OrderAggregationTests : BaseTest
     {

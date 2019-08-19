@@ -44,13 +44,13 @@
 
         private readonly IMarketTradingHoursService _tradingHoursService;
 
-        private readonly UniverseSelectionState _universeSelectionState;
-
-        private MarkingTheCloseEquitiesParameters _equitiesParameters;
-
         private readonly UniverseMarketCacheFactory _universeMarketCacheFactory;
 
         private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
+
+        private readonly UniverseSelectionState _universeSelectionState;
+
+        private MarkingTheCloseEquitiesParameters _equitiesParameters;
 
         public MarkingTheCloseSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {

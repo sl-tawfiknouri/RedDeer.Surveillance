@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentlySynchronizedField
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace DataSynchroniser.App.ConfigBuilder
 {
     using System;

@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedParameter.Local
 
-// ReSharper disable UnusedParameter.Local
 namespace DataSynchroniser.App
 {
     using System;

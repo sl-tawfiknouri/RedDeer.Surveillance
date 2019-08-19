@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedMember.Global
 
-// ReSharper disable UnusedMember.Global
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
 {
     using System.Collections.Generic;

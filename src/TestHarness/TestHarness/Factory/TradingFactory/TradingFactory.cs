@@ -30,6 +30,8 @@
     {
         private readonly ILogger _logger;
 
+        private readonly IStockExchangeStreamFactory _streamFactory;
+
         // heartbeat selection
         private IHeartbeat _heartbeat;
 
@@ -41,8 +43,6 @@
         private bool _marketUpdateSelected;
 
         private IReadOnlyCollection<string> _sedolFilter;
-
-        private readonly IStockExchangeStreamFactory _streamFactory;
 
         // volume strategy
         private ITradeVolumeStrategy _volumeStrategy;

@@ -88,10 +88,7 @@
 
         public void Save(ISpoofingJudgement spoofing)
         {
-            if (spoofing == null)
-            {
-                this._logger?.LogError("Spoofing Judgement was null");
-            }
+            if (spoofing == null) this._logger?.LogError("Spoofing Judgement was null");
         }
 
         private class HighProfitJudgementDto

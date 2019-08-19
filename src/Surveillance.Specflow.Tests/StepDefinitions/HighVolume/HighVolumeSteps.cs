@@ -39,23 +39,19 @@
     [Binding]
     public sealed class HighVolumeSteps
     {
-        private readonly ScenarioContext _scenarioContext;
-
         private readonly IUniverseAlertStream _alertStream;
-
-        private ICurrencyConverterService _currencyConverterService;
 
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         private readonly EquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
-
-        private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
 
         private readonly IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
         private readonly ILogger<HighVolumeRule> _logger;
 
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private readonly ScenarioContext _scenarioContext;
 
         private readonly IMarketTradingHoursService _tradingHoursService;
 
@@ -64,6 +60,10 @@
         private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
 
         private readonly UniverseSelectionState _universeSelectionState;
+
+        private ICurrencyConverterService _currencyConverterService;
+
+        private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
 
         public HighVolumeSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {

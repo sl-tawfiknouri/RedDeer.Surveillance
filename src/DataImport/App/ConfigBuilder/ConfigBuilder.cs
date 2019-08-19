@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentlySynchronizedField
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 {
     using System;

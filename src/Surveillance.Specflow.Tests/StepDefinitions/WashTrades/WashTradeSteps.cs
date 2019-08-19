@@ -33,8 +33,6 @@
     [Binding]
     public sealed class WashTradeSteps
     {
-        private readonly ScenarioContext _scenarioContext;
-
         private readonly IUniverseAlertStream _alertStream;
 
         // wash trade factory and arguments
@@ -46,6 +44,8 @@
 
         // wash trade run
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private readonly ScenarioContext _scenarioContext;
 
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
 

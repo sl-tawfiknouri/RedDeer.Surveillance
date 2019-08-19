@@ -33,6 +33,8 @@
     {
         private readonly ScenarioContext _scenarioContext;
 
+        private readonly UniverseSelectionState _universeSelectionState;
+
         private IUniverseAlertStream _alertStream;
 
         private IClusteringService _clusteringService;
@@ -46,8 +48,6 @@
         private IPortfolioFactory _portfolioFactory;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-
-        private readonly UniverseSelectionState _universeSelectionState;
 
         public FixedIncomeWashTradeSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {

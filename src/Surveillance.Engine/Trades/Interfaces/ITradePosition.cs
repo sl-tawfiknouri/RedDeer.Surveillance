@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedMember.Global
 
-// ReSharper disable UnusedMember.Global
 namespace Surveillance.Engine.Rules.Trades.Interfaces
 {
     using System.Collections.Generic;

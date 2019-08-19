@@ -42,7 +42,11 @@
     [Binding]
     public sealed class HighProfitSteps
     {
+        private readonly ExchangeRateSelection _exchangeRateSelection;
+
         private readonly ScenarioContext _scenarioContext;
+
+        private readonly UniverseSelectionState _universeSelectionState;
 
         private IUniverseAlertStream _alertStream;
 
@@ -55,8 +59,6 @@
         private EquityRuleHighProfitFactory _equityRuleHighProfitFactory;
 
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
-
-        private readonly ExchangeRateSelection _exchangeRateSelection;
 
         private HighProfitsRuleEquitiesParameters _highProfitRuleEquitiesParameters;
 
@@ -83,8 +85,6 @@
         private ILogger<TradingHistoryStack> _tradingLogger;
 
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
-
-        private readonly UniverseSelectionState _universeSelectionState;
 
         public HighProfitSteps(
             ScenarioContext scenarioContext,

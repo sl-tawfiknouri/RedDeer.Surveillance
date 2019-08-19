@@ -41,7 +41,17 @@
     [Binding]
     public sealed class HighVolumeVenueFilterSteps
     {
+        private readonly IObserver<IUniverseEvent> _observer;
+
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
         private readonly ScenarioContext _scenarioContext;
+
+        private readonly IMarketTradingHoursService _tradingHoursService;
+
+        private readonly IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
+
+        private readonly UniverseSelectionState _universeSelectionState;
 
         private IUniverseFilterService _baseUniverseFilterService;
 
@@ -57,21 +67,11 @@
 
         private ILogger<HighVolumeRule> _logger;
 
-        private readonly IObserver<IUniverseEvent> _observer;
-
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-
         private TimeWindows _timeWindows;
-
-        private readonly IMarketTradingHoursService _tradingHoursService;
 
         private ILogger<TradingHistoryStack> _tradingLogger;
 
-        private readonly IUniverseDataRequestsSubscriber _universeDataRequestsSubscriber;
-
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
-
-        private readonly UniverseSelectionState _universeSelectionState;
 
         private HighVolumeVenueFilterApiParameters _venueFilterApiParameters;
 

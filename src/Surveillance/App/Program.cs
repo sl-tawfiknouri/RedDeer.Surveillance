@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable UnusedParameter.Local
 
-// ReSharper disable UnusedParameter.Local
 namespace RedDeer.Surveillance.App
 {
     using System;

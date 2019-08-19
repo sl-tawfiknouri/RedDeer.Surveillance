@@ -30,17 +30,17 @@
 
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
 
+        private readonly UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
 
         private readonly ScenarioContext _scenarioContext;
 
+        private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
+
         private readonly UniverseSelectionState _universeSelectionState;
 
-        private readonly UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
-
         private CancelledOrderRuleEquitiesParameters _parameters;
-
-        private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
 
         public CancelledOrdersSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {

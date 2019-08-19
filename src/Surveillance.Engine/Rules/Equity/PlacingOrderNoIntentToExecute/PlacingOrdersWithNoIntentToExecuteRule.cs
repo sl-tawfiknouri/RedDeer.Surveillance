@@ -232,8 +232,8 @@
 
             // ReSharper disable once AssignNullToNotNullAttribute
             var pricesInTimeBars = dataResponse.Response.Select(_ => (double)_.SpreadTimeBar.Price.Value).ToList();
-            var sd = (decimal)Statistics.StandardDeviation(pricesInTimeBars);
-            var mean = (decimal)Statistics.Mean(pricesInTimeBars);
+            var sd = (decimal)pricesInTimeBars.StandardDeviation();
+            var mean = (decimal)pricesInTimeBars.Mean();
 
             var ruleBreaches = ordersToCheck.Select(_ => this.ReferenceOrderSigma(_, sd, mean))
                 .Where(_ => _.Item1 > 0 && _.Item1 > this._parameters.Sigma)
@@ -328,7 +328,6 @@
             }
 
             if (order.OrderDirection == OrderDirections.SELL || order.OrderDirection == OrderDirections.SHORT)
-            {
                 return new PlacingOrderWithNoIntentToExecuteRuleRuleBreach.ProbabilityOfExecution(
                     order.OrderId,
                     sd,
@@ -336,7 +335,6 @@
                     order.OrderLimitPrice.Value.Value,
                     cdf,
                     sigma);
-            }
 
             var exception = new ArgumentOutOfRangeException(nameof(order.OrderDirection));
             this._logger?.LogError($"{exception.Message}");

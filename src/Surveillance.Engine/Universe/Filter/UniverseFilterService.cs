@@ -63,7 +63,6 @@
 
             this._highMarketCapFilter = highMarketCapFilter
                                         ?? throw new ArgumentNullException(nameof(highMarketCapFilter));
-            
 
             this._accounts = accounts;
             this._traders = traders;

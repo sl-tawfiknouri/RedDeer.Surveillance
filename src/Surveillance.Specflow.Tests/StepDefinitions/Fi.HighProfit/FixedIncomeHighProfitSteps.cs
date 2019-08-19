@@ -29,6 +29,8 @@
     {
         private readonly ScenarioContext _scenarioContext;
 
+        private readonly UniverseSelectionState _universeSelectionState;
+
         private IUniverseAlertStream _alertStream;
 
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
@@ -38,8 +40,6 @@
         private HighProfitsRuleFixedIncomeParameters _parameters;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-
-        private readonly UniverseSelectionState _universeSelectionState;
 
         public FixedIncomeHighProfitSteps(
             ScenarioContext scenarioContext,

@@ -22,6 +22,8 @@
     [TestFixture]
     public class FixedIncomeHighVolumeTests
     {
+        private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
+
         private IUniverseAlertStream _alertStream;
 
         private IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFile;
@@ -33,8 +35,6 @@
         private IHighVolumeIssuanceRuleFixedIncomeParameters _parameters;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-
-        private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
 
         private ILogger<TradingHistoryStack> _tradingStackLogger;
 

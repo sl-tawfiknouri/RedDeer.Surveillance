@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable InconsistentNaming
 
-// ReSharper disable InconsistentNaming
 namespace Surveillance.Api.DataAccess.DbContexts
 {
     using System.Linq;

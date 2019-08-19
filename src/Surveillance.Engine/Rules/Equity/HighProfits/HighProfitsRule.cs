@@ -1,6 +1,5 @@
-﻿
+﻿// ReSharper disable AssignNullToNotNullAttribute
 
-// ReSharper disable AssignNullToNotNullAttribute
 namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 {
     using System;

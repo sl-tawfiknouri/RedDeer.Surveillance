@@ -87,14 +87,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             var tradedSecurities =
                 tradeWindow
                     .Where(tr =>
-                        tr.OrderStatus() == OrderStatus.Filled)
+                        tr.OrderFilledVolume.GetValueOrDefault() > 0)
                     .ToList();
 
             var tradedVolume =
                 tradedSecurities
                     .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
-            var tradePosition = new TradePosition(tradeWindow.ToList());
+            var tradePosition = new TradePosition(tradedSecurities.ToList());
             var mostRecentTrade = tradeWindow.Pop();
 
             var dailyBreach = CheckDailyVolume(mostRecentTrade, tradedVolume);

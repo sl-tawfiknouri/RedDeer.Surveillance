@@ -1,7 +1,7 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Domain.Surveillance.Judgement.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public class MarkingTheCloseJudgement : IMarkingTheCloseJudgement
     {
         public MarkingTheCloseJudgement(
@@ -9,13 +9,15 @@ namespace Domain.Surveillance.Judgement.Equity
             decimal? windowPercentageMarketVolume,
             decimal? thresholdOffTouchPercentage)
         {
-            DailyPercentageMarketVolume = dailyPercentageMarketVolume;
-            WindowPercentageMarketVolume = windowPercentageMarketVolume;
-            ThresholdOffTouchPercentage = thresholdOffTouchPercentage;
+            this.DailyPercentageMarketVolume = dailyPercentageMarketVolume;
+            this.WindowPercentageMarketVolume = windowPercentageMarketVolume;
+            this.ThresholdOffTouchPercentage = thresholdOffTouchPercentage;
         }
 
         public decimal? DailyPercentageMarketVolume { get; }
-        public decimal? WindowPercentageMarketVolume { get; }
+
         public decimal? ThresholdOffTouchPercentage { get; }
+
+        public decimal? WindowPercentageMarketVolume { get; }
     }
 }

@@ -6,30 +6,30 @@
     {
         public Money(decimal? value, string currency)
         {
-            Value = value.GetValueOrDefault(0);
-            Currency = new Currency(currency ?? string.Empty);
+            this.Value = value.GetValueOrDefault(0);
+            this.Currency = new Currency(currency ?? string.Empty);
         }
 
         public Money(decimal? value, Currency currency)
         {
-            Value = value.GetValueOrDefault(0);
-            Currency = currency;
+            this.Value = value.GetValueOrDefault(0);
+            this.Currency = currency;
         }
 
         public decimal Value { get; set; }
+
         public Currency Currency { get; set; }
 
         public bool DenominatedInCommonCurrency(Money amount)
         {
-            return Equals(Currency, amount.Currency);
+            return Equals(this.Currency, amount.Currency);
         }
 
         public static Money operator +(Money a, Money b)
         {
             if (!a.DenominatedInCommonCurrency(b))
-            {
-                throw new ArgumentException($"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
-            }
+                throw new ArgumentException(
+                    $"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
 
             return new Money(a.Value + b.Value, a.Currency);
         }
@@ -37,16 +37,15 @@
         public static Money operator -(Money a, Money b)
         {
             if (!a.DenominatedInCommonCurrency(b))
-            {
-                throw new ArgumentException($"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
-            }
+                throw new ArgumentException(
+                    $"Currency of A did not match currency of B ({a.Currency.Code}, {b.Currency.Code})");
 
             return new Money(a.Value - b.Value, a.Currency);
         }
 
         public override string ToString()
         {
-            return $"({Currency.Code}) {Value}";
+            return $"({this.Currency.Code}) {this.Value}";
         }
     }
 }

@@ -1,18 +1,19 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Domain.Surveillance.Judgement.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public class CancelledOrderJudgement : ICancelledOrderJudgement
     {
         public CancelledOrderJudgement(
             decimal? cancelledOrderPercentagePositionThreshold,
             decimal? cancelledOrderCountPercentageThreshold)
         {
-            CancelledOrderPercentagePositionThreshold = cancelledOrderPercentagePositionThreshold;
-            CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
+            this.CancelledOrderPercentagePositionThreshold = cancelledOrderPercentagePositionThreshold;
+            this.CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
         }
 
-        public decimal? CancelledOrderPercentagePositionThreshold { get; }
         public decimal? CancelledOrderCountPercentageThreshold { get; }
+
+        public decimal? CancelledOrderPercentagePositionThreshold { get; }
     }
 }

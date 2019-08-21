@@ -1,12 +1,22 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class TraderNode : Node<TraderNode>
     {
-        public TraderNode(Parent parent) : base(parent) { }
+        public TraderNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public TraderNode FieldId() => AddField("id");
-        public TraderNode FieldName() => AddField("name");
+        public TraderNode FieldId()
+        {
+            return this.AddField("id");
+        }
+
+        public TraderNode FieldName()
+        {
+            return this.AddField("name");
+        }
     }
 }

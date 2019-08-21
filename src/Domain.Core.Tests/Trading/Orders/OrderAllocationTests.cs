@@ -4,6 +4,7 @@
 
     using Domain.Core.Tests.Helpers;
     using Domain.Core.Trading.Orders;
+
     using NUnit.Framework;
 
     [TestFixture]
@@ -20,15 +21,7 @@
             var orderFilledVolume = 1002;
             var createdDate = new DateTime(2019, 1, 1, 1, 1, 1);
 
-            var alloc =
-                new OrderAllocation(
-                    id,
-                    orderId,
-                    fund,
-                    strategy,
-                    clientAccount,
-                    orderFilledVolume,
-                    createdDate);
+            var alloc = new OrderAllocation(id, orderId, fund, strategy, clientAccount, orderFilledVolume, createdDate);
 
             Assert.AreEqual(id, alloc.Id);
             Assert.AreEqual(orderId, alloc.OrderId);
@@ -68,15 +61,14 @@
         [Test]
         public void IsValid_False_WhenNoAssociatedOrderId()
         {
-            var alloc =
-                new OrderAllocation(
-                    "some-primary-key",
-                    null,
-                    "fund-a",
-                    "strategy-b",
-                    "client-c",
-                    100,
-                    DateTime.UtcNow);
+            var alloc = new OrderAllocation(
+                "some-primary-key",
+                null,
+                "fund-a",
+                "strategy-b",
+                "client-c",
+                100,
+                DateTime.UtcNow);
 
             var result = alloc.IsValid();
 

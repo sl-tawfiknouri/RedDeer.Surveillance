@@ -1,11 +1,15 @@
-﻿using System;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Interfaces
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     public interface IUniverseRule : IObserver<IUniverseEvent>
     {
-        Domain.Surveillance.Scheduling.Rules Rule { get; }
+        Rules Rule { get; }
+
         string Version { get; }
     }
 }

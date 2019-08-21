@@ -1,13 +1,17 @@
-﻿using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces
 {
+    using Domain.Core.Financial.Money;
+
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+
     public interface IRevenueCalculatorFactory
     {
         IRevenueCalculator RevenueCalculator();
+
         IRevenueCalculator RevenueCalculatorMarketClosureCalculator();
 
-        IRevenueCalculator RevenueCurrencyConvertingCalculator(Domain.Core.Financial.Money.Currency currency);
-        IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Core.Financial.Money.Currency currency);
+        IRevenueCalculator RevenueCurrencyConvertingCalculator(Currency currency);
+
+        IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Currency currency);
     }
 }

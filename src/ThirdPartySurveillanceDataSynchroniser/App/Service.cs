@@ -1,74 +1,71 @@
-﻿using System.Threading;
-using DasMulli.Win32.ServiceUtils;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using NLog.Web;
-
-namespace DataSynchroniser.App
+﻿namespace DataSynchroniser.App
 {
+    using System.Threading;
+
+    using DasMulli.Win32.ServiceUtils;
+
+    using Microsoft.AspNetCore;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Web;
+
     public class Service : IWin32Service
     {
-        private readonly ILogger _logger;
         private readonly CancellationTokenSource _cts;
 
-        private IWebHost _webHost;
+        private readonly ILogger _logger;
+
         private bool _stopRequestedByWindows;
-        public string ServiceName => Program.ServiceName;
+
+        private IWebHost _webHost;
 
         public Service(ILogger<Service> logger)
         {
-            _logger = logger;
-            _cts = new CancellationTokenSource();
+            this._logger = logger;
+            this._cts = new CancellationTokenSource();
         }
+
+        public string ServiceName => Program.ServiceName;
 
         public void Start(string[] startupArguments, ServiceStoppedCallback serviceStoppedCallback)
         {
-            _logger.LogInformation("Service Starting.");
-            _webHost = WebHost.CreateDefaultBuilder(startupArguments)
-                .UseStartup<Startup>()
-                .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls("http://*:9089/")
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog()
-                .Build();
+            this._logger.LogInformation("Service Starting.");
+            this._webHost = WebHost.CreateDefaultBuilder(startupArguments).UseStartup<Startup>()
+                .UseDefaultServiceProvider(options => options.ValidateScopes = false).UseUrls("http://*:9089/")
+                .ConfigureLogging(
+                    logging =>
+                        {
+                            logging.ClearProviders();
+                            logging.SetMinimumLevel(LogLevel.Trace);
+                        }).UseNLog().Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
-            _logger.LogInformation($"Service registering web host");
-            _webHost
-                .Services
-                .GetRequiredService<IApplicationLifetime>()
-                .ApplicationStopped
-                .Register(() =>
-                {
-                    if (_stopRequestedByWindows == false)
+            this._logger.LogInformation("Service registering web host");
+            this._webHost.Services.GetRequiredService<IApplicationLifetime>().ApplicationStopped.Register(
+                () =>
                     {
-                        serviceStoppedCallback();
-                    }
-                });
+                        if (this._stopRequestedByWindows == false) serviceStoppedCallback();
+                    });
 
-            _logger.LogInformation("WebHost Starting.");
-            _webHost.Start();
-            _logger.LogInformation("WebHost Started.");
+            this._logger.LogInformation("WebHost Starting.");
+            this._webHost.Start();
+            this._logger.LogInformation("WebHost Started.");
 
-            _logger.LogInformation("Service Started.");
+            this._logger.LogInformation("Service Started.");
         }
 
         public void Stop()
         {
-            _logger.LogInformation("Service Stopping.");
+            this._logger.LogInformation("Service Stopping.");
 
-            _stopRequestedByWindows = true;
-            _webHost.Dispose();
-            _cts.Cancel();
+            this._stopRequestedByWindows = true;
+            this._webHost.Dispose();
+            this._cts.Cancel();
 
-            _logger.LogInformation("Service Stop.");
+            this._logger.LogInformation("Service Stop.");
         }
     }
 }

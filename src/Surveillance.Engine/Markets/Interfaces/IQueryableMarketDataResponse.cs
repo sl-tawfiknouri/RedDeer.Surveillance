@@ -1,10 +1,11 @@
-﻿using Domain.Core.Financial.Money;
-
-namespace Surveillance.Engine.Rules.Markets.Interfaces
+﻿namespace Surveillance.Engine.Rules.Markets.Interfaces
 {
+    using Domain.Core.Financial.Money;
+
     public interface IQueryableMarketDataResponse
     {
         bool HadMissingData();
+
         Money? PriceOrClose();
     }
 }

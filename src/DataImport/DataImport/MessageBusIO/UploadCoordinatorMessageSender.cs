@@ -1,19 +1,27 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using DataImport.MessageBusIO.Interfaces;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Interfaces;
-using SharedKernel.Contracts.Queues;
-
-namespace DataImport.MessageBusIO
+﻿namespace DataImport.MessageBusIO
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using DataImport.MessageBusIO.Interfaces;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService.Interfaces;
+
+    using SharedKernel.Contracts.Queues;
+
     public class UploadCoordinatorMessageSender : IUploadCoordinatorMessageSender
     {
-        private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
+
+        private readonly IAwsQueueClient _awsQueueClient;
+
         private readonly ILogger<UploadCoordinatorMessageSender> _logger;
+
         private readonly IMessageBusSerialiser _serialiser;
 
         public UploadCoordinatorMessageSender(
@@ -22,32 +30,39 @@ namespace DataImport.MessageBusIO
             IMessageBusSerialiser serialiser,
             ILogger<UploadCoordinatorMessageSender> logger)
         {
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));            
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this._serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Send(AutoScheduleMessage message)
         {
             if (message == null)
             {
-                _logger.LogWarning($"UploadCoordinatorMessageSender was asked to send a null message. Will not be sending anything.");
+                this._logger.LogWarning(
+                    "UploadCoordinatorMessageSender was asked to send a null message. Will not be sending anything.");
                 return;
             }
 
             var messageBusCts = new CancellationTokenSource();
-            var serialisedMessage = _serialiser.Serialise(message);
+            var serialisedMessage = this._serialiser.Serialise(message);
 
             try
             {
-                _logger.LogInformation($"UploadCoordinatorMessageSender dispatching to {_awsConfiguration.UploadCoordinatorQueueName}");
-                await _awsQueueClient.SendToQueue(_awsConfiguration.UploadCoordinatorQueueName, serialisedMessage, messageBusCts.Token);
-                _logger.LogInformation($"UploadCoordinatorMessageSender finished dispatching to {_awsConfiguration.UploadCoordinatorQueueName}");
+                this._logger.LogInformation(
+                    $"UploadCoordinatorMessageSender dispatching to {this._awsConfiguration.UploadCoordinatorQueueName}");
+                await this._awsQueueClient.SendToQueue(
+                    this._awsConfiguration.UploadCoordinatorQueueName,
+                    serialisedMessage,
+                    messageBusCts.Token);
+                this._logger.LogInformation(
+                    $"UploadCoordinatorMessageSender finished dispatching to {this._awsConfiguration.UploadCoordinatorQueueName}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception in UploadCoordinatorMessageSender sending message '{message}' to bus on queue {_awsConfiguration.UploadCoordinatorQueueName}. Error was {e.Message}");
+                this._logger.LogError(
+                    $"Exception in UploadCoordinatorMessageSender sending message '{message}' to bus on queue {this._awsConfiguration.UploadCoordinatorQueueName}. Error was {e.Message}");
             }
         }
     }

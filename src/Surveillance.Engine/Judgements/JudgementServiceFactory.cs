@@ -1,18 +1,22 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
-using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
-
-namespace Surveillance.Engine.Rules.Judgements
+﻿namespace Surveillance.Engine.Rules.Judgements
 {
+    using System;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+
     public class JudgementServiceFactory : IJudgementServiceFactory
     {
-        private readonly IRuleViolationServiceFactory _ruleViolationServiceFactory;
-        private readonly IJudgementRepository _judgementRepository;
         private readonly IHighProfitJudgementMapper _highProfitJudgementMapper;
 
+        private readonly IJudgementRepository _judgementRepository;
+
         private readonly ILogger<JudgementService> _logger;
+
+        private readonly IRuleViolationServiceFactory _ruleViolationServiceFactory;
 
         public JudgementServiceFactory(
             IRuleViolationServiceFactory ruleViolationServiceFactory,
@@ -20,28 +24,25 @@ namespace Surveillance.Engine.Rules.Judgements
             IHighProfitJudgementMapper highProfitJudgementMapper,
             ILogger<JudgementService> logger)
         {
-            _ruleViolationServiceFactory =
-                ruleViolationServiceFactory
-                ?? throw new ArgumentNullException(nameof(ruleViolationServiceFactory));
+            this._ruleViolationServiceFactory = ruleViolationServiceFactory
+                                                ?? throw new ArgumentNullException(nameof(ruleViolationServiceFactory));
 
-            _judgementRepository =
-                judgementRepository
-                ?? throw new ArgumentNullException(nameof(judgementRepository));
+            this._judgementRepository =
+                judgementRepository ?? throw new ArgumentNullException(nameof(judgementRepository));
 
-            _highProfitJudgementMapper =
-                highProfitJudgementMapper
-                ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
+            this._highProfitJudgementMapper = highProfitJudgementMapper
+                                              ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
 
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IJudgementService Build()
         {
             return new JudgementService(
-                _judgementRepository,
-                _ruleViolationServiceFactory.Build(),
-                _highProfitJudgementMapper,
-                _logger);
+                this._judgementRepository,
+                this._ruleViolationServiceFactory.Build(),
+                this._highProfitJudgementMapper,
+                this._logger);
         }
     }
 }

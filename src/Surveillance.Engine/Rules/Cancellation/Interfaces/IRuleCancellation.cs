@@ -3,7 +3,9 @@
     public interface IRuleCancellation
     {
         void Cancel(string cancelledRuleId);
+
         void Subscribe(ICancellableRule cancellableRule);
+
         void Unsubscribe(ICancellableRule cancellableRule);
     }
 }

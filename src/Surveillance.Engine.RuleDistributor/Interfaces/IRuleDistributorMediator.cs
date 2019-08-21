@@ -1,7 +1,7 @@
-﻿using Surveillance.Engine.Interfaces.Mediator;
-
-namespace Surveillance.Engine.RuleDistributor.Interfaces
+﻿namespace Surveillance.Engine.RuleDistributor.Interfaces
 {
+    using Surveillance.Engine.Interfaces.Mediator;
+
     public interface IRuleDistributorMediator : IMediator
     {
     }

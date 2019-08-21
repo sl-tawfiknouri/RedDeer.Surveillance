@@ -1,9 +1,11 @@
-﻿using Surveillance.Engine.Rules.Rules.Interfaces;
-
-namespace Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces
+﻿namespace Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces
 {
+    using Domain.Surveillance.Rules;
+
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+
     public interface IRuleBreachToRuleBreachMapper
     {
-        Domain.Surveillance.Rules.RuleBreach RuleBreachItem(IRuleBreach ruleBreach);
+        RuleBreach RuleBreachItem(IRuleBreach ruleBreach);
     }
 }

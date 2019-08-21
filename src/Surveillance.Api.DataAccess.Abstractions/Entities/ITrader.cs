@@ -3,6 +3,7 @@
     public interface ITrader
     {
         string Id { get; set; }
+
         string Name { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 {
+    using System;
+
+    using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
+    using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
+
     public class RampingStrategySummary : IRampingStrategySummary
     {
         public RampingStrategySummary(
@@ -14,15 +15,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             RampingStrategy rampingStrategy,
             TimeSegment timeSegment)
         {
-            PriceImpact = priceImpact ?? throw new ArgumentNullException(nameof(priceImpact));
-            TrendClassification = trendClassification ?? throw new ArgumentNullException(nameof(trendClassification));
-            RampingStrategy = rampingStrategy;
-            TimeSegment = timeSegment;
+            this.PriceImpact = priceImpact ?? throw new ArgumentNullException(nameof(priceImpact));
+            this.TrendClassification =
+                trendClassification ?? throw new ArgumentNullException(nameof(trendClassification));
+            this.RampingStrategy = rampingStrategy;
+            this.TimeSegment = timeSegment;
         }
 
-        public TimeSegment TimeSegment { get; }
         public IPriceImpactSummary PriceImpact { get; }
-        public ITimeSeriesTrendClassification TrendClassification { get; }
+
         public RampingStrategy RampingStrategy { get; }
+
+        public TimeSegment TimeSegment { get; }
+
+        public ITimeSeriesTrendClassification TrendClassification { get; }
     }
 }

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
-
-namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
+﻿namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Rules.Tuning;
+
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+
     [Serializable]
     public class WashTradeRuleFixedIncomeParameters : IWashTradeRuleFixedIncomeParameters
     {
@@ -31,118 +32,63 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
-            Windows = new TimeWindows(id, windowSize);
+            this.Id = id ?? string.Empty;
+            this.Windows = new TimeWindows(id, windowSize);
 
-            PerformAveragePositionAnalysis = performAveragePositionAnalysis;
-            PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
-            AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
-            AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
-            AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
-            AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
+            this.PerformAveragePositionAnalysis = performAveragePositionAnalysis;
+            this.PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
+            this.AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
+            this.AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
+            this.AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
+            this.AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
 
-            ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
-            ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
-            
-            Accounts = accounts ?? RuleFilter.None();
-            Traders = traders ?? RuleFilter.None();
-            Markets = markets ?? RuleFilter.None();
-            Funds = funds ?? RuleFilter.None();
-            Strategies = strategies ?? RuleFilter.None();
-            Factors = factors ?? new List<ClientOrganisationalFactors>();
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
+            this.ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
 
-            PerformTuning = performTuning;
+            this.Accounts = accounts ?? RuleFilter.None();
+            this.Traders = traders ?? RuleFilter.None();
+            this.Markets = markets ?? RuleFilter.None();
+            this.Funds = funds ?? RuleFilter.None();
+            this.Strategies = strategies ?? RuleFilter.None();
+            this.Factors = factors ?? new List<ClientOrganisationalFactors>();
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+
+            this.PerformTuning = performTuning;
         }
 
-        [TuneableIdParameter]
-        public string Id { get; set; }
-        [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; set; }
+        public RuleFilter Accounts { get; set; }
 
-        public bool PerformAveragePositionAnalysis { get; set; }
-        public bool PerformClusteringPositionAnalysis { get; set; }
-        
-        [TuneableIntegerParameter]
-        public int? AveragePositionMinimumNumberOfTrades { get; set; }
-        [TuneableDecimalParameter]
-        public decimal? AveragePositionMaximumPositionValueChange { get; set; }
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
         [TuneableDecimalParameter]
         public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; set; }
+
         public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; set; }
 
+        [TuneableDecimalParameter]
+        public decimal? AveragePositionMaximumPositionValueChange { get; set; }
+
         [TuneableIntegerParameter]
-        public int? ClusteringPositionMinimumNumberOfTrades { get; set; }
+        public int? AveragePositionMinimumNumberOfTrades { get; set; }
+
         [TuneableDecimalParameter]
         public decimal? ClusteringPercentageValueDifferenceThreshold { get; set; }
 
-        public RuleFilter Accounts { get; set; }
-        public RuleFilter Traders { get; set; }
-        public RuleFilter Markets { get; set; }
-        public RuleFilter Funds { get; set; }
-        public RuleFilter Strategies { get; set; }
-        
-        public bool HasInternalFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None;
-        }
+        [TuneableIntegerParameter]
+        public int? ClusteringPositionMinimumNumberOfTrades { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
-        public bool Valid()
-        {
-            return !string.IsNullOrWhiteSpace(Id)
-               && (AveragePositionMinimumNumberOfTrades == null
-                   || AveragePositionMinimumNumberOfTrades >= 0)
-                && (AveragePositionMaximumPositionValueChange == null
-                || AveragePositionMaximumPositionValueChange >= 0)
-                && (AveragePositionMaximumAbsoluteValueChangeAmount == null
-                    || AveragePositionMaximumAbsoluteValueChangeAmount >= 0)
-                && (ClusteringPositionMinimumNumberOfTrades == null
-                    || ClusteringPositionMinimumNumberOfTrades >= 0)
-                && (ClusteringPercentageValueDifferenceThreshold == null
-                    || ClusteringPercentageValueDifferenceThreshold >= 0);
-        }
+        public RuleFilter Funds { get; set; }
 
-        public override int GetHashCode()
-        {
-            return Windows.GetHashCode()
-               * AveragePositionMinimumNumberOfTrades.GetHashCode()
-               * AveragePositionMaximumPositionValueChange.GetHashCode()
-               * AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
-               * ClusteringPositionMinimumNumberOfTrades.GetHashCode()
-               * ClusteringPercentageValueDifferenceThreshold.GetHashCode();
-        }
+        [TuneableIdParameter]
+        public string Id { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
+        public RuleFilter Markets { get; set; }
 
-            var castObj = obj as WashTradeRuleFixedIncomeParameters;
+        public string PairingPositionMaximumAbsoluteCurrency => null;
 
-            if (castObj == null)
-            {
-                return false;
-            }
-
-            return Windows == castObj.Windows
-                   && AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
-                   && AveragePositionMaximumPositionValueChange == castObj.AveragePositionMaximumPositionValueChange
-                   && AveragePositionMaximumAbsoluteValueChangeAmount == castObj.AveragePositionMaximumAbsoluteValueChangeAmount
-                   && ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
-                   && ClusteringPercentageValueDifferenceThreshold == castObj.ClusteringPercentageValueDifferenceThreshold;
-
-        }
-
-        // Removing from wash trade parameter interface soon
-        public bool PerformPairingPositionAnalysis => false;
+        public decimal? PairingPositionMaximumAbsoluteMoney => null;
 
         public int? PairingPositionMinimumNumberOfPairedTrades => null;
 
@@ -150,13 +96,72 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public decimal? PairingPositionPercentageVolumeDifferenceThreshold => null;
 
-        public decimal? PairingPositionMaximumAbsoluteMoney => null;
+        public bool PerformAveragePositionAnalysis { get; set; }
 
-        public string PairingPositionMaximumAbsoluteCurrency => null;
+        public bool PerformClusteringPositionAnalysis { get; set; }
+
+        // Removing from wash trade parameter interface soon
+        public bool PerformPairingPositionAnalysis => false;
 
         public bool PerformTuning { get; set; }
 
+        public RuleFilter Strategies { get; set; }
+
+        public RuleFilter Traders { get; set; }
+
         [TunedParam]
         public TunedParameter<string> TunedParam { get; set; }
+
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+
+            var castObj = obj as WashTradeRuleFixedIncomeParameters;
+
+            if (castObj == null) return false;
+
+            return this.Windows == castObj.Windows
+                   && this.AveragePositionMinimumNumberOfTrades == castObj.AveragePositionMinimumNumberOfTrades
+                   && this.AveragePositionMaximumPositionValueChange
+                   == castObj.AveragePositionMaximumPositionValueChange
+                   && this.AveragePositionMaximumAbsoluteValueChangeAmount
+                   == castObj.AveragePositionMaximumAbsoluteValueChangeAmount
+                   && this.ClusteringPositionMinimumNumberOfTrades == castObj.ClusteringPositionMinimumNumberOfTrades
+                   && this.ClusteringPercentageValueDifferenceThreshold
+                   == castObj.ClusteringPercentageValueDifferenceThreshold;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Windows.GetHashCode() * this.AveragePositionMinimumNumberOfTrades.GetHashCode()
+                                              * this.AveragePositionMaximumPositionValueChange.GetHashCode()
+                                              * this.AveragePositionMaximumAbsoluteValueChangeAmount.GetHashCode()
+                                              * this.ClusteringPositionMinimumNumberOfTrades.GetHashCode()
+                                              * this.ClusteringPercentageValueDifferenceThreshold.GetHashCode();
+        }
+
+        public bool HasInternalFilters()
+        {
+            return this.Accounts?.Type != RuleFilterType.None || this.Traders?.Type != RuleFilterType.None
+                                                              || this.Markets?.Type != RuleFilterType.None;
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Id)
+                   && (this.AveragePositionMinimumNumberOfTrades == null
+                       || this.AveragePositionMinimumNumberOfTrades >= 0)
+                   && (this.AveragePositionMaximumPositionValueChange == null
+                       || this.AveragePositionMaximumPositionValueChange >= 0)
+                   && (this.AveragePositionMaximumAbsoluteValueChangeAmount == null
+                       || this.AveragePositionMaximumAbsoluteValueChangeAmount >= 0)
+                   && (this.ClusteringPositionMinimumNumberOfTrades == null
+                       || this.ClusteringPositionMinimumNumberOfTrades >= 0)
+                   && (this.ClusteringPercentageValueDifferenceThreshold == null
+                       || this.ClusteringPercentageValueDifferenceThreshold >= 0);
+        }
     }
 }

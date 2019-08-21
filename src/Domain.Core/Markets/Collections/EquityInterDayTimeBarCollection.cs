@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Core.Markets.Timebars;
-
-namespace Domain.Core.Markets.Collections
+﻿namespace Domain.Core.Markets.Collections
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Core.Markets.Timebars;
+
     /// <summary>
-    /// An aggregation of security time bars
-    /// This represents a specific point in time
-    /// All child security dates are considered cannon at the same point in time
-    /// If you have security data spanning multiple points in time they need
-    /// to be split into multiple collections
+    ///     An aggregation of security time bars
+    ///     This represents a specific point in time
+    ///     All child security dates are considered cannon at the same point in time
+    ///     If you have security data spanning multiple points in time they need
+    ///     to be split into multiple collections
     /// </summary>
     public class EquityInterDayTimeBarCollection
     {
@@ -18,36 +19,30 @@ namespace Domain.Core.Markets.Collections
             DateTime epoch,
             IReadOnlyCollection<EquityInstrumentInterDayTimeBar> securities)
         {
-            Exchange = exchange;
-            Epoch = epoch;
-            Securities = securities ?? new List<EquityInstrumentInterDayTimeBar>();
+            this.Exchange = exchange;
+            this.Epoch = epoch;
+            this.Securities = securities ?? new List<EquityInstrumentInterDayTimeBar>();
         }
 
+        public DateTime Epoch { get; }
+
         /// <summary>
-        /// The exchange the data update is issued by
+        ///     The exchange the data update is issued by
         /// </summary>
         public Market Exchange { get; }
 
         /// <summary>
-        /// The securities with updated data
+        ///     The securities with updated data
         /// </summary>
         public IReadOnlyCollection<EquityInstrumentInterDayTimeBar> Securities { get; }
-
-        public DateTime Epoch { get; }
 
         public override string ToString()
         {
             var str = string.Empty;
 
-            if (Exchange != null)
-            {
-                str += $"Exchange ({Exchange.MarketIdentifierCode}.{Exchange.Name}) ";   
-            }
+            if (this.Exchange != null) str += $"Exchange ({this.Exchange.MarketIdentifierCode}.{this.Exchange.Name}) ";
 
-            if (Securities != null)
-            {
-                str += $"Securities({Securities.Count})";
-            }
+            if (this.Securities != null) str += $"Securities({this.Securities.Count})";
 
             return str;
         }

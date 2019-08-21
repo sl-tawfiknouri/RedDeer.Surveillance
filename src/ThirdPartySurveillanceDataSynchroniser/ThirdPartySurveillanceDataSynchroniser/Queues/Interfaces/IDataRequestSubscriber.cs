@@ -3,6 +3,7 @@
     public interface IDataRequestSubscriber
     {
         void Initiate();
+
         void Terminate();
     }
 }

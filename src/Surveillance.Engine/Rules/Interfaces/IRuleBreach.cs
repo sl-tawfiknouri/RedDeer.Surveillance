@@ -2,7 +2,8 @@
 {
     public interface IRuleBreach : IRuleBreachContext
     {
-        string Description { get; set; }
         string CaseTitle { get; set; }
+
+        string Description { get; set; }
     }
 }

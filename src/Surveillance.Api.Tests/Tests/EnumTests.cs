@@ -1,34 +1,38 @@
-﻿using NUnit.Framework;
-using RedDeer.Surveillance.Api.Client.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Surveillance.Api.Tests.Tests
+﻿namespace Surveillance.Api.Tests.Tests
 {
+    using System;
+    using System.Linq;
+
+    using Domain.Core.Trading.Orders;
+
+    using NUnit.Framework;
+
+    using RedDeer.Surveillance.Api.Client.Enums;
+
+    using OrderStatus = RedDeer.Surveillance.Api.Client.Enums.OrderStatus;
+
     public class EnumTests
     {
         [Test]
-        public void OrderType_Matches()
-        {
-            TestEnumMatches<OrderType, Domain.Core.Trading.Orders.OrderTypes>();
-        }
-
-        [Test]
         public void OrderDirection_Matches()
         {
-            TestEnumMatches<OrderDirection, Domain.Core.Trading.Orders.OrderDirections>();
+            this.TestEnumMatches<OrderDirection, OrderDirections>();
         }
 
         [Test]
         public void OrderStatus_Matches()
         {
-            TestEnumMatches<OrderStatus, Domain.Core.Trading.Orders.OrderStatus>();
+            this.TestEnumMatches<OrderStatus, Domain.Core.Trading.Orders.OrderStatus>();
+        }
+
+        [Test]
+        public void OrderType_Matches()
+        {
+            this.TestEnumMatches<OrderType, OrderTypes>();
         }
 
         private void TestEnumMatches<A, B>()
-        { 
+        {
             var valuesA = Enum.GetValues(typeof(A)).Cast<A>().ToList();
             var valuesB = Enum.GetValues(typeof(B)).Cast<B>().ToList();
 

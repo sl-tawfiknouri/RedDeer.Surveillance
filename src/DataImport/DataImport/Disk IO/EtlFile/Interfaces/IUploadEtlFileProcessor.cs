@@ -1,10 +1,11 @@
-﻿using Domain.Core.Trading.Orders;
-using SharedKernel.Files.Orders;
-
-namespace DataImport.Disk_IO.EtlFile.Interfaces
+﻿namespace DataImport.Disk_IO.EtlFile.Interfaces
 {
+    using Domain.Core.Trading.Orders;
+
+    using SharedKernel.Files.Orders;
+
     public interface IUploadEtlFileProcessor
     {
-         UploadFileProcessorResult<OrderFileContract, Order> Process(string path);
+        UploadFileProcessorResult<OrderFileContract, Order> Process(string path);
     }
 }

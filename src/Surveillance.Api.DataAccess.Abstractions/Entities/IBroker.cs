@@ -1,12 +1,15 @@
-﻿using System;
-
-namespace Surveillance.Api.DataAccess.Abstractions.Entities
+﻿namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
+    using System;
+
     public interface IBroker
     {
-        int Id { get; set; }
-        string ExternalId { get; set; }
-        string Name { get; set; }
         DateTime CreatedOn { get; set; }
+
+        string ExternalId { get; set; }
+
+        int Id { get; set; }
+
+        string Name { get; set; }
     }
 }

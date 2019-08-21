@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Domain.Core.Trading.Orders
+﻿namespace Domain.Core.Trading.Orders
 {
+    using System;
+
     public class OrderAllocation
     {
         public OrderAllocation(
@@ -13,44 +13,47 @@ namespace Domain.Core.Trading.Orders
             decimal orderFilledVolume,
             DateTime? createdDate)
         {
-            Id = id ?? string.Empty;
-            OrderId = orderId ?? string.Empty;
-            Fund = fund ?? string.Empty;
-            Strategy = strategy ?? string.Empty;
-            ClientAccountId = clientAccountId ?? string.Empty;
-            OrderFilledVolume = orderFilledVolume;
-            CreatedDate = createdDate;
+            this.Id = id ?? string.Empty;
+            this.OrderId = orderId ?? string.Empty;
+            this.Fund = fund ?? string.Empty;
+            this.Strategy = strategy ?? string.Empty;
+            this.ClientAccountId = clientAccountId ?? string.Empty;
+            this.OrderFilledVolume = orderFilledVolume;
+            this.CreatedDate = createdDate;
         }
 
         /// <summary>
-        /// 100% allocation
+        ///     100% allocation
         /// </summary>
         public OrderAllocation(Order order)
         {
-            if (order == null)
-            {
-                return;
-            }
+            if (order == null) return;
 
-            Id = string.Empty;
-            OrderId = order.OrderId;
-            Fund = order.OrderFund;
-            Strategy = order.OrderStrategy;
-            ClientAccountId = order.OrderClientAccountAttributionId;
-            OrderFilledVolume = order.OrderFilledVolume.GetValueOrDefault(0);
+            this.Id = string.Empty;
+            this.OrderId = order.OrderId;
+            this.Fund = order.OrderFund;
+            this.Strategy = order.OrderStrategy;
+            this.ClientAccountId = order.OrderClientAccountAttributionId;
+            this.OrderFilledVolume = order.OrderFilledVolume.GetValueOrDefault(0);
         }
 
-        public string Id { get; }
-        public string OrderId { get; }
-        public string Fund { get; }
-        public string Strategy { get; }
         public string ClientAccountId { get; }
-        public decimal OrderFilledVolume { get; }
+
         public DateTime? CreatedDate { get; }
+
+        public string Fund { get; }
+
+        public string Id { get; }
+
+        public decimal OrderFilledVolume { get; }
+
+        public string OrderId { get; }
+
+        public string Strategy { get; }
 
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(OrderId);
+            return !string.IsNullOrEmpty(this.OrderId);
         }
     }
 }

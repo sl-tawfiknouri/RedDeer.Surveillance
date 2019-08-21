@@ -3,8 +3,11 @@
     public enum PriceSentiment
     {
         Neutral,
+
         Positive,
+
         Negative,
+
         Mixed
     }
 }

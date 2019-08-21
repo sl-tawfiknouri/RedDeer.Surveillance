@@ -1,18 +1,23 @@
 ﻿namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
-    public interface IWashTradeRuleParameters: IRuleParameter
+    public interface IWashTradeRuleParameters : IRuleParameter
     {
-        bool PerformAveragePositionAnalysis { get; }
-        bool PerformClusteringPositionAnalysis { get; }
+        decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
+
+        string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
+
+        decimal? AveragePositionMaximumPositionValueChange { get; }
 
         // Parameter set one
         int? AveragePositionMinimumNumberOfTrades { get; }
-        decimal? AveragePositionMaximumPositionValueChange { get; }
-        decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
-        string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
+
+        decimal? ClusteringPercentageValueDifferenceThreshold { get; }
 
         // Parameter set two
         int? ClusteringPositionMinimumNumberOfTrades { get; }
-        decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+
+        bool PerformAveragePositionAnalysis { get; }
+
+        bool PerformClusteringPositionAnalysis { get; }
     }
 }

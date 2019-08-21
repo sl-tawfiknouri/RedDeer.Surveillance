@@ -1,36 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Surveillance.Scheduling;
-using Infrastructure.Network.Extensions;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
-using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
+﻿namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Infrastructure.Network.Extensions;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
+
     public class HighVolumeEquitySubscriber : BaseSubscriber, IHighVolumeEquitySubscriber
     {
-        private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
-        private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+
         private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+
+        private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
+
         private readonly ILogger<HighVolumeEquitySubscriber> _logger;
+
+        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+
+        private readonly IUniverseFilterFactory _universeFilterFactory;
 
         public HighVolumeEquitySubscriber(
             IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
@@ -40,12 +51,17 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<HighVolumeEquitySubscriber> logger)
         {
-            _equityRuleHighVolumeFactory = equityRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
-            _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            _decoratorFilterFactory = decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._equityRuleHighVolumeFactory = equityRuleHighVolumeFactory
+                                                ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
+            this._ruleParameterMapper =
+                ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+            this._universeFilterFactory =
+                universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            this._brokerServiceFactory =
+                brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
+            this._decoratorFilterFactory =
+                decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
@@ -56,85 +72,23 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IJudgementService judgementService,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Surveillance.Scheduling.Rules.HighVolume) ?? true)
-            {
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.HighVolume) ?? true)
                 return new IObserver<IUniverseEvent>[0];
-            }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .HighVolumes
-                    .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
-                    .ToList();
+            var dtos = ruleParameters.HighVolumes
+                .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var highVolumeParameters = _ruleParameterMapper.Map(execution, dtos);
+            var highVolumeParameters = this._ruleParameterMapper.Map(execution, dtos);
 
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
-
-            return subscriptions;
-        }
-
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
-            ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> highVolumeParameters)
-        {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (highVolumeParameters != null
-                && highVolumeParameters.Any())
-            {
-                foreach (var param in highVolumeParameters)
-                {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
-                    subscriptions.Add(paramSubscriptions);
-                }
-            }
-            else
-            {
-                const string errorMessage = "tried to schedule a high volume rule execution with no parameters set";
-                _logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
-            }
+            var subscriptions = this.SubscribeToUniverse(
+                execution,
+                opCtx,
+                alertStream,
+                dataRequestSubscriber,
+                highVolumeParameters);
 
             return subscriptions;
-        }
-
-        private IUniverseRule SubscribeToParams(
-            ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IHighVolumeRuleEquitiesParameters param)
-        {
-            var ruleCtx = opCtx
-                .CreateAndStartRuleRunContext(
-                    Domain.Surveillance.Scheduling.Rules.HighVolume.GetDescription(),
-                    EquityRuleHighVolumeFactory.Version,
-                    param.Id,
-                    (int)Domain.Surveillance.Scheduling.Rules.HighVolume,
-                    execution.IsBackTest,
-                    execution.TimeSeriesInitiation.DateTime,
-                    execution.TimeSeriesTermination.DateTime,
-                    execution.CorrelationId,
-                    execution.IsForceRerun);
-
-            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highVolume = _equityRuleHighVolumeFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
-
-            var highVolumeOrgFactors =
-                _brokerServiceFactory.Build(
-                    highVolume,
-                    param.Factors,
-                    param.AggregateNonFactorableIntoOwnCategory);
-
-            var decoratedHighVolumeRule = DecorateWithFilter(opCtx, param, highVolumeOrgFactors, dataRequestSubscriber, ruleCtx, runMode);
-
-            return decoratedHighVolumeRule;
         }
 
         private IUniverseRule DecorateWithFilter(
@@ -145,14 +99,12 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters()
-                || param.HasReferenceDataFilters()
-                || param.HasMarketCapFilters()
+            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
                 || param.HasVenueVolumeFilters())
             {
-                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
-                var filteredUniverse = _universeFilterFactory.Build(
+                var filteredUniverse = this._universeFilterFactory.Build(
                     param.Accounts,
                     param.Traders,
                     param.Markets,
@@ -171,51 +123,109 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 var decoratedFilter = filteredUniverse;
 
                 if (param.HasVenueVolumeFilters())
-                {
-                    decoratedFilter = 
-                        _decoratorFilterFactory.Build(
-                            param.Windows,
-                            filteredUniverse,
-                            param.VenueVolumeFilter, 
-                            processOperationRunRuleContext,
-                            dataRequestSubscriber,
-                            HighVolumeDataSource(param),
-                            ruleRunMode);
-                }
+                    decoratedFilter = this._decoratorFilterFactory.Build(
+                        param.Windows,
+                        filteredUniverse,
+                        param.VenueVolumeFilter,
+                        processOperationRunRuleContext,
+                        dataRequestSubscriber,
+                        this.HighVolumeDataSource(param),
+                        ruleRunMode);
 
                 decoratedFilter.Subscribe(highVolume);
 
                 return decoratedFilter;
             }
-            else
-            {
-                return highVolume;
-            }
+
+            return highVolume;
         }
 
         private DataSource HighVolumeDataSource(IHighVolumeRuleEquitiesParameters parameters)
         {
-            if (parameters == null)
+            if (parameters == null) return DataSource.AllInterday;
+
+            if (parameters.HighVolumePercentageWindow != null) return DataSource.AllIntraday;
+
+            if (parameters.HighVolumePercentageDaily != null) return DataSource.AllInterday;
+
+            if (parameters.HighVolumePercentageMarketCap != null) return DataSource.AllInterday;
+
+            return this.DataSourceForWindow(parameters.Windows);
+        }
+
+        private IUniverseRule SubscribeToParams(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IHighVolumeRuleEquitiesParameters param)
+        {
+            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+                Rules.HighVolume.GetDescription(),
+                EquityRuleHighVolumeFactory.Version,
+                param.Id,
+                (int)Rules.HighVolume,
+                execution.IsBackTest,
+                execution.TimeSeriesInitiation.DateTime,
+                execution.TimeSeriesTermination.DateTime,
+                execution.CorrelationId,
+                execution.IsForceRerun);
+
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+            var highVolume = this._equityRuleHighVolumeFactory.Build(
+                param,
+                ruleCtx,
+                alertStream,
+                dataRequestSubscriber,
+                runMode);
+
+            var highVolumeOrgFactors = this._brokerServiceFactory.Build(
+                highVolume,
+                param.Factors,
+                param.AggregateNonFactorableIntoOwnCategory);
+
+            var decoratedHighVolumeRule = this.DecorateWithFilter(
+                opCtx,
+                param,
+                highVolumeOrgFactors,
+                dataRequestSubscriber,
+                ruleCtx,
+                runMode);
+
+            return decoratedHighVolumeRule;
+        }
+
+        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> highVolumeParameters)
+        {
+            var subscriptions = new List<IObserver<IUniverseEvent>>();
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (highVolumeParameters != null && highVolumeParameters.Any())
             {
-                return DataSource.AllInterday;
+                foreach (var param in highVolumeParameters)
+                {
+                    var paramSubscriptions = this.SubscribeToParams(
+                        execution,
+                        opCtx,
+                        alertStream,
+                        dataRequestSubscriber,
+                        param);
+                    subscriptions.Add(paramSubscriptions);
+                }
+            }
+            else
+            {
+                const string errorMessage = "tried to schedule a high volume rule execution with no parameters set";
+                this._logger.LogError(errorMessage);
+                opCtx.EventError(errorMessage);
             }
 
-            if (parameters.HighVolumePercentageWindow != null)
-            {
-                return DataSource.AllIntraday;
-            }
-
-            if (parameters.HighVolumePercentageDaily != null)
-            {
-                return DataSource.AllInterday;
-            }
-
-            if (parameters.HighVolumePercentageMarketCap != null)
-            {
-                return DataSource.AllInterday;
-            }
-
-            return DataSourceForWindow(parameters.Windows);
+            return subscriptions;
         }
     }
 }

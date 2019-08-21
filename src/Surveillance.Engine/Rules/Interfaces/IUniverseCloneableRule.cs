@@ -1,10 +1,11 @@
-﻿using System;
-
-namespace Surveillance.Engine.Rules.Rules.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Interfaces
 {
+    using System;
+
     public interface IUniverseCloneableRule : IUniverseRule, ICloneable
     {
-        IUniverseCloneableRule Clone(IFactorValue factor);
         IFactorValue OrganisationFactorValue { get; set; }
+
+        IUniverseCloneableRule Clone(IFactorValue factor);
     }
 }

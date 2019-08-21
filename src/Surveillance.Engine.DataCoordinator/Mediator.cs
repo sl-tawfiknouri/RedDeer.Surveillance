@@ -1,41 +1,45 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.DataCoordinator.Interfaces;
-using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator
+﻿namespace Surveillance.Engine.DataCoordinator
 {
+    using System;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.DataCoordinator.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
+
     public class Mediator : ICoordinatorMediator
     {
         private readonly IDataCoordinatorScheduler _dataScheduler;
-        private readonly IQueueSubscriber _queueSubscriber;
+
         private readonly ILogger<Mediator> _logger;
+
+        private readonly IQueueSubscriber _queueSubscriber;
 
         public Mediator(
             IDataCoordinatorScheduler dataScheduler,
             IQueueSubscriber queueSubscriber,
             ILogger<Mediator> logger)
         {
-            _dataScheduler = dataScheduler ?? throw new ArgumentNullException(nameof(dataScheduler));
-            _queueSubscriber = queueSubscriber ?? throw new ArgumentNullException(nameof(queueSubscriber));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._dataScheduler = dataScheduler ?? throw new ArgumentNullException(nameof(dataScheduler));
+            this._queueSubscriber = queueSubscriber ?? throw new ArgumentNullException(nameof(queueSubscriber));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
-            _logger?.LogInformation("Initiating");
-            _dataScheduler.Initialise();
-            _queueSubscriber.Initiate();
-            _logger?.LogInformation("Initiation Completed");
+            this._logger?.LogInformation("Initiating");
+            this._dataScheduler.Initialise();
+            this._queueSubscriber.Initiate();
+            this._logger?.LogInformation("Initiation Completed");
         }
 
         public void Terminate()
         {
-            _logger?.LogInformation("Terminating");
-            _dataScheduler.Terminate();
-            _queueSubscriber.Terminate();
-            _logger?.LogInformation("Termination Completed");
+            this._logger?.LogInformation("Terminating");
+            this._dataScheduler.Terminate();
+            this._queueSubscriber.Terminate();
+            this._logger?.LogInformation("Termination Completed");
         }
     }
 }

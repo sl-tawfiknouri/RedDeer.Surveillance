@@ -1,6 +1,7 @@
 ﻿namespace Domain.Core.Tests.Trading.Execution
 {
     using Domain.Core.Trading.Execution;
+
     using NUnit.Framework;
 
     [TestFixture]

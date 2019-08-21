@@ -1,19 +1,19 @@
-﻿using System;
-using Domain.Core.Trading.Orders;
-
-namespace Domain.Core.Trading.Execution
+﻿namespace Domain.Core.Trading.Execution
 {
+    using System;
+
+    using Domain.Core.Trading.Orders;
+
     public class OrderAnalysis : IOrderAnalysis
     {
-        public OrderAnalysis(
-            Order order,
-            PriceSentiment sentiment)
+        public OrderAnalysis(Order order, PriceSentiment sentiment)
         {
-            Order = order ?? throw new ArgumentNullException(nameof(order));
-            Sentiment = sentiment;
+            this.Order = order ?? throw new ArgumentNullException(nameof(order));
+            this.Sentiment = sentiment;
         }
 
         public Order Order { get; }
+
         public PriceSentiment Sentiment { get; }
     }
 }

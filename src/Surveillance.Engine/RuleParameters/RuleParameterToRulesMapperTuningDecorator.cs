@@ -1,24 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Surveillance.Scheduling;
-using Newtonsoft.Json;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
-using Surveillance.DataLayer.Aurora.Tuning;
-using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
-
-namespace Surveillance.Engine.Rules.RuleParameters
+﻿namespace Surveillance.Engine.Rules.RuleParameters
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Newtonsoft.Json;
+
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
+
+    using Surveillance.DataLayer.Aurora.Tuning;
+    using Surveillance.DataLayer.Aurora.Tuning.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Tuning.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+
     public class RuleParameterToRulesMapperTuningDecorator : IRuleParameterToRulesMapperDecorator
     {
-        private readonly IRuleParameterTuner _tuner;
         private readonly IRuleParameterToRulesMapper _mapper;
+
+        private readonly IRuleParameterTuner _tuner;
+
         private readonly ITuningRepository _tuningRepository;
 
         public RuleParameterToRulesMapperTuningDecorator(
@@ -26,38 +32,25 @@ namespace Surveillance.Engine.Rules.RuleParameters
             IRuleParameterToRulesMapper mapper,
             ITuningRepository tuningRepository)
         {
-            _tuner = tuner ?? throw new ArgumentNullException(nameof(tuner));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _tuningRepository = tuningRepository ?? throw new ArgumentNullException(nameof(tuningRepository));
+            this._tuner = tuner ?? throw new ArgumentNullException(nameof(tuner));
+            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this._tuningRepository = tuningRepository ?? throw new ArgumentNullException(nameof(tuningRepository));
         }
-        
+
         public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(
             ScheduledExecution execution,
             List<SpoofingRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>  
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -66,29 +59,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<CancelledOrderRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -97,29 +77,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<HighProfitsRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -128,29 +95,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<MarkingTheCloseRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -159,29 +113,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<LayeringRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -190,29 +131,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<HighVolumeRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -221,29 +149,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<WashTradeRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -252,29 +167,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<RampingRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -283,29 +185,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<PlacingOrdersWithNoIntentToExecuteRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -314,29 +203,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeWashTradeRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -345,29 +221,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeHighProfitRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }
@@ -376,29 +239,16 @@ namespace Surveillance.Engine.Rules.RuleParameters
             ScheduledExecution execution,
             List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
         {
-            if (!execution?.IsBackTest ?? true)
-            {
-                return _mapper.Map(execution, dtos);
-            }
+            if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 
-            var mappedDtos = _mapper.Map(execution, dtos).ToList();
-            var tunedDtos =
-                mappedDtos
-                    .Where(_ => _.PerformTuning)
-                    .SelectMany(_tuner.ParametersFramework)
-                    .Where(_ => _.Valid() && _.TunedParam != null)
-                    .Distinct()
-                    .ToList();
+            var mappedDtos = this._mapper.Map(execution, dtos).ToList();
+            var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
+                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
 
-            var saveableDtos =
-                tunedDtos
-                    .Select(_ =>
-                        new TuningRepository.TuningPair(
-                            _.TunedParam,
-                            JsonConvert.SerializeObject(_)))
-                    .ToList();
+            var saveableDtos = tunedDtos
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
 
-            _tuningRepository.SaveTasks(saveableDtos).Wait();
+            this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
             return mappedDtos.Concat(tunedDtos).ToList();
         }

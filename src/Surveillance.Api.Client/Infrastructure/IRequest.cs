@@ -1,13 +1,11 @@
-﻿using GraphQL.Common.Request;
-using GraphQL.Common.Response;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace RedDeer.Surveillance.Api.Client.Infrastructure
+﻿namespace RedDeer.Surveillance.Api.Client.Infrastructure
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using GraphQL.Common.Request;
+    using GraphQL.Common.Response;
+
     public interface IRequest
     {
         Task<GraphQLResponse> PostAsync(GraphQLRequest request, CancellationToken ctx);

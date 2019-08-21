@@ -1,23 +1,26 @@
-﻿using System;
-using Domain.Core.Financial.Cfis;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Filter
+﻿namespace Surveillance.Engine.Rules.Universe.Filter
 {
+    using System;
+
+    using Domain.Core.Financial.Cfis;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     public class UniverseEquityOrderFilterService : IUniverseEquityOrderFilterService
     {
         private readonly ILogger<UniverseEquityOrderFilterService> _logger;
 
         public UniverseEquityOrderFilterService(ILogger<UniverseEquityOrderFilterService> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        /// Returns null if it has filtered out the event
+        ///     Returns null if it has filtered out the event
         /// </summary>
         public IUniverseEvent Filter(IUniverseEvent universeEvent)
         {
@@ -34,7 +37,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (order == null)
             {
-                _logger.LogError($"encountered an unexpected type for the underlying value of a trade event. Not filtering.");
+                this._logger.LogError(
+                    "encountered an unexpected type for the underlying value of a trade event. Not filtering.");
                 return universeEvent;
             }
 
@@ -42,7 +46,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (string.IsNullOrWhiteSpace(cfi))
             {
-                _logger.LogError($"tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
+                this._logger.LogError(
+                    $"tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
                 return null;
             }
 
@@ -51,7 +56,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (filter)
             {
-                _logger.LogInformation($"filtering out cfi of {cfi} as it did not have a leading character of e");
+                this._logger.LogInformation($"filtering out cfi of {cfi} as it did not have a leading character of e");
                 return null;
             }
 

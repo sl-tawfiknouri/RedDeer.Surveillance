@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Universe
+﻿namespace Surveillance.Engine.Rules.Tests.Universe
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Universe;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     [TestFixture]
     public class UniverseSortComparerTests
     {
@@ -20,57 +22,6 @@ namespace Surveillance.Engine.Rules.Tests.Universe
             var result = comparer.Compare(x, y);
 
             Assert.AreEqual(result, 0);
-        }
-
-        [Test]
-        public void Do_XNullEvent_ReturnLess()
-        {
-            IUniverseEvent x = null;
-            IUniverseEvent y = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
-            var comparer = new UniverseEventComparer();
-
-            var result = comparer.Compare(x, y);
-
-            Assert.AreEqual(result, -1);
-        }
-
-        [Test]
-        public void Do_YNullEvent_ReturnMore()
-        {
-            IUniverseEvent x = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
-            IUniverseEvent y = null;
-
-            var comparer = new UniverseEventComparer();
-
-            var result = comparer.Compare(x, y);
-
-            Assert.AreEqual(result, 1);
-        }
-
-        [Test]
-        public void Do_XDatePrecedeY_ReturnLess()
-        {
-            IUniverseEvent x = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
-            IUniverseEvent y = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow.AddMinutes(5), new object());
-
-            var comparer = new UniverseEventComparer();
-
-            var result = comparer.Compare(x, y);
-
-            Assert.AreEqual(result, -1);
-        }
-
-        [Test]
-        public void Do_XDateSucceedY_ReturnMore()
-        {
-            IUniverseEvent x = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow.AddMinutes(5), new object());
-            IUniverseEvent y = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
-
-            var comparer = new UniverseEventComparer();
-
-            var result = comparer.Compare(x, y);
-
-            Assert.AreEqual(result, 1);
         }
 
         [TestCase(UniverseStateEvent.Unknown, UniverseStateEvent.Unknown, 0)]
@@ -151,6 +102,63 @@ namespace Surveillance.Engine.Rules.Tests.Universe
         }
 
         [Test]
+        public void Do_XDatePrecedeY_ReturnLess()
+        {
+            IUniverseEvent x = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
+            IUniverseEvent y = new UniverseEvent(
+                UniverseStateEvent.Genesis,
+                DateTime.UtcNow.AddMinutes(5),
+                new object());
+
+            var comparer = new UniverseEventComparer();
+
+            var result = comparer.Compare(x, y);
+
+            Assert.AreEqual(result, -1);
+        }
+
+        [Test]
+        public void Do_XDateSucceedY_ReturnMore()
+        {
+            IUniverseEvent x = new UniverseEvent(
+                UniverseStateEvent.Genesis,
+                DateTime.UtcNow.AddMinutes(5),
+                new object());
+            IUniverseEvent y = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
+
+            var comparer = new UniverseEventComparer();
+
+            var result = comparer.Compare(x, y);
+
+            Assert.AreEqual(result, 1);
+        }
+
+        [Test]
+        public void Do_XNullEvent_ReturnLess()
+        {
+            IUniverseEvent x = null;
+            IUniverseEvent y = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
+            var comparer = new UniverseEventComparer();
+
+            var result = comparer.Compare(x, y);
+
+            Assert.AreEqual(result, -1);
+        }
+
+        [Test]
+        public void Do_YNullEvent_ReturnMore()
+        {
+            IUniverseEvent x = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object());
+            IUniverseEvent y = null;
+
+            var comparer = new UniverseEventComparer();
+
+            var result = comparer.Compare(x, y);
+
+            Assert.AreEqual(result, 1);
+        }
+
+        [Test]
         public void Does_ASeriesOfUniverseEvents_GetSorted_AsExpected()
         {
             var dateBase = DateTime.UtcNow;
@@ -166,14 +174,24 @@ namespace Surveillance.Engine.Rules.Tests.Universe
             var x9 = new UniverseEvent(UniverseStateEvent.Order, dateBase.AddMinutes(6), new object());
             var x10 = new UniverseEvent(UniverseStateEvent.OrderPlaced, dateBase.AddMinutes(6), new object());
             var x11 = new UniverseEvent(UniverseStateEvent.Eschaton, dateBase.AddMinutes(6), new object());
-            var universeEvents = new List<IUniverseEvent> {x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11};
+            var universeEvents = new List<IUniverseEvent>
+                                     {
+                                         x1,
+                                         x2,
+                                         x3,
+                                         x4,
+                                         x5,
+                                         x6,
+                                         x7,
+                                         x8,
+                                         x9,
+                                         x10,
+                                         x11
+                                     };
 
             var orderedEvents = universeEvents.OrderBy(i => i, new UniverseEventComparer()).ToList();
 
-            foreach (var item in orderedEvents)
-            {
-                Console.WriteLine(item.StateChange);
-            }
+            foreach (var item in orderedEvents) Console.WriteLine(item.StateChange);
 
             Assert.AreEqual(orderedEvents.First(), x3);
             Assert.AreEqual(orderedEvents.Skip(1).First(), x1);

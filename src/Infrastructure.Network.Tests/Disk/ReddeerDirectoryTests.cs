@@ -1,75 +1,17 @@
-﻿using System;
-using System.IO;
-using Infrastructure.Network.Disk;
-using NUnit.Framework;
-
-// ReSharper disable StringLiteralTypo
+﻿// ReSharper disable StringLiteralTypo
 
 namespace Infrastructure.Network.Tests.Disk
 {
+    using System;
+    using System.IO;
+
+    using Infrastructure.Network.Disk;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class ReddeerDirectoryTests
     {
-        [Test]
-        public void Create_DoesNotThrow_NullPath()
-        {
-            var directory = new ReddeerDirectory();
-
-            var result = directory.Create(null);
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        public void Create_DoesNotThrow_EmptyPath()
-        {
-            var directory = new ReddeerDirectory();
-
-            var result = directory.Create(string.Empty);
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        [Explicit]
-        [Ignore("Windows only test")]
-        public void Create_DoesThrowWhenArgumentHas_NonPathValue()
-        {
-            var directory = new ReddeerDirectory();
-
-            Assert.Throws<ArgumentException>(() => directory.Create("er?:<!'/\b\aj4jh,a"));
-        }
-
-        [Test]
-        public void Delete_DoesNotThrow_NullPath()
-        {
-            var directory = new ReddeerDirectory();
-
-            var result = directory.Delete(null);
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        public void Delete_DoesNotThrow_EmptyPath()
-        {
-            var directory = new ReddeerDirectory();
-
-            var result = directory.Delete(string.Empty);
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        [Explicit]
-        [Ignore("Windows only test")]
-        public void Delete_DoesThrowWhenArgumentHas_NonPathValue()
-        {
-            var directory = new ReddeerDirectory();
-
-            Assert.Throws<ArgumentException>(() => directory.Delete("er?:<!'/\b\aj4jh,a"));
-        }
-
         [Test]
         [Explicit]
         public void Create_And_Delete()
@@ -87,33 +29,74 @@ namespace Infrastructure.Network.Tests.Disk
         }
 
         [Test]
-        public void GetFiles_DoesNotThrow_NullPath()
+        public void Create_DoesNotThrow_EmptyPath()
         {
             var directory = new ReddeerDirectory();
 
-            var result = directory.GetFiles(null, null);
+            var result = directory.Create(string.Empty);
 
-            Assert.IsEmpty(result);
+            Assert.IsFalse(result);
         }
 
         [Test]
-        public void GetFiles_DoesNotThrow_EmptyPath()
+        public void Create_DoesNotThrow_NullPath()
         {
             var directory = new ReddeerDirectory();
 
-            var result = directory.GetFiles(string.Empty, string.Empty);
+            var result = directory.Create(null);
 
-            Assert.IsEmpty(result);
+            Assert.IsFalse(result);
         }
 
         [Test]
         [Explicit]
         [Ignore("Windows only test")]
-        public void GetFiles_DoesThrowWhenArgumentHas_NonPathValue()
+        public void Create_DoesThrowWhenArgumentHas_NonPathValue()
         {
             var directory = new ReddeerDirectory();
 
-            Assert.Throws<ArgumentException>(() => directory.GetFiles("er?:<!'/\b\aj4jh,a", string.Empty));
+            Assert.Throws<ArgumentException>(() => directory.Create("er?:<!'/\b\aj4jh,a"));
+        }
+
+        [Test]
+        public void Delete_DoesNotThrow_EmptyPath()
+        {
+            var directory = new ReddeerDirectory();
+
+            var result = directory.Delete(string.Empty);
+
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void Delete_DoesNotThrow_NullPath()
+        {
+            var directory = new ReddeerDirectory();
+
+            var result = directory.Delete(null);
+
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        [Explicit]
+        [Ignore("Windows only test")]
+        public void Delete_DoesThrowWhenArgumentHas_NonPathValue()
+        {
+            var directory = new ReddeerDirectory();
+
+            Assert.Throws<ArgumentException>(() => directory.Delete("er?:<!'/\b\aj4jh,a"));
+        }
+
+        [Test]
+        public void Exists_ReturnsFalseWhenFolder_DoesNotExist()
+        {
+            var directory = new ReddeerDirectory();
+            var targetDirectory = "C:/aepjgaeijrg4j/aerjga34i91/argjag.aerg";
+
+            var exists = directory.DirectoryExists(targetDirectory);
+
+            Assert.IsFalse(exists);
         }
 
         [Test]
@@ -128,14 +111,33 @@ namespace Infrastructure.Network.Tests.Disk
         }
 
         [Test]
-        public void Exists_ReturnsFalseWhenFolder_DoesNotExist()
+        public void GetFiles_DoesNotThrow_EmptyPath()
         {
             var directory = new ReddeerDirectory();
-            var targetDirectory = "C:/aepjgaeijrg4j/aerjga34i91/argjag.aerg";
 
-            var exists = directory.DirectoryExists(targetDirectory);
+            var result = directory.GetFiles(string.Empty, string.Empty);
 
-            Assert.IsFalse(exists);
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public void GetFiles_DoesNotThrow_NullPath()
+        {
+            var directory = new ReddeerDirectory();
+
+            var result = directory.GetFiles(null, null);
+
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        [Explicit]
+        [Ignore("Windows only test")]
+        public void GetFiles_DoesThrowWhenArgumentHas_NonPathValue()
+        {
+            var directory = new ReddeerDirectory();
+
+            Assert.Throws<ArgumentException>(() => directory.GetFiles("er?:<!'/\b\aj4jh,a", string.Empty));
         }
     }
 }

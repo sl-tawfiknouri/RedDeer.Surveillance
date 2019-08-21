@@ -1,14 +1,18 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RedDeer.Surveillance.Api.Client.Filters
+﻿namespace RedDeer.Surveillance.Api.Client.Filters
 {
-    public class RuleBreachFilter<T> : Filter<RuleBreachFilter<T>, T> where T : Parent
-    {
-        public RuleBreachFilter(T node) : base(node) { }
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
 
-        public RuleBreachFilter<T> ArgumentId(int id) => AddArgument("id", id);
+    public class RuleBreachFilter<T> : Filter<RuleBreachFilter<T>, T>
+        where T : Parent
+    {
+        public RuleBreachFilter(T node)
+            : base(node)
+        {
+        }
+
+        public RuleBreachFilter<T> ArgumentId(int id)
+        {
+            return this.AddArgument("id", id);
+        }
     }
 }

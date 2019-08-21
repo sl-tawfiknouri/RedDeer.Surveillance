@@ -2,6 +2,7 @@
 {
     using Domain.Core.Financial.Money;
     using Domain.Core.Markets.Timebars;
+
     using NUnit.Framework;
 
     [TestFixture]

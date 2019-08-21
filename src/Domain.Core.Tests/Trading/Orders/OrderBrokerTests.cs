@@ -1,7 +1,9 @@
 ﻿namespace Domain.Core.Tests.Trading.Orders
 {
     using System;
+
     using Domain.Core.Trading.Orders;
+
     using NUnit.Framework;
 
     [TestFixture]

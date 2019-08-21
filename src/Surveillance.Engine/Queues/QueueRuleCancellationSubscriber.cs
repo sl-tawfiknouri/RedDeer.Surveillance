@@ -1,27 +1,37 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Infrastructure.Network.Aws;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService;
-using RedDeer.Contracts.SurveillanceService.Interfaces;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
-
-namespace Surveillance.Engine.Rules.Queues
+﻿namespace Surveillance.Engine.Rules.Queues
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Infrastructure.Network.Aws;
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService;
+    using RedDeer.Contracts.SurveillanceService.Interfaces;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
+
     public class QueueRuleCancellationSubscriber : IQueueRuleCancellationSubscriber
     {
-        private readonly IRuleCancellation _ruleCancellation;
-        private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly ISystemProcessContext _systemProcessContext;
-        private readonly IMessageBusSerialiser _messageBusSerialiser;
+
+        private readonly IAwsQueueClient _awsQueueClient;
 
         private readonly ILogger<QueueRuleCancellationSubscriber> _logger;
+
+        private readonly IMessageBusSerialiser _messageBusSerialiser;
+
+        private readonly IRuleCancellation _ruleCancellation;
+
+        private readonly ISystemProcessContext _systemProcessContext;
+
         private CancellationTokenSource _messageBusCts;
+
         private AwsResusableCancellationToken _token;
 
         public QueueRuleCancellationSubscriber(
@@ -32,59 +42,66 @@ namespace Surveillance.Engine.Rules.Queues
             IMessageBusSerialiser messageBusSerialiser,
             ILogger<QueueRuleCancellationSubscriber> logger)
         {
-            _ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
-            _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public void Initiate()
-        {
-            _logger?.LogInformation($"Initiating {nameof(QueueRuleCancellationSubscriber)}");
-
-            _messageBusCts?.Cancel();
-            _messageBusCts = new CancellationTokenSource();
-            _token = new AwsResusableCancellationToken();
-            
-            _awsQueueClient.SubscribeToQueueAsync(
-                _awsConfiguration.ScheduleRuleCancellationQueueName,
-                async (a, b) => { await ExecuteCancellationMessage(a, b); },
-                _messageBusCts.Token,
-                _token);
-
-            _logger?.LogInformation($"Initiating {nameof(QueueRuleCancellationSubscriber)} completed");
-        }
-
-        public void Terminate()
-        {
-            _logger?.LogInformation($"Terminating {nameof(QueueRuleCancellationSubscriber)}");
-            _messageBusCts?.Cancel();
-            _messageBusCts = null;
-            _logger?.LogInformation($"Terminating {nameof(QueueRuleCancellationSubscriber)} completed");
+            this._ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
+            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this._systemProcessContext =
+                systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            this._messageBusSerialiser =
+                messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task ExecuteCancellationMessage(string messageId, string messageBody)
         {
-            var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+            var opCtx = this._systemProcessContext.CreateAndStartOperationContext();
 
             try
             {
-                _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} initiated for {messageId}");
+                this._logger?.LogInformation(
+                    $"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} initiated for {messageId}");
 
-                var cancellationMessage = _messageBusSerialiser?.Deserialise<CancelScheduledExecutionMessage>(messageBody);
-                _ruleCancellation?.Cancel(cancellationMessage?.RuleRunId ?? string.Empty);
+                var cancellationMessage =
+                    this._messageBusSerialiser?.Deserialise<CancelScheduledExecutionMessage>(messageBody);
+                this._ruleCancellation?.Cancel(cancellationMessage?.RuleRunId ?? string.Empty);
 
-                _logger?.LogInformation($"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} completed for {messageId}");
+                this._logger?.LogInformation(
+                    $"ExecuteCancellationMessage {nameof(QueueRuleCancellationSubscriber)} completed for {messageId}");
 
                 await Task.CompletedTask;
             }
             catch (Exception e)
             {
-                _logger.LogError($"caught exception in execute cancellation message {e.Message} {e.InnerException}", e);
+                this._logger.LogError(
+                    $"caught exception in execute cancellation message {e.Message} {e.InnerException}",
+                    e);
                 opCtx.EndEventWithError(e.Message);
             }
+        }
+
+        public void Initiate()
+        {
+            this._logger?.LogInformation($"Initiating {nameof(QueueRuleCancellationSubscriber)}");
+
+            this._messageBusCts?.Cancel();
+            this._messageBusCts = new CancellationTokenSource();
+            this._token = new AwsResusableCancellationToken();
+
+            this._awsQueueClient.SubscribeToQueueAsync(
+                this._awsConfiguration.ScheduleRuleCancellationQueueName,
+                async (a, b) => { await this.ExecuteCancellationMessage(a, b); },
+                this._messageBusCts.Token,
+                this._token);
+
+            this._logger?.LogInformation($"Initiating {nameof(QueueRuleCancellationSubscriber)} completed");
+        }
+
+        public void Terminate()
+        {
+            this._logger?.LogInformation($"Terminating {nameof(QueueRuleCancellationSubscriber)}");
+            this._messageBusCts?.Cancel();
+            this._messageBusCts = null;
+            this._logger?.LogInformation($"Terminating {nameof(QueueRuleCancellationSubscriber)} completed");
         }
     }
 }

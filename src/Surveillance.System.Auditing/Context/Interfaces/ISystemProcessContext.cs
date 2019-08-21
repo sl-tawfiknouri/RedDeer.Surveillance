@@ -1,15 +1,21 @@
-﻿using System;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-
-namespace Surveillance.Auditing.Context.Interfaces
+﻿namespace Surveillance.Auditing.Context.Interfaces
 {
+    using System;
+
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+
     public interface ISystemProcessContext
     {
-        ISystemProcessOperationContext CreateOperationContext();
         ISystemProcessOperationContext CreateAndStartOperationContext();
-        void StartEvent(ISystemProcess systemProcess);
-        void UpdateHeartbeat();
-        ISystemProcess SystemProcess();
+
+        ISystemProcessOperationContext CreateOperationContext();
+
         void EventException(Exception e);
+
+        void StartEvent(ISystemProcess systemProcess);
+
+        ISystemProcess SystemProcess();
+
+        void UpdateHeartbeat();
     }
 }

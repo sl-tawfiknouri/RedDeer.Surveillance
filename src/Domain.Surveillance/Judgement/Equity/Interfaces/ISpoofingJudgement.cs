@@ -3,6 +3,7 @@
     public interface ISpoofingJudgement
     {
         decimal? CancellationThreshold { get; }
+
         decimal? RelativeSizeSpoofExceedingReal { get; }
     }
 }

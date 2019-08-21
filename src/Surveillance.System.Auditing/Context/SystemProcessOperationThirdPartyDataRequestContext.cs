@@ -1,16 +1,20 @@
-﻿using System;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-using Surveillance.Auditing.Logging.Interfaces;
-
-namespace Surveillance.Auditing.Context
+﻿namespace Surveillance.Auditing.Context
 {
-    public class SystemProcessOperationThirdPartyDataRequestContext : ISystemProcessOperationThirdPartyDataRequestContext
+    using System;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+    using Surveillance.Auditing.Logging.Interfaces;
+
+    public class
+        SystemProcessOperationThirdPartyDataRequestContext : ISystemProcessOperationThirdPartyDataRequestContext
     {
-        private readonly ISystemProcessOperationContext _processOperationContext;
-        private readonly ISystemProcessOperationThirdPartyDataRequestRepository _requestRepository;
         private readonly IOperationLogging _operationLogging;
+
+        private readonly ISystemProcessOperationContext _processOperationContext;
+
+        private readonly ISystemProcessOperationThirdPartyDataRequestRepository _requestRepository;
 
         private ISystemProcessOperationThirdPartyDataRequest _request;
 
@@ -19,32 +23,30 @@ namespace Surveillance.Auditing.Context
             ISystemProcessOperationThirdPartyDataRequestRepository requestRepository,
             IOperationLogging operationLogging)
         {
-            _processOperationContext = processOperationContext ?? throw new ArgumentNullException(nameof(processOperationContext));
-            _requestRepository = requestRepository ?? throw new ArgumentNullException(nameof(requestRepository));
-            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            this._processOperationContext = processOperationContext
+                                            ?? throw new ArgumentNullException(nameof(processOperationContext));
+            this._requestRepository = requestRepository ?? throw new ArgumentNullException(nameof(requestRepository));
+            this._operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
-        public void StartEvent(ISystemProcessOperationThirdPartyDataRequest request)
+        public string Id => this._request?.Id.ToString() ?? string.Empty;
+
+        public ISystemProcessOperationContext EndEvent()
         {
-            _request = request;
-            _requestRepository?.Create(request);
+            return this._processOperationContext;
         }
 
         public void EventError(string message)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(message)) return;
 
-            _operationLogging.Log(new Exception(message), _request);
+            this._operationLogging.Log(new Exception(message), this._request);
         }
 
-        public string Id => _request?.Id.ToString() ?? string.Empty;
-
-        public ISystemProcessOperationContext EndEvent()
+        public void StartEvent(ISystemProcessOperationThirdPartyDataRequest request)
         {
-            return _processOperationContext;
+            this._request = request;
+            this._requestRepository?.Create(request);
         }
     }
 }

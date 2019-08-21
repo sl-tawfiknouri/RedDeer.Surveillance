@@ -1,10 +1,11 @@
-﻿using SharedKernel.Contracts.Markets;
-
-namespace Surveillance.Engine.Rules.Markets.Interfaces
+﻿namespace Surveillance.Engine.Rules.Markets.Interfaces
 {
+    using SharedKernel.Contracts.Markets;
+
     public interface IMarketDataCacheStrategy
     {
-        IQueryableMarketDataResponse Query(MarketDataRequest request);
         DataSource DataSource { get; }
+
+        IQueryableMarketDataResponse Query(MarketDataRequest request);
     }
 }

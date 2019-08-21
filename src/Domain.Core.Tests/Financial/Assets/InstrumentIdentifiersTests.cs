@@ -1,18 +1,132 @@
-﻿using Domain.Core.Financial.Assets;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Financial.Assets
+﻿namespace Domain.Core.Tests.Financial.Assets
 {
+    using Domain.Core.Financial.Assets;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class InstrumentIdentifiersTests
     {
-        [Test]
-        public void Null_IsNotEqualTo_Null()
+        [TestCase("", "client-1", "", "", "", "", "", false)]
+        [TestCase("", "client-id", "", "", "", "", "", true)]
+        [TestCase("", "", "sedol-1", "", "", "", "", false)]
+        [TestCase("", "", "sedol", "", "", "", "", true)]
+        [TestCase("", "client-9", "sedol", "", "", "", "", true)]
+        [TestCase("", "", "", "figi-1", "", "", "", false)]
+        [TestCase("", "", "", "figi", "", "", "", true)]
+        [TestCase("", "", "", "", "cusip-1", "", "", false)]
+        [TestCase("", "", "", "", "cusip", "", "", true)]
+        [TestCase("", "", "", "", "", "isin-1", "", false)]
+        [TestCase("", "", "", "", "", "isin", "", true)]
+        [TestCase("", "", "sedol", "", "", "isin-3", "", true)]
+        [TestCase("", "", "", "", "", "", "bloomberg-1", false)]
+        [TestCase("", "", "", "", "", "", "bloomberg", true)]
+        public void Equals_ReturnsTrueFor_MatchingSecurities(
+            string reddeeridArg,
+            string clientidArg,
+            string sedolArg,
+            string figiArg,
+            string cusipArg,
+            string isinArg,
+            string bloombergArg,
+            bool isMatch)
         {
-            var nullOne = InstrumentIdentifiers.Null();
-            var nullTwo = InstrumentIdentifiers.Null();
+            var id = "ii-id";
+            var reddeerId = "red-id";
+            var reddeerEnrichmentId = "red-enrich-id";
+            var clientIdentifier = "client-id";
+            var sedol = "sedol";
+            var isin = "isin";
+            var figi = "figi";
+            var cusip = "cusip";
+            var exchangeSymbol = "exch symbol";
+            var lei = "lei";
+            var bloombergTicker = "bloomberg";
 
-            Assert.AreNotEqual(nullOne, nullTwo);
+            var instrumentIdentifiers = new InstrumentIdentifiers(
+                id,
+                reddeerId,
+                reddeerEnrichmentId,
+                clientIdentifier,
+                sedol,
+                isin,
+                figi,
+                cusip,
+                exchangeSymbol,
+                lei,
+                bloombergTicker);
+
+            var instrumentIdentifiers2 = new InstrumentIdentifiers(
+                id,
+                reddeeridArg,
+                "some-other-reddeer-enrichment-id",
+                clientidArg,
+                sedolArg,
+                isinArg,
+                figiArg,
+                cusipArg,
+                "some-other-exchange-symbol",
+                "some-other-lei",
+                bloombergArg);
+
+            if (isMatch) Assert.AreEqual(instrumentIdentifiers, instrumentIdentifiers2);
+            else Assert.AreNotEqual(instrumentIdentifiers, instrumentIdentifiers2);
+        }
+
+        [TestCase]
+        public void GetHashCode_EqualForDifferentCased_ReddeerId()
+        {
+            var identifiers1 = InstrumentIdentifiers.Null();
+            identifiers1.ReddeerId = "abc";
+            var hashCode1 = identifiers1.GetHashCode();
+
+            var identifiers2 = InstrumentIdentifiers.Null();
+            identifiers2.ReddeerId = "aBc";
+            var hashCode2 = identifiers2.GetHashCode();
+
+            Assert.AreEqual(hashCode1, hashCode2);
+        }
+
+        [TestCase]
+        public void GetHashCode_EqualForNull_ReddeerId()
+        {
+            var identifiers1 = InstrumentIdentifiers.Null();
+            identifiers1.ReddeerId = null;
+            var hashCode1 = identifiers1.GetHashCode();
+
+            var identifiers2 = InstrumentIdentifiers.Null();
+            identifiers2.ReddeerId = string.Empty;
+            var hashCode2 = identifiers2.GetHashCode();
+
+            Assert.AreEqual(hashCode1, hashCode2);
+        }
+
+        [TestCase]
+        public void GetHashCode_EqualForSame_ReddeerId()
+        {
+            var identifiers1 = InstrumentIdentifiers.Null();
+            identifiers1.ReddeerId = "abc";
+            var hashCode1 = identifiers1.GetHashCode();
+
+            var identifiers2 = InstrumentIdentifiers.Null();
+            identifiers2.ReddeerId = "abc";
+            var hashCode2 = identifiers2.GetHashCode();
+
+            Assert.AreEqual(hashCode1, hashCode2);
+        }
+
+        [TestCase]
+        public void GetHashCode_NotEqualForDifferent_ReddeerId()
+        {
+            var identifiers1 = InstrumentIdentifiers.Null();
+            identifiers1.ReddeerId = "abc";
+            var hashCode1 = identifiers1.GetHashCode();
+
+            var identifiers2 = InstrumentIdentifiers.Null();
+            identifiers2.ReddeerId = "def";
+            var hashCode2 = identifiers2.GetHashCode();
+
+            Assert.AreNotEqual(hashCode1, hashCode2);
         }
 
         [Test]
@@ -81,60 +195,13 @@ namespace Domain.Core.Tests.Financial.Assets
             Assert.AreEqual(instrumentIdentifiers.UnderlyingClientIdentifier, underlyingClientIdentifier);
         }
 
-        [TestCase]
-        public void GetHashCode_EqualForSame_ReddeerId()
+        [Test]
+        public void Null_IsNotEqualTo_Null()
         {
-            var identifiers1 = InstrumentIdentifiers.Null();
-            identifiers1.ReddeerId = "abc";
-            var hashCode1 = identifiers1.GetHashCode();
+            var nullOne = InstrumentIdentifiers.Null();
+            var nullTwo = InstrumentIdentifiers.Null();
 
-            var identifiers2 = InstrumentIdentifiers.Null();
-            identifiers2.ReddeerId = "abc";
-            var hashCode2 = identifiers2.GetHashCode();
-
-            Assert.AreEqual(hashCode1, hashCode2);
-        }
-
-        [TestCase]
-        public void GetHashCode_EqualForNull_ReddeerId()
-        {
-            var identifiers1 = InstrumentIdentifiers.Null();
-            identifiers1.ReddeerId = null;
-            var hashCode1 = identifiers1.GetHashCode();
-
-            var identifiers2 = InstrumentIdentifiers.Null();
-            identifiers2.ReddeerId = string.Empty;
-            var hashCode2 = identifiers2.GetHashCode();
-
-            Assert.AreEqual(hashCode1, hashCode2);
-        }
-
-        [TestCase]
-        public void GetHashCode_NotEqualForDifferent_ReddeerId()
-        {
-            var identifiers1 = InstrumentIdentifiers.Null();
-            identifiers1.ReddeerId = "abc";
-            var hashCode1 = identifiers1.GetHashCode();
-
-            var identifiers2 = InstrumentIdentifiers.Null();
-            identifiers2.ReddeerId = "def";
-            var hashCode2 = identifiers2.GetHashCode();
-
-            Assert.AreNotEqual(hashCode1, hashCode2);
-        }
-
-        [TestCase]
-        public void GetHashCode_EqualForDifferentCased_ReddeerId()
-        {
-            var identifiers1 = InstrumentIdentifiers.Null();
-            identifiers1.ReddeerId = "abc";
-            var hashCode1 = identifiers1.GetHashCode();
-
-            var identifiers2 = InstrumentIdentifiers.Null();
-            identifiers2.ReddeerId = "aBc";
-            var hashCode2 = identifiers2.GetHashCode();
-
-            Assert.AreEqual(hashCode1, hashCode2);
+            Assert.AreNotEqual(nullOne, nullTwo);
         }
 
         [TestCase]
@@ -183,79 +250,9 @@ namespace Domain.Core.Tests.Financial.Assets
 
             var outputStr = instrumentIdentifiers.ToString();
 
-            Assert.AreEqual(outputStr, "Client Id: client-id | Sedol sedol | Isin isin | Figi figi | Cusip cusip | Exchange Symbol exch symbol | Lei lei | Bloomberg Ticker bloomberg");
-        }
-
-        [TestCase("", "client-1", "", "", "", "", "", false)]
-        [TestCase("", "client-id", "", "", "", "", "", true)]
-        [TestCase("", "", "sedol-1", "", "", "", "", false)]
-        [TestCase("", "", "sedol", "", "", "", "", true)]
-        [TestCase("", "client-9", "sedol", "", "", "", "", true)]
-        [TestCase("", "", "", "figi-1", "", "", "", false)]
-        [TestCase("", "", "", "figi", "", "", "", true)]
-        [TestCase("", "", "", "", "cusip-1", "", "", false)]
-        [TestCase("", "", "", "", "cusip", "", "", true)]
-        [TestCase("", "", "", "", "", "isin-1", "", false)]
-        [TestCase("", "", "", "", "", "isin", "", true)]
-        [TestCase("", "", "sedol", "", "", "isin-3", "", true)]
-        [TestCase("", "", "", "", "", "", "bloomberg-1", false)]
-        [TestCase("", "", "", "", "", "", "bloomberg", true)]
-        public void Equals_ReturnsTrueFor_MatchingSecurities(
-            string reddeeridArg,
-            string clientidArg,
-            string sedolArg,
-            string figiArg,
-            string cusipArg,
-            string isinArg,
-            string bloombergArg,
-            bool isMatch)
-        {
-            var id = "ii-id";
-            var reddeerId = "red-id";
-            var reddeerEnrichmentId = "red-enrich-id";
-            var clientIdentifier = "client-id";
-            var sedol = "sedol";
-            var isin = "isin";
-            var figi = "figi";
-            var cusip = "cusip";
-            var exchangeSymbol = "exch symbol";
-            var lei = "lei";
-            var bloombergTicker = "bloomberg";
-
-            var instrumentIdentifiers = new InstrumentIdentifiers(
-                id,
-                reddeerId,
-                reddeerEnrichmentId,
-                clientIdentifier,
-                sedol,
-                isin,
-                figi,
-                cusip,
-                exchangeSymbol,
-                lei,
-                bloombergTicker);
-
-            var instrumentIdentifiers2 = new InstrumentIdentifiers(
-                id,
-                reddeeridArg,
-                "some-other-reddeer-enrichment-id",
-                clientidArg,
-                sedolArg,
-                isinArg,
-                figiArg,
-                cusipArg,
-                "some-other-exchange-symbol",
-                "some-other-lei",
-                bloombergArg);
-
-            if (isMatch)
-            {
-                Assert.AreEqual(instrumentIdentifiers, instrumentIdentifiers2);
-            }
-            else
-            {
-                Assert.AreNotEqual(instrumentIdentifiers, instrumentIdentifiers2);
-            }
+            Assert.AreEqual(
+                outputStr,
+                "Client Id: client-id | Sedol sedol | Isin isin | Figi figi | Cusip cusip | Exchange Symbol exch symbol | Lei lei | Bloomberg Ticker bloomberg");
         }
     }
 }

@@ -1,37 +1,36 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-
-namespace Surveillance.Engine.Rules.Tests.Trades
+﻿namespace Surveillance.Engine.Rules.Tests.Trades
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
     public static class OrderHelper
     {
         public static Order Orders(OrderStatus status)
         {
-            var securityIdentifiers =
-                new InstrumentIdentifiers(
-                    string.Empty,
-                    "reddeer id",
-                    null,
-                    "client id",
-                    "1234567",
-                    "12345678912",
-                    "figi",
-                    "cusip",
-                    "test",
-                    "test lei",
-                    "ticker");
+            var securityIdentifiers = new InstrumentIdentifiers(
+                string.Empty,
+                "reddeer id",
+                null,
+                "client id",
+                "1234567",
+                "12345678912",
+                "figi",
+                "cusip",
+                "test",
+                "test lei",
+                "ticker");
 
-            var security =
-                new FinancialInstrument(
-                    InstrumentTypes.Equity,
-                    securityIdentifiers,
-                    "Test Security",
-                    "CFI",
-                    "USD",
-                    "Issuer Identifier");
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                securityIdentifiers,
+                "Test Security",
+                "CFI",
+                "USD",
+                "Issuer Identifier");
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.UtcNow : null;
             var filledDate = status == OrderStatus.Filled ? (DateTime?)DateTime.UtcNow : null;
@@ -53,8 +52,8 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 filledDate,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Money.Currency("GBP"),
-                new Domain.Core.Financial.Money.Currency("GBP"),
+                new Currency("GBP"),
+                new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(1000, "GBP"),
@@ -65,11 +64,11 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 "trader one",
                 "Rybank Long",
                 "deal-asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.UtcNow, true), 
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.UtcNow, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
-            }
         }
     }
+}

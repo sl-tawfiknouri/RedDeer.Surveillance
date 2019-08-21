@@ -1,7 +1,7 @@
-﻿using System.Data;
-
-namespace Surveillance.DataLayer.Aurora.Interfaces
+﻿namespace Surveillance.DataLayer.Aurora.Interfaces
 {
+    using System.Data;
+
     public interface IConnectionStringFactory
     {
         IDbConnection BuildConn();

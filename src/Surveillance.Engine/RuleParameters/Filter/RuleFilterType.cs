@@ -3,7 +3,9 @@
     public enum RuleFilterType
     {
         None,
+
         Include,
+
         Exclude
     }
 }

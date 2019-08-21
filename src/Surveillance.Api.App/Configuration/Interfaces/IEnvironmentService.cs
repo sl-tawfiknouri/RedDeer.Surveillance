@@ -3,6 +3,7 @@
     public interface IEnvironmentService
     {
         bool IsEc2Instance();
+
         bool IsUnitTest();
     }
 }

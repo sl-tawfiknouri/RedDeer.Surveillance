@@ -1,83 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Trades;
-
-namespace Surveillance.Engine.Rules.Tests.Trades
+﻿namespace Surveillance.Engine.Rules.Tests.Trades
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Trades;
+
     [TestFixture]
     public class TradePositionTests
     {
         private ILogger _logger;
-
-        [SetUp]
-        public void Setup()
-        {
-            _logger = A.Fake<ILogger>();
-        }
-
-        [Test]
-        public void CancellationRatioByTradeCount_ReturnsExpected()
-        {
-            var tof = new List<Order>
-            {
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled)
-            };
-
-            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
-
-            var result = tradePosition.CancellationRatioByTradeCount();
-
-            Assert.AreEqual(result, 0.2m);
-        }
-
-        [Test]
-        public void CancellationRatioByTradeCountNotHigh_ReturnsExpected()
-        {
-            var tof = new List<Order>
-            {
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled)
-            };
-
-            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
-
-            var result = tradePosition.HighCancellationRatioByTradeCount();
-
-            Assert.AreEqual(result, false);
-        }
-
-        [Test]
-        public void CancellationRatioByTradeCountIsHigh_ReturnsExpected()
-        {
-            var tof = new List<Order>
-            {
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled)
-            };
-
-            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
-
-            var result = tradePosition.HighCancellationRatioByTradeCount();
-
-            Assert.AreEqual(result, true);
-        }
 
         [Test]
         public void CancellationRatioByPositionSizeIsHigh_ReturnsExpected()
@@ -87,15 +29,15 @@ namespace Surveillance.Engine.Rules.Tests.Trades
             bigPosition.OrderOrderedVolume = bigPosition.OrderFilledVolume * 100;
 
             var tof = new List<Order>
-            {
-                bigPosition,
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled)
-            };
+                          {
+                              bigPosition,
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled)
+                          };
 
-            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
+            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, this._logger);
 
             var result = tradePosition.HighCancellationRatioByPositionSize();
 
@@ -109,48 +51,109 @@ namespace Surveillance.Engine.Rules.Tests.Trades
             bigPosition.OrderFilledVolume = bigPosition.OrderFilledVolume * 100;
 
             var tof = new List<Order>
-            {
-                bigPosition,
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Cancelled),
-                OrderHelper.Orders(OrderStatus.Filled),
-                OrderHelper.Orders(OrderStatus.Filled)
-            };
+                          {
+                              bigPosition,
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled)
+                          };
 
-            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
+            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, this._logger);
 
             var result = tradePosition.HighCancellationRatioByPositionSize();
 
             Assert.AreEqual(result, false);
         }
 
+        [Test]
+        public void CancellationRatioByTradeCount_ReturnsExpected()
+        {
+            var tof = new List<Order>
+                          {
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled)
+                          };
+
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, this._logger);
+
+            var result = tradePosition.CancellationRatioByTradeCount();
+
+            Assert.AreEqual(result, 0.2m);
+        }
+
+        [Test]
+        public void CancellationRatioByTradeCountIsHigh_ReturnsExpected()
+        {
+            var tof = new List<Order>
+                          {
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled)
+                          };
+
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, this._logger);
+
+            var result = tradePosition.HighCancellationRatioByTradeCount();
+
+            Assert.AreEqual(result, true);
+        }
+
+        [Test]
+        public void CancellationRatioByTradeCountNotHigh_ReturnsExpected()
+        {
+            var tof = new List<Order>
+                          {
+                              OrderHelper.Orders(OrderStatus.Cancelled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled),
+                              OrderHelper.Orders(OrderStatus.Filled)
+                          };
+
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, this._logger);
+
+            var result = tradePosition.HighCancellationRatioByTradeCount();
+
+            Assert.AreEqual(result, false);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._logger = A.Fake<ILogger>();
+        }
+
         private Order TradeFrame(OrderStatus status)
         {
-            var securityIdentifiers =
-                new InstrumentIdentifiers(
-                    string.Empty,
-                    "reddeer id",
-                    null,
-                    "client id",
-                    "1234567",
-                    "12345678912",
-                    "figi",
-                    "cusip",
-                    "test",
-                    "test lei",
-                    "ticker");
+            var securityIdentifiers = new InstrumentIdentifiers(
+                string.Empty,
+                "reddeer id",
+                null,
+                "client id",
+                "1234567",
+                "12345678912",
+                "figi",
+                "cusip",
+                "test",
+                "test lei",
+                "ticker");
 
-            var security =
-                new FinancialInstrument(
-                    InstrumentTypes.Equity,
-                    securityIdentifiers,
-                    "Test Security",
-                    "CFI",
-                    "USD",
-                    "Issuer Identifier");
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                securityIdentifiers,
+                "Test Security",
+                "CFI",
+                "USD",
+                "Issuer Identifier");
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.UtcNow : null;
-            var filledDate = status == OrderStatus.Filled ? (DateTime?) DateTime.UtcNow : null;
+            var filledDate = status == OrderStatus.Filled ? (DateTime?)DateTime.UtcNow : null;
 
             return new Order(
                 security,
@@ -169,8 +172,8 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 filledDate,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Money.Currency("GBP"), 
-                new Domain.Core.Financial.Money.Currency("GBP"),
+                new Currency("GBP"),
+                new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(1000, "GBP"),
@@ -181,7 +184,7 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 "trader one",
                 "Rybank Long",
                 "deal-asap",
-                new OrderBroker("", "", "Mr Broker", DateTime.Now, true),
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.Now, true),
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

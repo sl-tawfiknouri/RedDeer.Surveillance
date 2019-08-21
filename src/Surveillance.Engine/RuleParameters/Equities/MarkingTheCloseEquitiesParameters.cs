@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Surveillance.Engine.Rules.RuleParameters.Extensions;
-using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Equities
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Rules.Tuning;
+
+    using Surveillance.Engine.Rules.RuleParameters.Extensions;
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+
     [Serializable]
     public class MarkingTheCloseEquitiesParameters : IMarkingTheCloseEquitiesParameters
     {
@@ -21,31 +23,31 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
+            this.Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(id, windowSize);
-            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
-            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
-            PercentThresholdOffTouch = percentThresholdOffTouch;
+            this.Windows = new TimeWindows(id, windowSize);
+            this.PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            this.PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            this.PercentThresholdOffTouch = percentThresholdOffTouch;
 
-            MarketCapFilter = DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = DecimalRangeRuleFilter.None();
 
-            Accounts = RuleFilter.None();
-            Traders = RuleFilter.None();
-            Markets = RuleFilter.None();
-            Funds = RuleFilter.None();
-            Strategies = RuleFilter.None();
+            this.Accounts = RuleFilter.None();
+            this.Traders = RuleFilter.None();
+            this.Markets = RuleFilter.None();
+            this.Funds = RuleFilter.None();
+            this.Strategies = RuleFilter.None();
 
-            Sectors = RuleFilter.None();
-            Industries = RuleFilter.None();
-            Regions = RuleFilter.None();
-            Countries = RuleFilter.None();
+            this.Sectors = RuleFilter.None();
+            this.Industries = RuleFilter.None();
+            this.Regions = RuleFilter.None();
+            this.Countries = RuleFilter.None();
 
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Factors = factors ?? new ClientOrganisationalFactors[0];
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            PerformTuning = performTuning;
+            this.PerformTuning = performTuning;
         }
 
         public MarkingTheCloseEquitiesParameters(
@@ -69,134 +71,140 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
+            this.Id = id ?? string.Empty;
 
-            Windows = new TimeWindows(id, windowSize);
-            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
-            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
-            PercentThresholdOffTouch = percentThresholdOffTouch;
+            this.Windows = new TimeWindows(id, windowSize);
+            this.PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            this.PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            this.PercentThresholdOffTouch = percentThresholdOffTouch;
 
-            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
 
-            Accounts = accounts ?? RuleFilter.None();
-            Traders = traders ?? RuleFilter.None();
-            Markets = markets ?? RuleFilter.None();
-            Funds = funds ?? RuleFilter.None();
-            Strategies = strategies ?? RuleFilter.None();
+            this.Accounts = accounts ?? RuleFilter.None();
+            this.Traders = traders ?? RuleFilter.None();
+            this.Markets = markets ?? RuleFilter.None();
+            this.Funds = funds ?? RuleFilter.None();
+            this.Strategies = strategies ?? RuleFilter.None();
 
-            Sectors = sectors ?? RuleFilter.None();
-            Industries = industries ?? RuleFilter.None();
-            Regions = regions ?? RuleFilter.None();
-            Countries = countries ?? RuleFilter.None();
+            this.Sectors = sectors ?? RuleFilter.None();
+            this.Industries = industries ?? RuleFilter.None();
+            this.Regions = regions ?? RuleFilter.None();
+            this.Countries = countries ?? RuleFilter.None();
 
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Factors = factors ?? new ClientOrganisationalFactors[0];
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            PerformTuning = performTuning;
+            this.PerformTuning = performTuning;
         }
+
+        public RuleFilter Accounts { get; set; }
+
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public RuleFilter Countries { get; set; }
+
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+
+        public RuleFilter Funds { get; set; }
 
         [TuneableIdParameter]
         public string Id { get; set; }
 
-        [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; set; }
+        public RuleFilter Industries { get; set; }
+
+        public DecimalRangeRuleFilter MarketCapFilter { get; }
+
+        public RuleFilter Markets { get; set; }
 
         /// <summary>
-        /// A fractional percentage e.g. 0.2 = 20%
+        ///     A fractional percentage e.g. 0.2 = 20%
         /// </summary>
         [TuneableDecimalParameter]
         public decimal? PercentageThresholdDailyVolume { get; set; }
 
         /// <summary>
-        /// A fractional percentage e.g. 0.2 = 20%
+        ///     A fractional percentage e.g. 0.2 = 20%
         /// </summary>
         [TuneableDecimalParameter]
         public decimal? PercentageThresholdWindowVolume { get; set; }
 
         /// <summary>
-        /// A fractional percentage for how far from touch e.g. % away from bid for a buy; % away from ask for a sell
+        ///     A fractional percentage for how far from touch e.g. % away from bid for a buy; % away from ask for a sell
         /// </summary>
         [TuneableDecimalParameter]
         public decimal? PercentThresholdOffTouch { get; set; }
 
-        public DecimalRangeRuleFilter MarketCapFilter { get; }
-        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
+        public bool PerformTuning { get; set; }
 
-        public RuleFilter Accounts { get; set; }
-        public RuleFilter Traders { get; set; }
-        public RuleFilter Markets { get; set; }
-        public RuleFilter Funds { get; set; }
-        public RuleFilter Strategies { get; set; }
+        public RuleFilter Regions { get; set; }
 
         public RuleFilter Sectors { get; set; }
-        public RuleFilter Industries { get; set; }
-        public RuleFilter Regions { get; set; }
-        public RuleFilter Countries { get; set; }
 
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        public RuleFilter Strategies { get; set; }
 
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+        public RuleFilter Traders { get; set; }
 
-        public bool HasInternalFilters()
-            => IFilterableRuleExtensions.HasInternalFilters(this);
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
 
-        public bool HasMarketCapFilters()
-            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
 
-        public bool HasReferenceDataFilters()
-            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
 
-        public bool HasVenueVolumeFilters() 
-            => IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
-
-        public bool Valid()
+        public override bool Equals(object obj)
         {
-            return !string.IsNullOrWhiteSpace(Id)
-                && (PercentageThresholdDailyVolume == null
-                    || (PercentageThresholdDailyVolume.GetValueOrDefault() >= 0
-                        && PercentageThresholdDailyVolume.GetValueOrDefault() <= 1))
-               && (PercentageThresholdWindowVolume == null
-                   || (PercentageThresholdWindowVolume.GetValueOrDefault() >= 0
-                       && PercentageThresholdWindowVolume.GetValueOrDefault() <= 1))
-               && (PercentThresholdOffTouch == null
-                   || (PercentThresholdOffTouch.GetValueOrDefault() >= 0
-                       && PercentThresholdOffTouch.GetValueOrDefault() <= 1));
+            if (obj == null) return false;
+
+            var castObj = obj as MarkingTheCloseEquitiesParameters;
+
+            if (castObj == null) return false;
+
+            return this.Windows == castObj.Windows
+                   && this.PercentageThresholdDailyVolume == castObj.PercentageThresholdDailyVolume
+                   && this.PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
+                   && this.PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
         }
 
         public override int GetHashCode()
         {
-            return 
-                Windows.GetHashCode()
-                    * PercentageThresholdDailyVolume.GetHashCode()
-                    * PercentageThresholdWindowVolume.GetHashCode()
-                    * PercentThresholdOffTouch.GetHashCode();
+            return this.Windows.GetHashCode() * this.PercentageThresholdDailyVolume.GetHashCode()
+                                              * this.PercentageThresholdWindowVolume.GetHashCode()
+                                              * this.PercentThresholdOffTouch.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public bool HasInternalFilters()
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            var castObj = obj as MarkingTheCloseEquitiesParameters;
-
-            if (castObj == null)
-            {
-                return false;
-            }
-
-            return
-                Windows == castObj.Windows
-                && PercentageThresholdDailyVolume == castObj.PercentageThresholdDailyVolume
-                && PercentageThresholdWindowVolume == castObj.PercentageThresholdWindowVolume
-                && PercentThresholdOffTouch == castObj.PercentThresholdOffTouch;
+            return IFilterableRuleExtensions.HasInternalFilters(this);
         }
 
-        public bool PerformTuning { get; set; }
+        public bool HasMarketCapFilters()
+        {
+            return IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+        }
 
-        [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public bool HasReferenceDataFilters()
+        {
+            return IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+        }
+
+        public bool HasVenueVolumeFilters()
+        {
+            return IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Id)
+                   && (this.PercentageThresholdDailyVolume == null
+                       || this.PercentageThresholdDailyVolume.GetValueOrDefault() >= 0
+                       && this.PercentageThresholdDailyVolume.GetValueOrDefault() <= 1)
+                   && (this.PercentageThresholdWindowVolume == null
+                       || this.PercentageThresholdWindowVolume.GetValueOrDefault() >= 0
+                       && this.PercentageThresholdWindowVolume.GetValueOrDefault() <= 1)
+                   && (this.PercentThresholdOffTouch == null || this.PercentThresholdOffTouch.GetValueOrDefault() >= 0
+                       && this.PercentThresholdOffTouch.GetValueOrDefault() <= 1);
+        }
     }
 }

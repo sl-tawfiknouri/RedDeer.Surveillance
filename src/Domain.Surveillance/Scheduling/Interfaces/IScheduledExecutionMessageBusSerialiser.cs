@@ -3,6 +3,7 @@
     public interface IScheduledExecutionMessageBusSerialiser
     {
         ScheduledExecution DeserialisedScheduledExecution(string serialisedExecution);
+
         string SerialiseScheduledExecution(ScheduledExecution execution);
     }
 }

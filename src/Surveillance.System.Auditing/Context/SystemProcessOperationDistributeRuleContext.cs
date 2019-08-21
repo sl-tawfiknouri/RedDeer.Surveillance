@@ -1,55 +1,53 @@
-﻿using System;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-using Surveillance.Auditing.Logging.Interfaces;
-
-namespace Surveillance.Auditing.Context
+﻿namespace Surveillance.Auditing.Context
 {
+    using System;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+    using Surveillance.Auditing.Logging.Interfaces;
+
     public class SystemProcessOperationDistributeRuleContext : ISystemProcessOperationDistributeRuleContext
     {
-        private ISystemProcessOperationDistributeRule _distributeRule;
-        private readonly ISystemProcessOperationContext _processOperationContext;
-        private readonly ISystemProcessOperationDistributeRuleRepository _repository;
         private readonly IOperationLogging _operationLogging;
+
+        private readonly ISystemProcessOperationContext _processOperationContext;
+
+        private readonly ISystemProcessOperationDistributeRuleRepository _repository;
+
+        private ISystemProcessOperationDistributeRule _distributeRule;
 
         public SystemProcessOperationDistributeRuleContext(
             ISystemProcessOperationContext processOperationContext,
             ISystemProcessOperationDistributeRuleRepository repository,
             IOperationLogging operationLogging)
         {
-            _processOperationContext =
-                processOperationContext
-                ?? throw new ArgumentNullException(nameof(processOperationContext));
+            this._processOperationContext = processOperationContext
+                                            ?? throw new ArgumentNullException(nameof(processOperationContext));
 
-            _repository =
-                repository
-                ?? throw new ArgumentNullException(nameof(repository));
+            this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
-            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            this._operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
-        public void StartEvent(ISystemProcessOperationDistributeRule distributeRule)
+        public string Id => this._distributeRule?.Id.ToString() ?? string.Empty;
+
+        public ISystemProcessOperationContext EndEvent()
         {
-            _distributeRule = distributeRule;
-            _repository.Create(_distributeRule);
+            return this._processOperationContext;
         }
 
         public void EventError(string message)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(message)) return;
 
-            _operationLogging.Log(new Exception(message), _distributeRule);
+            this._operationLogging.Log(new Exception(message), this._distributeRule);
         }
 
-        public string Id => _distributeRule?.Id.ToString() ?? string.Empty;
-
-        public ISystemProcessOperationContext EndEvent()
+        public void StartEvent(ISystemProcessOperationDistributeRule distributeRule)
         {
-            return _processOperationContext;
+            this._distributeRule = distributeRule;
+            this._repository.Create(this._distributeRule);
         }
     }
 }

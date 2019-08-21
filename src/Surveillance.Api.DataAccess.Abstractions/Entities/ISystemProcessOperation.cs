@@ -1,14 +1,17 @@
-﻿using System;
-
-namespace Surveillance.Api.DataAccess.Abstractions.Entities
+﻿namespace Surveillance.Api.DataAccess.Abstractions.Entities
 {
+    using System;
+
     public interface ISystemProcessOperation
     {
         int Id { get; set; }
-        int OperationState { get; set; }
-        string SystemProcessId { get; set; }
+
+        DateTime? OperationEnd { get; }
 
         DateTime OperationStart { get; }
-        DateTime? OperationEnd { get; }
+
+        int OperationState { get; set; }
+
+        string SystemProcessId { get; set; }
     }
 }

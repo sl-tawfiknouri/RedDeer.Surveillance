@@ -1,19 +1,26 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Domain.Surveillance.Scheduling;
-using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator.Queues
+﻿namespace Surveillance.Engine.DataCoordinator.Queues
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Domain.Surveillance.Scheduling;
+    using Domain.Surveillance.Scheduling.Interfaces;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+
     public class QueueScheduleRulePublisher : IQueueScheduleRulePublisher
     {
-        private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
+
+        private readonly IAwsQueueClient _awsQueueClient;
+
         private readonly ILogger<QueueScheduleRulePublisher> _logger;
+
         private readonly IScheduledExecutionMessageBusSerialiser _serialiser;
 
         public QueueScheduleRulePublisher(
@@ -22,32 +29,36 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             IScheduledExecutionMessageBusSerialiser serialiser,
             ILogger<QueueScheduleRulePublisher> logger)
         {
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this._serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Send(ScheduledExecution message)
         {
             if (message == null)
             {
-                _logger.LogWarning($"was asked to send a null message. Will not be sending anything.");
+                this._logger.LogWarning("was asked to send a null message. Will not be sending anything.");
                 return;
             }
 
             var messageBusCts = new CancellationTokenSource();
-            var serialisedMessage = _serialiser.SerialiseScheduledExecution(message);
+            var serialisedMessage = this._serialiser.SerialiseScheduledExecution(message);
 
             try
             {
-                _logger.LogInformation($"dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
-                await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token);
-                _logger.LogInformation($"finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
+                this._logger.LogInformation($"dispatching to {this._awsConfiguration.ScheduledRuleQueueName}");
+                await this._awsQueueClient.SendToQueue(
+                    this._awsConfiguration.ScheduledRuleQueueName,
+                    serialisedMessage,
+                    messageBusCts.Token);
+                this._logger.LogInformation($"finished dispatching to {this._awsConfiguration.ScheduledRuleQueueName}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception sending message '{message}' to queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
+                this._logger.LogError(
+                    $"Exception sending message '{message}' to queue {this._awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
             }
         }
     }

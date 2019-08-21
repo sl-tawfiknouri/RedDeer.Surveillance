@@ -1,231 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.Interfaces;
-using Surveillance.DataLayer.Aurora.Market;
-using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-
-namespace Surveillance.DataLayer.Aurora.Orders
+﻿namespace Surveillance.DataLayer.Aurora.Orders
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Dapper;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.Interfaces;
+    using Surveillance.DataLayer.Aurora.Market;
+    using Surveillance.DataLayer.Aurora.Market.Interfaces;
+    using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+
     public class OrdersRepository : IOrdersRepository
     {
-        private readonly object _lock = new object();
-
-        private readonly IReddeerMarketRepository _marketRepository;
-        private readonly IConnectionStringFactory _dbConnectionFactory;
-        private readonly IOrderBrokerRepository _orderBrokerRepository;
-
-        private readonly ILogger _logger;
-
-        private const string InsertOrderSql = @"
-            INSERT INTO Orders(
-                MarketId,
-                SecurityId,
-                ClientOrderId,
-                OrderVersion,
-                OrderVersionLinkId,
-                OrderGroupId,
-                PlacedDate,
-                BookedDate,
-                AmendedDate,
-                RejectedDate,
-                CancelledDate,
-                FilledDate,
-                StatusChangedDate,
-                CreatedDate,
-                LifeCycleStatus,
-                OrderType,
-                Direction,
-                Currency,
-                SettlementCurrency,
-                CleanDirty,
-                AccumulatedInterest,
-                LimitPrice,
-                AverageFillPrice,
-                OrderedVolume,
-                FilledVolume,
-                TraderId,
-                TraderName,
-                BrokerId,
-                ClearingAgent,
-                DealingInstructions,
-                OptionStrikePrice,
-                OptionExpirationDate,
-                OptionEuropeanAmerican)
-            VALUES(
-                @MarketId,
-                @SecurityReddeerId,
-                @OrderId,
-                @OrderVersion,
-                @OrderVersionLinkId,
-                @OrderGroupId,
-                @OrderPlacedDate,
-                @OrderBookedDate,
-                @OrderAmendedDate,
-                @OrderRejectedDate,
-                @OrderCancelledDate,
-                @OrderFilledDate,
-                @OrderStatusChangedDate,
-                @CreatedDate,
-                @LifeCycleStatus,
-                @OrderType,
-                @OrderDirection,
-                @OrderCurrency,
-                @OrderSettlementCurrency,
-                @CleanDirty,
-                @AccumulatedInterest,
-                @OrderLimitPrice,
-                @OrderAverageFillPrice,
-                @OrderOrderedVolume,
-                @OrderFilledVolume,
-                @OrderTraderId,
-                @OrderTraderName,
-                @OrderBrokerId,
-                @OrderClearingAgent,
-                @OrderDealingInstructions,
-                @OptionStrikePrice,
-                @OptionExpirationDate,
-                @OptionEuropeanAmerican)
-            ON DUPLICATE KEY UPDATE
-                ClientOrderId =@OrderId,
-                OrderVersion=@OrderVersion,
-                OrderVersionLinkId=@OrderVersionLinkId,
-                OrderGroupId=@OrderGroupId,
-                PlacedDate=@OrderPlacedDate,
-                BookedDate=@OrderBookedDate,
-                AmendedDate=@OrderAmendedDate,
-                RejectedDate=@OrderRejectedDate,
-                CancelledDate=@OrderCancelledDate,
-                FilledDate=@OrderFilledDate,
-                StatusChangedDate=@OrderStatusChangedDate,
-                OrderType=@OrderType,
-                Direction=@OrderDirection,
-                Currency=@OrderCurrency,
-                SettlementCurrency=@OrderSettlementCurrency,
-                CleanDirty=@CleanDirty,
-                AccumulatedInterest=@AccumulatedInterest,
-                LimitPrice=@OrderLimitPrice,
-                AverageFillPrice=@OrderAverageFillPrice,
-                OrderedVolume=@OrderOrderedVolume,
-                FilledVolume=@OrderFilledVolume,
-                TraderId=@OrderTraderId,
-                TraderName = @OrderTraderName,
-                BrokerId = @OrderBrokerId,
-                ClearingAgent=@OrderClearingAgent,
-                DealingInstructions=@OrderDealingInstructions,
-                OptionStrikePrice=@OptionStrikePrice,
-                OptionExpirationDate=@OptionExpirationDate,
-                OptionEuropeanAmerican=@OptionEuropeanAmerican,
-                Live = 0,
-                Autoscheduled = 0,
-                Id = LAST_INSERT_ID(Id);
-                SELECT LAST_INSERT_ID();";
-
-        private const string InsertDealerOrderSql = @"
-            INSERT INTO DealerOrders(
-                OrderId,
-                ClientDealerOrderId,
+        private const string GetDealerOrdersSql = @"
+            SELECT
+                Id as ReddeerDealerOrderId,
+                OrderId as OrderId,
+                ClientDealerOrderId as ClientDealerOrderId,
                 DealerOrderVersion,
                 DealerOrderVersionLinkId,
-                DealerOrderGroupId,              
-                PlacedDate,
-                BookedDate,
-                AmendedDate,
-                RejectedDate,
-                CancelledDate,
-                FilledDate,
-                StatusChangedDate,
-                CreatedDate,
-                LifeCycleStatus,
-                DealerId,
-                TraderName,
-                Notes,
-                CounterParty,
-                OrderType,
-                Direction,
-                Currency,
-                SettlementCurrency,
-                CleanDirty,
-                AccumulatedInterest,
-                LimitPrice,
-                AverageFillPrice,
-                OrderedVolume,
-                FilledVolume,
-                OptionStrikePrice,
-                OptionExpirationDate,
-                OptionEuropeanAmerican)
-            VALUES(
-                @OrderId,
-                @ClientDealerOrderId,
-                @DealerOrderVersion,
-                @DealerOrderVersionLinkId,
-                @DealerOrderGroupId,
-                @PlacedDate,
-                @BookedDate,
-                @AmendedDate,
-                @RejectedDate,
-                @CancelledDate,
-                @FilledDate,
-                @StatusChangedDate,
-                @CreatedDate,
-                @LifeCycleStatus,
-                @DealerId,
-                @TraderName,
-                @Notes,
-                @CounterParty,
-                @OrderType,
-                @Direction,
-                @Currency,
-                @SettlementCurrency,
-                @CleanDirty,
-                @AccumulatedInterest,
-                @LimitPrice,
-                @AverageFillPrice,
-                @OrderedVolume,
-                @FilledVolume,
-                @OptionStrikePrice,
-                @OptionExpirationDate,
-                @OptionEuropeanAmerican)
-            ON DUPLICATE KEY UPDATE
-                ClientDealerOrderId = @ClientDealerOrderId,
-                DealerOrderVersion = @DealerOrderVersion,
-                DealerOrderVersionLinkId = @DealerOrderVersionLinkId,
-                DealerOrderGroupId = @DealerOrderGroupId,
-                PlacedDate = @PlacedDate,
-                BookedDate = @BookedDate,
-                AmendedDate = @AmendedDate,
-                RejectedDate = @RejectedDate,
-                CancelledDate = @CancelledDate,
-                FilledDate = @FilledDate,
-                StatusChangedDate = @StatusChangedDate,
-                DealerId = @DealerId,
-                TraderName = @TraderName,
-                Notes = @Notes,
-                CounterParty = @CounterParty,
-                OrderType = @OrderType,
-                Direction = @Direction,
-                Currency = @Currency,
-                SettlementCurrency = @SettlementCurrency,
-                CleanDirty = @CleanDirty,
-                AccumulatedInterest = @AccumulatedInterest,
-                LimitPrice = @LimitPrice,
-                AverageFillPrice = @AverageFillPrice,
-                OrderedVolume = @OrderedVolume,
-                FilledVolume = @FilledVolume,
-                OptionStrikePrice = @OptionStrikePrice,
-                OptionExpirationDate = @OptionExpirationDate,
-                OptionEuropeanAmerican = @OptionEuropeanAmerican,
-                Id = LAST_INSERT_ID(Id);
-                SELECT LAST_INSERT_ID();";
+                DealerOrderGroupId,
+                PlacedDate as PlacedDate,
+                BookedDate as BookedDate,
+                AmendedDate as AmendedDate,
+                RejectedDate as RejectedDate,
+                CancelledDate as CancelledDate,
+                FilledDate as FilledDate,
+                StatusChangedDate as StatusChangedDate,
+                CreatedDate as CreatedDate,
+                DealerId as DealerId,
+                TraderName as TraderName,
+                Notes as Notes,
+                CounterParty as CounterParty,
+                OrderType as OrderType,
+                Direction as Direction,
+                Currency as Currency,
+                SettlementCurrency as SettlementCurrency,
+                CleanDirty as CleanDirty,
+                AccumulatedInterest as AccumulatedInterest,
+                LimitPrice as LimitPrice,
+                AverageFillPrice as AverageFillPrice,
+                OrderedVolume as OrderedVolume,
+                FilledVolume as FilledVolume,
+                OptionStrikePrice as OptionStrikePrice,
+                OptionExpirationDate as OptionExpirationDate,
+                OptionEuropeanAmerican as OptionEuropeanAmerican
+            FROM DealerOrders
+            WHERE OrderId IN @OrderIds";
 
         private const string GetLiveUnautoscheduledOrders = @"
             SELECT
@@ -380,103 +211,6 @@ namespace Surveillance.DataLayer.Aurora.Orders
             on broker.Id = ord.BrokerId
             WHERE OrdAlloc.Live = 1 AND OrdAlloc.Autoscheduled = 0;";
 
-        private const string SetOrdersToScheduled = @"
-            UPDATE Orders
-            SET Autoscheduled = 1
-            WHERE ClientOrderId = @OrderId;
-
-            UPDATE OrdersAllocation
-            SET Autoscheduled = 1
-            WHERE OrderId = @OrderId;";
-
-        private const string SetOrdersToLivened = @"
-            UPDATE Orders AS ord
-            LEFT OUTER JOIN OrdersAllocation AS oa
-            ON ord.ClientOrderId = oa.OrderId
-            SET ord.Live = 1
-            WHERE oa.OrderId IS NOT NULL;
-
-            UPDATE OrdersAllocation AS oa
-            LEFT OUTER JOIN Orders AS ord
-            ON oa.OrderId = ord.ClientOrderId
-            SET oa.Live = 1
-            WHERE ord.Id IS NOT NULL;";
-
-        private const string GetStaleOrders = @"
-            SELECT
-	            ord.Id as ReddeerOrderId,
-                ord.ClientOrderId as OrderId,
-                ord.SecurityId as SecurityId,
-                ord.OrderVersion as OrderVersion,
-                ord.OrderVersionLinkId as OrderVersionLinkId,
-                ord.OrderGroupId as OrderGroupId,
-                ord.PlacedDate as OrderPlacedDate,
-                ord.BookedDate as OrderBookedDate,
-                ord.AmendedDate as OrderAmendedDate,
-                ord.RejectedDate as OrderRejectedDate,
-                ord.CancelledDate as OrderCancelledDate,
-                ord.FilledDate as OrderFilledDate,
-                ord.CreatedDate as CreatedDate,
-                ord.OrderType as OrderType,
-                ord.Direction as OrderDirection,
-                ord.Currency as OrderCurrency,
-                ord.SettlementCurrency as OrderSettlementCurrency,
-                ord.CleanDirty as CleanDirty,
-                ord.AccumulatedInterest,
-                ord.LimitPrice as OrderLimitPrice,
-                ord.AverageFillPrice as OrderAverageFillPrice,
-                ord.OrderedVolume as OrderOrderedVolume,
-                ord.FilledVolume as OrderFilledVolume,
-                ord.TraderId as OrderTraderId,
-                ord.TraderName as OrderTraderName,
-                ord.ClearingAgent as OrderClearingAgent,
-                ord.DealingInstructions as OrderDealingInstructions,
-                ord.OptionStrikePrice as OptionStrikePrice,
-                ord.OptionExpirationDate as OptionExpirationDate,
-                ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
-                ord.BrokerId as OrderBrokerId,
-	            fi.Id AS SecurityReddeerId,
-	            fi.ClientIdentifier AS SecurityClientIdentifier,
-	            fi.Sedol AS SecuritySedol,
-	            fi.Isin AS SecurityIsin,
-	            fi.Figi AS SecurityFigi,
-	            fi.Cusip AS SecurityCusip,
-	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
-	            fi.Lei AS SecurityLei,
-	            fi.BloombergTicker AS SecurityBloombergTicker,
-	            fi.SecurityName AS SecurityName,
-	            fi.Cfi AS SecurityCfi,
-	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
-                fi.ReddeerId AS SecurityReddeerEnrichmentId,
-	            fi.UnderlyingSedol AS UnderlyingSedol,
-	            fi.UnderlyingIsin AS UnderlyingIsin,
-	            fi.UnderlyingFigi AS UnderlyingFigi,
-	            fi.UnderlyingCusip AS UnderlyingCusip,
-	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
-	            fi.UnderlyingLei AS UnderlyingLei,
-	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
-	            fi.UnderlyingName AS UnderlyingName,
-	            fi.UnderlyingCfi AS UnderlyingCfi,
-                fi.SectorCode As SectorCode,
-                fi.IndustryCode As IndustryCode,
-                fi.RegionCode As RegionCode,
-                fi.CountryCode As CountryCode,
-                mark.Id AS MarketId,
-                mark.MarketId AS MarketIdentifierCode,
-                mark.MarketName AS MarketName,
-                broker.ExternalId as OrderBrokerReddeerId,
-                broker.Name as OrderBroker,
-                broker.CreatedOn as OrderBrokerCreatedOn,
-                broker.Live as OrderBrokerLive
-            FROM Orders as ord
-            LEFT OUTER JOIN FinancialInstruments as fi
-            ON fi.Id = ord.SecurityId
-            LEFT OUTER JOIN Market as mark
-            on mark.Id = ord.MarketId
-            LEFT OUTER JOIN Brokers as broker
-            on broker.Id = ord.BrokerId
-            WHERE ord.Live = 0 AND ord.CreatedDate < @StaleDate;";
-
         private const string GetOrderSql = @"
             SELECT
 	            ord.Id as ReddeerOrderId,
@@ -555,78 +289,349 @@ namespace Surveillance.DataLayer.Aurora.Orders
             AND ord.StatusChangedDate <= @End
             AND ord.Live = 1;";
 
-        private const string GetDealerOrdersSql = @"
+        private const string GetStaleOrders = @"
             SELECT
-                Id as ReddeerDealerOrderId,
-                OrderId as OrderId,
-                ClientDealerOrderId as ClientDealerOrderId,
+	            ord.Id as ReddeerOrderId,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.OrderVersion as OrderVersion,
+                ord.OrderVersionLinkId as OrderVersionLinkId,
+                ord.OrderGroupId as OrderGroupId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.CreatedDate as CreatedDate,
+                ord.OrderType as OrderType,
+                ord.Direction as OrderDirection,
+                ord.Currency as OrderCurrency,
+                ord.SettlementCurrency as OrderSettlementCurrency,
+                ord.CleanDirty as CleanDirty,
+                ord.AccumulatedInterest,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AverageFillPrice as OrderAverageFillPrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.OptionStrikePrice as OptionStrikePrice,
+                ord.OptionExpirationDate as OptionExpirationDate,
+                ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+                ord.BrokerId as OrderBrokerId,
+	            fi.Id AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+                fi.ReddeerId AS SecurityReddeerEnrichmentId,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.SectorCode As SectorCode,
+                fi.IndustryCode As IndustryCode,
+                fi.RegionCode As RegionCode,
+                fi.CountryCode As CountryCode,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName,
+                broker.ExternalId as OrderBrokerReddeerId,
+                broker.Name as OrderBroker,
+                broker.CreatedOn as OrderBrokerCreatedOn,
+                broker.Live as OrderBrokerLive
+            FROM Orders as ord
+            LEFT OUTER JOIN FinancialInstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN Market as mark
+            on mark.Id = ord.MarketId
+            LEFT OUTER JOIN Brokers as broker
+            on broker.Id = ord.BrokerId
+            WHERE ord.Live = 0 AND ord.CreatedDate < @StaleDate;";
+
+        private const string InsertDealerOrderSql = @"
+            INSERT INTO DealerOrders(
+                OrderId,
+                ClientDealerOrderId,
                 DealerOrderVersion,
                 DealerOrderVersionLinkId,
-                DealerOrderGroupId,
-                PlacedDate as PlacedDate,
-                BookedDate as BookedDate,
-                AmendedDate as AmendedDate,
-                RejectedDate as RejectedDate,
-                CancelledDate as CancelledDate,
-                FilledDate as FilledDate,
-                StatusChangedDate as StatusChangedDate,
-                CreatedDate as CreatedDate,
-                DealerId as DealerId,
-                TraderName as TraderName,
-                Notes as Notes,
-                CounterParty as CounterParty,
-                OrderType as OrderType,
-                Direction as Direction,
-                Currency as Currency,
-                SettlementCurrency as SettlementCurrency,
-                CleanDirty as CleanDirty,
-                AccumulatedInterest as AccumulatedInterest,
-                LimitPrice as LimitPrice,
-                AverageFillPrice as AverageFillPrice,
-                OrderedVolume as OrderedVolume,
-                FilledVolume as FilledVolume,
-                OptionStrikePrice as OptionStrikePrice,
-                OptionExpirationDate as OptionExpirationDate,
-                OptionEuropeanAmerican as OptionEuropeanAmerican
-            FROM DealerOrders
-            WHERE OrderId IN @OrderIds";
+                DealerOrderGroupId,              
+                PlacedDate,
+                BookedDate,
+                AmendedDate,
+                RejectedDate,
+                CancelledDate,
+                FilledDate,
+                StatusChangedDate,
+                CreatedDate,
+                LifeCycleStatus,
+                DealerId,
+                TraderName,
+                Notes,
+                CounterParty,
+                OrderType,
+                Direction,
+                Currency,
+                SettlementCurrency,
+                CleanDirty,
+                AccumulatedInterest,
+                LimitPrice,
+                AverageFillPrice,
+                OrderedVolume,
+                FilledVolume,
+                OptionStrikePrice,
+                OptionExpirationDate,
+                OptionEuropeanAmerican)
+            VALUES(
+                @OrderId,
+                @ClientDealerOrderId,
+                @DealerOrderVersion,
+                @DealerOrderVersionLinkId,
+                @DealerOrderGroupId,
+                @PlacedDate,
+                @BookedDate,
+                @AmendedDate,
+                @RejectedDate,
+                @CancelledDate,
+                @FilledDate,
+                @StatusChangedDate,
+                @CreatedDate,
+                @LifeCycleStatus,
+                @DealerId,
+                @TraderName,
+                @Notes,
+                @CounterParty,
+                @OrderType,
+                @Direction,
+                @Currency,
+                @SettlementCurrency,
+                @CleanDirty,
+                @AccumulatedInterest,
+                @LimitPrice,
+                @AverageFillPrice,
+                @OrderedVolume,
+                @FilledVolume,
+                @OptionStrikePrice,
+                @OptionExpirationDate,
+                @OptionEuropeanAmerican)
+            ON DUPLICATE KEY UPDATE
+                ClientDealerOrderId = @ClientDealerOrderId,
+                DealerOrderVersion = @DealerOrderVersion,
+                DealerOrderVersionLinkId = @DealerOrderVersionLinkId,
+                DealerOrderGroupId = @DealerOrderGroupId,
+                PlacedDate = @PlacedDate,
+                BookedDate = @BookedDate,
+                AmendedDate = @AmendedDate,
+                RejectedDate = @RejectedDate,
+                CancelledDate = @CancelledDate,
+                FilledDate = @FilledDate,
+                StatusChangedDate = @StatusChangedDate,
+                DealerId = @DealerId,
+                TraderName = @TraderName,
+                Notes = @Notes,
+                CounterParty = @CounterParty,
+                OrderType = @OrderType,
+                Direction = @Direction,
+                Currency = @Currency,
+                SettlementCurrency = @SettlementCurrency,
+                CleanDirty = @CleanDirty,
+                AccumulatedInterest = @AccumulatedInterest,
+                LimitPrice = @LimitPrice,
+                AverageFillPrice = @AverageFillPrice,
+                OrderedVolume = @OrderedVolume,
+                FilledVolume = @FilledVolume,
+                OptionStrikePrice = @OptionStrikePrice,
+                OptionExpirationDate = @OptionExpirationDate,
+                OptionEuropeanAmerican = @OptionEuropeanAmerican,
+                Id = LAST_INSERT_ID(Id);
+                SELECT LAST_INSERT_ID();";
 
-         public OrdersRepository(
+        private const string InsertOrderSql = @"
+            INSERT INTO Orders(
+                MarketId,
+                SecurityId,
+                ClientOrderId,
+                OrderVersion,
+                OrderVersionLinkId,
+                OrderGroupId,
+                PlacedDate,
+                BookedDate,
+                AmendedDate,
+                RejectedDate,
+                CancelledDate,
+                FilledDate,
+                StatusChangedDate,
+                CreatedDate,
+                LifeCycleStatus,
+                OrderType,
+                Direction,
+                Currency,
+                SettlementCurrency,
+                CleanDirty,
+                AccumulatedInterest,
+                LimitPrice,
+                AverageFillPrice,
+                OrderedVolume,
+                FilledVolume,
+                TraderId,
+                TraderName,
+                BrokerId,
+                ClearingAgent,
+                DealingInstructions,
+                OptionStrikePrice,
+                OptionExpirationDate,
+                OptionEuropeanAmerican)
+            VALUES(
+                @MarketId,
+                @SecurityReddeerId,
+                @OrderId,
+                @OrderVersion,
+                @OrderVersionLinkId,
+                @OrderGroupId,
+                @OrderPlacedDate,
+                @OrderBookedDate,
+                @OrderAmendedDate,
+                @OrderRejectedDate,
+                @OrderCancelledDate,
+                @OrderFilledDate,
+                @OrderStatusChangedDate,
+                @CreatedDate,
+                @LifeCycleStatus,
+                @OrderType,
+                @OrderDirection,
+                @OrderCurrency,
+                @OrderSettlementCurrency,
+                @CleanDirty,
+                @AccumulatedInterest,
+                @OrderLimitPrice,
+                @OrderAverageFillPrice,
+                @OrderOrderedVolume,
+                @OrderFilledVolume,
+                @OrderTraderId,
+                @OrderTraderName,
+                @OrderBrokerId,
+                @OrderClearingAgent,
+                @OrderDealingInstructions,
+                @OptionStrikePrice,
+                @OptionExpirationDate,
+                @OptionEuropeanAmerican)
+            ON DUPLICATE KEY UPDATE
+                ClientOrderId =@OrderId,
+                OrderVersion=@OrderVersion,
+                OrderVersionLinkId=@OrderVersionLinkId,
+                OrderGroupId=@OrderGroupId,
+                PlacedDate=@OrderPlacedDate,
+                BookedDate=@OrderBookedDate,
+                AmendedDate=@OrderAmendedDate,
+                RejectedDate=@OrderRejectedDate,
+                CancelledDate=@OrderCancelledDate,
+                FilledDate=@OrderFilledDate,
+                StatusChangedDate=@OrderStatusChangedDate,
+                OrderType=@OrderType,
+                Direction=@OrderDirection,
+                Currency=@OrderCurrency,
+                SettlementCurrency=@OrderSettlementCurrency,
+                CleanDirty=@CleanDirty,
+                AccumulatedInterest=@AccumulatedInterest,
+                LimitPrice=@OrderLimitPrice,
+                AverageFillPrice=@OrderAverageFillPrice,
+                OrderedVolume=@OrderOrderedVolume,
+                FilledVolume=@OrderFilledVolume,
+                TraderId=@OrderTraderId,
+                TraderName = @OrderTraderName,
+                BrokerId = @OrderBrokerId,
+                ClearingAgent=@OrderClearingAgent,
+                DealingInstructions=@OrderDealingInstructions,
+                OptionStrikePrice=@OptionStrikePrice,
+                OptionExpirationDate=@OptionExpirationDate,
+                OptionEuropeanAmerican=@OptionEuropeanAmerican,
+                Live = 0,
+                Autoscheduled = 0,
+                Id = LAST_INSERT_ID(Id);
+                SELECT LAST_INSERT_ID();";
+
+        private const string SetOrdersToLivened = @"
+            UPDATE Orders AS ord
+            LEFT OUTER JOIN OrdersAllocation AS oa
+            ON ord.ClientOrderId = oa.OrderId
+            SET ord.Live = 1
+            WHERE oa.OrderId IS NOT NULL;
+
+            UPDATE OrdersAllocation AS oa
+            LEFT OUTER JOIN Orders AS ord
+            ON oa.OrderId = ord.ClientOrderId
+            SET oa.Live = 1
+            WHERE ord.Id IS NOT NULL;";
+
+        private const string SetOrdersToScheduled = @"
+            UPDATE Orders
+            SET Autoscheduled = 1
+            WHERE ClientOrderId = @OrderId;
+
+            UPDATE OrdersAllocation
+            SET Autoscheduled = 1
+            WHERE OrderId = @OrderId;";
+
+        private readonly IConnectionStringFactory _dbConnectionFactory;
+
+        private readonly object _lock = new object();
+
+        private readonly ILogger _logger;
+
+        private readonly IReddeerMarketRepository _marketRepository;
+
+        private readonly IOrderBrokerRepository _orderBrokerRepository;
+
+        public OrdersRepository(
             IConnectionStringFactory connectionStringFactory,
             IReddeerMarketRepository marketRepository,
             IOrderBrokerRepository orderBrokerRepository,
             ILogger<OrdersRepository> logger)
         {
-            _dbConnectionFactory =
-                connectionStringFactory
-                ?? throw new ArgumentNullException(nameof(connectionStringFactory));
+            this._dbConnectionFactory = connectionStringFactory
+                                        ?? throw new ArgumentNullException(nameof(connectionStringFactory));
 
-            _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
-            _orderBrokerRepository = orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
+            this._orderBrokerRepository =
+                orderBrokerRepository ?? throw new ArgumentNullException(nameof(orderBrokerRepository));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Create(Order entity)
         {
             if (entity == null)
             {
-                _logger.LogError($"ReddeerTradeRepository Create passed a null order entity. Returning.");
+                this._logger.LogError("ReddeerTradeRepository Create passed a null order entity. Returning.");
                 return;
             }
 
-            lock (_lock)
+            lock (this._lock)
             {
-                var dbConnection = _dbConnectionFactory.BuildConn();
+                var dbConnection = this._dbConnectionFactory.BuildConn();
 
                 try
                 {
                     dbConnection.Open();
 
-                    if (entity.OrderBroker != null
-                        && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name)
-                        && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
+                    if (entity.OrderBroker != null && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name)
+                                                   && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
                     {
-                        var brokerTask = _orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
+                        var brokerTask = this._orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
                         brokerTask.Wait();
                         var broker = brokerTask.Result;
                         entity.OrderBroker.Id = broker;
@@ -634,20 +639,20 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
                     var dto = new OrderDto(entity);
 
-                    _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
+                    this._logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
 
-                    if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
-                    || string.IsNullOrWhiteSpace(dto.MarketId))
+                    if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId) || string.IsNullOrWhiteSpace(dto.MarketId))
                     {
-                        var marketDataPair = new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
-                        var marketSecurityIdTask = _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
+                        var marketDataPair =
+                            new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
+                        var marketSecurityIdTask = this._marketRepository.CreateAndOrGetSecurityId(marketDataPair);
                         marketSecurityIdTask.Wait();
                         var marketSecurityId = marketSecurityIdTask.Result;
                         dto.SecurityReddeerId = marketSecurityId.SecurityId;
                         dto.MarketId = marketSecurityId.MarketId;
                     }
 
-                    _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new order");
+                    this._logger.LogInformation("ReddeerTradeRepository Create about to insert a new order");
                     using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto))
                     {
                         var orderIdTask = conn;
@@ -655,29 +660,27 @@ namespace Surveillance.DataLayer.Aurora.Orders
                         var orderId = orderIdTask.Result;
 
                         entity.ReddeerOrderId = orderId;
-                        _logger.LogInformation($"ReddeerTradeRepository Create completed for the new order {orderId}");
+                        this._logger.LogInformation(
+                            $"ReddeerTradeRepository Create completed for the new order {orderId}");
                     }
 
                     if (entity.ReddeerOrderId == null)
-                    {
-                        _logger.LogError($"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
-                    }
+                        this._logger.LogError(
+                            $"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
 
-                    if (entity.DealerOrders == null
-                        || !entity.DealerOrders.Any())
+                    if (entity.DealerOrders == null || !entity.DealerOrders.Any())
                     {
-                        _logger.LogInformation($"ReddeerTradeRepository Create saved an order with id {entity.ReddeerOrderId} and it had no trades so returning.");
+                        this._logger.LogInformation(
+                            $"ReddeerTradeRepository Create saved an order with id {entity.ReddeerOrderId} and it had no trades so returning.");
                         return;
                     }
 
                     foreach (var trade in entity.DealerOrders)
                     {
-                        if (trade == null)
-                        {
-                            continue;
-                        }
+                        if (trade == null) continue;
 
-                        _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
+                        this._logger.LogInformation(
+                            $"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
                         var tradeDto = new DealerOrdersDto(trade, entity.ReddeerOrderId);
                         using (var conn = dbConnection.ExecuteScalarAsync<string>(InsertDealerOrderSql, tradeDto))
                         {
@@ -685,15 +688,17 @@ namespace Surveillance.DataLayer.Aurora.Orders
                             tradeIdTask.Wait();
                             var tradeId = tradeIdTask.Result;
                             tradeDto.ReddeerDealerOrderId = tradeId;
-                            _logger.LogInformation($"ReddeerTradeRepository Create inserted a new trade entry for order {entity.ReddeerOrderId} and it had an id of {tradeId}");
+                            this._logger.LogInformation(
+                                $"ReddeerTradeRepository Create inserted a new trade entry for order {entity.ReddeerOrderId} and it had an id of {tradeId}");
                         }
                     }
 
-                    _logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
+                    this._logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
+                    this._logger.LogError(
+                        $"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
                 }
                 finally
                 {
@@ -703,21 +708,26 @@ namespace Surveillance.DataLayer.Aurora.Orders
             }
         }
 
-        public async Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<Order>> Get(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx)
         {
-            _logger.LogInformation($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
+            this._logger.LogInformation(
+                $"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
 
             start = start.Date;
             end = end.Date.AddDays(1).AddMilliseconds(-1);
 
             if (end < start)
             {
-                _logger.LogError($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id} but the end date predated the start date!");
+                this._logger.LogError(
+                    $"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id} but the end date predated the start date!");
 
                 return new Order[0];
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
+            var dbConnection = this._dbConnectionFactory.BuildConn();
 
             try
             {
@@ -727,14 +737,16 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 var orders = new List<Order>();
                 var query = new GetQuery { Start = start, End = end };
 
-                _logger.LogInformation($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
+                this._logger.LogInformation(
+                    $"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
                 using (var conn = dbConnection.QueryAsync<OrderDto>(GetOrderSql, query))
                 {
                     var rawResult = await conn;
 
-                    _logger.LogInformation($"ReddeerTradeRepository has gotten orders {rawResult?.Count() ?? 0} from {start} to {end} for system process operation {opCtx?.Id}");
+                    this._logger.LogInformation(
+                        $"ReddeerTradeRepository has gotten orders {rawResult?.Count() ?? 0} from {start} to {end} for system process operation {opCtx?.Id}");
 
-                    orders = rawResult?.Select(Project).ToList();
+                    orders = rawResult?.Select(this.Project).ToList();
                 }
 
                 // GET TRADES
@@ -742,15 +754,19 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 var tradeIds = new List<string>();
                 var tradeDtos = new List<DealerOrdersDto>();
 
-                if (orderIds != null
-                    && orderIds.Any())
+                if (orderIds != null && orderIds.Any())
                 {
-                    _logger.LogInformation($"ReddeerTradeRepository getting trades from {start} to {end} for system process operation {opCtx?.Id}");
-                    using (var conn = dbConnection.QueryAsync<DealerOrdersDto>(GetDealerOrdersSql, new { OrderIds = orderIds }))
+                    this._logger.LogInformation(
+                        $"ReddeerTradeRepository getting trades from {start} to {end} for system process operation {opCtx?.Id}");
+                    using (var conn = dbConnection.QueryAsync<DealerOrdersDto>(
+                        GetDealerOrdersSql,
+                        new { OrderIds = orderIds }))
                     {
                         tradeDtos = (await conn).ToList();
-                        tradeIds = tradeDtos.Select(tfo => tfo.ReddeerDealerOrderId?.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-                        _logger.LogInformation($"ReddeerTradeRepository completed getting trades from {start} to {end} for system process operation {opCtx?.Id}");
+                        tradeIds = tradeDtos.Select(tfo => tfo.ReddeerDealerOrderId?.ToString())
+                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        this._logger.LogInformation(
+                            $"ReddeerTradeRepository completed getting trades from {start} to {end} for system process operation {opCtx?.Id}");
                     }
                 }
 
@@ -759,23 +775,22 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 foreach (var grp in groups)
                 {
                     var order = orders.FirstOrDefault(ord => ord.ReddeerOrderId == grp.Key);
-                    if (order == null)
-                    {
-                        continue;
-                    }
+                    if (order == null) continue;
 
-                    order.DealerOrders = grp.Select(tr => Project(tr, order.Instrument)).ToList();
+                    order.DealerOrders = grp.Select(tr => this.Project(tr, order.Instrument)).ToList();
                     foreach (var trad in order.DealerOrders)
                         trad.ParentOrder = order;
                 }
 
-                _logger.LogInformation($"ReddeerTradeRepository returning from get orders from {start} to {end} for system process operation {opCtx?.Id} with {orders?.Count} orders");
+                this._logger.LogInformation(
+                    $"ReddeerTradeRepository returning from get orders from {start} to {end} for system process operation {opCtx?.Id} with {orders?.Count} orders");
 
                 return orders;
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
+                this._logger.LogError(
+                    $"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
                 opCtx?.EventError(e);
             }
             finally
@@ -787,26 +802,48 @@ namespace Surveillance.DataLayer.Aurora.Orders
             return new Order[0];
         }
 
-        public async Task<IReadOnlyCollection<Order>> LiveUnscheduledOrders()
+        public async Task LivenCompletedOrderSets()
         {
-            _logger.LogInformation($"OrdersRepository asked to get live unscheduled order ids");
+            this._logger.LogInformation("OrdersRepository asked to set order livening");
 
             try
             {
-                using (var open = _dbConnectionFactory.BuildConn())
+                using (var open = this._dbConnectionFactory.BuildConn())
+                using (var conn = open.ExecuteAsync(SetOrdersToLivened))
+                {
+                    await conn;
+
+                    this._logger.LogInformation("OrdersRepository completed setting order livening");
+                }
+            }
+            catch (Exception e)
+            {
+                this._logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
+            }
+        }
+
+        public async Task<IReadOnlyCollection<Order>> LiveUnscheduledOrders()
+        {
+            this._logger.LogInformation("OrdersRepository asked to get live unscheduled order ids");
+
+            try
+            {
+                using (var open = this._dbConnectionFactory.BuildConn())
                 using (var conn = open.QueryAsync<OrderDto>(GetLiveUnautoscheduledOrders))
                 {
                     var response = await conn;
-                    var projectedResponse = response.Select(Project).ToList();
+                    var projectedResponse = response.Select(this.Project).ToList();
 
-                    _logger.LogInformation($"OrdersRepository completed getting live unscheduled order ids");
+                    this._logger.LogInformation("OrdersRepository completed getting live unscheduled order ids");
 
                     return projectedResponse;
                 }
             }
             catch (Exception e)
             {
-                _logger?.LogError($"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}", e);
+                this._logger?.LogError(
+                    $"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}",
+                    e);
             }
 
             return new List<Order>();
@@ -814,75 +851,53 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
         public async Task SetOrdersScheduled(IReadOnlyCollection<Order> orders)
         {
-            if (orders == null
-                || !orders.Any())
-            {
-                return;
-            }
+            if (orders == null || !orders.Any()) return;
 
-            _logger.LogInformation($"OrdersRepository asked to set orders scheduled");
+            this._logger.LogInformation("OrdersRepository asked to set orders scheduled");
 
             try
             {
                 var dtos = orders.Select(i => new OrderDto(i)).ToList();
 
-                using (var open = _dbConnectionFactory.BuildConn())
+                using (var open = this._dbConnectionFactory.BuildConn())
                 using (var conn = open.ExecuteAsync(SetOrdersToScheduled, dtos))
                 {
                     await conn;
 
-                    _logger.LogInformation($"OrdersRepository completed setting orders scheduled");
+                    this._logger.LogInformation("OrdersRepository completed setting orders scheduled");
                 }
             }
             catch (Exception e)
             {
-                _logger?.LogError($"OrdersRepository set orders as scheduled encountered an exception {e.Message}", e);
-            }
-        }
-
-        public async Task LivenCompletedOrderSets()
-        {
-            _logger.LogInformation($"OrdersRepository asked to set order livening");
-
-            try
-            {
-                using (var open = _dbConnectionFactory.BuildConn())
-                using (var conn = open.ExecuteAsync(SetOrdersToLivened))
-                {
-                    await conn;
-
-                    _logger.LogInformation($"OrdersRepository completed setting order livening");
-                }
-            }
-            catch (Exception e)
-            {
-                _logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
+                this._logger?.LogError(
+                    $"OrdersRepository set orders as scheduled encountered an exception {e.Message}",
+                    e);
             }
         }
 
         /// <summary>
-        /// Does not eagerly fetch related domain entities
+        ///     Does not eagerly fetch related domain entities
         /// </summary>
         public async Task<IReadOnlyCollection<Order>> StaleOrders(DateTime stalenessDate)
         {
-            _logger.LogInformation($"OrdersRepository asked to fetch stale orders");
+            this._logger.LogInformation("OrdersRepository asked to fetch stale orders");
 
             try
             {
-                using (var open = _dbConnectionFactory.BuildConn())
+                using (var open = this._dbConnectionFactory.BuildConn())
                 using (var conn = open.QueryAsync<OrderDto>(GetStaleOrders, new { StaleDate = stalenessDate }))
                 {
                     var queryResult = await conn;
 
-                    var staleOrders = queryResult.Select(Project).ToList();
-                    _logger.LogInformation($"OrdersRepository completed fetching stale orders");
+                    var staleOrders = queryResult.Select(this.Project).ToList();
+                    this._logger.LogInformation("OrdersRepository completed fetching stale orders");
 
                     return staleOrders;
                 }
             }
             catch (Exception e)
             {
-                _logger?.LogError($"OrdersRepository fetch stale orders exception {e.Message}", e);
+                this._logger?.LogError($"OrdersRepository fetch stale orders exception {e.Message}", e);
             }
 
             return new List<Order>();
@@ -890,40 +905,39 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
         private Order Project(OrderDto dto)
         {
-            var financialInstrument =
-                new FinancialInstrument(
-                    InstrumentTypes.Equity,
-                    new InstrumentIdentifiers(
-                        dto.SecurityId,
-                        dto.SecurityReddeerId,
-                        dto.SecurityReddeerEnrichmentId,
-                        dto.SecurityClientIdentifier,
-                        dto.SecuritySedol,
-                        dto.SecurityIsin,
-                        dto.SecurityFigi,
-                        dto.SecurityCusip,
-                        dto.SecurityExchangeSymbol,
-                        dto.SecurityLei,
-                        dto.SecurityBloombergTicker,
-                        dto.UnderlyingSecuritySedol,
-                        dto.UnderlyingSecurityIsin,
-                        dto.UnderlyingSecurityFigi,
-                        dto.UnderlyingSecurityCusip,
-                        dto.UnderlyingSecurityLei,
-                        dto.UnderlyingSecurityExchangeSymbol,
-                        dto.UnderlyingSecurityBloombergTicker,
-                        dto.UnderlyingClientIdentifier),
-                    dto.SecurityName,
-                    dto.SecurityCfi,
-                    dto.OrderCurrency,
-                    dto.SecurityIssuerIdentifier,
-                    dto.UnderlyingSecurityName,
-                    dto.UnderlyingSecurityCfi,
-                    dto.UnderlyingSecurityIssuerIdentifier,
-                    dto.SectorCode,
-                    dto.IndustryCode,
-                    dto.RegionCode,
-                    dto.CountryCode);
+            var financialInstrument = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                new InstrumentIdentifiers(
+                    dto.SecurityId,
+                    dto.SecurityReddeerId,
+                    dto.SecurityReddeerEnrichmentId,
+                    dto.SecurityClientIdentifier,
+                    dto.SecuritySedol,
+                    dto.SecurityIsin,
+                    dto.SecurityFigi,
+                    dto.SecurityCusip,
+                    dto.SecurityExchangeSymbol,
+                    dto.SecurityLei,
+                    dto.SecurityBloombergTicker,
+                    dto.UnderlyingSecuritySedol,
+                    dto.UnderlyingSecurityIsin,
+                    dto.UnderlyingSecurityFigi,
+                    dto.UnderlyingSecurityCusip,
+                    dto.UnderlyingSecurityLei,
+                    dto.UnderlyingSecurityExchangeSymbol,
+                    dto.UnderlyingSecurityBloombergTicker,
+                    dto.UnderlyingClientIdentifier),
+                dto.SecurityName,
+                dto.SecurityCfi,
+                dto.OrderCurrency,
+                dto.SecurityIssuerIdentifier,
+                dto.UnderlyingSecurityName,
+                dto.UnderlyingSecurityCfi,
+                dto.UnderlyingSecurityIssuerIdentifier,
+                dto.SectorCode,
+                dto.IndustryCode,
+                dto.RegionCode,
+                dto.CountryCode);
 
             Enum.TryParse(dto.MarketType?.ToString() ?? string.Empty, out MarketTypes result);
             var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
@@ -932,21 +946,21 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var limitPrice = new Money(dto.OrderLimitPrice, dto.OrderCurrency);
             var averagePrice = new Money(dto.OrderAverageFillPrice, dto.OrderCurrency);
 
-            var settlementCurrency = 
-                !string.IsNullOrWhiteSpace(dto.OrderSettlementCurrency)
-                    ? (Currency?) new Currency(dto.OrderSettlementCurrency)
-                    : null;
+            var settlementCurrency = !string.IsNullOrWhiteSpace(dto.OrderSettlementCurrency)
+                                         ? (Currency?)new Currency(dto.OrderSettlementCurrency)
+                                         : null;
 
             var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
             var orderAccumulatedInterest = dto.AccumulatedInterest;
 
-            var market = new Domain.Core.Markets.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
-            var dealerOrders = dto.DealerOrders?.Select(tr => Project(tr, financialInstrument)).ToList() ?? new List<DealerOrder>();
+            var market = new Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+            var dealerOrders = dto.DealerOrders?.Select(tr => this.Project(tr, financialInstrument)).ToList()
+                               ?? new List<DealerOrder>();
 
-            var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);
+            var optionEuropeanAmerican = (OptionEuropeanAmerican)dto.OptionEuropeanAmerican.GetValueOrDefault(0);
             var optionStrikePrice = dto.OptionStrikePrice == null
-                ? (Money?)null
-                : new Money(dto.OptionStrikePrice, dto.OrderCurrency);
+                                        ? (Money?)null
+                                        : new Money(dto.OptionStrikePrice, dto.OrderCurrency);
 
             var order = new Order(
                 financialInstrument,
@@ -954,25 +968,21 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.ReddeerOrderId,
                 dto.OrderId,
                 dto.CreatedDate,
-
                 dto.OrderVersion,
                 dto.OrderVersionLinkId,
                 dto.OrderGroupId,
-
                 dto.OrderPlacedDate,
                 dto.OrderBookedDate,
                 dto.OrderAmendedDate,
                 dto.OrderRejectedDate,
                 dto.OrderCancelledDate,
                 dto.OrderFilledDate,
-
                 orderTypeResult,
                 orderDirectionResult,
                 orderCurrency,
                 settlementCurrency,
                 orderCleanDirty,
                 orderAccumulatedInterest,
-
                 limitPrice,
                 averagePrice,
                 dto.OrderOrderedVolume,
@@ -981,12 +991,15 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
-                new OrderBroker(dto.OrderBrokerId, dto.OrderBrokerReddeerId, dto.OrderBroker, dto.OrderBrokerCreatedOn, dto.OrderBrokerLive), 
-
+                new OrderBroker(
+                    dto.OrderBrokerId,
+                    dto.OrderBrokerReddeerId,
+                    dto.OrderBroker,
+                    dto.OrderBrokerCreatedOn,
+                    dto.OrderBrokerLive),
                 optionStrikePrice,
                 dto.OptionExpirationDate,
                 optionEuropeanAmerican,
-
                 dealerOrders);
 
             foreach (var trad in dealerOrders)
@@ -999,19 +1012,15 @@ namespace Surveillance.DataLayer.Aurora.Orders
         {
             var orderType = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
             var orderDirection = (OrderDirections)dto.Direction.GetValueOrDefault(0);
-            var orderCleanDirty = (OrderCleanDirty) dto.CleanDirty.GetValueOrDefault(0);
-            var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault();
+            var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
+            var optionEuropeanAmerican = (OptionEuropeanAmerican)dto.OptionEuropeanAmerican.GetValueOrDefault();
             var orderCurrency = new Currency(dto.Currency);
             var settlementCurrency = new Currency(dto.SettlementCurrency);
 
-            var orderLimit =
-                dto.LimitPrice != null
-                    ? new Money(dto.LimitPrice, dto.Currency)
-                    : (Money?)null;
-            var orderAveragePrice =
-                dto.AverageFillPrice != null
-                    ? new Money(dto.AverageFillPrice, dto.Currency)
-                    : (Money?)null;
+            var orderLimit = dto.LimitPrice != null ? new Money(dto.LimitPrice, dto.Currency) : (Money?)null;
+            var orderAveragePrice = dto.AverageFillPrice != null
+                                        ? new Money(dto.AverageFillPrice, dto.Currency)
+                                        : (Money?)null;
 
             var dealerOrder = new DealerOrder(
                 fi,
@@ -1039,7 +1048,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.DealerOrderGroupId,
                 orderLimit,
                 orderAveragePrice,
-                dto.OrderedVolume, 
+                dto.OrderedVolume,
                 dto.FilledVolume,
                 dto.OptionStrikePrice,
                 dto.OptionExpirationDate,
@@ -1048,10 +1057,128 @@ namespace Surveillance.DataLayer.Aurora.Orders
             return dealerOrder;
         }
 
+        public class DealerOrdersDto
+        {
+            public DealerOrdersDto()
+            {
+            }
+
+            public DealerOrdersDto(DealerOrder dealerOrder, int? orderId)
+            {
+                this.OrderId = orderId;
+
+                if (dealerOrder == null) return;
+
+                this.ReddeerDealerOrderId = dealerOrder.ReddeerDealerOrderId;
+                this.ClientDealerOrderId = dealerOrder.DealerOrderId;
+
+                this.DealerOrderVersion = dealerOrder.DealerOrderVersion;
+                this.DealerOrderVersionLinkId = dealerOrder.DealerOrderVersionLinkId;
+                this.DealerOrderGroupId = dealerOrder.DealerOrderGroupId;
+
+                this.PlacedDate = dealerOrder.PlacedDate;
+                this.BookedDate = dealerOrder.BookedDate;
+                this.AmendedDate = dealerOrder.AmendedDate;
+                this.RejectedDate = dealerOrder.RejectedDate;
+                this.CancelledDate = dealerOrder.CancelledDate;
+                this.FilledDate = dealerOrder.FilledDate;
+                this.StatusChangedDate = dealerOrder.MostRecentDateEvent();
+                this.CreatedDate = dealerOrder.CreatedDate;
+
+                this.DealerId = dealerOrder.DealerId;
+                this.TraderName = dealerOrder.DealerName;
+                this.Notes = dealerOrder.Notes;
+
+                this.CounterParty = dealerOrder.DealerCounterParty;
+                this.LifeCycleStatus = (int?)dealerOrder.OrderStatus();
+                this.OrderType = (int?)dealerOrder.OrderType;
+                this.Direction = (int?)dealerOrder.OrderDirection;
+
+                this.Currency = dealerOrder.Currency.Code;
+                this.SettlementCurrency = dealerOrder.SettlementCurrency.Code;
+                this.CleanDirty = (int?)dealerOrder.CleanDirty;
+                this.AccumulatedInterest = dealerOrder.AccumulatedInterest;
+
+                this.LimitPrice = dealerOrder.LimitPrice?.Value;
+                this.AverageFillPrice = dealerOrder.AverageFillPrice?.Value;
+                this.OrderedVolume = dealerOrder.OrderedVolume;
+                this.FilledVolume = dealerOrder.FilledVolume;
+
+                this.OptionStrikePrice = dealerOrder.OptionStrikePrice;
+                this.OptionExpirationDate = dealerOrder.OptionExpirationDate;
+                this.OptionEuropeanAmerican = (int?)dealerOrder.OptionEuropeanAmerican;
+            }
+
+            public decimal? AccumulatedInterest { get; set; }
+
+            public DateTime? AmendedDate { get; set; }
+
+            public decimal? AverageFillPrice { get; set; }
+
+            public DateTime? BookedDate { get; set; }
+
+            public DateTime? CancelledDate { get; set; }
+
+            public int? CleanDirty { get; set; }
+
+            public string ClientDealerOrderId { get; set; }
+
+            public string CounterParty { get; set; }
+
+            public DateTime? CreatedDate { get; set; }
+
+            public string Currency { get; set; }
+
+            public string DealerId { get; set; }
+
+            public string DealerOrderGroupId { get; set; }
+
+            public string DealerOrderVersion { get; set; }
+
+            public string DealerOrderVersionLinkId { get; set; }
+
+            public int? Direction { get; set; }
+
+            public DateTime? FilledDate { get; set; }
+
+            public decimal? FilledVolume { get; set; }
+
+            public int? LifeCycleStatus { get; set; }
+
+            public decimal? LimitPrice { get; set; }
+
+            public string Notes { get; set; }
+
+            public int? OptionEuropeanAmerican { get; set; }
+
+            public DateTime? OptionExpirationDate { get; set; }
+
+            public decimal? OptionStrikePrice { get; set; }
+
+            public decimal? OrderedVolume { get; set; }
+
+            public int? OrderId { get; set; }
+
+            public int? OrderType { get; set; }
+
+            public DateTime? PlacedDate { get; set; }
+
+            public string ReddeerDealerOrderId { get; set; }
+
+            public DateTime? RejectedDate { get; set; }
+
+            public string SettlementCurrency { get; set; }
+
+            public DateTime? StatusChangedDate { get; set; }
+
+            public string TraderName { get; set; }
+        }
+
         private class GetQuery
         {
-            public DateTime Start { get; set; }
             public DateTime End { get; set; }
+
+            public DateTime Start { get; set; }
         }
 
         private class OrderDto
@@ -1063,302 +1190,250 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             public OrderDto(Order order)
             {
-                if (order == null)
-                {
-                    return;
-                }
+                if (order == null) return;
 
-                MarketId = order.Market?.Id ?? string.Empty;
-                MarketIdentifierCode = order.Market?.MarketIdentifierCode;
-                MarketName = order.Market?.Name;
-                MarketType = (int?)order.Market?.Type;
+                this.MarketId = order.Market?.Id ?? string.Empty;
+                this.MarketIdentifierCode = order.Market?.MarketIdentifierCode;
+                this.MarketName = order.Market?.Name;
+                this.MarketType = (int?)order.Market?.Type;
 
-                SecurityId = order?.Instrument.Identifiers.Id;
-                SecurityReddeerId = order?.Instrument.Identifiers.ReddeerId;
-                SecurityReddeerEnrichmentId = order?.Instrument.Identifiers.ReddeerEnrichmentId;
-                SecurityClientIdentifier = order?.Instrument.Identifiers.ClientIdentifier;
+                this.SecurityId = order?.Instrument.Identifiers.Id;
+                this.SecurityReddeerId = order?.Instrument.Identifiers.ReddeerId;
+                this.SecurityReddeerEnrichmentId = order?.Instrument.Identifiers.ReddeerEnrichmentId;
+                this.SecurityClientIdentifier = order?.Instrument.Identifiers.ClientIdentifier;
 
-                SecurityName = order?.Instrument.Name;
-                SecurityCfi = order?.Instrument.Cfi;
-                SecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
-                SecurityType = (int?)order?.Instrument.Type;
+                this.SecurityName = order?.Instrument.Name;
+                this.SecurityCfi = order?.Instrument.Cfi;
+                this.SecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
+                this.SecurityType = (int?)order?.Instrument.Type;
 
-                SecuritySedol = order?.Instrument.Identifiers.Sedol;
-                SecurityIsin = order?.Instrument.Identifiers.Isin;
-                SecurityFigi = order?.Instrument.Identifiers.Figi;
-                SecurityCusip = order?.Instrument.Identifiers.Cusip;
-                SecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
-                SecurityLei = order?.Instrument.Identifiers.Lei;
-                SecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+                this.SecuritySedol = order?.Instrument.Identifiers.Sedol;
+                this.SecurityIsin = order?.Instrument.Identifiers.Isin;
+                this.SecurityFigi = order?.Instrument.Identifiers.Figi;
+                this.SecurityCusip = order?.Instrument.Identifiers.Cusip;
+                this.SecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
+                this.SecurityLei = order?.Instrument.Identifiers.Lei;
+                this.SecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
 
-                UnderlyingSecurityName = order?.Instrument.Name;
-                UnderlyingSecurityCfi = order?.Instrument.Cfi;
-                UnderlyingSecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
+                this.UnderlyingSecurityName = order?.Instrument.Name;
+                this.UnderlyingSecurityCfi = order?.Instrument.Cfi;
+                this.UnderlyingSecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
 
-                UnderlyingSecuritySedol = order?.Instrument.Identifiers.Sedol;
-                UnderlyingSecurityIsin = order?.Instrument.Identifiers.Isin;
-                UnderlyingSecurityFigi = order?.Instrument.Identifiers.Figi;
-                UnderlyingSecurityCusip = order?.Instrument.Identifiers.Cusip;
-                UnderlyingSecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
-                UnderlyingSecurityLei = order?.Instrument.Identifiers.Lei;
-                UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
-                UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingSecuritySedol = order?.Instrument.Identifiers.Sedol;
+                this.UnderlyingSecurityIsin = order?.Instrument.Identifiers.Isin;
+                this.UnderlyingSecurityFigi = order?.Instrument.Identifiers.Figi;
+                this.UnderlyingSecurityCusip = order?.Instrument.Identifiers.Cusip;
+                this.UnderlyingSecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
+                this.UnderlyingSecurityLei = order?.Instrument.Identifiers.Lei;
+                this.UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+                this.UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
 
-                SectorCode = order?.Instrument.SectorCode;
-                IndustryCode = order?.Instrument.IndustryCode;
-                RegionCode = order?.Instrument.RegionCode;
-                CountryCode = order?.Instrument.CountryCode;
+                this.SectorCode = order?.Instrument.SectorCode;
+                this.IndustryCode = order?.Instrument.IndustryCode;
+                this.RegionCode = order?.Instrument.RegionCode;
+                this.CountryCode = order?.Instrument.CountryCode;
 
-                OrderVersion = order?.OrderVersion;
-                OrderVersionLinkId = order?.OrderVersionLinkId;
-                OrderGroupId = order?.OrderGroupId;
+                this.OrderVersion = order?.OrderVersion;
+                this.OrderVersionLinkId = order?.OrderVersionLinkId;
+                this.OrderGroupId = order?.OrderGroupId;
 
-                ReddeerOrderId = order.ReddeerOrderId;
-                OrderId = order.OrderId;
-                OrderPlacedDate = order.PlacedDate;
-                OrderBookedDate = order.BookedDate;
-                OrderAmendedDate = order.AmendedDate;
-                OrderRejectedDate = order.RejectedDate;
-                OrderCancelledDate = order.CancelledDate;
-                OrderFilledDate = order.FilledDate;
-                OrderStatusChangedDate = order.MostRecentDateEvent();
-                CreatedDate = order.CreatedDate;
+                this.ReddeerOrderId = order.ReddeerOrderId;
+                this.OrderId = order.OrderId;
+                this.OrderPlacedDate = order.PlacedDate;
+                this.OrderBookedDate = order.BookedDate;
+                this.OrderAmendedDate = order.AmendedDate;
+                this.OrderRejectedDate = order.RejectedDate;
+                this.OrderCancelledDate = order.CancelledDate;
+                this.OrderFilledDate = order.FilledDate;
+                this.OrderStatusChangedDate = order.MostRecentDateEvent();
+                this.CreatedDate = order.CreatedDate;
 
-                OrderBroker = order.OrderBroker?.Name;
-                OrderBrokerId = order.OrderBroker?.Id;
-                if (OrderBrokerId == string.Empty)
-                    OrderBrokerId = null;
+                this.OrderBroker = order.OrderBroker?.Name;
+                this.OrderBrokerId = order.OrderBroker?.Id;
+                if (this.OrderBrokerId == string.Empty) this.OrderBrokerId = null;
 
-                OrderBrokerCreatedOn = order.OrderBroker?.CreatedOn;
-                OrderBrokerReddeerId = order.OrderBroker?.ReddeerId;
-                OrderBrokerLive = order.OrderBroker?.Live ?? false;
+                this.OrderBrokerCreatedOn = order.OrderBroker?.CreatedOn;
+                this.OrderBrokerReddeerId = order.OrderBroker?.ReddeerId;
+                this.OrderBrokerLive = order.OrderBroker?.Live ?? false;
 
-                LifeCycleStatus = (int?)order.OrderStatus();
-                OrderType = (int?)order.OrderType;
-                OrderDirection = (int?)order.OrderDirection;
-                OrderCurrency = order.OrderCurrency.Code ?? string.Empty;
-                OrderSettlementCurrency = order.OrderSettlementCurrency?.Code ?? string.Empty;
-                OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
-                OrderAverageFillPrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
-                OrderOrderedVolume = order.OrderOrderedVolume;
-                OrderFilledVolume = order.OrderFilledVolume;
-                CleanDirty = (int?)order.OrderCleanDirty;
+                this.LifeCycleStatus = (int?)order.OrderStatus();
+                this.OrderType = (int?)order.OrderType;
+                this.OrderDirection = (int?)order.OrderDirection;
+                this.OrderCurrency = order.OrderCurrency.Code ?? string.Empty;
+                this.OrderSettlementCurrency = order.OrderSettlementCurrency?.Code ?? string.Empty;
+                this.OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
+                this.OrderAverageFillPrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
+                this.OrderOrderedVolume = order.OrderOrderedVolume;
+                this.OrderFilledVolume = order.OrderFilledVolume;
+                this.CleanDirty = (int?)order.OrderCleanDirty;
 
-                OrderTraderId = order.OrderTraderId;
-                OrderTraderName = order.OrderTraderName;
-                OrderClearingAgent = order.OrderClearingAgent;
-                OrderDealingInstructions = order.OrderDealingInstructions;
-                AccumulatedInterest = order.OrderAccumulatedInterest;
+                this.OrderTraderId = order.OrderTraderId;
+                this.OrderTraderName = order.OrderTraderName;
+                this.OrderClearingAgent = order.OrderClearingAgent;
+                this.OrderDealingInstructions = order.OrderDealingInstructions;
+                this.AccumulatedInterest = order.OrderAccumulatedInterest;
 
-                OptionEuropeanAmerican = (int?)order.OrderOptionEuropeanAmerican;
-                OptionExpirationDate = order.OrderOptionExpirationDate;
-                OptionStrikePrice = order.OrderOptionStrikePrice?.Value;
+                this.OptionEuropeanAmerican = (int?)order.OrderOptionEuropeanAmerican;
+                this.OptionExpirationDate = order.OrderOptionExpirationDate;
+                this.OptionStrikePrice = order.OrderOptionStrikePrice?.Value;
             }
 
+            public decimal? AccumulatedInterest { get; }
+
+            public int? CleanDirty { get; }
+
+            public string CountryCode { get; }
+
+            public DateTime? CreatedDate { get; }
+
+            public IList<DealerOrdersDto> DealerOrders { get; } = new List<DealerOrdersDto>();
+
+            public string IndustryCode { get; }
+
+            public int? LifeCycleStatus { get; }
+
             /// <summary>
-            /// The id for the market (primary key)
+            ///     The id for the market (primary key)
             /// </summary>
             public string MarketId { get; set; }
 
             /// <summary>
-            /// The market the security is being traded on
+            ///     The market the security is being traded on
             /// </summary>
-            public string MarketIdentifierCode { get; set; }
+            public string MarketIdentifierCode { get; }
 
             /// <summary>
-            /// The market the security is being traded on
+            ///     The market the security is being traded on
             /// </summary>
-            public string MarketName { get; set; }
+            public string MarketName { get; }
 
             /// <summary>
-            /// The enumeration for the type of market i.e. stock exchange or otc
+            ///     The enumeration for the type of market i.e. stock exchange or otc
             /// </summary>
-            public int? MarketType { get; set; }
+            public int? MarketType { get; }
+
+            public int? OptionEuropeanAmerican { get; }
+
+            public DateTime? OptionExpirationDate { get; }
+
+            public decimal? OptionStrikePrice { get; }
+
+            public DateTime? OrderAmendedDate { get; }
+
+            public decimal? OrderAverageFillPrice { get; }
+
+            public DateTime? OrderBookedDate { get; }
+
+            public string OrderBroker { get; }
+
+            public DateTime? OrderBrokerCreatedOn { get; }
+
+            public string OrderBrokerId { get; }
+
+            public bool OrderBrokerLive { get; }
+
+            public string OrderBrokerReddeerId { get; }
+
+            public DateTime? OrderCancelledDate { get; }
+
+            public string OrderClearingAgent { get; }
+
+            public string OrderCurrency { get; }
+
+            public string OrderDealingInstructions { get; }
+
+            public int? OrderDirection { get; }
+
+            public DateTime? OrderFilledDate { get; }
+
+            public decimal? OrderFilledVolume { get; }
+
+            public string OrderGroupId { get; }
+
+            public string OrderId { get; } // the client id for the order
+
+            public decimal? OrderLimitPrice { get; }
+
+            public decimal? OrderOrderedVolume { get; }
+
+            public DateTime? OrderPlacedDate { get; }
+
+            public DateTime? OrderRejectedDate { get; }
+
+            public string OrderSettlementCurrency { get; }
+
+            public DateTime? OrderStatusChangedDate { get; }
+
+            public string OrderTraderId { get; }
+
+            public string OrderTraderName { get; }
+
+            public int? OrderType { get; }
+
+            public string OrderVersion { get; }
+
+            public string OrderVersionLinkId { get; }
+
+            public int? ReddeerOrderId { get; } // primary key
+
+            public string RegionCode { get; }
+
+            public string SectorCode { get; }
+
+            public string SecurityBloombergTicker { get; }
+
+            public string SecurityCfi { get; }
+
+            public string SecurityClientIdentifier { get; }
+
+            public string SecurityCusip { get; }
+
+            public string SecurityExchangeSymbol { get; }
+
+            public string SecurityFigi { get; }
 
             // client key
-            public string SecurityId { get; set; }
+            public string SecurityId { get; }
+
+            public string SecurityIsin { get; }
+
+            public string SecurityIssuerIdentifier { get; }
+
+            public string SecurityLei { get; }
+
+            public string SecurityName { get; }
+
+            // primary key in the sql server db
+            public string SecurityReddeerEnrichmentId { get; }
+
             // primary key
             public string SecurityReddeerId { get; set; }
-            // primary key in the sql server db
-            public string SecurityReddeerEnrichmentId { get; set; }
-            public string SecurityClientIdentifier { get; set; }
 
-            public string SecurityName { get; set; }
-            public string SecurityCfi { get; set; }
-            public string SecurityIssuerIdentifier { get; set; }
-            public int? SecurityType { get; set; }
+            public string SecuritySedol { get; }
 
-            public string SecuritySedol { get; set; }
-            public string SecurityIsin { get; set; }
-            public string SecurityFigi { get; set; }
-            public string SecurityCusip { get; set; }
-            public string SecurityExchangeSymbol { get; set; }
-            public string SecurityLei { get; set; }
-            public string SecurityBloombergTicker { get; set; }
+            public int? SecurityType { get; }
 
-            public string UnderlyingSecurityName { get; set; }
-            public string UnderlyingSecurityCfi { get; set; }
-            public string UnderlyingSecurityIssuerIdentifier { get; set; }
+            public string UnderlyingClientIdentifier { get; }
 
-            public string UnderlyingSecuritySedol { get; set; }
-            public string UnderlyingSecurityIsin { get; set; }
-            public string UnderlyingSecurityFigi { get; set; }
-            public string UnderlyingSecurityCusip { get; set; }
-            public string UnderlyingSecurityExchangeSymbol { get; set; }
-            public string UnderlyingSecurityLei { get; set; }
-            public string UnderlyingSecurityBloombergTicker { get; set; }
-            public string UnderlyingClientIdentifier { get; set; }
+            public string UnderlyingSecurityBloombergTicker { get; }
 
-            public string SectorCode { get; set; }
-            public string IndustryCode { get; set; }
-            public string RegionCode { get; set; }
-            public string CountryCode { get; set; }
+            public string UnderlyingSecurityCfi { get; }
 
+            public string UnderlyingSecurityCusip { get; }
 
-            public int? ReddeerOrderId { get; set; } // primary key
-            public string OrderId { get; set; } // the client id for the order
-            public DateTime? OrderPlacedDate { get; set; }
-            public DateTime? OrderBookedDate { get; set; }
-            public DateTime? OrderAmendedDate { get; set; }
-            public DateTime? OrderRejectedDate { get; set; }
-            public DateTime? OrderCancelledDate { get; set; }
-            public DateTime? OrderFilledDate { get; set; }
-            public DateTime? OrderStatusChangedDate { get; set; }
-            public DateTime? CreatedDate { get; set; }
+            public string UnderlyingSecurityExchangeSymbol { get; }
 
+            public string UnderlyingSecurityFigi { get; }
 
-            public string OrderVersion { get; set; }
-            public string OrderVersionLinkId { get; set; }
-            public string OrderGroupId { get; set; }
+            public string UnderlyingSecurityIsin { get; }
 
+            public string UnderlyingSecurityIssuerIdentifier { get; }
 
-            public string OrderBroker { get; set; }
-            public string OrderBrokerId { get; set; }
-            public string OrderBrokerReddeerId { get; set; }
-            public DateTime? OrderBrokerCreatedOn { get; set; }
-            public bool OrderBrokerLive { get; set; }
+            public string UnderlyingSecurityLei { get; }
 
+            public string UnderlyingSecurityName { get; }
 
-            public int? LifeCycleStatus { get; set; }
-            public int? OrderType { get; set; }
-            public int? OrderDirection { get; set; }
-            public string OrderCurrency { get; set; }
-            public string OrderSettlementCurrency { get; set; }
-            public decimal? OrderLimitPrice { get; set; }
-            public int? CleanDirty { get; set; }
-            public decimal? OrderAverageFillPrice { get; set; }
-            public decimal? OrderOrderedVolume { get; set; }
-            public decimal? OrderFilledVolume { get; set; }
-            public string OrderTraderId { get; set; }
-            public string OrderTraderName { get; set; }
-            public string OrderClearingAgent { get; set; }
-            public string OrderDealingInstructions { get; set; }
-            public decimal? AccumulatedInterest { get; set; }
-
-            public decimal? OptionStrikePrice { get; set; }
-            public DateTime? OptionExpirationDate { get; set; }
-            public int? OptionEuropeanAmerican { get; set; }
-
-            public IList<DealerOrdersDto> DealerOrders { get; set; } = new List<DealerOrdersDto>();
+            public string UnderlyingSecuritySedol { get; }
         }
-
-        public class DealerOrdersDto
-        {
-            public DealerOrdersDto()
-            { }
-
-            public DealerOrdersDto(DealerOrder dealerOrder, int? orderId)
-            {
-                OrderId = orderId;
-
-                if (dealerOrder == null)
-                {
-                    return;
-                }
-
-                ReddeerDealerOrderId = dealerOrder.ReddeerDealerOrderId;
-                ClientDealerOrderId = dealerOrder.DealerOrderId;
-
-                DealerOrderVersion = dealerOrder.DealerOrderVersion;
-                DealerOrderVersionLinkId = dealerOrder.DealerOrderVersionLinkId;
-                DealerOrderGroupId = dealerOrder.DealerOrderGroupId;
-
-                PlacedDate = dealerOrder.PlacedDate;
-                BookedDate = dealerOrder.BookedDate;
-                AmendedDate = dealerOrder.AmendedDate;
-                RejectedDate = dealerOrder.RejectedDate;
-                CancelledDate = dealerOrder.CancelledDate;
-                FilledDate = dealerOrder.FilledDate;
-                StatusChangedDate = dealerOrder.MostRecentDateEvent();
-                CreatedDate = dealerOrder.CreatedDate;
-
-                DealerId = dealerOrder.DealerId;
-                TraderName = dealerOrder.DealerName;
-                Notes = dealerOrder.Notes;
-
-                CounterParty = dealerOrder.DealerCounterParty;
-                LifeCycleStatus = (int?)dealerOrder.OrderStatus();
-                OrderType = (int?)dealerOrder.OrderType;
-                Direction = (int?)dealerOrder.OrderDirection;
-
-                Currency = dealerOrder.Currency.Code;
-                SettlementCurrency = dealerOrder.SettlementCurrency.Code;
-                CleanDirty = (int?)dealerOrder.CleanDirty;
-                AccumulatedInterest = dealerOrder.AccumulatedInterest;
-
-                LimitPrice = dealerOrder.LimitPrice?.Value;
-                AverageFillPrice = dealerOrder.AverageFillPrice?.Value;
-                OrderedVolume = dealerOrder.OrderedVolume;
-                FilledVolume = dealerOrder.FilledVolume;
-
-                OptionStrikePrice = dealerOrder.OptionStrikePrice;
-                OptionExpirationDate = dealerOrder.OptionExpirationDate;
-                OptionEuropeanAmerican = (int?)dealerOrder.OptionEuropeanAmerican;
-            }
-
-            public string ReddeerDealerOrderId { get; set; }
-            public int? OrderId { get; set; }
-            public string ClientDealerOrderId { get; set; }
-
-            public string DealerOrderVersion { get; set; }
-            public string DealerOrderVersionLinkId { get; set; }
-            public string DealerOrderGroupId { get; set; }
-
-
-            public DateTime? PlacedDate { get; set; }
-            public DateTime? BookedDate { get; set; }
-            public DateTime? AmendedDate { get; set; }
-            public DateTime? RejectedDate { get; set; }
-            public DateTime? CancelledDate { get; set; }
-            public DateTime? FilledDate { get; set; }
-            public DateTime? StatusChangedDate { get; set; }
-            public DateTime? CreatedDate { get; set; }
-
-
-            public string DealerId { get; set; }
-            public string TraderName { get; set; }
-            public string Notes { get; set; }
-
-            public string CounterParty { get; set; }
-            public int? LifeCycleStatus { get; set; }
-            public int? OrderType { get; set; }
-            public int? Direction { get; set; }
-
-
-            public string Currency { get; set; }
-            public string SettlementCurrency { get; set; }
-
-            public int? CleanDirty { get; set; }
-            public decimal? AccumulatedInterest { get; set; }
-
-            public decimal? LimitPrice { get; set; }
-            public decimal? AverageFillPrice { get; set; }
-            public decimal? OrderedVolume { get; set; }
-            public decimal? FilledVolume { get; set; }
-
-            public decimal? OptionStrikePrice { get; set; }
-            public DateTime? OptionExpirationDate { get; set; }
-            public int? OptionEuropeanAmerican { get; set; }
-        }    
     }
 }

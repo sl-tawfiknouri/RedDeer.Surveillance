@@ -1,73 +1,72 @@
-﻿using System;
-using Domain.Surveillance.Rules.Tuning.Interfaces;
-
-namespace Domain.Surveillance.Rules.Tuning
+﻿namespace Domain.Surveillance.Rules.Tuning
 {
+    using System;
+
+    using Domain.Surveillance.Rules.Tuning.Interfaces;
+
     [Serializable]
-    public class TunedParameter<T> : ITunedParameter<T> where T : IEquatable<T>
+    public class TunedParameter<T> : ITunedParameter<T>
+        where T : IEquatable<T>
     {
         public TunedParameter(
-            T baseValue, 
+            T baseValue,
             T tunedValue,
             string parameterName,
             string baseId,
             string tuningParameterId,
-            TuningDirection direction, 
+            TuningDirection direction,
             TuningStrength strength)
         {
-            BaseValue = baseValue;
-            TunedValue = tunedValue;
-            ParameterName = parameterName;
-            BaseId = baseId ?? string.Empty;
-            TuningParameterId = tuningParameterId ?? string.Empty;
-            TuningDirection = direction;
-            TuningStrength = strength;
+            this.BaseValue = baseValue;
+            this.TunedValue = tunedValue;
+            this.ParameterName = parameterName;
+            this.BaseId = baseId ?? string.Empty;
+            this.TuningParameterId = tuningParameterId ?? string.Empty;
+            this.TuningDirection = direction;
+            this.TuningStrength = strength;
         }
 
+        public string BaseId { get; set; }
+
         public T BaseValue { get; set; }
-        public T TunedValue { get; set; }
 
         public string ParameterName { get; set; }
-        public string BaseId { get; set; }
-        public string TuningParameterId { get; set; }
+
+        public T TunedValue { get; set; }
+
         public TuningDirection TuningDirection { get; set; }
+
+        public string TuningParameterId { get; set; }
+
         public TuningStrength TuningStrength { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+
+            var castedObj = obj as TunedParameter<T>;
+
+            if (castedObj == null) return false;
+
+            return string.Equals(this.ParameterName, castedObj.ParameterName, StringComparison.OrdinalIgnoreCase)
+                   && this.BaseValue.Equals(castedObj.BaseValue) && this.TunedValue.Equals(castedObj.TunedValue);
+        }
 
         public override int GetHashCode()
         {
             return 0;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            var castedObj = obj as TunedParameter<T>;
-
-            if (castedObj == null)
-            {
-                return false;
-            }
-
-            return
-                string.Equals(ParameterName, castedObj.ParameterName, StringComparison.OrdinalIgnoreCase)
-                && BaseValue.Equals(castedObj.BaseValue)
-                && TunedValue.Equals(castedObj.TunedValue);
-        }
-
         public TunedParameter<string> MapToString()
         {
             return new TunedParameter<string>(
-                BaseValue?.ToString() ?? string.Empty,
-                TunedValue?.ToString() ?? string.Empty,
-                ParameterName ?? string.Empty,
-                BaseId,
-                TuningParameterId,
-                TuningDirection,
-                TuningStrength);
+                this.BaseValue?.ToString() ?? string.Empty,
+                this.TunedValue?.ToString() ?? string.Empty,
+                this.ParameterName ?? string.Empty,
+                this.BaseId,
+                this.TuningParameterId,
+                this.TuningDirection,
+                this.TuningStrength);
         }
     }
 }

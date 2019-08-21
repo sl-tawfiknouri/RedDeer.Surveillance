@@ -2,7 +2,8 @@
 {
     public interface IUploadEtlFileMonitor
     {
-        bool ProcessFile(string path);
         void Initiate();
+
+        bool ProcessFile(string path);
     }
 }

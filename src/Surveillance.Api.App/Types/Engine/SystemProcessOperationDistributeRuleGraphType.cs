@@ -1,12 +1,13 @@
-﻿using GraphQL.Authorization;
-using GraphQL.DataLoader;
-using GraphQL.Types;
-using Surveillance.Api.App.Authorization;
-using Surveillance.Api.DataAccess.Abstractions.Entities;
-using Surveillance.Api.DataAccess.Abstractions.Repositories;
-
-namespace Surveillance.Api.App.Types.Engine
+﻿namespace Surveillance.Api.App.Types.Engine
 {
+    using GraphQL.Authorization;
+    using GraphQL.DataLoader;
+    using GraphQL.Types;
+
+    using Surveillance.Api.App.Authorization;
+    using Surveillance.Api.DataAccess.Abstractions.Entities;
+    using Surveillance.Api.DataAccess.Abstractions.Repositories;
+
     public class SystemProcessOperationDistributeRuleGraphType : ObjectGraphType<ISystemProcessOperationDistributeRule>
     {
         public SystemProcessOperationDistributeRuleGraphType(
@@ -15,20 +16,23 @@ namespace Surveillance.Api.App.Types.Engine
         {
             this.AuthorizeWith(PolicyManifest.AdminPolicy);
 
-            Field(i => i.Id).Description("Identifier for the system process operation distribute rule");
-            Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
-            {
-                var loader =
-                    dataLoaderAccessor.Context.GetOrAddLoader(
-                        $"GetSystemProcessOperationById-{context.Source.Id}",
-                        () => operationRepository.GetForId(context.Source.Id));
+            this.Field(i => i.Id).Description("Identifier for the system process operation distribute rule");
+            this.Field<SystemProcessOperationGraphType>(
+                "processOperation",
+                resolve: context =>
+                    {
+                        var loader = dataLoaderAccessor.Context.GetOrAddLoader(
+                            $"GetSystemProcessOperationById-{context.Source.Id}",
+                            () => operationRepository.GetForId(context.Source.Id));
 
-                return loader.LoadAsync();
-            });
+                        return loader.LoadAsync();
+                    });
 
-            Field(i => i.ScheduleRuleInitialStart).Type(new DateTimeGraphType()).Description("Scheduled rule start before distribution");
-            Field(i => i.ScheduleRuleInitialEnd, nullable: true).Type(new DateTimeGraphType()).Description("Scheduled rule end before distribution");
-            Field(i => i.RulesDistributed).Description("Rules distributed by the disassemble operation");
+            this.Field(i => i.ScheduleRuleInitialStart).Type(new DateTimeGraphType())
+                .Description("Scheduled rule start before distribution");
+            this.Field(i => i.ScheduleRuleInitialEnd, true).Type(new DateTimeGraphType())
+                .Description("Scheduled rule end before distribution");
+            this.Field(i => i.RulesDistributed).Description("Rules distributed by the disassemble operation");
         }
     }
 }

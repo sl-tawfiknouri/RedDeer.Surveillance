@@ -2,21 +2,26 @@
 {
     public interface IUploadConfiguration
     {
-        string DataImportTradeFileUploadDirectoryPath { get; }
-        string DataImportTradeFileFtpDirectoryPath { get; }
+        bool AutoSchedule { get; }
 
-        string DataImportEquityFileUploadDirectoryPath { get; }
-        string DataImportEquityFileFtpDirectoryPath { get; }
-        string DataImportEtlFailureNotifications { get; }
-
-        string DataImportAllocationFileUploadDirectoryPath { get; }
         string DataImportAllocationFileFtpDirectoryPath { get; }
 
-        string DataImportEtlFileUploadDirectoryPath { get; }
+        string DataImportAllocationFileUploadDirectoryPath { get; }
+
+        string DataImportEquityFileFtpDirectoryPath { get; }
+
+        string DataImportEquityFileUploadDirectoryPath { get; }
+
+        string DataImportEtlFailureNotifications { get; }
+
         string DataImportEtlFileFtpDirectoryPath { get; }
+
+        string DataImportEtlFileUploadDirectoryPath { get; }
 
         string DataImportS3UploadQueueName { get; }
 
-        bool AutoSchedule { get; }
+        string DataImportTradeFileFtpDirectoryPath { get; }
+
+        string DataImportTradeFileUploadDirectoryPath { get; }
     }
 }

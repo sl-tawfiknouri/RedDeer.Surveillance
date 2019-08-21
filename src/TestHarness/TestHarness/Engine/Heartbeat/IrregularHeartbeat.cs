@@ -1,72 +1,76 @@
-﻿using MathNet.Numerics.Distributions;
-using System;
-using System.Timers;
-using TestHarness.Engine.Heartbeat.Interfaces;
-
-namespace TestHarness.Engine.Heartbeat
+﻿namespace TestHarness.Engine.Heartbeat
 {
+    using System;
+    using System.Timers;
+
+    using MathNet.Numerics.Distributions;
+
+    using TestHarness.Engine.Heartbeat.Interfaces;
+
     public class IrregularHeartbeat : IHeartbeat
     {
-        private readonly double _sd;
-        private readonly TimeSpan _coreHeartbeat;
         private readonly Timer _activeTimer;
+
+        private readonly TimeSpan _coreHeartbeat;
 
         private readonly object _lock = new object();
 
+        private readonly double _sd;
+
         /// <summary>
-        /// Ensure the SD is high enough we can observe the difference in the beats
+        ///     Ensure the SD is high enough we can observe the difference in the beats
         /// </summary>
         public IrregularHeartbeat(TimeSpan heartbeat, double sd)
         {
-            _coreHeartbeat = heartbeat;
+            this._coreHeartbeat = heartbeat;
 
-            _sd = sd;
+            this._sd = sd;
 
-            _activeTimer = new Timer {Interval = heartbeat.TotalMilliseconds};
-            _activeTimer.Elapsed += PaceMaker;
-            _activeTimer.AutoReset = false;
+            this._activeTimer = new Timer { Interval = heartbeat.TotalMilliseconds };
+            this._activeTimer.Elapsed += this.PaceMaker;
+            this._activeTimer.AutoReset = false;
         }
 
-        public void Start()
+        public void Dispose()
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _activeTimer.Enabled = true;
+                this._activeTimer.Dispose();
             }
-        }
-
-        private void PaceMaker(object sender, ElapsedEventArgs e)
-        {
-            var milliseconds = _coreHeartbeat.TotalMilliseconds;
-            var subsequentBeat = Normal.Sample(milliseconds, _sd);
-            subsequentBeat = Math.Max(subsequentBeat, 5);
-
-            _activeTimer.Interval = subsequentBeat;
-            _activeTimer.Enabled = true;
         }
 
         public void OnBeat(ElapsedEventHandler handler)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _activeTimer.Elapsed += handler;
+                this._activeTimer.Elapsed += handler;
+            }
+        }
+
+        public void Start()
+        {
+            lock (this._lock)
+            {
+                this._activeTimer.Enabled = true;
             }
         }
 
         public void Stop()
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _activeTimer.Enabled = false;
+                this._activeTimer.Enabled = false;
             }
         }
 
-        public void Dispose()
+        private void PaceMaker(object sender, ElapsedEventArgs e)
         {
-            lock (_lock)
-            {
-                _activeTimer.Dispose();
-            }
+            var milliseconds = this._coreHeartbeat.TotalMilliseconds;
+            var subsequentBeat = Normal.Sample(milliseconds, this._sd);
+            subsequentBeat = Math.Max(subsequentBeat, 5);
+
+            this._activeTimer.Interval = subsequentBeat;
+            this._activeTimer.Enabled = true;
         }
     }
 }

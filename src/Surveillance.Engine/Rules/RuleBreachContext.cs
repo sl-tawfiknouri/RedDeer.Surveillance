@@ -1,11 +1,13 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules
+﻿namespace Surveillance.Engine.Rules.Rules
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+
     public class RuleBreachContext : IRuleBreachContext
     {
         public RuleBreachContext(
@@ -20,27 +22,36 @@ namespace Surveillance.Engine.Rules.Rules
             IRuleParameter ruleParameters,
             DateTime universeDateTime)
         {
-            Window = window;
-            Trades = trades;
-            Security = security;
-            IsBackTestRun = isBackTestRun;
-            RuleParameterId = ruleParameterId;
-            SystemOperationId = systemOperationId;
-            CorrelationId = correlationId;
-            FactorValue = factorValue;
-            RuleParameters = ruleParameters;
-            UniverseDateTime = universeDateTime;
+            this.Window = window;
+            this.Trades = trades;
+            this.Security = security;
+            this.IsBackTestRun = isBackTestRun;
+            this.RuleParameterId = ruleParameterId;
+            this.SystemOperationId = systemOperationId;
+            this.CorrelationId = correlationId;
+            this.FactorValue = factorValue;
+            this.RuleParameters = ruleParameters;
+            this.UniverseDateTime = universeDateTime;
         }
 
-        public TimeSpan Window { get; }
-        public ITradePosition Trades { get; }
-        public FinancialInstrument Security { get; }
-        public bool IsBackTestRun { get; set; }
-        public string RuleParameterId { get; set; }
-        public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+
         public IFactorValue FactorValue { get; set; }
+
+        public bool IsBackTestRun { get; set; }
+
+        public string RuleParameterId { get; set; }
+
         public IRuleParameter RuleParameters { get; set; }
+
+        public FinancialInstrument Security { get; }
+
+        public string SystemOperationId { get; set; }
+
+        public ITradePosition Trades { get; }
+
         public DateTime UniverseDateTime { get; set; }
+
+        public TimeSpan Window { get; }
     }
 }

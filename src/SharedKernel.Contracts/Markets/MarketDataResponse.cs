@@ -1,16 +1,19 @@
 ﻿namespace SharedKernel.Contracts.Markets
 {
-    public class MarketDataResponse<T> where T : class
+    public class MarketDataResponse<T>
+        where T : class
     {
         public MarketDataResponse(T response, bool hadMissingData, bool isBestEffort)
         {
-            Response = response;
-            HadMissingData = hadMissingData;
+            this.Response = response;
+            this.HadMissingData = hadMissingData;
         }
 
-        public T Response { get; }
         public bool HadMissingData { get; }
+
         public bool IsBestEffort { get; }
+
+        public T Response { get; }
 
         public static MarketDataResponse<T> MissingData()
         {

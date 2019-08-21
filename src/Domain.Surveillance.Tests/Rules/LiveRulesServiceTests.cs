@@ -1,22 +1,46 @@
-﻿using System.Linq;
-using Domain.Surveillance.Rules;
-using NUnit.Framework;
-
-namespace Domain.Surveillance.Tests.Rules
+﻿namespace Domain.Surveillance.Tests.Rules
 {
+    using System.Linq;
+
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Scheduling;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class LiveRulesServiceTests
     {
-        [TestCase(Scheduling.Rules.HighVolume, true)]
-        [TestCase(Scheduling.Rules.CancelledOrders, true)]
-        [TestCase(Scheduling.Rules.WashTrade, true)]
-        [TestCase(Scheduling.Rules.PlacingOrderWithNoIntentToExecute, true)]
-        [TestCase(Scheduling.Rules.FixedIncomeHighProfits, true)]
-        [TestCase(Scheduling.Rules.FixedIncomeHighVolumeIssuance, true)]
-        [TestCase(Scheduling.Rules.UniverseFilter, false)]
-        [TestCase(Scheduling.Rules.TrashAndCash, false)]
-        [TestCase(Scheduling.Rules.PumpAndDump, false)]
-        public void RuleIsLive_LiveRule_IsTrue(Scheduling.Rules rule, bool expectation)
+        [Test]
+        public void LiveRules_Contains_ExpectedRules()
+        {
+            var liveRulesService = new ActiveRulesService();
+
+            var result = liveRulesService.EnabledRules();
+
+            Assert.IsTrue(result.Contains(Rules.HighVolume));
+            Assert.IsTrue(result.Contains(Rules.FixedIncomeWashTrades));
+            Assert.IsTrue(result.Contains(Rules.HighProfits));
+            Assert.IsTrue(result.Contains(Rules.WashTrade));
+            Assert.IsTrue(result.Contains(Rules.CancelledOrders));
+            Assert.IsTrue(result.Contains(Rules.PaintingTheTape));
+            Assert.IsTrue(result.Contains(Rules.PlacingOrderWithNoIntentToExecute));
+
+            Assert.IsFalse(result.Contains(Rules.UniverseFilter));
+            Assert.IsFalse(result.Contains(Rules.PumpAndDump));
+            Assert.IsFalse(result.Contains(Rules.TrashAndCash));
+            Assert.IsFalse(result.Contains(Rules.CrossAssetManipulation));
+        }
+
+        [TestCase(Rules.HighVolume, true)]
+        [TestCase(Rules.CancelledOrders, true)]
+        [TestCase(Rules.WashTrade, true)]
+        [TestCase(Rules.PlacingOrderWithNoIntentToExecute, true)]
+        [TestCase(Rules.FixedIncomeHighProfits, true)]
+        [TestCase(Rules.FixedIncomeHighVolumeIssuance, true)]
+        [TestCase(Rules.UniverseFilter, false)]
+        [TestCase(Rules.TrashAndCash, false)]
+        [TestCase(Rules.PumpAndDump, false)]
+        public void RuleIsLive_LiveRule_IsTrue(Rules rule, bool expectation)
         {
             var liveRulesService = new ActiveRulesService();
 
@@ -26,47 +50,24 @@ namespace Domain.Surveillance.Tests.Rules
         }
 
         [Test]
-        public void LiveRules_Contains_ExpectedRules()
-        {
-            var liveRulesService = new ActiveRulesService();
-
-            var result = liveRulesService.EnabledRules();
-
-            Assert.IsTrue(result.Contains(Scheduling.Rules.HighVolume));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.FixedIncomeWashTrades));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.HighProfits));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.WashTrade));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.CancelledOrders));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.PaintingTheTape));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.PlacingOrderWithNoIntentToExecute));
-
-
-            Assert.IsFalse(result.Contains(Scheduling.Rules.UniverseFilter));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.PumpAndDump));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.TrashAndCash));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.CrossAssetManipulation));
-        }
-
-        [Test]
         public void UnLiveRules_Contains_ExpectedRules()
         {
             var liveRulesService = new ActiveRulesService();
 
             var result = liveRulesService.DisabledRules();
 
-            Assert.IsTrue(result.Contains(Scheduling.Rules.UniverseFilter));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.PumpAndDump));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.TrashAndCash));
-            Assert.IsTrue(result.Contains(Scheduling.Rules.CrossAssetManipulation));
+            Assert.IsTrue(result.Contains(Rules.UniverseFilter));
+            Assert.IsTrue(result.Contains(Rules.PumpAndDump));
+            Assert.IsTrue(result.Contains(Rules.TrashAndCash));
+            Assert.IsTrue(result.Contains(Rules.CrossAssetManipulation));
 
-            Assert.IsFalse(result.Contains(Scheduling.Rules.PlacingOrderWithNoIntentToExecute));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.HighVolume));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.FixedIncomeWashTrades));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.HighProfits));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.WashTrade));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.CancelledOrders));
-            Assert.IsFalse(result.Contains(Scheduling.Rules.PaintingTheTape));
-
+            Assert.IsFalse(result.Contains(Rules.PlacingOrderWithNoIntentToExecute));
+            Assert.IsFalse(result.Contains(Rules.HighVolume));
+            Assert.IsFalse(result.Contains(Rules.FixedIncomeWashTrades));
+            Assert.IsFalse(result.Contains(Rules.HighProfits));
+            Assert.IsFalse(result.Contains(Rules.WashTrade));
+            Assert.IsFalse(result.Contains(Rules.CancelledOrders));
+            Assert.IsFalse(result.Contains(Rules.PaintingTheTape));
         }
     }
 }

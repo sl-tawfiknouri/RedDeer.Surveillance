@@ -1,83 +1,256 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Domain.Core.Extensions;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Trading.Orders;
-using SharedKernel.Files.Orders.Interfaces;
-
-namespace SharedKernel.Files.Orders
+﻿namespace SharedKernel.Files.Orders
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Extensions;
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Trading.Orders;
+
+    using SharedKernel.Files.Orders.Interfaces;
+
     public class OrderFileToOrderSerialiser : IOrderFileToOrderSerialiser
     {
+        public int FailedParseTotal { get; set; }
+
         public OrderFileContract[] Map(Order order)
         {
-            if (order == null)
-            {
-                return null;
-            }
+            if (order == null) return null;
 
             var csv = new OrderFileContract();
-            csv = MapOrderFields(order, csv);
-            
-            if (order.DealerOrders == null
-                || !order.DealerOrders.Any())
-            {
-                return new OrderFileContract[] { csv };
-            }
+            csv = this.MapOrderFields(order, csv);
 
-            var result = MapTradeFields(order);
+            if (order.DealerOrders == null || !order.DealerOrders.Any()) return new[] { csv };
+
+            var result = this.MapTradeFields(order);
 
             return result;
         }
 
-        private OrderFileContract[] MapTradeFields(Order order)
+        /// <summary>
+        ///     Assumption => csv is validated
+        /// </summary>
+        public Order Map(OrderFileContract contract)
         {
-            // ReSharper disable once IdentifierTypo
-            var csvs = new List<OrderFileContract>();
-
-            foreach (var trad in order.DealerOrders)
+            if (contract == null)
             {
-                var csv = new OrderFileContract();
-                csv = MapTradeFields2(trad, csv);
-                csv = MapOrderFields(order, csv);
-                csvs.Add(csv);
+                this.FailedParseTotal += 1;
+                return null;
             }
 
-            return csvs.ToArray();
+            var trade = this.MapTrade(contract);
+            var trades = trade != null ? new[] { trade } : null;
+            var order = this.MapOrder(contract, trades);
+
+            return order;
         }
 
-        private OrderFileContract MapTradeFields2(DealerOrder trad, OrderFileContract contract)
+        /// <summary>
+        ///     Excel has a tendency to truncate leading 0s on valid sedols.
+        ///     Insert these in if this is the case
+        /// </summary>
+        private string AdjustTruncatedSedols(string sedol)
         {
-            contract.DealerOrderId = trad.DealerOrderId;
-            contract.DealerOrderPlacedDate = trad.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderBookedDate = trad.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderAmendedDate = trad.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderRejectedDate = trad.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderCancelledDate = trad.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderFilledDate = trad.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderDealerId = trad.DealerId;
-            contract.DealerOrderCounterParty = trad.DealerCounterParty;
-            contract.DealerOrderType = ((int?)trad.OrderType).ToString();
-            contract.DealerOrderDirection = ((int?)trad.OrderDirection).ToString();
-            contract.DealerOrderCurrency = trad.Currency.Code;
-            contract.DealerOrderLimitPrice = trad.LimitPrice?.Value.ToString();
-            contract.DealerOrderAverageFillPrice = trad.AverageFillPrice?.Value.ToString();
-            contract.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
-            contract.DealerOrderFilledVolume = trad.FilledVolume?.ToString();
-            contract.DealerOrderOptionStrikePrice = trad.OptionStrikePrice?.ToString();
-            contract.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.DealerOrderOptionEuropeanAmerican = ((int?)trad.OptionEuropeanAmerican).ToString();
+            if (string.IsNullOrWhiteSpace(sedol)) return sedol;
 
-            return contract;
+            while (sedol.Length < 7) sedol = $"0{sedol}";
+
+            return sedol;
+        }
+
+        private InstrumentTypes MapCfi(string cfi)
+        {
+            if (string.IsNullOrWhiteSpace(cfi)) return InstrumentTypes.None;
+
+            cfi = cfi.ToLower();
+
+            if (cfi.Take(1).ToString() == "e") return InstrumentTypes.Equity;
+
+            if (cfi.Take(2).ToString() == "db") return InstrumentTypes.Bond;
+
+            if (cfi.Take(2).ToString() == "oc") return InstrumentTypes.OptionCall;
+
+            if (cfi.Take(2).ToString() == "op") return InstrumentTypes.OptionPut;
+
+            return InstrumentTypes.Unknown;
+        }
+
+        private DateTime? MapDate(string date)
+        {
+            if (string.IsNullOrWhiteSpace(date)) return null;
+
+            var success = DateTime.TryParse(date, out var result);
+
+            if (success)
+                return result;
+
+            return null;
+        }
+
+        private decimal? MapDecimal(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            var success = decimal.TryParse(value, out var result);
+
+            if (success)
+                return result;
+
+            return null;
+        }
+
+        private FinancialInstrument MapInstrument(OrderFileContract contract)
+        {
+            var identifiers = new InstrumentIdentifiers(
+                string.Empty,
+                string.Empty,
+                null,
+                contract.InstrumentClientIdentifier,
+                this.AdjustTruncatedSedols(contract.InstrumentSedol),
+                contract.InstrumentIsin,
+                contract.InstrumentFigi,
+                contract.InstrumentCusip,
+                contract.InstrumentExchangeSymbol,
+                contract.InstrumentLei,
+                contract.InstrumentBloombergTicker,
+                contract.InstrumentUnderlyingSedol,
+                contract.InstrumentUnderlyingIsin,
+                contract.InstrumentUnderlyingFigi,
+                contract.InstrumentUnderlyingCusip,
+                contract.InstrumentUnderlyingLei,
+                contract.InstrumentUnderlyingExchangeSymbol,
+                contract.InstrumentUnderlyingBloombergTicker,
+                contract.InstrumentUnderlyingClientIdentifier);
+
+            return new FinancialInstrument(
+                this.MapCfi(contract.InstrumentCfi),
+                identifiers,
+                contract.InstrumentName ?? string.Empty,
+                contract.InstrumentCfi ?? string.Empty,
+                contract.OrderCurrency ?? contract.DealerOrderCurrency ?? string.Empty,
+                contract.InstrumentIssuerIdentifier ?? string.Empty,
+                contract.InstrumentUnderlyingName ?? string.Empty,
+                contract.InstrumentUnderlyingCfi ?? string.Empty,
+                contract.InstrumentUnderlyingIssuerIdentifier ?? string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+        }
+
+        private long? MapLong(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            var success = long.TryParse(value, out var result);
+
+            if (success)
+                return result;
+
+            return null;
+        }
+
+        private long? MapLongWithRounding(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            var success = decimal.TryParse(value, out var result);
+
+            if (!success)
+                return null;
+
+            var adjustedToIntegerValue = Math.Round(result, 0, MidpointRounding.AwayFromZero);
+
+            return this.MapLong(adjustedToIntegerValue.ToString());
+        }
+
+        private Market MapMarket(OrderFileContract contract)
+        {
+            Enum.TryParse(contract.MarketType, out MarketTypes marketType);
+
+            return new Market(string.Empty, contract.MarketIdentifierCode, contract.MarketName, marketType);
+        }
+
+        private Order MapOrder(OrderFileContract contract, IReadOnlyCollection<DealerOrder> dealerOrder)
+        {
+            if (dealerOrder == null) dealerOrder = new DealerOrder[0];
+
+            var instrument = this.MapInstrument(contract);
+            var market = this.MapMarket(contract);
+
+            var placedDate = this.MapDate(contract.OrderPlacedDate);
+            var bookedDate = this.MapDate(contract.OrderBookedDate);
+            var amendedDate = this.MapDate(contract.OrderAmendedDate);
+            var rejectedDate = this.MapDate(contract.OrderRejectedDate);
+            var cancelledDate = this.MapDate(contract.OrderCancelledDate);
+            var filledDate = this.MapDate(contract.OrderFilledDate);
+
+            var orderType = this.MapToEnum<OrderTypes>(contract.OrderType);
+            var orderDirection = this.MapToEnum<OrderDirections>(contract.OrderDirection);
+            var orderCurrency = new Currency(contract.OrderCurrency);
+            var orderSettlementCurrency = !string.IsNullOrWhiteSpace(contract.OrderSettlementCurrency)
+                                              ? (Currency?)new Currency(contract.OrderSettlementCurrency)
+                                              : null;
+
+            var orderCleanDirty = this.MapToEnum<OrderCleanDirty>(contract.OrderCleanDirty);
+
+            var limitPrice = new Money(this.MapDecimal(contract.OrderLimitPrice), contract.OrderCurrency);
+            var averagePrice = new Money(this.MapDecimal(contract.OrderAverageFillPrice), contract.OrderCurrency);
+
+            var orderOptionStrikePrice = new Money(
+                this.MapDecimal(contract.OrderOptionStrikePrice),
+                contract.OrderCurrency);
+            var orderOptionExpirationDate = this.MapDate(contract.OrderOptionExpirationDate);
+            var orderOptionEuropeanAmerican =
+                this.MapToEnum<OptionEuropeanAmerican>(contract.OrderOptionEuropeanAmerican);
+
+            var orderedVolume = this.MapLongWithRounding(contract.OrderOrderedVolume);
+            var filledVolume = this.MapLongWithRounding(contract.OrderFilledVolume);
+
+            var accInterest = this.MapDecimal(contract.OrderAccumulatedInterest);
+
+            return new Order(
+                instrument,
+                market,
+                null,
+                contract.OrderId,
+                DateTime.UtcNow,
+                contract.OrderVersion,
+                contract.OrderVersionLinkId,
+                contract.OrderGroupId,
+                placedDate,
+                bookedDate,
+                amendedDate,
+                rejectedDate,
+                cancelledDate,
+                filledDate,
+                orderType,
+                orderDirection,
+                orderCurrency,
+                orderSettlementCurrency,
+                orderCleanDirty,
+                accInterest,
+                limitPrice,
+                averagePrice,
+                orderedVolume,
+                filledVolume,
+                contract.OrderTraderId,
+                contract.OrderTraderName,
+                contract.OrderClearingAgent,
+                contract.OrderDealingInstructions,
+                new OrderBroker(string.Empty, string.Empty, contract.OrderBroker, null, false),
+                orderOptionStrikePrice,
+                orderOptionExpirationDate,
+                orderOptionEuropeanAmerican,
+                dealerOrder);
         }
 
         private OrderFileContract MapOrderFields(Order order, OrderFileContract contract)
         {
-            contract.MarketType = ((int?) order.Market.Type)?.ToString();
+            contract.MarketType = ((int?)order.Market.Type)?.ToString();
             contract.MarketIdentifierCode = order.Market.MarketIdentifierCode;
             contract.MarketName = order.Market.Name;
             contract.InstrumentName = order.Instrument.Name;
@@ -111,8 +284,8 @@ namespace SharedKernel.Files.Orders
             contract.OrderRejectedDate = order.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             contract.OrderCancelledDate = order.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             contract.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
-            contract.OrderType = ((int?) order.OrderType).ToString();
-            contract.OrderDirection = ((int?) order.OrderDirection).ToString();
+            contract.OrderType = ((int?)order.OrderType).ToString();
+            contract.OrderDirection = ((int?)order.OrderDirection).ToString();
             contract.OrderCurrency = order.OrderCurrency.Code;
             contract.OrderLimitPrice = order.OrderLimitPrice?.Value.ToString();
             contract.OrderAverageFillPrice = order.OrderAverageFillPrice?.Value.ToString();
@@ -127,99 +300,14 @@ namespace SharedKernel.Files.Orders
             return contract;
         }
 
-        /// <summary>
-        /// Assumption => csv is validated
-        /// </summary>
-        public Order Map(OrderFileContract contract)
+        private T MapToEnum<T>(string propertyValue)
+            where T : struct
         {
-            if (contract == null)
-            {
-                FailedParseTotal += 1;
-                return null;
-            }
-            
-            var trade = MapTrade(contract);
-            var trades = trade != null ? new[] {trade} : null;
-            var order = MapOrder(contract, trades);
+            propertyValue = propertyValue?.ToUpper() ?? string.Empty;
 
-            return order;
-        }
+            EnumExtensions.TryParsePermutations(propertyValue, out T result);
 
-        public int FailedParseTotal { get; set; }
-
-        private Order MapOrder(OrderFileContract contract, IReadOnlyCollection<DealerOrder> dealerOrder)
-        {
-            if (dealerOrder == null)
-            {
-                dealerOrder = new DealerOrder[0];
-            }
-
-            var instrument = MapInstrument(contract);
-            var market = MapMarket(contract);
-
-            var placedDate = MapDate(contract.OrderPlacedDate);
-            var bookedDate = MapDate(contract.OrderBookedDate);
-            var amendedDate = MapDate(contract.OrderAmendedDate);
-            var rejectedDate = MapDate(contract.OrderRejectedDate);
-            var cancelledDate = MapDate(contract.OrderCancelledDate);
-            var filledDate = MapDate(contract.OrderFilledDate);
-
-            var orderType = MapToEnum<OrderTypes>(contract.OrderType);
-            var orderDirection = MapToEnum<OrderDirections>(contract.OrderDirection);
-            var orderCurrency = new Currency(contract.OrderCurrency);
-            var orderSettlementCurrency =
-                !string.IsNullOrWhiteSpace(contract.OrderSettlementCurrency) 
-                    ? (Currency?)new Currency(contract.OrderSettlementCurrency) 
-                    : null;
-
-            var orderCleanDirty = MapToEnum<OrderCleanDirty>(contract.OrderCleanDirty);
-
-            var limitPrice = new Money(MapDecimal(contract.OrderLimitPrice), contract.OrderCurrency);
-            var averagePrice = new Money(MapDecimal(contract.OrderAverageFillPrice), contract.OrderCurrency);
-
-            var orderOptionStrikePrice = new Money(MapDecimal(contract.OrderOptionStrikePrice), contract.OrderCurrency);
-            var orderOptionExpirationDate = MapDate(contract.OrderOptionExpirationDate);
-            var orderOptionEuropeanAmerican = MapToEnum<OptionEuropeanAmerican>(contract.OrderOptionEuropeanAmerican);
-
-            var orderedVolume = MapLongWithRounding(contract.OrderOrderedVolume);
-            var filledVolume = MapLongWithRounding(contract.OrderFilledVolume);
-
-            var accInterest = MapDecimal(contract.OrderAccumulatedInterest);
-            
-            return new Order(
-                instrument,
-                market,
-                null,
-                contract.OrderId,
-                DateTime.UtcNow,
-                contract.OrderVersion,
-                contract.OrderVersionLinkId,
-                contract.OrderGroupId,
-                placedDate,
-                bookedDate,
-                amendedDate,
-                rejectedDate,
-                cancelledDate,
-                filledDate,
-                orderType,
-                orderDirection,
-                orderCurrency,
-                orderSettlementCurrency,
-                orderCleanDirty,
-                accInterest,
-                limitPrice,
-                averagePrice,
-                orderedVolume,
-                filledVolume,
-                contract.OrderTraderId,
-                contract.OrderTraderName,
-                contract.OrderClearingAgent,
-                contract.OrderDealingInstructions,
-                new OrderBroker(string.Empty, string.Empty, contract.OrderBroker, null, false), 
-                orderOptionStrikePrice,
-                orderOptionExpirationDate,
-                orderOptionEuropeanAmerican,
-                dealerOrder);
+            return result;
         }
 
         private DealerOrder MapTrade(OrderFileContract contract)
@@ -227,31 +315,33 @@ namespace SharedKernel.Files.Orders
             if (string.IsNullOrWhiteSpace(contract.DealerOrderId))
                 return null;
 
-            var instrument = MapInstrument(contract);
+            var instrument = this.MapInstrument(contract);
 
-            var placedDate = MapDate(contract.DealerOrderPlacedDate);
-            var bookedDate = MapDate(contract.DealerOrderBookedDate);
-            var amendedDate = MapDate(contract.DealerOrderAmendedDate);
-            var rejectedDate = MapDate(contract.DealerOrderRejectedDate);
-            var cancelledDate = MapDate(contract.DealerOrderCancelledDate);
-            var filledDate = MapDate(contract.DealerOrderFilledDate);
+            var placedDate = this.MapDate(contract.DealerOrderPlacedDate);
+            var bookedDate = this.MapDate(contract.DealerOrderBookedDate);
+            var amendedDate = this.MapDate(contract.DealerOrderAmendedDate);
+            var rejectedDate = this.MapDate(contract.DealerOrderRejectedDate);
+            var cancelledDate = this.MapDate(contract.DealerOrderCancelledDate);
+            var filledDate = this.MapDate(contract.DealerOrderFilledDate);
 
-            var dealerOrderType = MapToEnum<OrderTypes>(contract.DealerOrderType);
-            var dealerOrderDirection = MapToEnum<OrderDirections>(contract.DealerOrderDirection);
+            var dealerOrderType = this.MapToEnum<OrderTypes>(contract.DealerOrderType);
+            var dealerOrderDirection = this.MapToEnum<OrderDirections>(contract.DealerOrderDirection);
             var dealerOrderCurrency = new Currency(contract.DealerOrderCurrency);
             var dealerOrderSettlementCurrency = new Currency(contract.DealerOrderSettlementCurrency);
 
-            var limitPrice = new Money(MapDecimal(contract.DealerOrderLimitPrice), contract.DealerOrderCurrency);
-            var averagePrice = new Money(MapDecimal(contract.DealerOrderAverageFillPrice), contract.DealerOrderCurrency);
-            var cleanDirty = MapToEnum<OrderCleanDirty>(contract.DealerOrderCleanDirty);
-            var euroAmerican = MapToEnum<OptionEuropeanAmerican>(contract.DealerOrderOptionEuropeanAmerican);
+            var limitPrice = new Money(this.MapDecimal(contract.DealerOrderLimitPrice), contract.DealerOrderCurrency);
+            var averagePrice = new Money(
+                this.MapDecimal(contract.DealerOrderAverageFillPrice),
+                contract.DealerOrderCurrency);
+            var cleanDirty = this.MapToEnum<OrderCleanDirty>(contract.DealerOrderCleanDirty);
+            var euroAmerican = this.MapToEnum<OptionEuropeanAmerican>(contract.DealerOrderOptionEuropeanAmerican);
 
-            var orderedVolume = MapLongWithRounding(contract.DealerOrderOrderedVolume);
-            var filledVolume = MapLongWithRounding(contract.DealerOrderFilledVolume);
+            var orderedVolume = this.MapLongWithRounding(contract.DealerOrderOrderedVolume);
+            var filledVolume = this.MapLongWithRounding(contract.DealerOrderFilledVolume);
 
-            var accumulatedInterest = MapDecimal(contract.DealerOrderAccumulatedInterest);
-            var optionStrikePrice = MapDecimal(contract.DealerOrderOptionStrikePrice);
-            var optionExpirationDate = MapDate(contract.DealerOrderOptionExpirationDate);
+            var accumulatedInterest = this.MapDecimal(contract.DealerOrderAccumulatedInterest);
+            var optionStrikePrice = this.MapDecimal(contract.DealerOrderOptionStrikePrice);
+            var optionExpirationDate = this.MapDate(contract.DealerOrderOptionExpirationDate);
 
             return new DealerOrder(
                 instrument,
@@ -286,173 +376,45 @@ namespace SharedKernel.Files.Orders
                 euroAmerican);
         }
 
-        private T MapToEnum<T>(string propertyValue) where T : struct
+        private OrderFileContract[] MapTradeFields(Order order)
         {
-            propertyValue = propertyValue?.ToUpper() ?? string.Empty;
+            // ReSharper disable once IdentifierTypo
+            var csvs = new List<OrderFileContract>();
 
-            EnumExtensions.TryParsePermutations(propertyValue, out T result);
+            foreach (var trad in order.DealerOrders)
+            {
+                var csv = new OrderFileContract();
+                csv = this.MapTradeFields2(trad, csv);
+                csv = this.MapOrderFields(order, csv);
+                csvs.Add(csv);
+            }
 
-            return result;
+            return csvs.ToArray();
         }
 
-        private DateTime? MapDate(string date)
+        private OrderFileContract MapTradeFields2(DealerOrder trad, OrderFileContract contract)
         {
-            if (string.IsNullOrWhiteSpace(date))
-            {
-                return null;
-            }
+            contract.DealerOrderId = trad.DealerOrderId;
+            contract.DealerOrderPlacedDate = trad.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderBookedDate = trad.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderAmendedDate = trad.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderRejectedDate = trad.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderCancelledDate = trad.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderFilledDate = trad.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderDealerId = trad.DealerId;
+            contract.DealerOrderCounterParty = trad.DealerCounterParty;
+            contract.DealerOrderType = ((int?)trad.OrderType).ToString();
+            contract.DealerOrderDirection = ((int?)trad.OrderDirection).ToString();
+            contract.DealerOrderCurrency = trad.Currency.Code;
+            contract.DealerOrderLimitPrice = trad.LimitPrice?.Value.ToString();
+            contract.DealerOrderAverageFillPrice = trad.AverageFillPrice?.Value.ToString();
+            contract.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
+            contract.DealerOrderFilledVolume = trad.FilledVolume?.ToString();
+            contract.DealerOrderOptionStrikePrice = trad.OptionStrikePrice?.ToString();
+            contract.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString("yyyy-MM-ddTHH:mm:ss");
+            contract.DealerOrderOptionEuropeanAmerican = ((int?)trad.OptionEuropeanAmerican).ToString();
 
-            var success = DateTime.TryParse(date, out var result);
-
-            if (success)
-                return result;
-
-            return null;
-        }
-
-        private decimal? MapDecimal(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-
-            var success = decimal.TryParse(value, out var result);
-
-            if (success)
-                return result;
-
-            return null;
-        }
-
-        private long? MapLongWithRounding(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-
-            var success = decimal.TryParse(value, out var result);
-
-            if (!success)
-                return null;
-
-            var adjustedToIntegerValue = Math.Round(result, 0, MidpointRounding.AwayFromZero);
-
-            return MapLong(adjustedToIntegerValue.ToString());
-        }
-
-        private long? MapLong(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-
-            var success = long.TryParse(value, out var result);
-
-            if (success)
-                return result;
-
-            return null;
-        }
-
-        private FinancialInstrument MapInstrument(OrderFileContract contract)
-        {
-            var identifiers =
-                new InstrumentIdentifiers(
-                    string.Empty,
-                    string.Empty,
-                    null,
-                    contract.InstrumentClientIdentifier,
-                    AdjustTruncatedSedols(contract.InstrumentSedol),
-                    contract.InstrumentIsin,
-                    contract.InstrumentFigi,
-                    contract.InstrumentCusip,
-                    contract.InstrumentExchangeSymbol,
-                    contract.InstrumentLei,
-                    contract.InstrumentBloombergTicker,
-                    contract.InstrumentUnderlyingSedol,
-                    contract.InstrumentUnderlyingIsin,
-                    contract.InstrumentUnderlyingFigi,
-                    contract.InstrumentUnderlyingCusip,
-                    contract.InstrumentUnderlyingLei,
-                    contract.InstrumentUnderlyingExchangeSymbol,
-                    contract.InstrumentUnderlyingBloombergTicker,
-                    contract.InstrumentUnderlyingClientIdentifier);
-
-            return new FinancialInstrument(
-                MapCfi(contract.InstrumentCfi),
-                identifiers,
-                contract.InstrumentName ?? string.Empty,
-                contract.InstrumentCfi ?? string.Empty,
-                contract.OrderCurrency ?? contract.DealerOrderCurrency ?? string.Empty,
-                contract.InstrumentIssuerIdentifier ?? string.Empty,
-                contract.InstrumentUnderlyingName ?? string.Empty,
-                contract.InstrumentUnderlyingCfi ?? string.Empty,
-                contract.InstrumentUnderlyingIssuerIdentifier ?? string.Empty,
-                string.Empty,
-                string.Empty,
-                string.Empty,
-                string.Empty);
-        }
-
-        /// <summary>
-        /// Excel has a tendency to truncate leading 0s on valid sedols.
-        /// Insert these in if this is the case
-        /// </summary>
-        private string AdjustTruncatedSedols(string sedol)
-        {
-            if (string.IsNullOrWhiteSpace(sedol))
-            {
-                return sedol;
-            }
-
-            while (sedol.Length < 7)
-            {
-                sedol = $"0{sedol}";
-            }
-
-            return sedol;
-        }
-
-        private Market MapMarket(OrderFileContract contract)
-        {
-            Enum.TryParse(contract.MarketType, out MarketTypes marketType);
-
-            return new Market(string.Empty, contract.MarketIdentifierCode, contract.MarketName, marketType);
-        }
-
-        private InstrumentTypes MapCfi(string cfi)
-        {
-            if (string.IsNullOrWhiteSpace(cfi))
-            {
-                return InstrumentTypes.None;
-            }
-
-            cfi = cfi.ToLower();
-
-            if (cfi.Take(1).ToString() == "e")
-            {
-                return InstrumentTypes.Equity;
-            }
-
-            if (cfi.Take(2).ToString() == "db")
-            {
-                return InstrumentTypes.Bond;
-            }
-
-            if (cfi.Take(2).ToString() == "oc")
-            {
-                return InstrumentTypes.OptionCall;
-            }
-
-            if (cfi.Take(2).ToString() == "op")
-            {
-                return InstrumentTypes.OptionPut;
-            }
-
-            return InstrumentTypes.Unknown;
+            return contract;
         }
     }
 }

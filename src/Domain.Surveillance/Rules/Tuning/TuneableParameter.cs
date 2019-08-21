@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Domain.Surveillance.Rules.Tuning
+﻿namespace Domain.Surveillance.Rules.Tuning
 {
+    using System;
+
     public abstract class TuneableParameter : Attribute
     {
     }

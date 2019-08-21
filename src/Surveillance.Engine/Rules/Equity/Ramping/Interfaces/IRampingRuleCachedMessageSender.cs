@@ -3,6 +3,7 @@
     public interface IRampingRuleCachedMessageSender
     {
         int Flush();
+
         void Send(IRampingRuleBreach ruleBreach);
     }
 }

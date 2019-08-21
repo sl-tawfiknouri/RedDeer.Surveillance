@@ -1,13 +1,18 @@
-﻿using System;
-using Domain.Core.Extensions;
-using FluentValidation.Validators;
-
-namespace SharedKernel.Files.PropertyValidators
+﻿namespace SharedKernel.Files.PropertyValidators
 {
-    public class EnumParseableValidator<T> : PropertyValidator where T : struct, IConvertible
+    using System;
+
+    using Domain.Core.Extensions;
+
+    using FluentValidation.Validators;
+
+    public class EnumParseableValidator<T> : PropertyValidator
+        where T : struct, IConvertible
     {
-        public EnumParseableValidator(string enumPropertyName) : base($"Property out of enum range {enumPropertyName}")
-        { }
+        public EnumParseableValidator(string enumPropertyName)
+            : base($"Property out of enum range {enumPropertyName}")
+        {
+        }
 
         protected override bool IsValid(PropertyValidatorContext context)
         {

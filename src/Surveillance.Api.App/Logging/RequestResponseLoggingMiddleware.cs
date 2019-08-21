@@ -1,31 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Surveillance.Api.App.Logging
+﻿namespace Surveillance.Api.App.Logging
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Internal;
+    using Microsoft.Extensions.Logging;
+
     public class RequestResponseLoggingMiddleware : IMiddleware
     {
-        private const string XCorrelationIDHeader = "X-Correlation-ID";
         private const int ReadChunkBufferLength = 4096;
+
+        private const string XCorrelationIDHeader = "X-Correlation-ID";
+
         private readonly ILogger<RequestResponseLoggingMiddleware> _logger;
 
         public RequestResponseLoggingMiddleware(ILogger<RequestResponseLoggingMiddleware> logger)
         {
-            _logger = logger;
+            this._logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var request = await FormatRequest(context);
 
-            _logger.LogInformation(request);
+            this._logger.LogInformation(request);
 
             var originalBody = context.Response.Body;
 
@@ -45,31 +48,48 @@ namespace Surveillance.Api.App.Logging
                 newResponseBody.Seek(0, SeekOrigin.Begin);
                 var response = FormatResponse(context, newResponseBody, sw.Elapsed);
 
-                _logger.LogInformation(response);
+                this._logger.LogInformation(response);
             }
+        }
+
+        private static string FormatCorrelationId(HttpContext context)
+        {
+            return
+                $"X-Correlation-ID: {string.Join(",", context.Request.Headers.GetCommaSeparatedValues(XCorrelationIDHeader))}";
+        }
+
+        private static string FormatHeaders(IHeaderDictionary headers)
+        {
+            return headers?.Count > 0
+                       ? $"Headers: {string.Join(",", headers?.Select(s => $"'{s.Key}': '{s.Value.ToString()}'"))}"
+                       : null;
+        }
+
+        private static async Task<string> FormatRequest(HttpContext context)
+        {
+            var sb = new StringBuilder()
+                .AppendLine(
+                    $"Http Request Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, ContentType: {context.Request.ContentType}")
+                .AppendLine(FormatHeaders(context.Request.Headers))
+                .AppendLine($"Request Body: {await GetRequestBody(context.Request)}");
+
+            return sb.ToString();
         }
 
         private static string FormatResponse(HttpContext context, MemoryStream newResponseBody, TimeSpan elapsed)
         {
             var sb = new StringBuilder()
-                .AppendLine($"Http Response Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, StatusCode: {context.Response.StatusCode}, Elapsed: {elapsed},")
+                .AppendLine(
+                    $"Http Response Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, StatusCode: {context.Response.StatusCode}, Elapsed: {elapsed},")
                 .AppendLine(FormatHeaders(context.Response.Headers))
                 .AppendLine($"Response Body: {ReadStreamInChunks(newResponseBody)}");
 
             return sb.ToString();
         }
 
-        private static string FormatCorrelationId(HttpContext context)
-            => $"X-Correlation-ID: {string.Join(",", context.Request.Headers.GetCommaSeparatedValues(XCorrelationIDHeader))}";
-
-        private static async Task<string> FormatRequest(HttpContext context)
+        private static string FormatUrl(HttpRequest request)
         {
-            var sb = new StringBuilder()
-                .AppendLine($"Http Request Information {FormatUrl(context.Request)}, {FormatCorrelationId(context)}, TraceIdentifier: {context.TraceIdentifier}, ContentType: {context.Request.ContentType}")
-                .AppendLine(FormatHeaders(context.Request.Headers))
-                .AppendLine($"Request Body: {await GetRequestBody(context.Request)}");
-
-            return sb.ToString();
+            return $"{request.Method} {request.Scheme}://{request.Host}{request.Path} {request.QueryString}";
         }
 
         private static async Task<string> GetRequestBody(HttpRequest request)
@@ -85,9 +105,6 @@ namespace Surveillance.Api.App.Logging
             }
         }
 
-        private static string FormatHeaders(IHeaderDictionary headers)
-            => headers?.Count > 0 ? $"Headers: {string.Join(",", headers?.Select(s => $"'{s.Key}': '{s.Value.ToString()}'"))}" : null;
-
         private static string ReadStreamInChunks(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
@@ -97,20 +114,19 @@ namespace Surveillance.Api.App.Logging
             {
                 var readChunk = new char[ReadChunkBufferLength];
                 int readChunkLength;
-                //do while: is useful for the last iteration in case readChunkLength < chunkLength
+
+                // do while: is useful for the last iteration in case readChunkLength < chunkLength
                 do
                 {
                     readChunkLength = reader.ReadBlock(readChunk, 0, ReadChunkBufferLength);
                     textWriter.Write(readChunk, 0, readChunkLength);
-                } while (readChunkLength > 0);
+                }
+                while (readChunkLength > 0);
 
                 result = textWriter.ToString();
             }
 
             return result;
         }
-
-        private static string FormatUrl(HttpRequest request)
-            => $"{request.Method} {request.Scheme}://{request.Host}{request.Path} {request.QueryString}";
     }
 }

@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Surveillance.Api.App
+﻿namespace Surveillance.Api.App
 {
+    using System;
+
+    using Microsoft.Extensions.DependencyInjection;
+
     public class StartupConfig : IStartupConfig
     {
-        public bool IsTest { get; set; } = false;
         public Action<IServiceCollection> ConfigureTestServices { get; set; } = null;
+
+        public bool IsTest { get; set; } = false;
     }
 }

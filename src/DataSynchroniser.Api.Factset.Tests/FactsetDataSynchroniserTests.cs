@@ -1,56 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DataSynchroniser.Api.Factset.Factset.Interfaces;
-using DataSynchroniser.Api.Factset.Filters.Interfaces;
-using Domain.Core.Financial.Assets;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-
-namespace DataSynchroniser.Api.Factset.Tests
+﻿namespace DataSynchroniser.Api.Factset.Tests
 {
+    using System;
+    using System.Collections.Generic;
+
+    using DataSynchroniser.Api.Factset.Factset.Interfaces;
+    using DataSynchroniser.Api.Factset.Filters.Interfaces;
+
+    using Domain.Core.Financial.Assets;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+
     [TestFixture]
     public class FactsetDataSynchroniserTests
     {
         private IFactsetDataRequestsManager _dataRequestsManager;
-        private IFactsetDataRequestFilter _requestFilter;
-        private ISystemProcessOperationThirdPartyDataRequestContext _requestContext;
+
         private ILogger<FactsetDataSynchroniser> _logger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _dataRequestsManager = A.Fake<IFactsetDataRequestsManager>();
+        private ISystemProcessOperationThirdPartyDataRequestContext _requestContext;
 
-            _requestFilter = A.Fake<IFactsetDataRequestFilter>();
-            A.CallTo(() => _requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(true);
-
-            _requestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
-            _logger = A.Fake<ILogger<FactsetDataSynchroniser>>();
-        }
+        private IFactsetDataRequestFilter _requestFilter;
 
         [Test]
         public void Constructor_NullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new FactsetDataSynchroniser(_dataRequestsManager, _requestFilter, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new FactsetDataSynchroniser(this._dataRequestsManager, this._requestFilter, null));
         }
 
         [Test]
-        public void Handle_Null_SystemProcessOperationId_DoesNotThrow()
+        public void Handle_NonRelevantRequests_DoesNotThrow()
         {
-            var synchroniser = BuildDataSynchroniser();
+            var synchroniser = this.BuildDataSynchroniser();
+            A.CallTo(() => this._requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(false);
 
-            Assert.DoesNotThrowAsync(async () => await synchroniser.Handle(null, _requestContext, new MarketDataRequest[0]));
+            var request = new List<MarketDataRequest> { this.BuildMarketDataRequest("d") };
+
+            Assert.DoesNotThrowAsync(async () => await synchroniser.Handle("a", this._requestContext, request));
         }
 
         [Test]
         public void Handle_Null_DataRequestContext_DoesNotThrow()
         {
-            var synchroniser = BuildDataSynchroniser();
+            var synchroniser = this.BuildDataSynchroniser();
 
             Assert.DoesNotThrowAsync(async () => await synchroniser.Handle("id", null, new MarketDataRequest[0]));
         }
@@ -58,33 +59,49 @@ namespace DataSynchroniser.Api.Factset.Tests
         [Test]
         public void Handle_Null_MarketDataRequests_DoesNotThrow()
         {
-            var synchroniser = BuildDataSynchroniser();
+            var synchroniser = this.BuildDataSynchroniser();
 
-            Assert.DoesNotThrowAsync(async () => await synchroniser.Handle("id", _requestContext, null));
+            Assert.DoesNotThrowAsync(async () => await synchroniser.Handle("id", this._requestContext, null));
         }
 
         [Test]
-        public void Handle_NonRelevantRequests_DoesNotThrow()
+        public void Handle_Null_SystemProcessOperationId_DoesNotThrow()
         {
-            var synchroniser = BuildDataSynchroniser();
-            A.CallTo(() => _requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(false);
+            var synchroniser = this.BuildDataSynchroniser();
 
-            var request = new List<MarketDataRequest>
-            {
-                BuildMarketDataRequest("d")
-            };
+            Assert.DoesNotThrowAsync(
+                async () => await synchroniser.Handle(null, this._requestContext, new MarketDataRequest[0]));
+        }
 
-           Assert.DoesNotThrowAsync(async () => await synchroniser.Handle("a", _requestContext, request));
+        [SetUp]
+        public void Setup()
+        {
+            this._dataRequestsManager = A.Fake<IFactsetDataRequestsManager>();
+
+            this._requestFilter = A.Fake<IFactsetDataRequestFilter>();
+            A.CallTo(() => this._requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(true);
+
+            this._requestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
+            this._logger = A.Fake<ILogger<FactsetDataSynchroniser>>();
         }
 
         private FactsetDataSynchroniser BuildDataSynchroniser()
         {
-            return new FactsetDataSynchroniser(_dataRequestsManager, _requestFilter, _logger);
+            return new FactsetDataSynchroniser(this._dataRequestsManager, this._requestFilter, this._logger);
         }
 
         private MarketDataRequest BuildMarketDataRequest(string cfi)
         {
-            return new MarketDataRequest("a", "XLON", cfi, InstrumentIdentifiers.Null(), null, null, "1", true, DataSource.Factset);
+            return new MarketDataRequest(
+                "a",
+                "XLON",
+                cfi,
+                InstrumentIdentifiers.Null(),
+                null,
+                null,
+                "1",
+                true,
+                DataSource.Factset);
         }
     }
 }

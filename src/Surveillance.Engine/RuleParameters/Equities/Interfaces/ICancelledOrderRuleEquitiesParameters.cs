@@ -1,13 +1,22 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface ICancelledOrderRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable, IReferenceDataFilterable, IMarketCapFilterable, IVenueVolumeFilterable
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+
+    public interface ICancelledOrderRuleEquitiesParameters : IFilterableRule,
+                                                             IRuleParameter,
+                                                             IOrganisationalFactorable,
+                                                             IReferenceDataFilterable,
+                                                             IMarketCapFilterable,
+                                                             IVenueVolumeFilterable
     {
-        TimeWindows Windows { get; set; }
-        decimal? CancelledOrderPercentagePositionThreshold { get; set; }
         decimal? CancelledOrderCountPercentageThreshold { get; set; }
-        int MinimumNumberOfTradesToApplyRuleTo { get; set; }
+
+        decimal? CancelledOrderPercentagePositionThreshold { get; set; }
+
         int? MaximumNumberOfTradesToApplyRuleTo { get; set; }
+
+        int MinimumNumberOfTradesToApplyRuleTo { get; set; }
+
+        TimeWindows Windows { get; set; }
     }
 }

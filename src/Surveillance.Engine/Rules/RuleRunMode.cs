@@ -3,6 +3,7 @@
     public enum RuleRunMode
     {
         ValidationRun,
+
         ForceRun
     }
 }

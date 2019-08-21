@@ -1,10 +1,11 @@
-﻿using Domain.Core.Trading.Orders;
-
-namespace SharedKernel.Files.Allocations.Interfaces
+﻿namespace SharedKernel.Files.Allocations.Interfaces
 {
+    using Domain.Core.Trading.Orders;
+
     public interface IAllocationFileCsvToOrderAllocationSerialiser
     {
-        OrderAllocation Map(AllocationFileContract contract);
         int FailedParseTotal { get; set; }
+
+        OrderAllocation Map(AllocationFileContract contract);
     }
 }

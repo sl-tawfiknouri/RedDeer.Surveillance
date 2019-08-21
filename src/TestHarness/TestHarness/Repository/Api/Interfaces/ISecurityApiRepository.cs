@@ -1,12 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
-
-namespace TestHarness.Repository.Api.Interfaces
+﻿namespace TestHarness.Repository.Api.Interfaces
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
+
     public interface ISecurityApiRepository
     {
-        Task<bool> Heartbeating();
         Task<SecurityPriceResponseDto> Get(DateTime from, DateTime to, string market);
+
+        Task<bool> Heartbeating();
     }
 }

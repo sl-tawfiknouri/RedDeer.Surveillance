@@ -3,6 +3,7 @@
     public interface ILayeringJudgement
     {
         decimal? DailyPercentageMarketVolume { get; }
+
         decimal? WindowPercentageMarketVolume { get; }
     }
 }

@@ -1,135 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Core.Markets;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Scheduling;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Surveillance.Engine.Rules.Tests.Helpers;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Universe
+﻿namespace Surveillance.Engine.Rules.Tests.Universe
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Domain.Core.Markets;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Scheduling;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.Market.Interfaces;
+    using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+    using Surveillance.Engine.Rules.Tests.Helpers;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
+
     [TestFixture]
     public class UniverseBuilderTests
     {
-        private IOrdersRepository _auroraOrdersRepository;
-        private IOrdersToAllocatedOrdersProjector _orderAllocationProjector;
         private IReddeerMarketRepository _auroraMarketRepository;
-        private IMarketOpenCloseEventService _marketService;
-        private ISystemProcessOperationContext _opCtx;
-        private IUniverseSortComparer _sortComparer;
+
+        private IOrdersRepository _auroraOrdersRepository;
+
         private ILogger<UniverseBuilder> _logger;
+
+        private IMarketOpenCloseEventService _marketService;
+
+        private ISystemProcessOperationContext _opCtx;
+
+        private IOrdersToAllocatedOrdersProjector _orderAllocationProjector;
+
+        private IUniverseSortComparer _sortComparer;
 
         [SetUp]
         public void Setup()
         {
-            _auroraOrdersRepository = A.Fake<IOrdersRepository>();
-            _orderAllocationProjector = A.Fake<IOrdersToAllocatedOrdersProjector>();
-            _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
-            _marketService = A.Fake<IMarketOpenCloseEventService>();
-            _opCtx = A.Fake<ISystemProcessOperationContext>();
-            _sortComparer = A.Fake<IUniverseSortComparer>();
-            _logger = A.Fake<ILogger<UniverseBuilder>>();
+            this._auroraOrdersRepository = A.Fake<IOrdersRepository>();
+            this._orderAllocationProjector = A.Fake<IOrdersToAllocatedOrdersProjector>();
+            this._auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
+            this._marketService = A.Fake<IMarketOpenCloseEventService>();
+            this._opCtx = A.Fake<ISystemProcessOperationContext>();
+            this._sortComparer = A.Fake<IUniverseSortComparer>();
+            this._logger = A.Fake<ILogger<UniverseBuilder>>();
         }
 
         [Test]
         public void Summon_DoesNot_ReturnNull()
         {
-            var builder =
-                new UniverseBuilder(
-                    _auroraOrdersRepository,
-                    _orderAllocationProjector,
-                    _auroraMarketRepository,
-                    _marketService,
-                    _sortComparer,
-                    _logger);
+            var builder = new UniverseBuilder(
+                this._auroraOrdersRepository,
+                this._orderAllocationProjector,
+                this._auroraMarketRepository,
+                this._marketService,
+                this._sortComparer,
+                this._logger);
 
-            var result = builder.Summon(null, _opCtx);
-
-            Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public async Task Summon_InsertsUniverseBeginningAndEndEventData()
-        {
-            var timeSeriesInitiation = new DateTime(2018, 01, 01);
-            var timeSeriesTermination = new DateTime(2018, 01, 02);
-            var builder =
-                new UniverseBuilder(
-                    _auroraOrdersRepository,
-                    _orderAllocationProjector,
-                    _auroraMarketRepository,
-                    _marketService,
-                    _sortComparer,
-                    _logger);
-
-            var schedule = new ScheduledExecution
-            {
-                Rules = new List<RuleIdentifier>(),
-                TimeSeriesInitiation = timeSeriesInitiation,
-                TimeSeriesTermination = timeSeriesTermination
-            };
-
-            var result = await builder.Summon(schedule, _opCtx);
+            var result = builder.Summon(null, this._opCtx);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EpochPrimordialUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EpochRealUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.EpochFutureUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
-        }
-
-        [Test]
-        [Ignore("Might be cause of the build server issues")]
-        public async Task Summon_FetchesTradeOrderData()
-        { 
-            var timeSeriesInitiation = new DateTime(2018, 01, 01);
-            var timeSeriesTermination = new DateTime(2018, 01, 02);
-            var builder =
-                new UniverseBuilder(
-                    _auroraOrdersRepository,
-                    _orderAllocationProjector,
-                    _auroraMarketRepository,
-                    _marketService,
-                    _sortComparer,
-                    _logger);
-
-            var schedule = new ScheduledExecution
-            {
-                Rules = new List<RuleIdentifier>(),
-                TimeSeriesInitiation = timeSeriesInitiation,
-                TimeSeriesTermination = timeSeriesTermination
-            };
-            var frame = ((Order)null).Random();
-
-            A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
-                .Returns(new[] {frame});
-            
-            A.CallTo(() => _orderAllocationProjector.DecorateOrders(A<IReadOnlyCollection<Order>>.Ignored))
-                .Returns(new[] {frame});
-
-            var result = await builder.Summon(schedule, _opCtx);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
-
-            A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -137,46 +77,55 @@ namespace Surveillance.Engine.Rules.Tests.Universe
         {
             var timeSeriesInitiation = new DateTime(2018, 01, 01);
             var timeSeriesTermination = new DateTime(2018, 01, 02);
-            var builder =
-                new UniverseBuilder(
-                    _auroraOrdersRepository,
-                    _orderAllocationProjector,
-                    _auroraMarketRepository,
-                    _marketService,
-                    _sortComparer,
-                    _logger);
+            var builder = new UniverseBuilder(
+                this._auroraOrdersRepository,
+                this._orderAllocationProjector,
+                this._auroraMarketRepository,
+                this._marketService,
+                this._sortComparer,
+                this._logger);
 
             var schedule = new ScheduledExecution
-            {
-                Rules = new List<RuleIdentifier>(),
-                TimeSeriesInitiation = timeSeriesInitiation,
-                TimeSeriesTermination = timeSeriesTermination
-            };
+                               {
+                                   Rules = new List<RuleIdentifier>(),
+                                   TimeSeriesInitiation = timeSeriesInitiation,
+                                   TimeSeriesTermination = timeSeriesTermination
+                               };
 
             var marketOpenClose = new[]
-            {
-                new UniverseEvent(
-                    UniverseStateEvent.ExchangeOpen,
-                    timeSeriesInitiation,
-                    new MarketOpenClose("xlon", timeSeriesInitiation, timeSeriesInitiation)),
-                new UniverseEvent(
-                    UniverseStateEvent.ExchangeClose,
-                    timeSeriesTermination,
-                    new MarketOpenClose("xlon", timeSeriesTermination, timeSeriesTermination))
-            };
+                                      {
+                                          new UniverseEvent(
+                                              UniverseStateEvent.ExchangeOpen,
+                                              timeSeriesInitiation,
+                                              new MarketOpenClose("xlon", timeSeriesInitiation, timeSeriesInitiation)),
+                                          new UniverseEvent(
+                                              UniverseStateEvent.ExchangeClose,
+                                              timeSeriesTermination,
+                                              new MarketOpenClose("xlon", timeSeriesTermination, timeSeriesTermination))
+                                      };
 
-            A.CallTo(() => _marketService.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
+            A.CallTo(() => this._marketService.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
                 .Returns(marketOpenClose);
 
-            var result = await builder.Summon(schedule, _opCtx);
+            var result = await builder.Summon(schedule, this._opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EpochPrimordialUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EpochRealUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.EpochFutureUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.ExchangeOpen);
-            Assert.AreEqual(result.UniverseEvents.Skip(5).FirstOrDefault().StateChange, UniverseStateEvent.ExchangeClose);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(1).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochPrimordialUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(2).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochRealUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(3).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochFutureUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(4).FirstOrDefault().StateChange,
+                UniverseStateEvent.ExchangeOpen);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(5).FirstOrDefault().StateChange,
+                UniverseStateEvent.ExchangeClose);
             Assert.AreEqual(result.UniverseEvents.Skip(6).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
 
@@ -185,48 +134,142 @@ namespace Surveillance.Engine.Rules.Tests.Universe
         {
             var timeSeriesInitiation = new DateTime(2018, 01, 01);
             var timeSeriesTermination = new DateTime(2018, 01, 02);
-            var builder =
-                new UniverseBuilder(
-                    _auroraOrdersRepository,
-                    _orderAllocationProjector,
-                    _auroraMarketRepository,
-                    _marketService,
-                    _sortComparer,
-                    _logger);
+            var builder = new UniverseBuilder(
+                this._auroraOrdersRepository,
+                this._orderAllocationProjector,
+                this._auroraMarketRepository,
+                this._marketService,
+                this._sortComparer,
+                this._logger);
 
             var schedule = new ScheduledExecution
-            {
-                Rules = new List<RuleIdentifier>(),
-                TimeSeriesInitiation = timeSeriesInitiation,
-                TimeSeriesTermination = timeSeriesTermination
-            };
+                               {
+                                   Rules = new List<RuleIdentifier>(),
+                                   TimeSeriesInitiation = timeSeriesInitiation,
+                                   TimeSeriesTermination = timeSeriesTermination
+                               };
 
             var exchangeFrames = new[]
-            {
-                new EquityIntraDayTimeBarCollection(
-                    new Market("1", "xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                    timeSeriesInitiation,
-                    new List<EquityInstrumentIntraDayTimeBar>()),
-                new EquityIntraDayTimeBarCollection(
-                    new Market(
-                        "1","xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                    timeSeriesTermination,
-                    new List<EquityInstrumentIntraDayTimeBar>())
-            };
+                                     {
+                                         new EquityIntraDayTimeBarCollection(
+                                             new Market(
+                                                 "1",
+                                                 "xlon",
+                                                 "London Stock Exchange",
+                                                 MarketTypes.STOCKEXCHANGE),
+                                             timeSeriesInitiation,
+                                             new List<EquityInstrumentIntraDayTimeBar>()),
+                                         new EquityIntraDayTimeBarCollection(
+                                             new Market(
+                                                 "1",
+                                                 "xlon",
+                                                 "London Stock Exchange",
+                                                 MarketTypes.STOCKEXCHANGE),
+                                             timeSeriesTermination,
+                                             new List<EquityInstrumentIntraDayTimeBar>())
+                                     };
 
-            A.CallTo(() => _auroraMarketRepository.GetEquityIntraday(A<DateTime>.Ignored, A<DateTime>.Ignored, _opCtx))
-                .Returns(exchangeFrames);
+            A.CallTo(
+                () => this._auroraMarketRepository.GetEquityIntraday(
+                    A<DateTime>.Ignored,
+                    A<DateTime>.Ignored,
+                    this._opCtx)).Returns(exchangeFrames);
 
-            var result = await builder.Summon(schedule, _opCtx);
+            var result = await builder.Summon(schedule, this._opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EpochPrimordialUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EpochRealUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.EpochFutureUniverse);
-            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
-            Assert.AreEqual(result.UniverseEvents.Skip(5).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(1).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochPrimordialUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(2).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochRealUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(3).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochFutureUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(4).FirstOrDefault().StateChange,
+                UniverseStateEvent.EquityIntradayTick);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(5).FirstOrDefault().StateChange,
+                UniverseStateEvent.EquityIntradayTick);
             Assert.AreEqual(result.UniverseEvents.Skip(6).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+        }
+
+        [Test]
+        [Ignore("Might be cause of the build server issues")]
+        public async Task Summon_FetchesTradeOrderData()
+        {
+            var timeSeriesInitiation = new DateTime(2018, 01, 01);
+            var timeSeriesTermination = new DateTime(2018, 01, 02);
+            var builder = new UniverseBuilder(
+                this._auroraOrdersRepository,
+                this._orderAllocationProjector,
+                this._auroraMarketRepository,
+                this._marketService,
+                this._sortComparer,
+                this._logger);
+
+            var schedule = new ScheduledExecution
+                               {
+                                   Rules = new List<RuleIdentifier>(),
+                                   TimeSeriesInitiation = timeSeriesInitiation,
+                                   TimeSeriesTermination = timeSeriesTermination
+                               };
+            var frame = ((Order)null).Random();
+
+            A.CallTo(() => this._auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, this._opCtx))
+                .Returns(new[] { frame });
+
+            A.CallTo(() => this._orderAllocationProjector.DecorateOrders(A<IReadOnlyCollection<Order>>.Ignored))
+                .Returns(new[] { frame });
+
+            var result = await builder.Summon(schedule, this._opCtx);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
+            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
+            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+
+            A.CallTo(() => this._auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, this._opCtx))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Summon_InsertsUniverseBeginningAndEndEventData()
+        {
+            var timeSeriesInitiation = new DateTime(2018, 01, 01);
+            var timeSeriesTermination = new DateTime(2018, 01, 02);
+            var builder = new UniverseBuilder(
+                this._auroraOrdersRepository,
+                this._orderAllocationProjector,
+                this._auroraMarketRepository,
+                this._marketService,
+                this._sortComparer,
+                this._logger);
+
+            var schedule = new ScheduledExecution
+                               {
+                                   Rules = new List<RuleIdentifier>(),
+                                   TimeSeriesInitiation = timeSeriesInitiation,
+                                   TimeSeriesTermination = timeSeriesTermination
+                               };
+
+            var result = await builder.Summon(schedule, this._opCtx);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(1).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochPrimordialUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(2).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochRealUniverse);
+            Assert.AreEqual(
+                result.UniverseEvents.Skip(3).FirstOrDefault().StateChange,
+                UniverseStateEvent.EpochFutureUniverse);
+            Assert.AreEqual(result.UniverseEvents.Skip(4).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
     }
 }

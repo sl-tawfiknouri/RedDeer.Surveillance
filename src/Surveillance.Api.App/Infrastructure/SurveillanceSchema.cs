@@ -1,13 +1,14 @@
-﻿using GraphQL;
-using GraphQL.Types;
-
-namespace Surveillance.Api.App.Infrastructure
+﻿namespace Surveillance.Api.App.Infrastructure
 {
+    using GraphQL;
+    using GraphQL.Types;
+
     public class SurveillanceSchema : Schema
     {
-        public SurveillanceSchema(IDependencyResolver resolver) : base(resolver)
+        public SurveillanceSchema(IDependencyResolver resolver)
+            : base(resolver)
         {
-            Query = resolver.Resolve<SurveillanceQuery>();
+            this.Query = resolver.Resolve<SurveillanceQuery>();
         }
     }
 }

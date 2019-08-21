@@ -3,6 +3,7 @@
     public interface IPlacingOrdersWithNoIntentToExecuteCacheMessageSender
     {
         int Flush();
+
         void Send(IPlacingOrdersWithNoIntentToExecuteRuleBreach ruleBreach);
     }
 }

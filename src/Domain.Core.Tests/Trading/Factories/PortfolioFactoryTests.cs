@@ -1,6 +1,7 @@
 ﻿namespace Domain.Core.Tests.Trading.Factories
 {
     using Domain.Core.Trading.Factories;
+
     using NUnit.Framework;
 
     [TestFixture]

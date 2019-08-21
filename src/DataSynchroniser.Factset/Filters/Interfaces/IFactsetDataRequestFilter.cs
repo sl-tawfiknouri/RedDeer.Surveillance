@@ -1,7 +1,7 @@
-﻿using SharedKernel.Contracts.Markets;
-
-namespace DataSynchroniser.Api.Factset.Filters.Interfaces
+﻿namespace DataSynchroniser.Api.Factset.Filters.Interfaces
 {
+    using SharedKernel.Contracts.Markets;
+
     public interface IFactsetDataRequestFilter
     {
         bool ValidAssetType(MarketDataRequest request);

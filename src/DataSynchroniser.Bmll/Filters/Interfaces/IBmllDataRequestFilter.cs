@@ -1,7 +1,7 @@
-﻿using SharedKernel.Contracts.Markets;
-
-namespace DataSynchroniser.Api.Bmll.Filters.Interfaces
+﻿namespace DataSynchroniser.Api.Bmll.Filters.Interfaces
 {
+    using SharedKernel.Contracts.Markets;
+
     public interface IBmllDataRequestFilter
     {
         bool ValidAssetType(MarketDataRequest request);

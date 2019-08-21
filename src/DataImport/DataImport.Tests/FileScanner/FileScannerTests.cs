@@ -1,50 +1,55 @@
-﻿using System;
-using System.Threading.Tasks;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-
-namespace DataImport.Tests.FileScanner
+﻿namespace DataImport.Tests.FileScanner
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using DataImport.File_Scanner;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+
     [TestFixture]
     public class FileScannerTests
     {
-        private ISystemProcessOperationUploadFileRepository _uploadFileRepository;
-        private ILogger<File_Scanner.FileScanner> _logger;
+        private ILogger<FileScanner> _logger;
 
-        [SetUp]
-        public void Setup()
+        private ISystemProcessOperationUploadFileRepository _uploadFileRepository;
+
+        [Test]
+        public void Constructor_Null_Logger_Throws_Exception()
         {
-            _uploadFileRepository = A.Fake<ISystemProcessOperationUploadFileRepository>();
-            _logger = new NullLogger<File_Scanner.FileScanner>();
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new FileScanner(this._uploadFileRepository, null));
         }
 
         [Test]
         public void Constructor_Null_UploadFileRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new File_Scanner.FileScanner(null, _logger));
-        }
-
-        [Test]
-        public void Constructor_Null_Logger_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new File_Scanner.FileScanner(_uploadFileRepository, null));
+            Assert.Throws<ArgumentNullException>(() => new FileScanner(null, this._logger));
         }
 
         [Test]
         public async Task Scan_Calls_UploadFileRepository()
         {
-            var scanner = new File_Scanner.FileScanner(_uploadFileRepository, _logger);
+            var scanner = new FileScanner(this._uploadFileRepository, this._logger);
 
             await scanner.Scan();
 
-            A
-                .CallTo(() => _uploadFileRepository.GetOnDate(A<DateTime>.Ignored))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._uploadFileRepository.GetOnDate(A<DateTime>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._uploadFileRepository = A.Fake<ISystemProcessOperationUploadFileRepository>();
+            this._logger = new NullLogger<FileScanner>();
         }
     }
 }

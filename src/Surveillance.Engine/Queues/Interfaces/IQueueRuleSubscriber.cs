@@ -3,6 +3,7 @@
     public interface IQueueRuleSubscriber
     {
         void Initiate();
+
         void Terminate();
     }
 }

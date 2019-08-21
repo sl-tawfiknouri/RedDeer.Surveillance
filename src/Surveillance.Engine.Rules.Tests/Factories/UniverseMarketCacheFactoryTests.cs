@@ -1,55 +1,48 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.Markets;
-using Surveillance.Engine.Rules.Rules;
-
-namespace Surveillance.Engine.Rules.Tests.Factories
+﻿namespace Surveillance.Engine.Rules.Tests.Factories
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+    using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Markets;
+    using Surveillance.Engine.Rules.Rules;
+
     [TestFixture]
     public class UniverseMarketCacheFactoryTests
     {
-        private IStubRuleRunDataRequestRepository _stubDataRequestRepository;
         private IRuleRunDataRequestRepository _dataRequestRepository;
+
         private ILogger<UniverseMarketCacheFactory> _logger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _stubDataRequestRepository = A.Fake<IStubRuleRunDataRequestRepository>();
-            _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
-            _logger = new NullLogger<UniverseMarketCacheFactory>();
-        }
+        private IStubRuleRunDataRequestRepository _stubDataRequestRepository;
 
         [Test]
-        public void Constructor_Null_StubDataRequestRepository_Throws_Exception()
+        public void BuildInterday_Returns_IntradayCache()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(null, _dataRequestRepository, _logger));
-        }
+            var factory = new UniverseMarketCacheFactory(
+                this._stubDataRequestRepository,
+                this._dataRequestRepository,
+                this._logger);
 
-        [Test]
-        public void Constructor_Null_DataRequestRepository_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(_stubDataRequestRepository, null, _logger));
-        }
+            var result = factory.BuildInterday(RuleRunMode.ForceRun);
 
-        [Test]
-        public void Constructor_Null_Logger_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, null));
+            Assert.IsInstanceOf<UniverseEquityInterDayCache>(result);
         }
 
         [Test]
         public void BuildIntraday_Returns_IntradayCache()
         {
-            var factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _logger);
+            var factory = new UniverseMarketCacheFactory(
+                this._stubDataRequestRepository,
+                this._dataRequestRepository,
+                this._logger);
 
             var result = factory.BuildIntraday(TimeSpan.FromDays(1), RuleRunMode.ForceRun);
 
@@ -57,13 +50,38 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void BuildInterday_Returns_IntradayCache()
+        public void Constructor_Null_DataRequestRepository_Throws_Exception()
         {
-            var factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _logger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new UniverseMarketCacheFactory(this._stubDataRequestRepository, null, this._logger));
+        }
 
-            var result = factory.BuildInterday(RuleRunMode.ForceRun);
+        [Test]
+        public void Constructor_Null_Logger_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new UniverseMarketCacheFactory(
+                    this._stubDataRequestRepository,
+                    this._dataRequestRepository,
+                    null));
+        }
 
-            Assert.IsInstanceOf<UniverseEquityInterDayCache>(result);
+        [Test]
+        public void Constructor_Null_StubDataRequestRepository_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new UniverseMarketCacheFactory(null, this._dataRequestRepository, this._logger));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._stubDataRequestRepository = A.Fake<IStubRuleRunDataRequestRepository>();
+            this._dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
+            this._logger = new NullLogger<UniverseMarketCacheFactory>();
         }
     }
 }

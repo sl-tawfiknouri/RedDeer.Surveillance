@@ -1,215 +1,246 @@
-﻿using System;
-using Domain.Surveillance.Scheduling;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories.Equities
+﻿namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+
     [TestFixture]
     public class HighProfitRuleFactoryTests
     {
-        private IUniverseEquityOrderFilterService _orderFilterService;
-        private ICostCalculatorFactory _costCalculatorFactory;
-        private IRevenueCalculatorFactory _revenueCalculatorFactory;
-        private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
-        private IUniverseMarketCacheFactory _marketCacheFactory;
         private IMarketDataCacheStrategyFactory _cacheStrategyFactory;
-        private IJudgementService _judgementService;
-        private ILogger<HighProfitsRule> _logger;
-        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
-       
-        private IHighProfitsRuleEquitiesParameters _equitiesParameters;
-        private ISystemProcessOperationRunRuleContext _ruleCtxStream;
-        private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
+
+        private ICostCalculatorFactory _costCalculatorFactory;
+
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+
+        private IHighProfitsRuleEquitiesParameters _equitiesParameters;
+
+        private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+
+        private IJudgementService _judgementService;
+
+        private ILogger<HighProfitsRule> _logger;
+
+        private IUniverseMarketCacheFactory _marketCacheFactory;
+
+        private IUniverseEquityOrderFilterService _orderFilterService;
+
+        private IRevenueCalculatorFactory _revenueCalculatorFactory;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtxStream;
+
         private ScheduledExecution _scheduledExecution;
 
-        [SetUp]
-        public void Setup()
-        {
-            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
-            _revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
-            _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            _cacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
-            _judgementService = A.Fake<IJudgementService>();
-            _logger = new NullLogger<HighProfitsRule>();
-            _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
-
-            _equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
-            _ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _ruleCtxMarket = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            _scheduledExecution = new ScheduledExecution();
-        }
+        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         [Test]
-        public void Constructor_Null_CostCalculatorFactory_Throws_Exception()
+        public void Build_Returns_High_Profits_Rule()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    null,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+            var factory = new EquityRuleHighProfitFactory(
+                this._costCalculatorFactory,
+                this._revenueCalculatorFactory,
+                this._exchangeRateProfitCalculator,
+                this._orderFilterService,
+                this._marketCacheFactory,
+                this._cacheStrategyFactory,
+                this._logger,
+                this._tradingHistoryLogger);
 
-        [Test]
-        public void Constructor_Null_RevenueCalculatorFactory_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    null,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+            var result = factory.Build(
+                this._equitiesParameters,
+                this._ruleCtxStream,
+                this._ruleCtxMarket,
+                this._dataRequestSubscriber,
+                this._judgementService,
+                this._scheduledExecution);
 
-        [Test]
-        public void Constructor_Null_ExchangeRateProfitCalculator_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    null,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_PercentageComplete_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    null,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_OrderFilter_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    null,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_MarketCacheFactory_Throws_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    null,
-                    _logger,
-                    _tradingHistoryLogger));
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void Constructor_Null_CacheStrategyFactory_Throws_Exception()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    null,
-                    _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        null,
+                        this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Null_CostCalculatorFactory_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        null,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Null_ExchangeRateProfitCalculator_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        this._revenueCalculatorFactory,
+                        null,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        this._tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Throws_Exception()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new EquityRuleHighProfitFactory(
-                    null,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _orderFilterService,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    null));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        null,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        null));
         }
 
+        [Test]
+        public void Constructor_Null_MarketCacheFactory_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        null,
+                        this._logger,
+                        this._tradingHistoryLogger));
+        }
 
         [Test]
-        public void Build_Returns_High_Profits_Rule()
+        public void Constructor_Null_OrderFilter_Throws_Exception()
         {
-             var factory = new EquityRuleHighProfitFactory(
-                _costCalculatorFactory,
-                _revenueCalculatorFactory,
-                _exchangeRateProfitCalculator,
-                _orderFilterService,
-                _marketCacheFactory,
-                _cacheStrategyFactory,
-                _logger,
-                _tradingHistoryLogger);
+            Assert.Throws<ArgumentNullException>(
+                () =>
 
-            var result =
-                factory.Build(
-                    _equitiesParameters,
-                    _ruleCtxStream, 
-                    _ruleCtxMarket,
-                    _dataRequestSubscriber,
-                    _judgementService,
-                    _scheduledExecution);
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        null,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        this._tradingHistoryLogger));
+        }
 
-            Assert.IsNotNull(result);
+        [Test]
+        public void Constructor_Null_PercentageComplete_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        this._revenueCalculatorFactory,
+                        this._exchangeRateProfitCalculator,
+                        null,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Null_RevenueCalculatorFactory_Throws_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new EquityRuleHighProfitFactory(
+                        this._costCalculatorFactory,
+                        null,
+                        this._exchangeRateProfitCalculator,
+                        this._orderFilterService,
+                        this._marketCacheFactory,
+                        this._cacheStrategyFactory,
+                        this._logger,
+                        this._tradingHistoryLogger));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
+            this._revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
+            this._exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._cacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
+            this._judgementService = A.Fake<IJudgementService>();
+            this._logger = new NullLogger<HighProfitsRule>();
+            this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+
+            this._equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
+            this._ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._ruleCtxMarket = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            this._scheduledExecution = new ScheduledExecution();
         }
     }
 }

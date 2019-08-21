@@ -1,7 +1,7 @@
-﻿using Domain.Core.Financial.Assets.Interfaces;
-
-namespace Domain.Core.Financial.Assets
+﻿namespace Domain.Core.Financial.Assets
 {
+    using Domain.Core.Financial.Assets.Interfaces;
+
     public class FinancialInstrument : IFinancialInstrument
     {
         public FinancialInstrument()
@@ -24,19 +24,19 @@ namespace Domain.Core.Financial.Assets
             string regionCode,
             string countryCode)
         {
-            Type = types;
-            Identifiers = identifiers;
-            Name = name;
-            Cfi = cfi;
-            SecurityCurrency = securityCurrency;
-            IssuerIdentifier = issuerIdentifier;
-            UnderlyingName = underlyingName;
-            UnderlyingCfi = underlyingCfi;
-            UnderlyingIssuerIdentifier = underlyingIssuerIdentifier;
-            SectorCode = sectorCode;
-            IndustryCode = industryCode;
-            RegionCode = regionCode;
-            CountryCode = countryCode;
+            this.Type = types;
+            this.Identifiers = identifiers;
+            this.Name = name;
+            this.Cfi = cfi;
+            this.SecurityCurrency = securityCurrency;
+            this.IssuerIdentifier = issuerIdentifier;
+            this.UnderlyingName = underlyingName;
+            this.UnderlyingCfi = underlyingCfi;
+            this.UnderlyingIssuerIdentifier = underlyingIssuerIdentifier;
+            this.SectorCode = sectorCode;
+            this.IndustryCode = industryCode;
+            this.RegionCode = regionCode;
+            this.CountryCode = countryCode;
         }
 
         public FinancialInstrument(
@@ -47,48 +47,53 @@ namespace Domain.Core.Financial.Assets
             string securityCurrency,
             string issuerIdentifier)
         {
-            Type = types;
-            Identifiers = identifiers;
-            Name = name;
-            Cfi = cfi;
-            SecurityCurrency = securityCurrency;
-            IssuerIdentifier = issuerIdentifier;
-            UnderlyingName = string.Empty;
-            UnderlyingCfi = string.Empty;
-            UnderlyingIssuerIdentifier = string.Empty;
-            SectorCode = string.Empty;
-            IndustryCode = string.Empty;
-            RegionCode = string.Empty;
-            CountryCode = string.Empty;
+            this.Type = types;
+            this.Identifiers = identifiers;
+            this.Name = name;
+            this.Cfi = cfi;
+            this.SecurityCurrency = securityCurrency;
+            this.IssuerIdentifier = issuerIdentifier;
+            this.UnderlyingName = string.Empty;
+            this.UnderlyingCfi = string.Empty;
+            this.UnderlyingIssuerIdentifier = string.Empty;
+            this.SectorCode = string.Empty;
+            this.IndustryCode = string.Empty;
+            this.RegionCode = string.Empty;
+            this.CountryCode = string.Empty;
         }
 
-        public InstrumentTypes Type { get; set; }
-
-        public InstrumentIdentifiers Identifiers { get; set; }
-
         /// <summary>
-        /// Name of the instrument
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Classification Financial Instrument code
+        ///     Classification Financial Instrument code
         /// </summary>
         public string Cfi { get; set; }
 
-        public string SecurityCurrency { get; set; }
+        public string CountryCode { get; set; }
+
+        public InstrumentIdentifiers Identifiers { get; set; }
+
+        public string IndustryCode { get; set; }
 
         public string IssuerIdentifier { get; set; }
 
-        // derivatives
-        public string UnderlyingName { get; set; }
-        public string UnderlyingCfi { get; set; }
-        public string UnderlyingIssuerIdentifier { get; set; }
+        /// <summary>
+        ///     Name of the instrument
+        /// </summary>
+        public string Name { get; set; }
+
+        public string RegionCode { get; set; }
 
         // reference data
         public string SectorCode { get; set; }
-        public string IndustryCode { get; set; }
-        public string RegionCode { get; set; }
-        public string CountryCode { get; set; }
+
+        public string SecurityCurrency { get; set; }
+
+        public InstrumentTypes Type { get; set; }
+
+        public string UnderlyingCfi { get; set; }
+
+        public string UnderlyingIssuerIdentifier { get; set; }
+
+        // derivatives
+        public string UnderlyingName { get; set; }
     }
 }

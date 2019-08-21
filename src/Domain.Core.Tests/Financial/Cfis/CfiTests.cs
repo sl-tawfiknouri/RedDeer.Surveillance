@@ -1,8 +1,9 @@
-﻿using Domain.Core.Financial.Cfis;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Financial.Cfis
+﻿namespace Domain.Core.Tests.Financial.Cfis
 {
+    using Domain.Core.Financial.Cfis;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class CfiTests
     {

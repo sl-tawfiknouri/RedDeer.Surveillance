@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Tests.Helpers;
 using Domain.Core.Trading.Execution;
 using Domain.Core.Trading.Orders;
 using NUnit.Framework;
 
 namespace Domain.Core.Tests.Trading.Execution
 {
+    using TestHelpers;
+
     [TestFixture]
     public class OrderPriceSentimentServiceTests
     {

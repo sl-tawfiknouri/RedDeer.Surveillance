@@ -221,7 +221,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (tradedVolume >= threshold)
             {
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold, mostRecentTrade.Market);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();
@@ -278,7 +278,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (tradedVolume >= threshold)
             {
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold, mostRecentTrade.Market);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();
@@ -343,7 +343,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 var thresholdMoney = new Money((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
                 var tradedMoney = new Money((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdMoney, tradedMoney);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdMoney, tradedMoney, mostRecentTrade.Market);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();

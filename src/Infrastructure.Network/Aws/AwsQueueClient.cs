@@ -144,16 +144,18 @@
             CancellationToken cancellationToken,
             AwsResusableCancellationToken reusableToken)
         {
+            _logger?.LogInformation($"Subscribing to queue {name}");
             var queueUrl = await this.GetQueueUrlAsync(name, cancellationToken);
+            _logger?.LogInformation($"Subscribing to queue {name} found queue url {queueUrl}");
             while (!cancellationToken.IsCancellationRequested)
                 try
                 {
                     var receiveMessageRequest = new ReceiveMessageRequest
-                                                    {
-                                                        QueueUrl = queueUrl,
-                                                        MaxNumberOfMessages = 1,
-                                                        WaitTimeSeconds = 20 // Long Polling
-                                                    };
+                    {
+                        QueueUrl = queueUrl,
+                        MaxNumberOfMessages = 1,
+                        WaitTimeSeconds = 20 // Long Polling
+                    };
 
                     var result = await this._sqsClient.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
                     foreach (var message in result.Messages)

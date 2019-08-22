@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             await Send(ruleBreach, description);
         }
 
-        private string BuildDescription(IHighVolumeRuleBreach ruleBreach)
+        public string BuildDescription(IHighVolumeRuleBreach ruleBreach)
         {
             var description = $"High Volume rule breach detected for {ruleBreach.Security?.Name}.";
             var dailyDescription = string.Empty;

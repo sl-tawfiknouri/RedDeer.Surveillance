@@ -147,6 +147,7 @@
 
             if (this._decimalRangeRuleFilter.Type == RuleFilterType.None)
             {
+                this._logger.LogInformation($"No filter applied (RuleFilterType.None)");
                 this.UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
@@ -155,6 +156,7 @@
 
             var tradingHours =
                 this._tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+
             if (!tradingHours.IsValid)
             {
                 this._logger.LogError(
@@ -166,7 +168,12 @@
 
             var marketTradedVolume = this.RetrieveMarketTradedVolume(mostRecentTrade, tradingHours, activeHistory);
 
-            if (marketTradedVolume == null) return;
+            if (marketTradedVolume == null)
+            {
+                this._logger.LogInformation($"{mostRecentTrade?.Instrument} had no market traded volume for {this.UniverseDateTime} and {mostRecentTrade.Market?.MarketIdentifierCode}");
+
+                return;
+            }
 
             var volumeTraded = activeHistory.Sum(_ => _.OrderFilledVolume ?? 0);
 
@@ -190,22 +197,33 @@
 
             var proportionOfTradedVolume = volumeTraded / (decimal)marketTradedVolume;
 
+            this._logger.LogInformation($"proportion of traded volume was {proportionOfTradedVolume} calculated from volume traded {volumeTraded} and market traded volume of {(decimal)marketTradedVolume} for {mostRecentTrade.Instrument.Identifiers}");
+
             var passedFilter = false;
 
             if (this._decimalRangeRuleFilter.Type == RuleFilterType.Include)
+            {
                 passedFilter =
-                    (this._decimalRangeRuleFilter.Max == null || this._decimalRangeRuleFilter.Max == 1
-                                                              || proportionOfTradedVolume
-                                                              <= this._decimalRangeRuleFilter.Max)
-                    && (this._decimalRangeRuleFilter.Min == null
-                        || proportionOfTradedVolume >= this._decimalRangeRuleFilter.Min);
+                    (this._decimalRangeRuleFilter.Max == null
+                     || this._decimalRangeRuleFilter.Max == 1
+                     || proportionOfTradedVolume <= this._decimalRangeRuleFilter.Max)
+                    && 
+                    (this._decimalRangeRuleFilter.Min == null
+                     || proportionOfTradedVolume >= this._decimalRangeRuleFilter.Min);
+
+                this._logger.LogInformation($"{mostRecentTrade.Instrument.Identifiers} was evaluated on an include filter and it was found to be PASSED FILTER? {passedFilter}");
+            }
             else if (this._decimalRangeRuleFilter.Type == RuleFilterType.Exclude)
-                passedFilter = this._decimalRangeRuleFilter.Max == null || this._decimalRangeRuleFilter.Max == 1
-                                                                        || proportionOfTradedVolume
-                                                                        > this._decimalRangeRuleFilter.Max
-                                                                        || this._decimalRangeRuleFilter.Min == null
-                                                                        || proportionOfTradedVolume
-                                                                        < this._decimalRangeRuleFilter.Min;
+            {
+                passedFilter =
+                    this._decimalRangeRuleFilter.Max == null 
+                    || this._decimalRangeRuleFilter.Max == 1
+                    || proportionOfTradedVolume > this._decimalRangeRuleFilter.Max
+                    || this._decimalRangeRuleFilter.Min == null
+                    || proportionOfTradedVolume < this._decimalRangeRuleFilter.Min;
+
+                this._logger.LogInformation($"{mostRecentTrade.Instrument.Identifiers} was evaluated on an exclude filter and it was found to be PASSED FILTER? {passedFilter}");
+            }
 
             if (passedFilter) this.UpdatePassedFilterWithOrders(activeHistory);
         }
@@ -280,6 +298,8 @@
 
             if (hadMissingData && this.RunMode == RuleRunMode.ForceRun)
             {
+                this._logger.LogInformation($"{mostRecentTrade.Instrument.Identifiers} had missing data on a force run, allowing the trade through");
+
                 this.UpdatePassedFilterWithOrders(activeHistory);
                 return null;
             }

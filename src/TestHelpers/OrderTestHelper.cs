@@ -61,7 +61,7 @@
                 "trader one",
                 "clearing agent",
                 "dealer-instructions",
-                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.Now, true),
+                new OrderBroker(string.Empty, string.Empty, "Mr Broker", DateTime.Now, true), 
                 null,
                 null,
                 OptionEuropeanAmerican.NONE,

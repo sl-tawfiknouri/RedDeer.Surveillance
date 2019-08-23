@@ -7,7 +7,7 @@
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Orders;
 
-    using NUnit.Framework;
+    using NUnit.Framework;   
 
     [TestFixture]
     public class OrderAnalysisSentimentServiceTests

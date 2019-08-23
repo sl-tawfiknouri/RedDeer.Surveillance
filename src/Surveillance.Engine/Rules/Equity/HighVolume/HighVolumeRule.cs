@@ -162,11 +162,15 @@
 
             if (tradeWindow == null || !tradeWindow.Any()) return;
 
-            var tradedSecurities = tradeWindow.Where(tr => tr.OrderStatus() == OrderStatus.Filled).ToList();
+            var tradedSecurities =
+                tradeWindow
+                    .Where(tr =>
+                        tr.OrderFilledVolume.GetValueOrDefault() > 0)
+                    .ToList();
 
             var tradedVolume = tradedSecurities.Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
-            var tradePosition = new TradePosition(tradeWindow.ToList());
+            var tradePosition = new TradePosition(tradedSecurities.ToList());
             var mostRecentTrade = tradeWindow.Pop();
 
             var dailyBreach = this.CheckDailyVolume(mostRecentTrade, tradedVolume);
@@ -275,7 +279,9 @@
                                        : 0;
 
             if (tradedVolume >= threshold)
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+            {
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold, mostRecentTrade.Market);
+            }
 
             return HighVolumeRuleBreach.BreachDetails.None();
         }
@@ -285,8 +291,9 @@
             HighVolumeRuleBreach.BreachDetails windowBreach,
             HighVolumeRuleBreach.BreachDetails marketCapBreach)
         {
-            return (!dailyBreach?.HasBreach ?? true) && (!windowBreach?.HasBreach ?? true)
-                                                     && (!marketCapBreach?.HasBreach ?? true);
+            return (!dailyBreach?.HasBreach ?? true) 
+                   && (!windowBreach?.HasBreach ?? true)
+                   && (!marketCapBreach?.HasBreach ?? true);
         }
 
         private HighVolumeRuleBreach.BreachDetails MarketCapCheck(Order mostRecentTrade, List<Order> trades)
@@ -344,7 +351,7 @@
                 var thresholdMoney = new Money((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
                 var tradedMoney = new Money((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdMoney, tradedMoney);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdMoney, tradedMoney, mostRecentTrade.Market);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();
@@ -401,7 +408,7 @@
             }
 
             if (tradedVolume >= threshold)
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold, mostRecentTrade.Market);
 
             return HighVolumeRuleBreach.BreachDetails.None();
         }

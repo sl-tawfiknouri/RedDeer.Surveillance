@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Surveillance.Engine\Surveillance.Engine.Rules.csproj" />
+    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj" />
   </ItemGroup>
 
 </Project>

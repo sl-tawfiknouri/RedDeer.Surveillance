@@ -10,6 +10,8 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 {
+    using Domain.Core.Markets;
+
     public class HighVolumeRuleBreach : IHighVolumeRuleBreach
     {
         public HighVolumeRuleBreach(
@@ -76,23 +78,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
-                decimal breachThresholdAmount)
+                decimal breachThresholdAmount,
+                Market venue)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
                 BreachThresholdAmount = breachThresholdAmount;
+                Venue = venue;
             }
 
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
                 Money breachThresholdMoney,
-                Money breachTradedMoney)
+                Money breachTradedMoney,
+                Market venue)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
                 BreachThresholdMoney = breachThresholdMoney;
                 BreachTradedMoney = breachTradedMoney;
+                Venue = venue;
             }
 
             public bool HasBreach { get; }
@@ -101,9 +107,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             public Money BreachThresholdMoney { get; }
             public Money BreachTradedMoney { get; }
 
+            public Market Venue { get; }
+
             public static BreachDetails None()
             {
-                return new BreachDetails(false, null, 0);
+                return new BreachDetails(false, null, 0, null);
             }
         }
     }

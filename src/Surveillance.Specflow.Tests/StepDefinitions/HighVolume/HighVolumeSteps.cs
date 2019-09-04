@@ -59,6 +59,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
             var exchangeRateDto = new ExchangeRateDto
             {
+
                 DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 0.02d
             };
 
@@ -71,11 +72,25 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                                           Rate = 100
                                       };
 
+            var exchangeRateDtoGbx = new ExchangeRateDto
+                                         {
+                                             DateTime = new DateTime(2018, 01, 01),
+                                             Name = "GBX/GBX",
+                                             FixedCurrency = "GBX",
+                                             VariableCurrency = "GBX",
+                                             Rate = 1
+                                         };
+
             A.CallTo(() =>
                     exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
                         {
-                            { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto, exchangeRateDtoJpy }}
+                            { new DateTime(2018, 01, 01), new ExchangeRateDto[]
+                                                              {
+                                                                  exchangeRateDto,
+                                                                  exchangeRateDtoJpy,
+                                                                  exchangeRateDtoGbx
+                                                              }}
                         });
 
             var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();

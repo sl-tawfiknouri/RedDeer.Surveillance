@@ -38,11 +38,11 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
-        private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        private ICurrencyConverterService currencyConverterService;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
         private EquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
@@ -62,13 +62,21 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 0.02d
             };
 
+            var exchangeRateDtoJpy = new ExchangeRateDto
+                                      {
+                                          DateTime = new DateTime(2018, 01, 01),
+                                          Name = "USD/JPY",
+                                          FixedCurrency = "USD",
+                                          VariableCurrency = "JPY",
+                                          Rate = 100
+                                      };
+
             A.CallTo(() =>
                     exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
                         {
-                            { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto }}
+                            { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto, exchangeRateDtoJpy }}
                         });
-
 
             var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
@@ -113,7 +121,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 new NullLogger<UniverseMarketCacheFactory>());
 
             var currencyLogger = new NullLogger<CurrencyConverterService>();
-            _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
+            currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
             _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _logger = new NullLogger<HighVolumeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
@@ -124,6 +132,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _universeOrderFilterService,
                 _interdayUniverseMarketCacheFactory,
                 _tradingHoursService,
+                this.currencyConverterService,
                 _logger,
                 _tradingLogger);
         }

@@ -65,6 +65,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newDaily = new DailySummaryTimeBar(
                 newMarketCap,
+                "USD",
                 newIntraday,
                 tick.DailySummaryTimeBar.ListedSecurities,
                 tick.DailySummaryTimeBar.DailyVolume,

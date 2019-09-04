@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Cfis.Interfaces;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Timebars;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.Interfaces;
-using Surveillance.DataLayer.Aurora.Market.Interfaces;
-
-namespace Surveillance.DataLayer.Aurora.Market
+﻿namespace Surveillance.DataLayer.Aurora.Market
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Dapper;
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Cfis.Interfaces;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Timebars;
+    using Microsoft.Extensions.Logging;
+    using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.Interfaces;
+    using Surveillance.DataLayer.Aurora.Market.Interfaces;
+    
     public class ReddeerMarketRepository : IReddeerMarketRepository
     {
         private readonly IConnectionStringFactory _dbConnectionFactory;
@@ -68,7 +68,8 @@ namespace Surveillance.DataLayer.Aurora.Market
              IEDS.LowIntradayPrice as LowIntradayPrice,
              IEDS.ListedSecurities as ListedSecurities,
              IEDS.MarketCap as MarketCap,
-             IEDS.DailyVolume as DailyVolume
+             IEDS.DailyVolume as DailyVolume,
+             IEDS.Currency AS MarketCapCurrency
              FROM InstrumentEquityTimeBars AS MSEP
              LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
              ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
@@ -120,7 +121,8 @@ namespace Surveillance.DataLayer.Aurora.Market
              IEDS.LowIntradayPrice as LowIntradayPrice,
              IEDS.ListedSecurities as ListedSecurities,
              IEDS.MarketCap as MarketCap,
-             IEDS.DailyVolume as DailyVolume
+             IEDS.DailyVolume as DailyVolume,
+             IEDS.Currency AS MarketCapCurrency
              FROM InstrumentEquityDailySummary AS IEDS
              LEFT OUTER JOIN FinancialInstruments AS MSES
              ON IEDS.SecurityId = MSES.Id
@@ -290,17 +292,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             ICfiInstrumentTypeMapper cfiMapper,
             ILogger<ReddeerMarketRepository> logger)
         {
-            _dbConnectionFactory =
-                dbConnectionFactory
-                ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
-
-            _cfiMapper =
-                cfiMapper
-                ?? throw new ArgumentNullException(nameof(cfiMapper));
-
-            _logger =
-                logger
-                ?? throw new ArgumentNullException(nameof(logger));
+            this._dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+            this._cfiMapper = cfiMapper ?? throw new ArgumentNullException(nameof(cfiMapper));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IReadOnlyCollection<SecurityEnrichmentDto>> GetUnEnrichedSecurities()
@@ -728,6 +722,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var dailySummary =
                 new DailySummaryTimeBar(
                     dto.MarketCap,
+                    dto.MarketCapCurrency,
                     intradayPrices,
                     dto.ListedSecurities,
                     new Volume(dto.DailyVolume.GetValueOrDefault(0)),
@@ -744,7 +739,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             return tick;
         }
 
-        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Markets.Market market)
+        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(
+            MarketStockExchangeSecuritiesDto dto,
+            Domain.Core.Markets.Market market)
         {
             if (dto == null)
             {
@@ -788,6 +785,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var dailySummary =
                 new DailySummaryTimeBar(
                     dto.MarketCap,
+                    dto.MarketCapCurrency,
                     intradayPrices,
                     dto.ListedSecurities,
                     new Volume(dto.DailyVolume.GetValueOrDefault(0)),
@@ -838,62 +836,66 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(EquityInstrumentIntraDayTimeBar entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
+            public MarketStockExchangeSecuritiesDto(
+                EquityInstrumentIntraDayTimeBar entity,
+                int marketId,
+                ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
                     return;
                 }
 
-                ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
-                ReddeerId = entity.Security?.Identifiers.ReddeerId;
-                ReddeerEnrichmentId = entity.Security?.Identifiers.ReddeerEnrichmentId;
-                Sedol = entity.Security?.Identifiers.Sedol;
-                Isin = entity.Security?.Identifiers.Isin;
-                Figi = entity.Security?.Identifiers.Figi;
-                Cusip = entity.Security?.Identifiers.Cusip;
-                Lei = entity.Security?.Identifiers.Lei;
-                ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
-                BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
-                SecurityName = entity.Security?.Name;
-                Cfi = entity.Security?.Cfi;
-                IssuerIdentifier = entity.Security?.IssuerIdentifier;
-                SecurityCurrency =
+                this.ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
+                this.ReddeerId = entity.Security?.Identifiers.ReddeerId;
+                this.ReddeerEnrichmentId = entity.Security?.Identifiers.ReddeerEnrichmentId;
+                this.Sedol = entity.Security?.Identifiers.Sedol;
+                this.Isin = entity.Security?.Identifiers.Isin;
+                this.Figi = entity.Security?.Identifiers.Figi;
+                this.Cusip = entity.Security?.Identifiers.Cusip;
+                this.Lei = entity.Security?.Identifiers.Lei;
+                this.ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
+                this.BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
+                this.SecurityName = entity.Security?.Name;
+                this.Cfi = entity.Security?.Cfi;
+                this.IssuerIdentifier = entity.Security?.IssuerIdentifier;
+                this.SecurityCurrency =
                     entity.SpreadTimeBar.Price.Currency.Code
                     ?? entity.SpreadTimeBar.Ask.Currency.Code
                     ?? entity.SpreadTimeBar.Bid.Currency.Code;
 
-                Epoch = entity.TimeStamp;
-                EpochDate = entity.TimeStamp.Date;
-                BidPrice = entity.SpreadTimeBar.Bid.Value;
-                AskPrice = entity.SpreadTimeBar.Ask.Value;
-                MarketPrice = entity.SpreadTimeBar.Price.Value;
-                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
-                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
-                MarketCap = entity.DailySummaryTimeBar.MarketCapCents;
-                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
-                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
-                MarketId = marketId.ToString();
-                InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+                this.Epoch = entity.TimeStamp;
+                this.EpochDate = entity.TimeStamp.Date;
+                this.BidPrice = entity.SpreadTimeBar.Bid.Value;
+                this.AskPrice = entity.SpreadTimeBar.Ask.Value;
+                this.MarketPrice = entity.SpreadTimeBar.Price.Value;
+                this.OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                this.ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                this.HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                this.LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                this.ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                this.MarketCap = entity.DailySummaryTimeBar?.MarketCap?.Value;
+                this.MarketCapCurrency = entity.DailySummaryTimeBar?.MarketCap?.Currency.Code;
+                this.VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
+                this.DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
+                this.MarketId = marketId.ToString();
+                this.InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
 
-                UnderlyingCfi = entity?.Security?.UnderlyingCfi;
-                UnderlyingName = entity?.Security?.UnderlyingName;
-                UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
-                UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
-                UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
-                UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
-                UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
-                UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
-                UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
-                UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingCfi = entity?.Security?.UnderlyingCfi;
+                this.UnderlyingName = entity?.Security?.UnderlyingName;
+                this.UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
+                this.UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
+                this.UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
+                this.UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
+                this.UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
+                this.UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
+                this.UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
+                this.UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
 
-                SectorCode = entity?.Security?.SectorCode;
-                IndustryCode = entity?.Security?.IndustryCode;
-                RegionCode = entity?.Security?.RegionCode;
-                CountryCode = entity?.Security?.CountryCode;
+                this.SectorCode = entity?.Security?.SectorCode;
+                this.IndustryCode = entity?.Security?.IndustryCode;
+                this.RegionCode = entity?.Security?.RegionCode;
+                this.CountryCode = entity?.Security?.CountryCode;
             }
 
             public string Id { get; set; }
@@ -971,6 +973,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public long? DailyVolume { get; set; }
 
+            public string MarketCapCurrency { get; set; }
+
+
 
 
             // dont set these two for writes they're just for reads
@@ -993,94 +998,95 @@ namespace Surveillance.DataLayer.Aurora.Market
                     return;
                 }
 
-                Id = entity?.Security?.Identifiers.Id ?? string.Empty;
-                MarketIdPrimaryKey = marketIdForeignKey;
-                MarketId = entity.Market?.MarketIdentifierCode;
-                MarketName = entity.Market?.Name;
-                ReddeerId = entity.Security?.Identifiers.ReddeerId;
-                ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
-                Sedol = entity.Security?.Identifiers.Sedol;
-                Isin = entity.Security?.Identifiers.Isin;
-                Figi = entity.Security?.Identifiers.Figi;
-                Cusip = entity.Security?.Identifiers.Cusip;
-                Lei = entity.Security?.Identifiers.Lei;
-                ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
-                BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
-                SecurityName = entity.Security?.Name;
-                Cfi = entity.Security?.Cfi;
-                IssuerIdentifier = entity.Security?.IssuerIdentifier;
-                SecurityCurrency =
+                this.Id = entity?.Security?.Identifiers.Id ?? string.Empty;
+                this.MarketIdPrimaryKey = marketIdForeignKey;
+                this.MarketId = entity.Market?.MarketIdentifierCode;
+                this.MarketName = entity.Market?.Name;
+                this.ReddeerId = entity.Security?.Identifiers.ReddeerId;
+                this.ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
+                this.Sedol = entity.Security?.Identifiers.Sedol;
+                this.Isin = entity.Security?.Identifiers.Isin;
+                this.Figi = entity.Security?.Identifiers.Figi;
+                this.Cusip = entity.Security?.Identifiers.Cusip;
+                this.Lei = entity.Security?.Identifiers.Lei;
+                this.ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
+                this.BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
+                this.SecurityName = entity.Security?.Name;
+                this.Cfi = entity.Security?.Cfi;
+                this.IssuerIdentifier = entity.Security?.IssuerIdentifier;
+                this.SecurityCurrency =
                     entity.SpreadTimeBar.Price.Currency.Code
                     ?? entity.SpreadTimeBar.Ask.Currency.Code
                     ?? entity.SpreadTimeBar.Bid.Currency.Code
                     ?? entity.SpreadTimeBar.Price.Currency.Code;
-                Epoch = entity.TimeStamp;
-                BidPrice = entity.SpreadTimeBar.Bid.Value;
-                AskPrice = entity.SpreadTimeBar.Ask.Value;
-                MarketPrice = entity.SpreadTimeBar.Price.Value;
-                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
-                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
-                MarketCap = entity.DailySummaryTimeBar.MarketCapCents;
-                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
-                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
-                InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
-                EpochDate = entity.TimeStamp.Date;
+                this.Epoch = entity.TimeStamp;
+                this.BidPrice = entity.SpreadTimeBar.Bid.Value;
+                this.AskPrice = entity.SpreadTimeBar.Ask.Value;
+                this.MarketPrice = entity.SpreadTimeBar.Price.Value;
+                this.OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                this.ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                this.HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                this.LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                this.ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                this.MarketCap = entity.DailySummaryTimeBar?.MarketCap?.Value;
+                this.MarketCapCurrency = entity.DailySummaryTimeBar?.MarketCap?.Currency.Code;
+                this.VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
+                this.DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
+                this.InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+                this.EpochDate = entity.TimeStamp.Date;
 
-                UnderlyingCfi = entity?.Security?.UnderlyingCfi;
-                UnderlyingName = entity?.Security?.UnderlyingName;
-                UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
-                UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
-                UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
-                UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
-                UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
-                UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
-                UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
-                UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingCfi = entity?.Security?.UnderlyingCfi;
+                this.UnderlyingName = entity?.Security?.UnderlyingName;
+                this.UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
+                this.UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
+                this.UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
+                this.UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
+                this.UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
+                this.UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
+                this.UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
+                this.UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
 
-                SectorCode = entity?.Security?.SectorCode;
-                IndustryCode = entity?.Security?.IndustryCode;
-                RegionCode = entity?.Security?.RegionCode;
-                CountryCode = entity?.Security?.CountryCode;
+                this.SectorCode = entity?.Security?.SectorCode;
+                this.IndustryCode = entity?.Security?.IndustryCode;
+                this.RegionCode = entity?.Security?.RegionCode;
+                this.CountryCode = entity?.Security?.CountryCode;
             }
 
             public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
-                MarketIdPrimaryKey = marketIdForeignKey;
+                this.MarketIdPrimaryKey = marketIdForeignKey;
 
-                Id = security.Identifiers.Id;
-                ReddeerId = security.Identifiers.ReddeerId;
-                ClientIdentifier = security.Identifiers.ClientIdentifier;
-                Sedol = security.Identifiers.Sedol;
-                Isin = security.Identifiers.Isin;
-                Figi = security.Identifiers.Figi;
-                Cusip = security.Identifiers.Cusip;
-                Lei = security.Identifiers.Lei;
-                ExchangeSymbol = security.Identifiers.ExchangeSymbol;
-                BloombergTicker = security.Identifiers.BloombergTicker;
-                SecurityName = security.Name;
-                Cfi = security.Cfi;
-                IssuerIdentifier = security.IssuerIdentifier;
-                InstrumentType = (int)cfiMapper.MapCfi(security.Cfi);
-                SecurityCurrency = security.SecurityCurrency;
+                this.Id = security.Identifiers.Id;
+                this.ReddeerId = security.Identifiers.ReddeerId;
+                this.ClientIdentifier = security.Identifiers.ClientIdentifier;
+                this.Sedol = security.Identifiers.Sedol;
+                this.Isin = security.Identifiers.Isin;
+                this.Figi = security.Identifiers.Figi;
+                this.Cusip = security.Identifiers.Cusip;
+                this.Lei = security.Identifiers.Lei;
+                this.ExchangeSymbol = security.Identifiers.ExchangeSymbol;
+                this.BloombergTicker = security.Identifiers.BloombergTicker;
+                this.SecurityName = security.Name;
+                this.Cfi = security.Cfi;
+                this.IssuerIdentifier = security.IssuerIdentifier;
+                this.InstrumentType = (int)cfiMapper.MapCfi(security.Cfi);
+                this.SecurityCurrency = security.SecurityCurrency;
+                
+                this.UnderlyingCfi = security.UnderlyingCfi;
+                this.UnderlyingName = security.UnderlyingName;
+                this.UnderlyingSedol = security.Identifiers.UnderlyingSedol;
+                this.UnderlyingIsin = security.Identifiers.UnderlyingIsin;
+                this.UnderlyingFigi = security.Identifiers.UnderlyingFigi;
+                this.UnderlyingCusip = security.Identifiers.UnderlyingCusip;
+                this.UnderlyingLei = security.Identifiers.UnderlyingLei;
+                this.UnderlyingExchangeSymbol = security.Identifiers.UnderlyingExchangeSymbol;
+                this.UnderlyingBloombergTicker = security.Identifiers.UnderlyingBloombergTicker;
+                this.UnderlyingClientIdentifier = security.Identifiers.UnderlyingClientIdentifier;
 
-                UnderlyingCfi = security.UnderlyingCfi;
-                UnderlyingName = security.UnderlyingName;
-                UnderlyingSedol = security.Identifiers.UnderlyingSedol;
-                UnderlyingIsin = security.Identifiers.UnderlyingIsin;
-                UnderlyingFigi = security.Identifiers.UnderlyingFigi;
-                UnderlyingCusip = security.Identifiers.UnderlyingCusip;
-                UnderlyingLei = security.Identifiers.UnderlyingLei;
-                UnderlyingExchangeSymbol = security.Identifiers.UnderlyingExchangeSymbol;
-                UnderlyingBloombergTicker = security.Identifiers.UnderlyingBloombergTicker;
-                UnderlyingClientIdentifier = security.Identifiers.UnderlyingClientIdentifier;
-
-                SectorCode = security.SectorCode;
-                IndustryCode = security.IndustryCode;
-                RegionCode = security.RegionCode;
-                CountryCode = security.CountryCode;
+                this.SectorCode = security.SectorCode;
+                this.IndustryCode = security.IndustryCode;
+                this.RegionCode = security.RegionCode;
+                this.CountryCode = security.CountryCode;
             }
 
             public string MarketIdPrimaryKey { get; set; }
@@ -1156,6 +1162,8 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? MarketCap { get; set; }
 
+            public string MarketCapCurrency { get; set; }
+
             public long? VolumeTraded { get; set; }
 
             public long? DailyVolume { get; set; }
@@ -1183,26 +1191,26 @@ namespace Surveillance.DataLayer.Aurora.Market
                     throw new ArgumentNullException(nameof(cfiMapper));
                 }
 
-                Id = dto.Id;
-                ReddeerId = dto.ReddeerId;
-                MarketIdentifierCode = dto.MarketIdentifierCode;
-                MarketName = dto.MarketName;
-                SecurityName = dto.SecurityName;
-                Cfi = dto.Cfi;
-                IssuerIdentifier = dto.IssuerIdentifier;
-                SecurityClientIdentifier = dto.SecurityClientIdentifier;
-                Sedol = dto.Sedol;
-                Isin = dto.Isin;
-                Figi = dto.Figi;
-                ExchangeSymbol = dto.ExchangeSymbol;
-                Cusip = dto.Cusip;
-                Lei = dto.Lei;
-                BloombergTicker = dto.BloombergTicker;
-                InstrumentType = (int)cfiMapper.MapCfi(dto.Cfi);
-                SectorCode = dto.SectorCode;
-                IndustryCode = dto.IndustryCode;
-                RegionCode = dto.RegionCode;
-                CountryCode = dto.CountryCode;
+                this.Id = dto.Id;
+                this.ReddeerId = dto.ReddeerId;
+                this.MarketIdentifierCode = dto.MarketIdentifierCode;
+                this.MarketName = dto.MarketName;
+                this.SecurityName = dto.SecurityName;
+                this.Cfi = dto.Cfi;
+                this.IssuerIdentifier = dto.IssuerIdentifier;
+                this.SecurityClientIdentifier = dto.SecurityClientIdentifier;
+                this.Sedol = dto.Sedol;
+                this.Isin = dto.Isin;
+                this.Figi = dto.Figi;
+                this.ExchangeSymbol = dto.ExchangeSymbol;
+                this.Cusip = dto.Cusip;
+                this.Lei = dto.Lei;
+                this.BloombergTicker = dto.BloombergTicker;
+                this.InstrumentType = (int)cfiMapper.MapCfi(dto.Cfi);
+                this.SectorCode = dto.SectorCode;
+                this.IndustryCode = dto.IndustryCode;
+                this.RegionCode = dto.RegionCode;
+                this.CountryCode = dto.CountryCode;
             }
 
             public string Id { get; set; }

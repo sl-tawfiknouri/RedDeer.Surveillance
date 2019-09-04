@@ -47,6 +47,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     spread,
                     new DailySummaryTimeBar(
                         1000,
+                        "USD",
                         null,
                         1000,
                         new Volume(20000),
@@ -80,6 +81,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     spread,
                     new DailySummaryTimeBar(
                         1000,
+                        "USD",
                         null,
                         1000,
                         new Volume(200000),

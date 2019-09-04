@@ -29,6 +29,8 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 {
+    using Surveillance.Engine.Rules.Currency.Interfaces;
+
     [TestFixture]
     public class HighVolumeRuleTests
     {
@@ -42,6 +44,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         private IRuleRunDataRequestRepository _dataRequestRepository;
         private IStubRuleRunDataRequestRepository _stubDataRequestRepository;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        private ICurrencyConverterService currencyConverterService;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _factoryCache;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -60,6 +63,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
             _factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _factoryCache);
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            this.currencyConverterService = A.Fake<ICurrencyConverterService>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
@@ -74,7 +78,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -82,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, null, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, null, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -90,7 +94,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, RuleRunMode.ValidationRun, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, null, _tradingLogger));
         }
 
         [Test]
@@ -142,6 +146,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000m,
+                            "USD",
                             new IntradayPrices(
                                 underlyingTrade.OrderAverageFillPrice.Value, 
                                 underlyingTrade.OrderAverageFillPrice.Value,
@@ -192,6 +197,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             100000,
+                            "USD",
                             new IntradayPrices(underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value,
                                 underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
@@ -240,6 +246,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(
                                 underlyingTrade.OrderAverageFillPrice.Value,
                                 underlyingTrade.OrderAverageFillPrice.Value,
@@ -290,6 +297,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
                 _factory,
                 _tradingHoursService,
                 _dataRequestSubscriber,
+                this.currencyConverterService,
                 RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);

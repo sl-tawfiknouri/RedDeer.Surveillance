@@ -132,7 +132,7 @@ namespace SharedKernel.Files.Security
             var security = BuildSecurity(csv);
             var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice, new Volume(volume));
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
-            var dailySummary = new DailySummaryTimeBar(marketCap, intradayPrices, listedSecurities, new Volume(dailyVolume), timeStamp);
+            var dailySummary = new DailySummaryTimeBar(marketCap, csv.Currency, intradayPrices, listedSecurities, new Volume(dailyVolume), timeStamp);
             var market = new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
 
             return new EquityInstrumentIntraDayTimeBar(

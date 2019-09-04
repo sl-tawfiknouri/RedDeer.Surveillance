@@ -123,6 +123,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                         new Volume(volume)),
                     new DailySummaryTimeBar(
                         1000,
+                        "USD",
                         null,
                         1000,
                         new Volume(volume),

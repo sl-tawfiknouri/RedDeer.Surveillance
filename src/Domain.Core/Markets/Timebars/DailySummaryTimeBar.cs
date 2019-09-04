@@ -1,29 +1,30 @@
-﻿using System;
-
-namespace Domain.Core.Markets.Timebars
+﻿namespace Domain.Core.Markets.Timebars
 {
+    using System;
+
+    using Domain.Core.Financial.Money;
+
     public class DailySummaryTimeBar
     {
         public DailySummaryTimeBar(
             decimal? marketCap,
+            string currency,
             IntradayPrices intradayPrices, 
             long? listedSecurities,
             Volume dailyVolume, 
             DateTime timeStamp)
         {
-            MarketCapCents = marketCap;
-            IntradayPrices = intradayPrices;
-            ListedSecurities = listedSecurities;
-            DailyVolume = dailyVolume;
-            TimeStamp = timeStamp;
+            this.MarketCap =
+                marketCap != null 
+                    ? (Money?)new Money(marketCap, currency) 
+                    : null; 
+            this.IntradayPrices = intradayPrices;
+            this.ListedSecurities = listedSecurities;
+            this.DailyVolume = dailyVolume;
+            this.TimeStamp = timeStamp;
         }
 
-        /// <summary>
-        /// Valuation of the security in full USD
-        /// </summary>
-        public decimal? MarketCap => MarketCapCents.GetValueOrDefault(0) > 0 ? MarketCapCents / 100 : MarketCapCents;
-
-        public decimal? MarketCapCents { get; }
+        public Money? MarketCap { get; }
 
         public IntradayPrices IntradayPrices { get; }
 

@@ -10,17 +10,22 @@ using System;
 
 namespace Surveillance.Engine.Rules.Universe.Filter
 {
+    using Surveillance.Engine.Rules.Currency.Interfaces;
+
     public class HighMarketCapFilterFactory : IHighMarketCapFilterFactory
     {
+        private readonly ICurrencyConverterService currencyConverterService;
         private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILoggerFactory _loggerFactory;
 
         public HighMarketCapFilterFactory(
+            ICurrencyConverterService currencyConverterService,
             IUniverseMarketCacheFactory universeMarketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             ILoggerFactory loggerFactory)
         {
+            this.currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _universeMarketCacheFactory = universeMarketCacheFactory ?? throw new ArgumentNullException(nameof(universeMarketCacheFactory));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
@@ -39,6 +44,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 _tradingHoursService, 
                 operationRunRuleContext,
                 universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 ruleName,
                 _loggerFactory.CreateLogger<HighMarketCapFilter>());
         }

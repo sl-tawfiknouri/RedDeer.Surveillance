@@ -49,7 +49,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         private DailySummaryTimeBar AdjustedDailies(EquityInstrumentIntraDayTimeBar tick)
         {
             return new DailySummaryTimeBar(
-                tick.DailySummaryTimeBar.MarketCap,
+                tick.DailySummaryTimeBar.MarketCap.Value.Value,
+                tick.DailySummaryTimeBar.MarketCap.Value.Currency.Code,
                 tick.DailySummaryTimeBar.IntradayPrices,
                 tick.DailySummaryTimeBar.ListedSecurities,
                 tick.DailySummaryTimeBar.DailyVolume,

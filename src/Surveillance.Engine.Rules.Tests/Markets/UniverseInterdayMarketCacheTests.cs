@@ -108,6 +108,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                                 null,
                                 null,
                                 null,
+                                null,
                                 new Volume(1),
                                 DateTime.Now),
                         DateTime.UtcNow, 
@@ -128,6 +129,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
                             "GBX",
                             "TEST"),
                         new DailySummaryTimeBar(
+                            null,
                             null,
                             null,
                             null,

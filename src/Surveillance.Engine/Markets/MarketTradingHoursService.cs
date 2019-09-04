@@ -24,7 +24,13 @@ namespace Surveillance.Engine.Rules.Markets
 
         public ITradingHours GetTradingHoursForMic(string marketIdentifierCode)
         {
-            var exchange = GetExchange(marketIdentifierCode);
+            if (string.Equals(marketIdentifierCode, "NA", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(marketIdentifierCode, "N/A", StringComparison.OrdinalIgnoreCase))
+            {
+                return new TradingHours { Mic = marketIdentifierCode, IsValid = false };
+            }
+
+            var exchange = this.GetExchange(marketIdentifierCode);
 
             if (exchange == null)
             {

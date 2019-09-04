@@ -83,6 +83,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     ),
                                 new DailySummaryTimeBar(
                                     smp.Value.MarketCapUsd,
+                                    "USD",
                                     new IntradayPrices(
                                         new Money(
                                             smp.Value.OpenPrice,

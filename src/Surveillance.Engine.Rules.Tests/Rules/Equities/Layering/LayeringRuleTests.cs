@@ -224,6 +224,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                         tradeBuy.Instrument,
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
                                 tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
@@ -279,6 +280,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
                                 tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
@@ -333,6 +335,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
                                 tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
@@ -383,6 +386,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                         tradeBuy.Instrument,
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
                                 tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
@@ -437,6 +441,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
+                            "USD",
                             new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
                                 tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
@@ -722,7 +727,17 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false, true);
             }
 
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule =
+                new LayeringRule(
+                parameters,
+                _alertStream,
+                _orderFilter,
+                _logger,
+                _factory,
+                _tradingHoursService,
+                _ruleCtx,
+                RuleRunMode.ValidationRun,
+                _tradingLogger);
 
             return rule;
         }
@@ -746,8 +761,12 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(baseBuyFrame.OrderAverageFillPrice.Value, baseBuyFrame.OrderAverageFillPrice.Value,
-                                baseBuyFrame.OrderAverageFillPrice.Value, baseBuyFrame.OrderAverageFillPrice.Value),
+                            "USD",
+                            new IntradayPrices(
+                                baseBuyFrame.OrderAverageFillPrice.Value,
+                                baseBuyFrame.OrderAverageFillPrice.Value,
+                                baseBuyFrame.OrderAverageFillPrice.Value,
+                                baseBuyFrame.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             timestamp),

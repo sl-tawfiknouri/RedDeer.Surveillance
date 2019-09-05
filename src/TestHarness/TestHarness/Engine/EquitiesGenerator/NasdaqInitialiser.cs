@@ -59,6 +59,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
                      new DailySummaryTimeBar(
                          decimal.Parse(raw.Buy) * volume,
+                         "USD",
                          new IntradayPrices(
                              new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
                              new Money(decimal.Parse(raw.Sell), _nasdaqCurrency),

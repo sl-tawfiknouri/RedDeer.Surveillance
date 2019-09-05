@@ -17,8 +17,15 @@ using System;
 
 namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 {
+    using System.Collections.Generic;
+
+    using Domain.Core.Financial.Money;
+
+    using Surveillance.Engine.Rules.Currency.Interfaces;
+
     public class HighMarketCapFilterTests
     {
+        private ICurrencyConverterService currencyConverterService;
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private IUniverseEquityInterDayCache _universeEquityInterDayCache;
         private IMarketTradingHoursService _tradingHoursService;
@@ -29,6 +36,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [SetUp]
         public void SetUp()
         {
+            this.currencyConverterService = A.Fake<ICurrencyConverterService>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _universeEquityInterDayCache = A.Fake<IUniverseEquityInterDayCache>();
             _universeDataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
@@ -53,6 +61,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -73,6 +82,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -96,6 +106,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -122,6 +133,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -154,6 +166,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -190,6 +203,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 
@@ -199,11 +213,22 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         }
 
         [TestCase(150, null, null, false)]
-        [TestCase(150, 100, 200, true)]
+        [TestCase(150, 100, 200, false)]
         [TestCase(50, 100, 200, true)]
         [TestCase(250, 100, 200, true)]
-        public void Filter_WhenUniverseEventAndMarketCapFilter_MustFilterCorrectly(decimal? marketCap, decimal? min, decimal? max, bool mustBeFiltered)
+        public void Filter_WhenUniverseEventAndMarketCapFilter_MustFilterCorrectly(
+            decimal? marketCap,
+            decimal? min,
+            decimal? max,
+            bool mustBeFiltered)
         {
+            A.CallTo(
+                () => this.currencyConverterService.Convert(
+                    A<IReadOnlyCollection<Money>>.Ignored,
+                    A<Currency>.Ignored,
+                    A<DateTime>.Ignored,
+                    A<ISystemProcessOperationRunRuleContext>.Ignored)).Returns(new Money(marketCap.Value, "GBP"));
+
             var fundOne = ((Order)null).Random();
             var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
 
@@ -212,7 +237,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
             //decimal? marketCap = 150;
             var marketDataResponse = new MarketDataResponse<EquityInstrumentInterDayTimeBar>(
-                new EquityInstrumentInterDayTimeBar(null, new DailySummaryTimeBar(marketCap, null, null, new Volume(), DateTime.UtcNow), DateTime.UtcNow, null), false, false);
+                new EquityInstrumentInterDayTimeBar(null, new DailySummaryTimeBar(marketCap, "GBP", null, null, new Volume(), DateTime.UtcNow), DateTime.UtcNow, null), false, false);
 
             A.CallTo(() => _universeEquityInterDayCache.Get(
                     A<MarketDataRequest>.That.Matches(
@@ -235,6 +260,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
                 _tradingHoursService,
                 _operationRunRuleContext,
                 _universeDataRequestsSubscriber,
+                this.currencyConverterService,
                 "test",
                 _logger);
 

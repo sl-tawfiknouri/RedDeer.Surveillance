@@ -11,7 +11,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     {
         IHighVolumeRule Build(
             IHighVolumeRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode);

@@ -76,6 +76,7 @@
                                 new Volume(volume(this.CalculateADailyVolume(smp.Value)))),
                             new DailySummaryTimeBar(
                                 smp.Value.MarketCapUsd,
+                                    "USD",
                                 new IntradayPrices(
                                     new Money(smp.Value.OpenPrice, this.SetCurrency(sm.SecurityCurrency)),
                                     new Money(smp.Value.ClosePrice, this.SetCurrency(sm.SecurityCurrency)),

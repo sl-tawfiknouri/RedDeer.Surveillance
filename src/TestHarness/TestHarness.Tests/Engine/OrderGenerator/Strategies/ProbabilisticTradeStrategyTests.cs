@@ -144,6 +144,7 @@
                         new Money((decimal)buyPrice, "GBP"),
                         new Volume(volume)),
                     new DailySummaryTimeBar(1000, null, 1000, new Volume(volume), DateTime.UtcNow),
+                        "USD",
                     DateTime.UtcNow,
                     new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 

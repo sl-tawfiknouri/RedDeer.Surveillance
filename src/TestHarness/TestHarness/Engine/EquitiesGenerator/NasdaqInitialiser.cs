@@ -61,6 +61,7 @@
                         new Volume(volume)),
                     new DailySummaryTimeBar(
                         decimal.Parse(raw.Buy) * volume,
+                         "USD",
                         new IntradayPrices(
                             new Money(decimal.Parse(raw.Buy), this._nasdaqCurrency),
                             new Money(decimal.Parse(raw.Sell), this._nasdaqCurrency),

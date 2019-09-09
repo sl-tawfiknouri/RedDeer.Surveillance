@@ -61,6 +61,7 @@
                 new SpreadTimeBar(new Money(0, "gbp"), new Money(0, "gbp"), new Money(0, "gbp"), new Volume(1000)),
                 new DailySummaryTimeBar(
                     10000,
+                    "USD",
                     new IntradayPrices(null, null, null, null),
                     1000,
                     new Volume(1000),
@@ -124,6 +125,7 @@
                 new SpreadTimeBar(new Money(0, "gbp"), new Money(0, "gbp"), new Money(0, "gbp"), new Volume(1000)),
                 new DailySummaryTimeBar(
                     1000,
+                    "USD",
                     new IntradayPrices(null, null, null, null),
                     1000,
                     new Volume(2000),
@@ -186,6 +188,7 @@
                 security,
                 new SpreadTimeBar(new Money(0, "gbp"), new Money(0, "gbp"), new Money(0, "gbp"), new Volume(1000)),
                 new DailySummaryTimeBar(
+                    "USD",
                     10000,
                     new IntradayPrices(null, null, null, null),
                     1000,
@@ -250,6 +253,7 @@
                 new SpreadTimeBar(new Money(0, "gbp"), new Money(0, "gbp"), new Money(0, "gbp"), new Volume(1000)),
                 new DailySummaryTimeBar(
                     1000,
+                    "USD",
                     new IntradayPrices(null, null, null, null),
                     10000,
                     new Volume(2000),

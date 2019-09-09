@@ -25,7 +25,7 @@ Scenario: Empty Universe yields no alerts
 Scenario: One order at market cap yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 20000          | 20000         |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 10000          | 10000         |
 	And With the interday market data :
 	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
 	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
@@ -45,8 +45,8 @@ Scenario: Two order one inside and one inside window but next day at market cap 
 	| Vodafone     | 1       | 01/02/2018 16:30:00 |            |             |              |               | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 10000          | 10000         |
 	And With the interday market data :
 	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 100000000  | 1000       | GBX      |
-	| Vodafone     | 01/02/2018 | 10        | 11         | 11.5              | 10               | 10               | 100000000  | 1000       | GBX      |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	| Vodafone     | 01/02/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 
@@ -78,7 +78,7 @@ Scenario: Two order one inside and one outside trading hours at market cap yield
 	| Vodafone     | 1       | 01/01/2018 16:30:00 |            |             |              |               | 01/01/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 10000          | 10000         |
 	And With the interday market data :
 	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 100000000  | 1000       | GBX      |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 
@@ -187,7 +187,7 @@ Scenario: Two order at market cap at window yields one alert
 	| Vodafone     | 0       | 01/01/2018 10:30:00 |            |             |              |               | 01/01/2018 10:30:00 | MARKET | BUY       | GBX      |            | 10              | 10000          | 10000         |
 	And With the interday market data :
 	| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 100000000  | 1000       | GBX      |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 
@@ -215,6 +215,6 @@ Scenario: Two order at market cap and inside window yields one alert
 	| Vodafone     | 0       | 01/01/2018 10:25:00 |            |             |              |               | 01/01/2018 10:25:00 | MARKET | BUY       | GBX      |            | 10              | 10000          | 10000         |
 	And With the interday market data :
 	| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 100000000  | 1000       | GBX      |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts

@@ -11,7 +11,7 @@
     {
         IHighVolumeRule Build(
             IHighVolumeRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode);

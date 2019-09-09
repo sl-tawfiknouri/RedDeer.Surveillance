@@ -39,8 +39,10 @@
         private ILogger _logger;
 
         private MarketDataRequest _mdr1;
+                                null,
 
         private MarketDataRequest _mdr2;
+                            null,
 
         [Test]
         public void Add_Null_Does_Not_Throw_Exception()

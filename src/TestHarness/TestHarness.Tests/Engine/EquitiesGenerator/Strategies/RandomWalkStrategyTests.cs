@@ -70,6 +70,7 @@
                 security,
                 spread,
                 new DailySummaryTimeBar(1000, null, 1000, new Volume(20000), DateTime.UtcNow),
+                        "USD",
                 DateTime.UtcNow,
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
@@ -118,6 +119,7 @@
                 security,
                 spread,
                 new DailySummaryTimeBar(1000, null, 1000, new Volume(200000), DateTime.UtcNow),
+                        "USD",
                 DateTime.UtcNow,
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 

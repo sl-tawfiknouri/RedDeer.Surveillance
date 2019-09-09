@@ -16,32 +16,17 @@
 
             var timeBar = new DailySummaryTimeBar(
                 100,
+                "USD",
                 new IntradayPrices(null, null, null, null),
                 123,
                 new Volume(101),
                 date);
 
-            Assert.AreEqual(1, timeBar.MarketCap);
-            Assert.AreEqual(100, timeBar.MarketCapCents);
+            Assert.AreEqual(100, timeBar.MarketCap.Value.Value);
+            Assert.AreEqual("USD", timeBar.MarketCap.Value.Currency.Code);
             Assert.AreEqual(101, timeBar.DailyVolume.Traded);
             Assert.AreEqual(123, timeBar.ListedSecurities);
             Assert.AreEqual(date, timeBar.TimeStamp);
-        }
-
-        [Test]
-        public void Ctor_HandlesZeroMarketCapCents_ConversionToDollars()
-        {
-            var date = DateTime.UtcNow;
-
-            var timeBar = new DailySummaryTimeBar(
-                0,
-                new IntradayPrices(null, null, null, null),
-                123,
-                new Volume(101),
-                date);
-
-            Assert.AreEqual(0, timeBar.MarketCap);
-            Assert.AreEqual(0, timeBar.MarketCapCents);
         }
     }
 }

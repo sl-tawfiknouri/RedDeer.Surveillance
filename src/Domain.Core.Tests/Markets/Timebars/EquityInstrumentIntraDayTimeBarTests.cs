@@ -25,7 +25,7 @@
                 new Money(100, "GBP"),
                 new Volume(99));
 
-            var dailyTb = new DailySummaryTimeBar(100, prices, 123, new Volume(123), dates);
+            var dailyTb = new DailySummaryTimeBar(100, "USD", prices, 123, new Volume(123), dates);
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.DealerBooks);
             var equityTimeBar = new EquityInstrumentIntraDayTimeBar(fi, spreadTb, dailyTb, dates, market);

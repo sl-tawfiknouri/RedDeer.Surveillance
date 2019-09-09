@@ -69,8 +69,7 @@
             var tick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 spread,
-                new DailySummaryTimeBar(1000, null, 1000, new Volume(20000), DateTime.UtcNow),
-                        "USD",
+                new DailySummaryTimeBar(1000, "USD", null, 1000, new Volume(20000), DateTime.UtcNow),
                 DateTime.UtcNow,
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
@@ -118,8 +117,7 @@
             var tick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 spread,
-                new DailySummaryTimeBar(1000, null, 1000, new Volume(200000), DateTime.UtcNow),
-                        "USD",
+                new DailySummaryTimeBar(1000, "USD", null, 1000, new Volume(200000), DateTime.UtcNow),
                 DateTime.UtcNow,
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 

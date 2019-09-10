@@ -120,11 +120,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 lastTrade.Market?.MarketIdentifierCode);
 
+            var subtractDate = BackwardWindowSize > TimeSpan.FromDays(30) ? this.BackwardWindowSize : TimeSpan.FromDays(30);
+
             var marketDataRequest = new MarketDataRequest(
                 lastTrade.Market?.MarketIdentifierCode,
                 lastTrade.Instrument.Cfi,
                 lastTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(subtractDate)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllIntraday);

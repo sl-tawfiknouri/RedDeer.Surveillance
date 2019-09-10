@@ -47,6 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.FromMinutes(30),
                 Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
@@ -187,7 +188,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
+                UniverseDateTime.Subtract(this.TradeBackwardWindowSize), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -235,7 +236,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 securities.Peek().Market?.MarketIdentifierCode);
 
@@ -244,7 +245,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                     securities.Peek().Market.MarketIdentifierCode,
                     securities.Peek().Instrument.Cfi,
                     securities.Peek().Instrument.Identifiers,
-                    UniverseDateTime.Subtract(BackwardWindowSize), // implicitly correct (market closure event trigger)
+                    UniverseDateTime.Subtract(this.TradeBackwardWindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);

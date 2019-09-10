@@ -54,6 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,

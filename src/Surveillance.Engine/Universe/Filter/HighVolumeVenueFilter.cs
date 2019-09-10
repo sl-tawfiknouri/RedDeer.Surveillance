@@ -48,6 +48,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             ILogger<HighVolumeVenueFilter> logger) 
             : base(
                 timeWindows.BackwardWindowSize,
+                timeWindows.BackwardWindowSize,
                 timeWindows.FutureWindowSize,
                 Domain.Surveillance.Scheduling.Rules.UniverseFilter,
                 Versioner.Version(1,0),
@@ -58,7 +59,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 logger,
                 stackLogger)
         {
-            _eventExpiration = BackwardWindowSize + BackwardWindowSize + TimeSpan.FromDays(3);
+            _eventExpiration = this.TradeBackwardWindowSize + this.TradeBackwardWindowSize + TimeSpan.FromDays(3);
             _tradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
             _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
@@ -168,7 +169,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     closeTime,
                     RuleCtx.Id(),
                     _source);

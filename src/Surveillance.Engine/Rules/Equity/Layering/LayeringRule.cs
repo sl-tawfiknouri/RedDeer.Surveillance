@@ -44,6 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(20),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(20),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
@@ -260,7 +261,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllInterday);
@@ -306,14 +307,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    UniverseDateTime.Subtract(BackwardWindowSize),
+                    UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                    UniverseDateTime.Subtract(BackwardWindowSize),
+                    UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
 
@@ -373,14 +374,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    startDate.Subtract(BackwardWindowSize),
+                    startDate.Subtract(this.TradeBackwardWindowSize),
                     endDate,
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
                 _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                    UniverseDateTime.Subtract(BackwardWindowSize),
+                    UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
 

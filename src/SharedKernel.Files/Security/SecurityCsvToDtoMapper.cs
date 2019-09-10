@@ -142,6 +142,7 @@
             var intradayPrices = this.BuildIntradayPrices(csv, open, close, high, low);
             var dailySummary = new DailySummaryTimeBar(
                 marketCap,
+                csv.Currency,
                 intradayPrices,
                 listedSecurities,
                 new Volume(dailyVolume),

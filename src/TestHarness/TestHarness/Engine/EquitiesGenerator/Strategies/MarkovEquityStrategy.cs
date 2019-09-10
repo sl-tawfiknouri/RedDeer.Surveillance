@@ -71,6 +71,7 @@
 
             var newDaily = new DailySummaryTimeBar(
                 newMarketCap,
+                "USD",
                 newIntraday,
                 tick.DailySummaryTimeBar.ListedSecurities,
                 tick.DailySummaryTimeBar.DailyVolume,

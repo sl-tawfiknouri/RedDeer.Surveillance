@@ -261,7 +261,7 @@
                                 "entspb",
                                 "GBX",
                                 "TEST"),
-                            new DailySummaryTimeBar(null, null, null, new Volume(1), DateTime.Now),
+                            new DailySummaryTimeBar(null, null, null, null, new Volume(1), DateTime.Now),
                             DateTime.UtcNow,
                             xlon)
                     });
@@ -279,7 +279,7 @@
                                 "entspb",
                                 "GBX",
                                 "TEST"),
-                            new DailySummaryTimeBar(null, null, null, new Volume(1), DateTime.Now),
+                            new DailySummaryTimeBar(null, null, null, null, new Volume(1), DateTime.Now),
                             DateTime.UtcNow,
                             xlon)
                     });

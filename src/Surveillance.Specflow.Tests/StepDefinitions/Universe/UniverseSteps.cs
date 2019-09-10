@@ -179,6 +179,7 @@
 
             var dailySummary = new DailySummaryTimeBar(
                 marketDataParam.MarketCap,
+                marketDataParam.Currency,
                 intradayPrices,
                 marketDataParam.ListedSecurities,
                 new Volume(marketDataParam.DailyVolume.GetValueOrDefault(0)),

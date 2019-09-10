@@ -166,6 +166,7 @@
                 new SpreadTimeBar(new Money(10, "GBP"), new Money(100, "GBP"), new Money(200, "GBP"), new Volume(9)),
                 new DailySummaryTimeBar(
                     100,
+                    "USD",
                     new IntradayPrices(null, null, null, null),
                     101,
                     new Volume(1234),

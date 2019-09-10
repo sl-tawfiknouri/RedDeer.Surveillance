@@ -164,6 +164,7 @@
                 new FinancialInstrument(),
                 new DailySummaryTimeBar(
                     100,
+                    "USD",
                     new IntradayPrices(null, null, null, null),
                     101,
                     new Volume(1234),

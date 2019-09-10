@@ -2,44 +2,44 @@
 {
     using System;
 
+    using Domain.Core.Financial.Money;
+
     public class DailySummaryTimeBar
     {
         public DailySummaryTimeBar(
             decimal? marketCap,
-            IntradayPrices intradayPrices,
+            string currency,
+            IntradayPrices intradayPrices, 
             long? listedSecurities,
-            Volume dailyVolume,
+            Volume dailyVolume, 
             DateTime timeStamp)
         {
-            this.MarketCapCents = marketCap;
+            this.MarketCap =
+                marketCap != null 
+                    ? (Money?)new Money(marketCap, currency) 
+                    : null; 
             this.IntradayPrices = intradayPrices;
             this.ListedSecurities = listedSecurities;
             this.DailyVolume = dailyVolume;
             this.TimeStamp = timeStamp;
         }
 
-        /// <summary>
-        ///     The daily volume traded of the security on the exchange
-        /// </summary>
-        public Volume DailyVolume { get; }
+        public Money? MarketCap { get; }
 
         public IntradayPrices IntradayPrices { get; }
 
         /// <summary>
-        ///     The number of the listed security on the exchange
+        /// The number of the listed security on the exchange
         /// </summary>
         public long? ListedSecurities { get; }
 
         /// <summary>
-        ///     Valuation of the security in full USD
+        /// The daily volume traded of the security on the exchange
         /// </summary>
-        public decimal? MarketCap =>
-            this.MarketCapCents.GetValueOrDefault(0) > 0 ? this.MarketCapCents / 100 : this.MarketCapCents;
-
-        public decimal? MarketCapCents { get; }
+        public Volume DailyVolume { get; }
 
         /// <summary>
-        ///     The time point at which the data was canonical
+        /// The time point at which the data was canonical
         /// </summary>
         public DateTime TimeStamp { get; }
     }

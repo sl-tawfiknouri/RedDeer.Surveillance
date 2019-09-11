@@ -56,6 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 rampingParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(7),
+                TimeSpan.FromDays(30),
                 rampingParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.Ramping,
                 EquityRuleRampingFactory.Version,
@@ -116,15 +117,17 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 lastTrade.Market?.MarketIdentifierCode);
+
+            var subtractDate = this.TradeBackwardWindowSize > TimeSpan.FromDays(30) ? this.TradeBackwardWindowSize : TimeSpan.FromDays(30);
 
             var marketDataRequest = new MarketDataRequest(
                 lastTrade.Market?.MarketIdentifierCode,
                 lastTrade.Instrument.Cfi,
                 lastTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(subtractDate)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllIntraday);
@@ -174,7 +177,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             // wrong but should be a judgement
             var breach =
                 new RampingRuleBreach(
-                    BackwardWindowSize,
+                    this.TradeBackwardWindowSize,
                     tradePosition,
                     lastTrade.Instrument,
                     _rampingParameters.Id,
@@ -261,7 +264,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
 
@@ -270,7 +273,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);

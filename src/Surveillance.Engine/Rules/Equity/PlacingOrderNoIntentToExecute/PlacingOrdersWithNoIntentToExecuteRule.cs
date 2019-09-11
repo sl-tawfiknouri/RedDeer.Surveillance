@@ -49,6 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             ILogger<TradingHistoryStack> tradingStackLogger) 
             : base(
                 TimeSpan.FromHours(24),
+                TimeSpan.FromHours(24),
                 TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
@@ -113,7 +114,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 benchmarkOrder.Market?.MarketIdentifierCode);
 

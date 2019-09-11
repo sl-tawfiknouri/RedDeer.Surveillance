@@ -32,6 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),

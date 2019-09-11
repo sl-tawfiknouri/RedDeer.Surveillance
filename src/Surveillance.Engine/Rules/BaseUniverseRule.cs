@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Rules
     public abstract class BaseUniverseRule : IUniverseRule
     {
         private readonly string _name;
-        protected readonly TimeSpan BackwardWindowSize;
+        protected readonly TimeSpan TradeBackwardWindowSize;
         protected readonly TimeSpan ForwardWindowSize;
 
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
@@ -55,7 +55,8 @@ namespace Surveillance.Engine.Rules.Rules
         private readonly object _lock = new object();
 
         protected BaseUniverseRule(
-            TimeSpan backwardWindowSize,
+            TimeSpan tradeBackwardWindowSize,
+            TimeSpan marketBackwardWindowSize,
             TimeSpan forwardWindowSize,
             Domain.Surveillance.Scheduling.Rules rules,
             string version,
@@ -66,14 +67,14 @@ namespace Surveillance.Engine.Rules.Rules
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
         {
-            BackwardWindowSize = backwardWindowSize;
+            this.TradeBackwardWindowSize = tradeBackwardWindowSize;
             ForwardWindowSize = forwardWindowSize;
 
             Rule = rules;
             Version = version ?? string.Empty;
 
             UniverseEquityIntradayCache =
-                factory?.BuildIntraday(backwardWindowSize, runMode)
+                factory?.BuildIntraday(marketBackwardWindowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
             FutureUniverseEquityIntradayCache =
@@ -245,7 +246,7 @@ namespace Surveillance.Engine.Rules.Rules
                 UpdateTradeSubmittedTradingHistories(
                     value,
                     TradingInitialHistory,
-                    BackwardWindowSize,
+                    this.TradeBackwardWindowSize,
                     null);
 
             RunInitialSubmissionEvent(updatedHistory);
@@ -265,7 +266,7 @@ namespace Surveillance.Engine.Rules.Rules
                 UpdateTradeSubmittedTradingHistories(
                     value,
                     DelayedTradingInitialHistory,
-                    BackwardWindowSize,
+                    this.TradeBackwardWindowSize,
                     ForwardWindowSize);
 
             RunInitialSubmissionEventDelayed(updatedHistory);
@@ -320,7 +321,7 @@ namespace Surveillance.Engine.Rules.Rules
             _logger?.LogTrace($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeLatestTradingHistories(value, TradingHistory, BackwardWindowSize, null);
+            var updatedHistory = UpdateTradeLatestTradingHistories(value, TradingHistory, this.TradeBackwardWindowSize, null);
 
             RunPostOrderEvent(updatedHistory);
         }
@@ -335,7 +336,7 @@ namespace Surveillance.Engine.Rules.Rules
             _logger?.LogTrace($"Trade event (status changed delayed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeLatestTradingHistories(value, DelayedTradingHistory, BackwardWindowSize, ForwardWindowSize);
+            var updatedHistory = UpdateTradeLatestTradingHistories(value, DelayedTradingHistory, this.TradeBackwardWindowSize, ForwardWindowSize);
 
             RunPostOrderEventDelayed(updatedHistory);
         }
@@ -389,7 +390,7 @@ namespace Surveillance.Engine.Rules.Rules
             _logger?.LogTrace($"Trade Filled event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeFilledTradingHistories(value, TradingFillsHistory, BackwardWindowSize, null);
+            var updatedHistory = UpdateTradeFilledTradingHistories(value, TradingFillsHistory, this.TradeBackwardWindowSize, null);
 
             RunOrderFilledEvent(updatedHistory);
         }
@@ -410,7 +411,7 @@ namespace Surveillance.Engine.Rules.Rules
             _logger?.LogTrace($"Trade Filled event (status changed - delayed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeFilledTradingHistories(value, DelayedTradingFillsHistory, BackwardWindowSize, ForwardWindowSize);
+            var updatedHistory = UpdateTradeFilledTradingHistories(value, DelayedTradingFillsHistory, this.TradeBackwardWindowSize, ForwardWindowSize);
 
             RunOrderFilledEventDelayed(updatedHistory);
         }

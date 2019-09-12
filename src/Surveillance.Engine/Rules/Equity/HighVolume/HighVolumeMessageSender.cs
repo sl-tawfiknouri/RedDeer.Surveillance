@@ -59,7 +59,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             {
                 var dailyPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
                 var dailyBreachPercentage = Math.Ceiling(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-
+                
                 dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was ordered against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
             }
 

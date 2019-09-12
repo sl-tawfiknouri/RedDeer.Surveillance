@@ -62,6 +62,7 @@
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,

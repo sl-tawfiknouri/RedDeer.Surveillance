@@ -49,6 +49,7 @@
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(60),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(60),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Rules.CancelledOrders,
                 Versioner.Version(2, 0),

@@ -54,6 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),

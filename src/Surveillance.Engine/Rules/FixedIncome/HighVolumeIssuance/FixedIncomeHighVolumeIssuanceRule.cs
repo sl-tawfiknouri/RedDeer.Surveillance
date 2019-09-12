@@ -39,6 +39,7 @@
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                parameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Rules.FixedIncomeHighVolumeIssuance,
                 Versioner.Version(1, 0),

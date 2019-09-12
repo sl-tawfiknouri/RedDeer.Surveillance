@@ -56,6 +56,7 @@
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
+                  equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromMinutes(30),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Rules.Spoofing,
                 EquityRuleSpoofingFactory.Version,

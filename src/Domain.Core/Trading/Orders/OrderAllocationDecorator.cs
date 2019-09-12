@@ -72,9 +72,14 @@ namespace Domain.Core.Trading.Orders
             set { }
         }
 
+        /// <summary>
+        /// order allocation weighting * base ordered volume?
+        /// what's wrong with that??
+        /// how is the weighting calculated??
+        /// </summary>
         public override decimal? OrderFilledVolume
         {
-            get => _orderAllocation.OrderFilledVolume;
+            get => (long?)(this._baseOrderFilledVolume * this._weighting);
             set { }
         }
 

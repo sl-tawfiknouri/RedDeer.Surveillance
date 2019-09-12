@@ -74,7 +74,7 @@ namespace Domain.Core.Trading.Orders
 
         public override decimal? OrderFilledVolume
         {
-            get => _orderAllocation.OrderFilledVolume;
+            get => (long?)(this._baseOrderFilledVolume * this._weighting);
             set { }
         }
 

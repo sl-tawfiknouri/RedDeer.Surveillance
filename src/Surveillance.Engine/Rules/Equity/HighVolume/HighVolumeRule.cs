@@ -104,7 +104,7 @@
                     .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradedSecurities.ToList());
-            var mostRecentTrade = tradeWindow.Pop();
+            var mostRecentTrade = tradeWindow.Peek();
 
             var dailyBreach = this.CheckDailyVolume(mostRecentTrade, tradedVolume);
             var windowBreach = this.CheckWindowVolume(mostRecentTrade, tradedVolume);

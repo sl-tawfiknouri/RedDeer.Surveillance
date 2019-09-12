@@ -55,6 +55,7 @@
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
                 equitiesParameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 equitiesParameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
                 Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
@@ -197,7 +198,7 @@
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id(),
                 DataSource.AllInterday);
@@ -244,7 +245,7 @@
             }
 
             var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
 
@@ -253,7 +254,7 @@
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(BackwardWindowSize)),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id(),
                     DataSource.AllIntraday);
@@ -310,7 +311,7 @@
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.BackwardWindowSize)),
+                tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(this.UniverseDateTime),
                 this._ruleCtx?.Id(),
                 DataSource.AllInterday);

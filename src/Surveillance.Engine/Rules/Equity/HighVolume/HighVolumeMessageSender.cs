@@ -64,8 +64,8 @@
                     ruleBreach.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
                 var dailyBreachPercentage =
                     Math.Ceiling(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-
-                dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was ordered against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
+                
+                dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
             }
 
             if (ruleBreach.WindowBreach.HasBreach)
@@ -75,7 +75,7 @@
                 var windowBreachPercentage =
                     Math.Ceiling(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
 
-                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {ruleBreach.EquitiesParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was ordered against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount.ToString("0.##")}.";
+                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {ruleBreach.EquitiesParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount.ToString("0.##")}.";
             }
 
             if (ruleBreach.MarketCapBreach.HasBreach)

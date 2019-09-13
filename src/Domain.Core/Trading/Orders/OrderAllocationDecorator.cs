@@ -64,7 +64,7 @@
 
         public override decimal? OrderFilledVolume
         {
-            get => this._orderAllocation.OrderFilledVolume;
+            get => (long?)(this._baseOrderFilledVolume * this._weighting);
             set
             {
             }

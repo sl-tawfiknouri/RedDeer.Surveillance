@@ -22,8 +22,37 @@
             var orderAllocation = this.BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
+            Assert.AreEqual(decorator.OrderFilledVolume, 100);
             Assert.AreEqual(decorator.OrderOrderedVolume, 10);
         }
+
+        [Test]
+        public void Decorator_Handles_Half_OrderFill()
+        {
+            var order = BuildOrder();
+            order.OrderFilledVolume = 50;
+            order.OrderOrderedVolume = 100;
+
+            var orderAllocation = BuildAllocation(100);
+            var decorator = new OrderAllocationDecorator(order, orderAllocation);
+
+            Assert.AreEqual(decorator.OrderFilledVolume, 50);
+        }
+
+        [Test]
+        public void Decorator_Handles_Double_OrderFill()
+        {
+            var order = BuildOrder();
+            order.OrderFilledVolume = 50;
+            order.OrderOrderedVolume = 100;
+
+            var orderAllocation = BuildAllocation(200);
+            var decorator = new OrderAllocationDecorator(order, orderAllocation);
+
+            Assert.AreEqual(decorator.OrderFilledVolume, 50);
+            Assert.AreEqual(decorator.OrderOrderedVolume, 100);
+        }
+
 
         [Test]
         public void Decorator_Handles_Zero_CorrectAccountingEntities()
@@ -63,7 +92,7 @@
             var orderAllocation = this.BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
-            Assert.AreEqual(decorator.OrderFilledVolume, 100);
+            Assert.AreEqual(decorator.OrderFilledVolume, 0);
             Assert.AreEqual(decorator.OrderOrderedVolume, 100);
         }
 

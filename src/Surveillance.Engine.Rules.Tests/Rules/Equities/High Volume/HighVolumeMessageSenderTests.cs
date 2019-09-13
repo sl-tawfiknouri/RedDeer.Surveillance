@@ -79,7 +79,7 @@
             var message = messageSender.BuildDescription(ruleBreach);
             
             // assert
-            Assert.AreEqual("High Volume rule breach detected for random-security. Percentage of daily volume breach has occured. A daily volume limit of 33% was exceeded by trading 43% of daily volume at the venue (XLON) London Stock Exchange. 10241 volume was ordered against a breach threshold volume of 103918412.", message);
+            Assert.AreEqual("High Volume rule breach detected for random-security. Percentage of daily volume breach has occured. A daily volume limit of 33% was exceeded by trading 43% of daily volume at the venue (XLON) London Stock Exchange. 10241 volume was the allocated fill against a breach threshold volume of 103918412.", message);
         }
 
         [Test]
@@ -111,7 +111,7 @@
             var message = messageSender.BuildDescription(ruleBreach);
 
             // assert
-            Assert.AreEqual("High Volume rule breach detected for random-security. Percentage of window volume breach has occured. A window volume limit of 33% was exceeded by trading 43% of window volume within the window of 180 minutes at the venue (XLON) London Stock Exchange. 10241 volume was ordered against a breach threshold volume of 103918412.", message);
+            Assert.AreEqual("High Volume rule breach detected for random-security. Percentage of window volume breach has occured. A window volume limit of 33% was exceeded by trading 43% of window volume within the window of 180 minutes at the venue (XLON) London Stock Exchange. 10241 volume was the allocated fill against a breach threshold volume of 103918412.", message);
         }
 
         [Test]

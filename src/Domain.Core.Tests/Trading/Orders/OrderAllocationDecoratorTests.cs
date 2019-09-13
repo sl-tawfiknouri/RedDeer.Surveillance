@@ -22,8 +22,8 @@
             var orderAllocation = this.BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
-            Assert.AreEqual(decorator.OrderFilledVolume, 0);
-            Assert.AreEqual(decorator.OrderOrderedVolume, 100);
+            Assert.AreEqual(decorator.OrderFilledVolume, 100);
+            Assert.AreEqual(decorator.OrderOrderedVolume, 10);
         }
 
         [Test]
@@ -92,7 +92,7 @@
             var orderAllocation = this.BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
-            Assert.AreEqual(decorator.OrderFilledVolume, 100);
+            Assert.AreEqual(decorator.OrderFilledVolume, 0);
             Assert.AreEqual(decorator.OrderOrderedVolume, 100);
         }
 

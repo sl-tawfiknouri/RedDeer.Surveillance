@@ -28,7 +28,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             decimal? relativeProfits,
             bool hasAbsoluteProfitBreach,
             bool hasRelativeProfitBreach,
-            IExchangeRateProfitBreakdown profitBreakdown)
+            IExchangeRateProfitBreakdown profitBreakdown,
+            HighProfitComponents components)
         {
             Judgement = judgement;
             ProjectToAlert = projectToAlert;
@@ -40,6 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             HasAbsoluteProfitBreach = hasAbsoluteProfitBreach;
             HasRelativeProfitBreach = hasRelativeProfitBreach;
             ExchangeRateProfits = profitBreakdown;
+            this.Components = components;
         }
 
         public IHighProfitJudgement Judgement { get; set; }
@@ -52,5 +54,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public Money? AbsoluteProfits { get; set; }
         public decimal? RelativeProfits { get; set; }
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; set; }
+        public HighProfitComponents Components { get; set; }
     }
 }

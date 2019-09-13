@@ -6,13 +6,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     {
         public RevenueMoney(
             bool hadMissingMarketData,
-            Money? money)
+            Money? money,
+            HighProfitComponents components)
         {
-            HadMissingMarketData = hadMissingMarketData;
-            Money = money;
+            this.HadMissingMarketData = hadMissingMarketData;
+            this.Money = money;
+            this.Components = components;
         }
 
         public bool HadMissingMarketData { get; }
         public Money? Money { get; }
+        public HighProfitComponents Components { get; }
     }
 }

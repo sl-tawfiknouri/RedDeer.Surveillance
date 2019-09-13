@@ -3,6 +3,7 @@ using Domain.Surveillance.Judgement.Equity;
 using Domain.Surveillance.Judgement.Equity.Interfaces;
 using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 
@@ -20,7 +21,8 @@ namespace Surveillance.Engine.Rules.Judgements.Equities
             string absoluteProfitCurrency, 
             Money? absoluteProfits,
             decimal? relativeProfits,
-            IExchangeRateProfitBreakdown exchangeRateProfits)
+            IExchangeRateProfitBreakdown exchangeRateProfits,
+            HighProfitComponents components)
         {
             Judgement = judgement;
             ProjectToAlert = projectToAlert;
@@ -32,6 +34,7 @@ namespace Surveillance.Engine.Rules.Judgements.Equities
             AbsoluteProfits = absoluteProfits;
             RelativeProfits = relativeProfits;
             ExchangeRateProfits = exchangeRateProfits;
+            Components = components;
         }
 
         public IHighProfitJudgement Judgement { get; set; }
@@ -44,5 +47,6 @@ namespace Surveillance.Engine.Rules.Judgements.Equities
         public Money? AbsoluteProfits { get; set; }
         public decimal? RelativeProfits { get; set; }
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; set; }
+        public HighProfitComponents Components { get; set; }
     }
 }

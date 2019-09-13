@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
                 // fully traded out position; return its value
-                return new RevenueMoney(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
             // has a virtual position; calculate its value
@@ -66,8 +66,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             if (security == null)
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Could not find a security so just returning the realised revenue.");
-                return new RevenueMoney(false, realisedRevenue);
 
+                return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
             var marketDataRequest =
@@ -81,8 +81,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             if (marketDataRequest == null)
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
-                return new RevenueMoney(false, null);
 
+                return new RevenueMoney(false, null, HighProfitComponents.Realised);
             }
 
             var marketResponse = cacheStrategy.Query(marketDataRequest);
@@ -91,7 +91,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogInformation($"Revenue currency converting calculator calculating for inferred virtual profits due to missing market data");
 
-                return new RevenueMoney(true, null);
+                return new RevenueMoney(true, null, HighProfitComponents.Virtual);
             }
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
@@ -107,19 +107,24 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             if (realisedRevenue == null)
             {
-                Logger.LogInformation($"Revenue currency converting calculator could not calculate realised revenues, returning realised revenues.");
-                return new RevenueMoney(false, convertedVirtualRevenues);
+                Logger.LogInformation($"Revenue currency converting calculator could not calculate realised revenues, returning unrealised revenues.");
+                return new RevenueMoney(false, convertedVirtualRevenues, HighProfitComponents.Virtual);
             }
 
             if (convertedVirtualRevenues == null)
             {
-                Logger.LogInformation($"Revenue currency converting calculator could not calculate virtual revenues. Returning virtual revenues.");
-                return new RevenueMoney(false, realisedRevenue);
+                Logger.LogInformation($"Revenue currency converting calculator could not calculate virtual revenues. Returning realised revenues.");
+                return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
             var totalMoneys = realisedRevenue + convertedVirtualRevenues;
 
-            return new RevenueMoney(false, totalMoneys);
+            var component =
+                realisedRevenue.HasValue && realisedRevenue.Value.Value > 0
+                ? HighProfitComponents.Hybrid
+                : HighProfitComponents.Virtual;
+
+            return new RevenueMoney(false, totalMoneys, component);
         }
 
         private async Task<Money?> CalculateRealisedRevenue

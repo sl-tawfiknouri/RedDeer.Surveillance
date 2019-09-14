@@ -50,13 +50,17 @@
         {
             return new FixedIncomeHighProfitsRule(
                 parameters,
-                this._fixedIncomeOrderFilterService,
-                ruleCtx,
-                this._marketCacheFactory,
-                runMode,
-                alertStream,
-                this._logger,
-                this._stackLogger);
+                this._logger);
+
+            //return new FixedIncomeHighProfitsRule(
+            //    parameters,
+            //    this._fixedIncomeOrderFilterService,
+            //    ruleCtx,
+            //    this._marketCacheFactory,
+            //    runMode,
+            //    alertStream,
+            //    this._logger,
+            //    this._stackLogger);
         }
     }
 }

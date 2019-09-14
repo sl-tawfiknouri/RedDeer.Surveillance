@@ -1,22 +1,17 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using Domain.Core.Financial.Assets;
+using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-
-    using Domain.Core.Financial.Assets;
-    using Domain.Core.Financial.Money;
-
-    using Microsoft.Extensions.Logging;
-
-    using SharedKernel.Contracts.Markets;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-
     public class RevenueCurrencyConvertingMarkingCloseCalculator : RevenueCurrencyConvertingCalculator
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(
-            Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverterService currencyConverterService,
             IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCurrencyConvertingCalculator> logger)

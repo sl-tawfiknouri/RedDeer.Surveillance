@@ -92,13 +92,7 @@
 
             var rule = new FixedIncomeHighProfitsRule(
                 this._parameters,
-                this._orderFilterService,
-                this._ruleCtx,
-                this._interdayUniverseMarketCacheFactory,
-                RuleRunMode.ForceRun,
-                this._alertStream,
-                new NullLogger<FixedIncomeHighProfitsRule>(),
-                new NullLogger<TradingHistoryStack>());
+                new NullLogger<FixedIncomeHighProfitsRule>());
 
             foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
                 rule.OnNext(universeEvent);

@@ -1,4 +1,9 @@
-﻿namespace Surveillance.Engine.Rules
+﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules
 {
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Execution.Interfaces;
@@ -61,10 +66,6 @@
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;

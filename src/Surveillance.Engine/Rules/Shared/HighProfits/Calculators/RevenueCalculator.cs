@@ -1,22 +1,18 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
+using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using Domain.Core.Financial.Assets;
-    using Domain.Core.Financial.Money;
-    using Domain.Core.Trading.Orders;
-
-    using Microsoft.Extensions.Logging;
-
-    using SharedKernel.Contracts.Markets;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
     /// <summary>
     ///     Calculates revenues without attempting to convert currencies
     /// </summary>

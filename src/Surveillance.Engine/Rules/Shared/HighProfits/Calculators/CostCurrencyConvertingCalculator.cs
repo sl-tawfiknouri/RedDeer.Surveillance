@@ -1,30 +1,27 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
+using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using Domain.Core.Financial.Money;
-    using Domain.Core.Trading.Orders;
-
-    using Microsoft.Extensions.Logging;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
     public class CostCurrencyConvertingCalculator : ICostCalculator
     {
         private readonly ICurrencyConverterService _currencyConverterService;
 
         private readonly ILogger<CostCurrencyConvertingCalculator> _logger;
 
-        private readonly Currency _targetCurrency;
+        private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
 
         public CostCurrencyConvertingCalculator(
             ICurrencyConverterService currencyConverterService,
-            Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ILogger<CostCurrencyConvertingCalculator> logger)
         {
             this._currencyConverterService = currencyConverterService

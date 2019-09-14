@@ -1,7 +1,7 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
-{
-    using Domain.Core.Financial.Money;
+﻿using Domain.Core.Financial.Money;
 
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
+{
     public class RevenueMoney
     {
         public RevenueMoney(bool hadMissingMarketData, Money? money)

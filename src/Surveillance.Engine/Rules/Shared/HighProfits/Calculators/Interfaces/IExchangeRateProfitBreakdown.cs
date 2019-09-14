@@ -1,12 +1,10 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces
+﻿using Surveillance.Engine.Rules.Trades.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces
 {
-    using Domain.Core.Financial.Money;
-
-    using Surveillance.Engine.Rules.Trades.Interfaces;
-
     public interface IExchangeRateProfitBreakdown
     {
-        Currency FixedCurrency { get; }
+        Domain.Core.Financial.Money.Currency FixedCurrency { get; }
 
         ITradePosition PositionCost { get; }
 
@@ -16,7 +14,7 @@
 
         decimal PositionRevenueWer { get; }
 
-        Currency VariableCurrency { get; }
+        Domain.Core.Financial.Money.Currency VariableCurrency { get; }
 
         decimal AbsoluteAmountDueToWer();
 

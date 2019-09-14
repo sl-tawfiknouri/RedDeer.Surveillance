@@ -1,4 +1,7 @@
-﻿namespace Surveillance.Engine.Rules.Factories.Equities
+﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Factories.Equities
 {
     using System;
 
@@ -15,8 +18,6 @@
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;

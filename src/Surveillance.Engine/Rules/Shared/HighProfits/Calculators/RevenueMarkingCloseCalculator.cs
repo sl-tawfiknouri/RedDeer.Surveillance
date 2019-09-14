@@ -1,16 +1,12 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using Domain.Core.Financial.Assets;
+using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-
-    using Domain.Core.Financial.Assets;
-
-    using Microsoft.Extensions.Logging;
-
-    using SharedKernel.Contracts.Markets;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-
     public class RevenueMarkingCloseCalculator : RevenueCalculator
     {
         public RevenueMarkingCloseCalculator(

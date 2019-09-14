@@ -1,16 +1,12 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories
+﻿using System;
+using Microsoft.Extensions.Logging;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories
 {
-    using System;
-
-    using Domain.Core.Financial.Money;
-
-    using Microsoft.Extensions.Logging;
-
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
     public class RevenueCalculatorFactory : IRevenueCalculatorFactory
     {
         private readonly ICurrencyConverterService _currencyConverterService;
@@ -46,7 +42,7 @@
             return new RevenueMarkingCloseCalculator(this._tradingHoursService, this._logger);
         }
 
-        public IRevenueCalculator RevenueCurrencyConvertingCalculator(Currency currency)
+        public IRevenueCalculator RevenueCurrencyConvertingCalculator(Domain.Core.Financial.Money.Currency currency)
         {
             return new RevenueCurrencyConvertingCalculator(
                 currency,
@@ -55,7 +51,7 @@
                 this._currencyConvertingLogger);
         }
 
-        public IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Currency currency)
+        public IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Core.Financial.Money.Currency currency)
         {
             return new RevenueCurrencyConvertingMarkingCloseCalculator(
                 currency,

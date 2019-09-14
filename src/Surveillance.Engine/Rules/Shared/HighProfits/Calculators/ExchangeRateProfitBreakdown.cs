@@ -1,12 +1,9 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Trades.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-
-    using Domain.Core.Financial.Money;
-
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
-
     public class ExchangeRateProfitBreakdown : IExchangeRateProfitBreakdown
     {
         public ExchangeRateProfitBreakdown(
@@ -14,8 +11,8 @@
             ITradePosition positionRevenue,
             decimal positionCostWer,
             decimal positionRevenueWer,
-            Currency fixedCurrency,
-            Currency variableCurrency)
+            Domain.Core.Financial.Money.Currency fixedCurrency,
+            Domain.Core.Financial.Money.Currency variableCurrency)
         {
             this.PositionCost = positionCost;
             this.PositionRevenue = positionRevenue;
@@ -25,7 +22,7 @@
             this.VariableCurrency = variableCurrency;
         }
 
-        public Currency FixedCurrency { get; }
+        public Domain.Core.Financial.Money.Currency FixedCurrency { get; }
 
         public ITradePosition PositionCost { get; }
 
@@ -35,7 +32,7 @@
 
         public decimal PositionRevenueWer { get; }
 
-        public Currency VariableCurrency { get; }
+        public Domain.Core.Financial.Money.Currency VariableCurrency { get; }
 
         public decimal AbsoluteAmountDueToWer()
         {

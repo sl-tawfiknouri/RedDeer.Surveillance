@@ -1,18 +1,14 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Trades.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using Domain.Core.Financial.Money;
-
-    using Microsoft.Extensions.Logging;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
-
     public class ExchangeRateProfitCalculator : IExchangeRateProfitCalculator
     {
         private readonly ILogger<ExchangeRateProfitCalculator> _logger;
@@ -31,7 +27,7 @@
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            Currency variableCurrency,
+            Domain.Core.Financial.Money.Currency variableCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (string.IsNullOrEmpty(variableCurrency.Code))

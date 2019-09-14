@@ -44,13 +44,7 @@
             Assert.Throws<ArgumentNullException>(
                 () => new FixedIncomeHighProfitsRule(
                     this._parameters,
-                    this._fixedIncomeOrderFile,
-                    this._ruleCtx,
-                    this._marketCacheFactory,
-                    this._runMode,
-                    this._alertStream,
-                    null,
-                    this._tradingStackLogger));
+                    null));
         }
 
         [SetUp]

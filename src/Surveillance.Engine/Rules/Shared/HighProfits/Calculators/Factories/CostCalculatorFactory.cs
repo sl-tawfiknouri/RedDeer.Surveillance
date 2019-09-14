@@ -1,15 +1,11 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories
+﻿using System;
+using Microsoft.Extensions.Logging;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories
 {
-    using System;
-
-    using Domain.Core.Financial.Money;
-
-    using Microsoft.Extensions.Logging;
-
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
     public class CostCalculatorFactory : ICostCalculatorFactory
     {
         private readonly ICurrencyConverterService _currencyConverterService;
@@ -34,7 +30,7 @@
             return new CostCalculator(this._logger);
         }
 
-        public ICostCalculator CurrencyConvertingCalculator(Currency currency)
+        public ICostCalculator CurrencyConvertingCalculator(Domain.Core.Financial.Money.Currency currency)
         {
             return new CostCurrencyConvertingCalculator(this._currencyConverterService, currency, this._currencyLogger);
         }

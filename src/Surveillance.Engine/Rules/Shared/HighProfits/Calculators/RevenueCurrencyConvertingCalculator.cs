@@ -1,23 +1,19 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
+using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using Domain.Core.Financial.Assets;
-    using Domain.Core.Financial.Money;
-    using Domain.Core.Trading.Orders;
-
-    using Microsoft.Extensions.Logging;
-
-    using SharedKernel.Contracts.Markets;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
         protected readonly ILogger Logger;
@@ -26,10 +22,10 @@
 
         private readonly ICurrencyConverterService _currencyConverterService;
 
-        private readonly Currency _targetCurrency;
+        private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
 
         public RevenueCurrencyConvertingCalculator(
-            Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverterService currencyConverterService,
             IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
@@ -170,7 +166,7 @@
 
         private async Task<Money?> CalculateRealisedRevenue(
             IList<Order> activeFulfilledTradeOrders,
-            Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {

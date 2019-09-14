@@ -39,19 +39,21 @@
             var ruleParameters = new HighProfitsRuleFixedIncomeParameters(
                 "id",
                 TimeSpan.FromHours(1),
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
+                TimeSpan.FromHours(1),
                 true,
+                true,
+                0.3m,
+                0.2m,
+                false,
+                "gbp",
+                null,
+                false,
                 true);
 
             var result = tuner.ParametersFramework(ruleParameters);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(5));
+            Assert.That(result.Count, Is.EqualTo(22));
         }
 
         [Test]

@@ -12,7 +12,6 @@
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Factories;
-    using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;
@@ -63,11 +62,13 @@
             this._parameters = new HighProfitsRuleFixedIncomeParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
-                RuleFilter.None(),
-                RuleFilter.None(),
-                RuleFilter.None(),
-                RuleFilter.None(),
-                RuleFilter.None(),
+                TimeSpan.FromHours(parameters.FutureHours),
+                parameters.PerformHighProfitWindowAnalysis,
+                parameters.PerformHighProfitDailyAnalysis,
+                parameters.HighProfitPercentage,
+                parameters.HighProfitAbsolute,
+                parameters.HighProfitUseCurrencyConversions,
+                parameters.HighProfitCurrency,
                 new[] { ClientOrganisationalFactors.None },
                 true,
                 true);

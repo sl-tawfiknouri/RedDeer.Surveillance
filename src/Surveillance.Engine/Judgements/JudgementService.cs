@@ -8,6 +8,7 @@
 
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
@@ -65,6 +66,11 @@
 
             var projectedBreach = this._highProfitJudgementMapper.Map(judgementContext);
             this._ruleViolationService.AddRuleViolation(projectedBreach);
+        }
+
+        public void Judgement(IFixedIncomeHighProfitJudgementContext judgementContext)
+        {
+            throw new NotImplementedException();
         }
 
         public void Judgement(ICancelledOrderJudgement cancelledOrder)

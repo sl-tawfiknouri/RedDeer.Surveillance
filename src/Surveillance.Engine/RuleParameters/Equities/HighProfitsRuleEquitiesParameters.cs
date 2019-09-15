@@ -159,7 +159,7 @@
         public RuleFilter Traders { get; set; }
 
         [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public TunedParameter<string> TunedParameters { get; set; }
 
         /// <summary>
         ///     If true we will use the target currency provided.

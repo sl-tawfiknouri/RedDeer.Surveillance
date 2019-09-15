@@ -157,7 +157,7 @@
         {
             var service = this.BuildService();
 
-            this._highProfitJudgementContext.ProjectToAlert = true;
+            this._highProfitJudgementContext.RaiseRuleViolation = true;
             this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
             service.Judgement(this._highProfitJudgementContext);
@@ -175,7 +175,7 @@
         {
             var service = this.BuildService();
 
-            this._highProfitJudgementContext.ProjectToAlert = false;
+            this._highProfitJudgementContext.RaiseRuleViolation = false;
             this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
             service.Judgement(this._highProfitJudgementContext);

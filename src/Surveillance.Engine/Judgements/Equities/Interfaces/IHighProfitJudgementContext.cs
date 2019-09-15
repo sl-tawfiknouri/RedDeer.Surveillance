@@ -23,7 +23,7 @@
 
         IHighProfitJudgement Judgement { get; set; }
 
-        bool ProjectToAlert { get; set; }
+        bool RaiseRuleViolation { get; set; }
 
         decimal? RelativeProfits { get; set; }
 

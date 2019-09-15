@@ -27,7 +27,7 @@
         public FixedIncomeHighProfitJudgementContext(FixedIncomeHighProfitJudgement judgement, bool projectToAlert)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@
             IExchangeRateProfitBreakdown profitBreakdown)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
             this.RuleBreachContext = ruleBreachContext;
             this.FixedIncomeParameters = fixedIncomeParameters;
             this.AbsoluteProfits = absoluteProfits;
@@ -125,7 +125,7 @@
         /// <summary>
         /// Gets or sets a value indicating whether project to alert.
         /// </summary>
-        public bool ProjectToAlert { get; set; }
+        public bool RaiseRuleViolation { get; set; }
 
         /// <summary>
         /// Gets or sets the relative profits.

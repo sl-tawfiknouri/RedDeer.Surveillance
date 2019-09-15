@@ -67,7 +67,7 @@
 
             var tradePosition = new TradePosition(new List<Order> { OrderHelper.Orders(OrderStatus.Filled) });
             A.CallTo(() => this._ruleBreach.Trades).Returns(tradePosition);
-            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParam).Returns(null);
+            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParameters).Returns(null);
             A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
 
             ruleViolationService.AddRuleViolation(this._ruleBreach);
@@ -97,7 +97,7 @@
 
             var tradePosition = new TradePosition(new List<Order> { OrderHelper.Orders(OrderStatus.Filled) });
             A.CallTo(() => this._ruleBreach.Trades).Returns(tradePosition);
-            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParam).Returns(null);
+            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParameters).Returns(null);
             A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
 
             ruleViolationService.AddRuleViolation(this._ruleBreach);

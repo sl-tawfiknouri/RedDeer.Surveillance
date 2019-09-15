@@ -15,7 +15,7 @@
         public HighProfitJudgementContext(HighProfitJudgement judgement, bool projectToAlert)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
         }
 
         public HighProfitJudgementContext(
@@ -31,7 +31,7 @@
             IExchangeRateProfitBreakdown profitBreakdown)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
             this.RuleBreachContext = ruleBreachContext;
             this.EquitiesParameters = equitiesParameters;
             this.AbsoluteProfits = absoluteProfits;
@@ -56,7 +56,7 @@
 
         public IHighProfitJudgement Judgement { get; set; }
 
-        public bool ProjectToAlert { get; set; }
+        public bool RaiseRuleViolation { get; set; }
 
         public decimal? RelativeProfits { get; set; }
 

@@ -6,6 +6,6 @@
     {
         bool PerformTuning { get; set; }
 
-        TunedParameter<string> TunedParam { get; set; }
+        TunedParameter<string> TunedParameters { get; set; }
     }
 }

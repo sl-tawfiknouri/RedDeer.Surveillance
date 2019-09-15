@@ -109,7 +109,7 @@
 
             this.judgementRepository.Save(judgementContext.Judgement);
 
-            if (!judgementContext.ProjectToAlert)
+            if (!judgementContext.RaiseRuleViolation)
             {
                 return;
             }
@@ -118,6 +118,13 @@
             this.ruleViolationService.AddRuleViolation(projectedBreach);
         }
 
+        /// <summary>
+        /// The judgement for a fixed income high profit judgement.
+        /// Will pass onto judgements if there is an alert
+        /// </summary>
+        /// <param name="judgementContext">
+        /// The judgement context.
+        /// </param>
         public void Judgement(IFixedIncomeHighProfitJudgementContext judgementContext)
         {
             if (judgementContext == null)
@@ -135,7 +142,7 @@
 
             this.judgementRepository.Save(judgementContext.Judgement);
 
-            if (!judgementContext.ProjectToAlert)
+            if (!judgementContext.RaiseRuleViolation)
             {
                 return;
             }

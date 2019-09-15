@@ -118,7 +118,7 @@
                 return;
             }
 
-            if (ruleBreach.RuleParameters.TunedParam != null)
+            if (ruleBreach.RuleParameters.TunedParameters != null)
             {
                 this.Logger.LogInformation(
                     $"was going to send for {this._messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected run was a tuning run");

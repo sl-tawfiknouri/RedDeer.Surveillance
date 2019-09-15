@@ -45,10 +45,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -63,10 +63,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -81,10 +81,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -99,10 +99,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -117,10 +117,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -135,10 +135,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -153,10 +153,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -171,10 +171,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -189,10 +189,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -207,10 +207,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -225,10 +225,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 
@@ -243,10 +243,10 @@
 
             var mappedDtos = this._mapper.Map(execution, dtos).ToList();
             var tunedDtos = mappedDtos.Where(_ => _.PerformTuning).SelectMany(this._tuner.ParametersFramework)
-                .Where(_ => _.Valid() && _.TunedParam != null).Distinct().ToList();
+                .Where(_ => _.Valid() && _.TunedParameters != null).Distinct().ToList();
 
             var saveableDtos = tunedDtos
-                .Select(_ => new TuningRepository.TuningPair(_.TunedParam, JsonConvert.SerializeObject(_))).ToList();
+                .Select(_ => new TuningRepository.TuningPair(_.TunedParameters, JsonConvert.SerializeObject(_))).ToList();
 
             this._tuningRepository.SaveTasks(saveableDtos).Wait();
 

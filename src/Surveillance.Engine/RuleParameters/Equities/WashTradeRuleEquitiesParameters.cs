@@ -178,7 +178,7 @@
         public RuleFilter Traders { get; set; }
 
         [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public TunedParameter<string> TunedParameters { get; set; }
 
         public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
 

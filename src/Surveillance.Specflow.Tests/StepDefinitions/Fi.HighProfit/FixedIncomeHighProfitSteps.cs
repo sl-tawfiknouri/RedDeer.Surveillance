@@ -14,52 +14,89 @@
     using Surveillance.Engine.Rules.Factories;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-    using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-    using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 
     using TechTalk.SpecFlow;
     using TechTalk.SpecFlow.Assist;
 
+    /// <summary>
+    /// The fixed income high profit steps.
+    /// </summary>
     [Binding]
     public class FixedIncomeHighProfitSteps
     {
-        private readonly ScenarioContext _scenarioContext;
+        /// <summary>
+        /// The _scenario context.
+        /// </summary>
+        private readonly ScenarioContext scenarioContext;
 
-        private readonly UniverseSelectionState _universeSelectionState;
+        /// <summary>
+        /// The _universe selection state.
+        /// </summary>
+        private readonly UniverseSelectionState universeSelectionState;
 
-        private IUniverseAlertStream _alertStream;
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private IUniverseAlertStream alertStream;
 
-        private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        /// <summary>
+        /// The interday universe market cache factory.
+        /// </summary>
+        private UniverseMarketCacheFactory interdayUniverseMarketCacheFactory;
 
-        private IUniverseFixedIncomeOrderFilterService _orderFilterService;
+        /// <summary>
+        /// The order filter service.
+        /// </summary>
+        private IUniverseFixedIncomeOrderFilterService orderFilterService;
 
-        private HighProfitsRuleFixedIncomeParameters _parameters;
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        private HighProfitsRuleFixedIncomeParameters parameters;
 
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
+        /// <summary>
+        /// The rule context for the system operation.
+        /// </summary>
+        private ISystemProcessOperationRunRuleContext ruleContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FixedIncomeHighProfitSteps"/> class.
+        /// </summary>
+        /// <param name="scenarioContext">
+        /// The scenario context.
+        /// </param>
+        /// <param name="universeSelectionState">
+        /// The universe selection state.
+        /// </param>
         public FixedIncomeHighProfitSteps(
             ScenarioContext scenarioContext,
             UniverseSelectionState universeSelectionState)
         {
-            this._scenarioContext = scenarioContext;
-            this._universeSelectionState = universeSelectionState;
+            this.scenarioContext = scenarioContext;
+            this.universeSelectionState = universeSelectionState;
         }
 
+        /// <summary>
+        /// The given i have the fixed income high profit rule parameter values.
+        /// </summary>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
         [Given(@"I have the fixed income high profit rule parameter values")]
         public void GivenIHaveTheFixedIncomeHighProfitRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
             {
-                this._scenarioContext.Pending();
+                this.scenarioContext.Pending();
                 return;
             }
 
             var parameters = ruleParameters.CreateInstance<FixedIncomeHighProfitApiParameters>();
 
-            this._parameters = new HighProfitsRuleFixedIncomeParameters(
+            this.parameters = new HighProfitsRuleFixedIncomeParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 TimeSpan.FromHours(parameters.FutureHours),
@@ -74,15 +111,24 @@
                 true);
         }
 
+        /// <summary>
+        /// The then i will have alerts.
+        /// </summary>
+        /// <param name="alertCount">
+        /// The alert count.
+        /// </param>
         [Then(@"I will have (.*) fixed income high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
             A.CallTo(
-                    () => this._alertStream.Add(
+                    () => this.alertStream.Add(
                         A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent)))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
         }
 
+        /// <summary>
+        /// The when i run the fixed income high profit rule.
+        /// </summary>
         [When(@"I run the fixed income high profit rule")]
         public void WhenIRunTheFixedIncomeHighProfitRule()
         {
@@ -91,21 +137,25 @@
             this.Setup();
 
             var rule = new FixedIncomeHighProfitsRule(
-                this._parameters,
+                this.parameters,
+                null,
                 null,
                 new NullLogger<FixedIncomeHighProfitsRule>());
 
-            foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
+            foreach (var universeEvent in this.universeSelectionState.SelectedUniverse.UniverseEvents)
                 rule.OnNext(universeEvent);
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         private void Setup()
         {
-            this._orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
-            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this._alertStream = A.Fake<IUniverseAlertStream>();
+            this.orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
+            this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this.alertStream = A.Fake<IUniverseAlertStream>();
 
-            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());

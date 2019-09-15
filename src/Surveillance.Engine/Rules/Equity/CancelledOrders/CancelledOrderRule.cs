@@ -40,7 +40,7 @@
 
         public CancelledOrderRule(
             ICancelledOrderRuleEquitiesParameters parameters,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext opContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -54,14 +54,14 @@
                 Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
-                opCtx,
+                opContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
         {
             this._parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            this._opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            this._opCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
             this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));

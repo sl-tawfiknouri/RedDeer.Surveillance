@@ -24,7 +24,7 @@
     {
         public HighProfitMarketClosureRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -38,7 +38,7 @@
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters,
-                ruleCtx,
+                ruleContext,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,

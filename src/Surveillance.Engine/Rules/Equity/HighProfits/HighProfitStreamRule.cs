@@ -58,7 +58,7 @@
 
         public HighProfitStreamRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -77,7 +77,7 @@
                 Rules.HighProfits,
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,
@@ -85,7 +85,7 @@
         {
             this._equitiesParameters =
                 equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            this._ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            this._ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
             this._costCalculatorFactory =
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             this._revenueCalculatorFactory = revenueCalculatorFactory

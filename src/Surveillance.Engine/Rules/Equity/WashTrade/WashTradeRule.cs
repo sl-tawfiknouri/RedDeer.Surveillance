@@ -51,7 +51,7 @@
 
         public WashTradeRule(
             IWashTradeRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IClusteringService clustering,
             IUniverseAlertStream alertStream,
             ICurrencyConverterService currencyConverterService,
@@ -67,7 +67,7 @@
                 Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,

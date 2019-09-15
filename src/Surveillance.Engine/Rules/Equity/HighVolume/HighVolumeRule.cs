@@ -43,7 +43,7 @@
 
         public HighVolumeRule(
             IHighVolumeRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext opContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -60,14 +60,14 @@
                 Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
-                opCtx,
+                opContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
         {
             this._equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            this._ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            this._ruleCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
             this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             this._tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));

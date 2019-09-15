@@ -45,7 +45,7 @@
 
         public SpoofingRule(
             ISpoofingRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -61,7 +61,7 @@
                 Rules.Spoofing,
                 EquityRuleSpoofingFactory.Version,
                 "Spoofing Rule",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,
@@ -74,7 +74,7 @@
             this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             this._portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             this._analysisService = analysisService ?? throw new ArgumentNullException(nameof(analysisService));
-            this._ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            this._ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;

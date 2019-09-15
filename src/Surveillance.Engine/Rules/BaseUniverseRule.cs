@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules
             Domain.Surveillance.Scheduling.Rules rules,
             string version,
             string name,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             ILogger logger,
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Rules
             DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
 
-            RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            RuleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
             _name = name ?? "Unnamed rule";
             RunMode = runMode;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

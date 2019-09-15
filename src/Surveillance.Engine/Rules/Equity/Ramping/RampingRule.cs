@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         public RampingRule(
             IRampingRuleEquitiesParameters rampingParameters,
             IUniverseAlertStream alertStream,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory factory,
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 Domain.Surveillance.Scheduling.Rules.Ramping,
                 EquityRuleRampingFactory.Version,
                 "Ramping Rule",
-                ruleCtx,
+                ruleContext,
                 factory,
                 runMode,
                 logger,
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         {
             _rampingParameters = rampingParameters ?? throw new ArgumentNullException(nameof(rampingParameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _rampingAnalyser = rampingAnalyser ?? throw new ArgumentNullException(nameof(rampingAnalyser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

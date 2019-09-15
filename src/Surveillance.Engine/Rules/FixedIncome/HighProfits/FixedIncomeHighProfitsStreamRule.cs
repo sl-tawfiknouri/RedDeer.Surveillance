@@ -7,6 +7,7 @@
     using Domain.Core.Financial.Money;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
+    using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
 
@@ -37,11 +38,6 @@
     /// </summary>
     public class FixedIncomeHighProfitsStreamRule : BaseUniverseRule, IFixedIncomeHighProfitsStreamRule
     {
-        /// <summary>
-        /// Flag to indicate that the rule is a market closure variant
-        /// </summary>
-        protected readonly bool MarketClosureRule = false;
-
         /// <summary>
         /// The parameters for the rule to leverage in analysis
         /// </summary>
@@ -106,7 +102,7 @@
         /// <param name="fixedIncomeParameters">
         /// parameters from the client service user interface
         /// </param>
-        /// <param name="ruleCtx">
+        /// <param name="ruleContext">
         /// auditing helper
         /// </param>
         /// <param name="costCalculatorFactory">
@@ -144,7 +140,7 @@
         /// </param>
         public FixedIncomeHighProfitsStreamRule(
             IHighProfitsRuleFixedIncomeParameters fixedIncomeParameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -163,7 +159,7 @@
                 Domain.Surveillance.Scheduling.Rules.FixedIncomeHighProfits,
                 FixedIncomeHighProfitFactory.Version,
                 "Fixed Income High Profit Rule",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,
@@ -172,7 +168,7 @@
             this.FixedIncomeParameters =
                 fixedIncomeParameters ?? throw new ArgumentNullException(nameof(fixedIncomeParameters));
 
-            this.RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            this.RuleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
 
             this.costCalculatorFactory =
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -202,6 +198,11 @@
         /// Helper support for trade analysis over org factor values such as fund
         /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the rule is a market closure variant
+        /// </summary>
+        protected bool MarketClosureRule { get; set; } = false;
 
         /// <summary>
         /// Typed cloning for factor value splitting over values i.e. fund a, fund b

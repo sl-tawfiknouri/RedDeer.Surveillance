@@ -168,9 +168,25 @@
                 this.logger,
                 this.stackLogger);
 
+            var fixedIncomeMarketClosureRule = new FixedIncomeHighProfitsMarketClosureRule(
+                parameters,
+                ruleContext,
+                this.costCalculatorFactory,
+                this.revenueCalculatorFactory,
+                this.exchangeRateProfitCalculator,
+                this.fixedIncomeOrderFilterService,
+                this.marketCacheFactory,
+                this.marketDataCacheStrategyFactory,
+                dataRequestSubscriber,
+                judgementService,
+                runMode,
+                this.logger,
+                this.stackLogger);
+
             return new FixedIncomeHighProfitsRule(
                 parameters,
                 fixedIncomeStreamRule,
+                fixedIncomeMarketClosureRule,
                 this.logger);
         }
     }

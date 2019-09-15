@@ -16,25 +16,28 @@
     [TestFixture]
     public class JudgementServiceFactoryTests
     {
-        private IHighProfitJudgementMapper _highProfitJudgementMapper;
+        private IHighProfitJudgementMapper highProfitJudgementMapper;
 
-        private IJudgementRepository _judgementRepository;
+        private IFixedIncomeHighProfitJudgementMapper fixedIncomeJudgementMapper;
 
-        private ILogger<JudgementService> _logger;
+        private IJudgementRepository judgementRepository;
 
-        private IRuleViolationServiceFactory _ruleViolationServiceFactory;
+        private ILogger<JudgementService> logger;
+
+        private IRuleViolationServiceFactory ruleViolationServiceFactory;
 
         [Test]
         public void Build_ReturnsValidService_CallsFactoryBuild()
         {
             var serviceFactory = new JudgementServiceFactory(
-                this._ruleViolationServiceFactory,
-                this._judgementRepository,
-                this._highProfitJudgementMapper,
-                this._logger);
+                this.ruleViolationServiceFactory,
+                this.judgementRepository,
+                this.highProfitJudgementMapper,
+                this.fixedIncomeJudgementMapper,
+                this.logger);
             var result = serviceFactory.Build();
 
-            A.CallTo(() => this._ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
             Assert.IsNotNull(result);
         }
 
@@ -44,10 +47,11 @@
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
-                    this._judgementRepository,
+                    this.ruleViolationServiceFactory,
+                    this.judgementRepository,
                     null,
-                    this._logger));
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
         [Test]
@@ -56,10 +60,11 @@
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
+                    this.ruleViolationServiceFactory,
                     null,
-                    this._highProfitJudgementMapper,
-                    this._logger));
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
         [Test]
@@ -68,9 +73,10 @@
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
-                    this._judgementRepository,
-                    this._highProfitJudgementMapper,
+                    this.ruleViolationServiceFactory,
+                    this.judgementRepository,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
                     null));
         }
 
@@ -81,18 +87,20 @@
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
                     null,
-                    this._judgementRepository,
-                    this._highProfitJudgementMapper,
-                    this._logger));
+                    this.judgementRepository,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
         [SetUp]
         public void Setup()
         {
-            this._ruleViolationServiceFactory = A.Fake<IRuleViolationServiceFactory>();
-            this._judgementRepository = A.Fake<IJudgementRepository>();
-            this._highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
-            this._logger = A.Fake<ILogger<JudgementService>>();
+            this.ruleViolationServiceFactory = A.Fake<IRuleViolationServiceFactory>();
+            this.fixedIncomeJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
+            this.logger = A.Fake<ILogger<JudgementService>>();
         }
     }
 }

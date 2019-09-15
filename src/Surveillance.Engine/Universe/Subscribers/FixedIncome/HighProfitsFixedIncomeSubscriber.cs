@@ -29,15 +29,15 @@
 
     public class HighProfitsFixedIncomeSubscriber : IHighProfitsFixedIncomeSubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IFixedIncomeHighProfitFactory _fixedIncomeRuleHighProfitsFactory;
+        private readonly IFixedIncomeHighProfitFactory fixedIncomeRuleHighProfitsFactory;
 
-        private readonly ILogger<HighVolumeFixedIncomeSubscriber> _logger;
+        private readonly ILogger<HighVolumeFixedIncomeSubscriber> logger;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
         public HighProfitsFixedIncomeSubscriber(
             IFixedIncomeHighProfitFactory fixedIncomeRuleHighVolumeFactory,
@@ -46,43 +46,134 @@
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeFixedIncomeSubscriber> logger)
         {
-            this._fixedIncomeRuleHighProfitsFactory = fixedIncomeRuleHighVolumeFactory
-                                                      ?? throw new ArgumentNullException(
-                                                          nameof(fixedIncomeRuleHighVolumeFactory));
-            this._ruleParameterMapper =
+            this.fixedIncomeRuleHighProfitsFactory = 
+                fixedIncomeRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeRuleHighVolumeFactory));
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger =
+                logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.FixedIncomeHighProfits) ?? true)
+            {
                 return new IObserver<IUniverseEvent>[0];
+            }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var filteredParameters =
+                execution
+                    .Rules
+                    .SelectMany(ru => ru.Ids)
+                    .Where(ru => ru != null)
+                    .ToList();
 
-            var dtos = ruleParameters.FixedIncomeHighProfits.Where(
-                hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
+            var dtos =
+                ruleParameters
+                    .FixedIncomeHighProfits
+                    .Where(hv => 
+                        filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            var highProfitParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var highProfitParameters = this.ruleParameterMapper.Map(execution, dtos);
+
             var subscriptions = this.SubscribeToUniverse(
                 execution,
-                opCtx,
-                alertStream,
+                operationContext,
                 dataRequestSubscriber,
-                highProfitParameters);
+                highProfitParameters,
+                judgementService);
 
             return subscriptions;
+        }
+
+        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext operationContext,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> highProfitParameters,
+            IJudgementService judgementService)
+        {
+            var subscriptions = new List<IObserver<IUniverseEvent>>();
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (highProfitParameters != null && highProfitParameters.Any())
+            {
+                foreach (var param in highProfitParameters)
+                {
+                    var paramSubscriptions = this.SubscribeToParams(
+                        execution,
+                        operationContext,
+                        dataRequestSubscriber,
+                        param,
+                        judgementService);
+                    subscriptions.Add(paramSubscriptions);
+                }
+            }
+            else
+            {
+                var errorMessage =
+                    $"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set";
+                this.logger.LogError(errorMessage);
+                operationContext.EventError(errorMessage);
+            }
+
+            return subscriptions;
+        }
+
+        private IUniverseRule SubscribeToParams(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext operationContext,
+            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
+            IHighProfitsRuleFixedIncomeParameters param,
+            IJudgementService judgementService)
+        {
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
+                Rules.FixedIncomeHighProfits.GetDescription(),
+                FixedIncomeHighProfitFactory.Version,
+                param.Id,
+                (int)Rules.FixedIncomeHighProfits,
+                execution.IsBackTest,
+                execution.TimeSeriesInitiation.DateTime,
+                execution.TimeSeriesTermination.DateTime,
+                execution.CorrelationId,
+                execution.IsForceRerun);
+
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+
+            var highProfits = 
+                this.fixedIncomeRuleHighProfitsFactory.BuildRule(
+                    param,
+                    ruleCtx,
+                    judgementService,
+                    universeDataRequestsSubscriber,
+                    runMode,
+                    execution);
+
+            var highProfitsOrgFactors = this.brokerServiceFactory.Build(
+                highProfits,
+                param.Factors,
+                param.AggregateNonFactorableIntoOwnCategory);
+
+            var highProfitsFiltered = this.DecorateWithFilters(
+                operationContext,
+                param,
+                highProfitsOrgFactors,
+                universeDataRequestsSubscriber,
+                ruleCtx,
+                runMode);
+
+            return highProfitsFiltered;
         }
 
         private IUniverseRule DecorateWithFilters(
@@ -95,9 +186,9 @@
         {
             if (param.HasInternalFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
+                var filteredUniverse = this.universeFilterFactory.Build(
                     param.Accounts,
                     param.Traders,
                     param.Markets,
@@ -118,75 +209,6 @@
             }
 
             return highProfits;
-        }
-
-        private IUniverseRule SubscribeToParams(
-            ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
-            IHighProfitsRuleFixedIncomeParameters param)
-        {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
-                Rules.FixedIncomeHighProfits.GetDescription(),
-                FixedIncomeHighProfitFactory.Version,
-                param.Id,
-                (int)Rules.FixedIncomeHighProfits,
-                execution.IsBackTest,
-                execution.TimeSeriesInitiation.DateTime,
-                execution.TimeSeriesTermination.DateTime,
-                execution.CorrelationId,
-                execution.IsForceRerun);
-
-            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highProfits = this._fixedIncomeRuleHighProfitsFactory.BuildRule(param, ruleCtx, alertStream, runMode);
-            var highProfitsOrgFactors = this._brokerServiceFactory.Build(
-                highProfits,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
-            var highProfitsFiltered = this.DecorateWithFilters(
-                opCtx,
-                param,
-                highProfitsOrgFactors,
-                universeDataRequestsSubscriber,
-                ruleCtx,
-                runMode);
-
-            return highProfitsFiltered;
-        }
-
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
-            ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> highProfitParameters)
-        {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (highProfitParameters != null && highProfitParameters.Any())
-            {
-                foreach (var param in highProfitParameters)
-                {
-                    var paramSubscriptions = this.SubscribeToParams(
-                        execution,
-                        opCtx,
-                        alertStream,
-                        dataRequestSubscriber,
-                        param);
-                    subscriptions.Add(paramSubscriptions);
-                }
-            }
-            else
-            {
-                var errorMessage =
-                    $"tried to schedule a {nameof(FixedIncomeHighProfitsRule)} rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
-            }
-
-            return subscriptions;
         }
     }
 }

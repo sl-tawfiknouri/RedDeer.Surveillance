@@ -8,41 +8,91 @@
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 
+    /// <summary>
+    /// The judgement service factory.
+    /// </summary>
     public class JudgementServiceFactory : IJudgementServiceFactory
     {
-        private readonly IHighProfitJudgementMapper _highProfitJudgementMapper;
+        /// <summary>
+        /// The high profit judgement mapper.
+        /// </summary>
+        private readonly IHighProfitJudgementMapper highProfitJudgementMapper;
 
-        private readonly IJudgementRepository _judgementRepository;
+        /// <summary>
+        /// The fixed income high profit judgement mapper.
+        /// </summary>
+        private readonly IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper;
 
-        private readonly ILogger<JudgementService> _logger;
+        /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private readonly IJudgementRepository judgementRepository;
 
-        private readonly IRuleViolationServiceFactory _ruleViolationServiceFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<JudgementService> logger;
 
+        /// <summary>
+        /// The rule violation service factory.
+        /// </summary>
+        private readonly IRuleViolationServiceFactory ruleViolationServiceFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JudgementServiceFactory"/> class.
+        /// </summary>
+        /// <param name="ruleViolationServiceFactory">
+        /// The rule violation service factory.
+        /// </param>
+        /// <param name="judgementRepository">
+        /// The judgement repository.
+        /// </param>
+        /// <param name="highProfitJudgementMapper">
+        /// The high profit judgement mapper.
+        /// </param>
+        /// <param name="fixedIncomeHighProfitJudgementMapper">
+        /// The fixed income high profit judgement mapper.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public JudgementServiceFactory(
             IRuleViolationServiceFactory ruleViolationServiceFactory,
             IJudgementRepository judgementRepository,
             IHighProfitJudgementMapper highProfitJudgementMapper,
+            IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper,
             ILogger<JudgementService> logger)
         {
-            this._ruleViolationServiceFactory = ruleViolationServiceFactory
-                                                ?? throw new ArgumentNullException(nameof(ruleViolationServiceFactory));
+            this.ruleViolationServiceFactory =
+                ruleViolationServiceFactory ?? throw new ArgumentNullException(nameof(ruleViolationServiceFactory));
 
-            this._judgementRepository =
+            this.judgementRepository =
                 judgementRepository ?? throw new ArgumentNullException(nameof(judgementRepository));
 
-            this._highProfitJudgementMapper = highProfitJudgementMapper
-                                              ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
+            this.highProfitJudgementMapper =
+                highProfitJudgementMapper ?? throw new ArgumentNullException(nameof(highProfitJudgementMapper));
 
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.fixedIncomeHighProfitJudgementMapper =
+                fixedIncomeHighProfitJudgementMapper ?? throw new ArgumentNullException(nameof(fixedIncomeHighProfitJudgementMapper));
+
+            this.logger =
+                logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The build judgement service - injects in dependencies.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IJudgementService"/>.
+        /// </returns>
         public IJudgementService Build()
         {
             return new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationServiceFactory.Build(),
-                this._highProfitJudgementMapper,
-                this._logger);
+                this.judgementRepository,
+                this.ruleViolationServiceFactory.Build(),
+                this.highProfitJudgementMapper,
+                this.fixedIncomeHighProfitJudgementMapper,
+                this.logger);
         }
     }
 }

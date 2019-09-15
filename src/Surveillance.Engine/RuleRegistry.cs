@@ -210,6 +210,7 @@ namespace Surveillance.Engine.Rules
             this.For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
             this.For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
             this.For<IFixedIncomeHighProfitFactory>().Use<FixedIncomeHighProfitFactory>();
+            this.For<IFixedIncomeHighProfitsStreamRule>().Use<FixedIncomeHighProfitsStreamRule>();
 
             this.For<IWashTradeFixedIncomeSubscriber>().Use<WashTradeFixedIncomeSubscriber>();
             this.For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
@@ -307,6 +308,7 @@ namespace Surveillance.Engine.Rules
             this.For<IPlacingOrdersJudgementService>().Use<JudgementService>();
             this.For<IRampingJudgementService>().Use<JudgementService>();
             this.For<ISpoofingJudgementService>().Use<JudgementService>();
+            this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
         }
     }
 }

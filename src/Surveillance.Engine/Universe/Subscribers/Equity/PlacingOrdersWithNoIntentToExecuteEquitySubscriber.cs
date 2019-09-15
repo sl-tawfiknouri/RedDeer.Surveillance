@@ -68,7 +68,7 @@
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IUniverseAlertStream alertStream)
@@ -84,7 +84,7 @@
             var placingOrderParameters = this._ruleParameterMapper.Map(execution, dtos);
             var subscriptions = this.SubscribeToUniverse(
                 execution,
-                opCtx,
+                operationContext,
                 alertStream,
                 placingOrderParameters,
                 dataRequestSubscriber);

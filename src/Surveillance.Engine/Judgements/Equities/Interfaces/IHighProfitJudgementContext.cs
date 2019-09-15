@@ -1,12 +1,11 @@
-﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules.Judgements.Equities.Interfaces
+﻿namespace Surveillance.Engine.Rules.Judgements.Equities.Interfaces
 {
     using Domain.Core.Financial.Money;
     using Domain.Surveillance.Judgement.Equity.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
 
     public interface IHighProfitJudgementContext
     {

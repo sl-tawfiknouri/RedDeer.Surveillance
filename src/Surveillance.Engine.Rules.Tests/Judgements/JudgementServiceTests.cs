@@ -26,6 +26,8 @@
 
         private IHighProfitJudgementMapper _highProfitJudgementMapper;
 
+        private IFixedIncomeHighProfitJudgementMapper fixedIncomeJudgementMapper;
+
         private IHighVolumeJudgement _highVolumeJudgementContext;
 
         private IJudgementRepository _judgementRepository;
@@ -49,7 +51,25 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new JudgementService(this._judgementRepository, this._ruleViolationService, null, this._logger));
+                () => new JudgementService(
+                    this._judgementRepository,
+                    this._ruleViolationService, 
+                    null,
+                    this.fixedIncomeJudgementMapper,
+                    this._logger));
+        }
+
+        [Test]
+        public void Ctor_NullFixedIncomeHighProfitJudgementMapper_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new JudgementService(
+                    this._judgementRepository,
+                    this._ruleViolationService,
+                    this._highProfitJudgementMapper,
+                    null,
+                    this._logger));
         }
 
         [Test]
@@ -61,6 +81,7 @@
                     null,
                     this._ruleViolationService,
                     this._highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
                     this._logger));
         }
 
@@ -73,6 +94,7 @@
                     this._judgementRepository,
                     this._ruleViolationService,
                     this._highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
                     null));
         }
 
@@ -85,17 +107,14 @@
                     this._judgementRepository,
                     null,
                     this._highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
                     this._logger));
         }
 
         [Test]
         public void Judgement_CancelledOrderJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._cancelledOrderJudgementContext);
 
@@ -108,11 +127,7 @@
         [Test]
         public void Judgement_CancelledOrderJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._cancelledOrderJudgementContext);
 
@@ -125,11 +140,8 @@
         [Test]
         public void Judgement_HighProfitJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
+
             this._highProfitJudgementContext.Judgement.OrderId = null;
 
             service.Judgement(this._highProfitJudgementContext);
@@ -143,11 +155,8 @@
         [Test]
         public void Judgement_HighProfitJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
+
             this._highProfitJudgementContext.ProjectToAlert = true;
             this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
@@ -164,11 +173,8 @@
         [Test]
         public void Judgement_HighProfitJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
+
             this._highProfitJudgementContext.ProjectToAlert = false;
             this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
@@ -184,11 +190,7 @@
         [Test]
         public void Judgement_HighVolumeJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._highVolumeJudgementContext);
 
@@ -201,11 +203,7 @@
         [Test]
         public void Judgement_HighVolumeJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._highVolumeJudgementContext);
 
@@ -218,11 +216,7 @@
         [Test]
         public void Judgement_LayeringJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._layeringJudgementContext);
 
@@ -234,11 +228,7 @@
         [Test]
         public void Judgement_LayeringJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._layeringJudgementContext);
 
@@ -250,11 +240,7 @@
         [Test]
         public void Judgement_MarkingTheCloseJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._markingTheCloseJudgementContext);
 
@@ -267,11 +253,7 @@
         [Test]
         public void Judgement_MarkingTheCloseJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._markingTheCloseJudgementContext);
 
@@ -284,11 +266,7 @@
         [Test]
         public void Judgement_NullCancelledOrderJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ICancelledOrderJudgement)null));
 
@@ -299,11 +277,7 @@
         [Test]
         public void Judgement_NullHighProfitJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IHighProfitJudgementContext)null));
 
@@ -316,11 +290,7 @@
         [Test]
         public void Judgement_NullHighVolumeJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IHighVolumeJudgement)null));
 
@@ -331,11 +301,7 @@
         [Test]
         public void Judgement_NullLayeringJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ILayeringJudgement)null));
 
@@ -346,11 +312,7 @@
         [Test]
         public void Judgement_NullMarkingTheCloseJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IMarkingTheCloseJudgement)null));
 
@@ -361,11 +323,7 @@
         [Test]
         public void Judgement_NullPlacingOrdersWithNoIntentJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IPlacingOrdersWithNoIntentToExecuteJudgement)null));
 
@@ -377,11 +335,7 @@
         [Test]
         public void Judgement_NullRampingJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IRampingJudgement)null));
 
@@ -392,11 +346,7 @@
         [Test]
         public void Judgement_NullSpoofingJudgement_NullDoesNotThrowException()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ISpoofingJudgement)null));
 
@@ -407,11 +357,7 @@
         [Test]
         public void Judgement_PlacingOrdersWithNoIntentJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._placingOrdersWithNoIntentJudgementContext);
 
@@ -424,11 +370,7 @@
         [Test]
         public void Judgement_PlacingOrdersWithNoIntentJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._placingOrdersWithNoIntentJudgementContext);
 
@@ -441,11 +383,7 @@
         [Test]
         public void Judgement_RampingJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._rampingJudgementContext);
 
@@ -457,11 +395,7 @@
         [Test]
         public void Judgement_RampingJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._rampingJudgementContext);
 
@@ -473,11 +407,7 @@
         [Test]
         public void Judgement_SpoofingJudgement_SaveDoesAddToViolationIfProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._spoofingJudgementContext);
 
@@ -489,11 +419,7 @@
         [Test]
         public void Judgement_SpoofingJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.Judgement(this._spoofingJudgementContext);
 
@@ -505,15 +431,21 @@
         [Test]
         public void PassJudgement_Calls_RuleViolationsRepository()
         {
-            var service = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this._logger);
+            var service = this.BuildService();
 
             service.PassJudgement();
 
             A.CallTo(() => this._ruleViolationService.ProcessRuleViolationCache()).MustHaveHappenedOnceExactly();
+        }
+
+        private JudgementService BuildService()
+        {
+            return new JudgementService(
+                this._judgementRepository,
+                this._ruleViolationService,
+                this._highProfitJudgementMapper,
+                this.fixedIncomeJudgementMapper,
+                this._logger);
         }
 
         [SetUp]
@@ -529,6 +461,7 @@
             this._markingTheCloseJudgementContext = A.Fake<IMarkingTheCloseJudgement>();
             this._spoofingJudgementContext = A.Fake<ISpoofingJudgement>();
             this._highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
+            this.fixedIncomeJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
             this._ruleViolationService = A.Fake<IRuleViolationService>();
             this._logger = A.Fake<ILogger<JudgementService>>();
         }

@@ -92,6 +92,7 @@
 
             var rule = new FixedIncomeHighProfitsRule(
                 this._parameters,
+                null,
                 new NullLogger<FixedIncomeHighProfitsRule>());
 
             foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)

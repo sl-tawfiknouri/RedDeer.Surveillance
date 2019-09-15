@@ -6,6 +6,7 @@
     using Dapper;
 
     using Domain.Surveillance.Judgement.Equity.Interfaces;
+    using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using Microsoft.Extensions.Logging;
 
@@ -27,6 +28,8 @@
                 dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        // EQUITY RULES
 
         public async Task Save(IHighProfitJudgement highProfit)
         {
@@ -91,6 +94,37 @@
             if (spoofing == null) this._logger?.LogError("Spoofing Judgement was null");
         }
 
+        // FIXED INCOME RULES
+
+        public async Task Save(IFixedIncomeHighProfitJudgement highProfit)
+        {
+            this._logger?.LogInformation($"Fixed Income High profit judgement saving for rule run {highProfit.RuleRunId}");
+
+            if (highProfit == null)
+            {
+                this._logger?.LogError("Fixed Income High profit judgement was null");
+                return;
+            }
+
+            var dto = new HighProfitJudgementDto(highProfit);
+
+            try
+            {
+                using (var dbConn = this._dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(SaveHighProfit, dto))
+                {
+                    await conn;
+                }
+            }
+            catch (Exception e)
+            {
+                this._logger?.LogError(
+                    e,
+                    $"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
+            }
+
+        }
+
         private class HighProfitJudgementDto
         {
             public HighProfitJudgementDto()
@@ -99,6 +133,21 @@
             }
 
             public HighProfitJudgementDto(IHighProfitJudgement judgement)
+            {
+                if (judgement == null) return;
+
+                this.RuleRunId = judgement.RuleRunId;
+                this.RuleRunCorrelationId = judgement.RuleRunCorrelationId;
+                this.OrderId = judgement.OrderId;
+                this.ClientOrderId = judgement.ClientOrderId;
+                this.AbsoluteHighProfit = judgement.AbsoluteHighProfit;
+                this.AbsoluteHighProfitCurrency = judgement.AbsoluteHighProfitCurrency;
+                this.PercentageHighProfit = judgement.PercentageHighProfit;
+                this.Parameter = judgement.Parameters;
+                this.Analysis = !judgement.NoAnalysis;
+            }
+
+            public HighProfitJudgementDto(IFixedIncomeHighProfitJudgement judgement)
             {
                 if (judgement == null) return;
 

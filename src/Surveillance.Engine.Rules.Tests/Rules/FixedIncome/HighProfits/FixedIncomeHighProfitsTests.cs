@@ -15,6 +15,7 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -22,6 +23,8 @@
     public class FixedIncomeHighProfitsTests
     {
         private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
+
+        private IFixedIncomeHighProfitsStreamRule streamRule;
 
         private IUniverseAlertStream _alertStream;
 
@@ -44,6 +47,7 @@
             Assert.Throws<ArgumentNullException>(
                 () => new FixedIncomeHighProfitsRule(
                     this._parameters,
+                    this.streamRule,
                     null));
         }
 
@@ -51,6 +55,7 @@
         public void Setup()
         {
             this._fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
+            this.streamRule = A.Fake<IFixedIncomeHighProfitsStreamRule>();
             this._parameters = A.Fake<IHighProfitsRuleFixedIncomeParameters>();
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();

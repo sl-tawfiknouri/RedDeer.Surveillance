@@ -6,7 +6,7 @@
 
     using Domain.Core.Financial.Money;
     using Domain.Core.Trading.Orders;
-    using Domain.Surveillance.Judgement.Equity;
+    using Domain.Surveillance.Judgement.FixedIncome;
 
     using Microsoft.Extensions.Logging;
 
@@ -50,7 +50,7 @@
         /// <summary>
         /// Plumbing code for analysis results aka 'judgements'
         /// </summary>
-        protected readonly IHighProfitJudgementService JudgementService;
+        protected readonly IFixedIncomeHighProfitJudgementService JudgementService;
 
         /// <summary>
         /// Auditing context
@@ -148,11 +148,11 @@
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
-            IUniverseOrderFilter orderFilter,
+            IUniverseFixedIncomeOrderFilterService orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IHighProfitJudgementService judgementService,
+            IFixedIncomeHighProfitJudgementService judgementService,
             RuleRunMode runMode,
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -257,17 +257,19 @@
 
             if (!this.MarketClosureRule)
             {
+                this.Logger.LogInformation("Running rule for all trading histories at eschaton");
                 this.RunRuleForAllTradingHistories();
             }
 
             if (this.hasMissingData && this.RunMode == RuleRunMode.ValidationRun)
             {
-                this.Logger.LogInformation("Deleting alerts off the message sender");
+                this.Logger.LogInformation("Submitting data requests - had missing data and is validation run");
                 this.dataRequestSubscriber.SubmitRequest();
                 this.RuleCtx?.EndEvent();
             }
             else
             {
+                this.Logger.LogInformation("Closing rule analysis");
                 this.RuleCtx?.EndEvent();
             }
         }
@@ -281,6 +283,8 @@
         {
             if (!this.RunRuleGuard(history))
             {
+                this.Logger.LogInformation($"EvaluateHighProfits did not pass the rule run guard exiting");
+
                 return;
             }
 
@@ -508,7 +512,7 @@
         protected void SetNoLiveTradesJudgement(Order orderUnderAnalysis)
         {
             var noTradesParameters = JsonConvert.SerializeObject(this.FixedIncomeParameters);
-            var noTradesJudgement = new HighProfitJudgement(
+            var noTradesJudgement = new FixedIncomeHighProfitJudgement(
                 this.RuleCtx.RuleParameterId(),
                 this.RuleCtx.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
@@ -520,7 +524,7 @@
                 false,
                 true);
 
-            this.JudgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+            this.JudgementService.Judgement(new FixedIncomeHighProfitJudgementContext(noTradesJudgement, false));
         }
 
         /// <summary>
@@ -642,6 +646,7 @@
                     StringComparison.InvariantCultureIgnoreCase))
             {
                 this.RuleCtx.EventException("had mismatching absolute profits currencies.");
+
                 throw new InvalidOperationException("had mismatching absolute profits currencies.");
             }
 
@@ -674,7 +679,7 @@
         {
             var noRevenueJsonParameters = JsonConvert.SerializeObject(this.FixedIncomeParameters);
 
-            var noRevenueJudgement = new HighProfitJudgement(
+            var noRevenueJudgement = new FixedIncomeHighProfitJudgement(
                 this.RuleCtx.RuleParameterId(),
                 this.RuleCtx.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
@@ -686,7 +691,7 @@
                 false,
                 false);
 
-            this.JudgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
+            this.JudgementService.Judgement(new FixedIncomeHighProfitJudgementContext(noRevenueJudgement, false));
         }
 
         /// <summary>
@@ -763,7 +768,7 @@
             var percentageHighProfit = hasHighProfitPercentage ? profitRatio : (decimal?)null;
 
             var jsonParameters = JsonConvert.SerializeObject(this.FixedIncomeParameters);
-            var judgement = new HighProfitJudgement(
+            var judgement = new FixedIncomeHighProfitJudgement(
                 this.RuleCtx.RuleParameterId(),
                 this.RuleCtx.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
@@ -798,7 +803,7 @@
         private void SetMissingMarketDataJudgement(Order orderUnderAnalysis)
         {
             var noTradesParameters = JsonConvert.SerializeObject(this.FixedIncomeParameters);
-            var noTradesJudgement = new HighProfitJudgement(
+            var noTradesJudgement = new FixedIncomeHighProfitJudgement(
                 this.RuleCtx.RuleParameterId(),
                 this.RuleCtx.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
@@ -810,7 +815,7 @@
                 true,
                 false);
 
-            this.JudgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+            this.JudgementService.Judgement(new FixedIncomeHighProfitJudgementContext(noTradesJudgement, false));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces
 {
     using Domain.Core.Financial.Money;
-    using Domain.Surveillance.Judgement.Equity.Interfaces;
+    using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -21,7 +21,7 @@
 
         bool HasRelativeProfitBreach { get; set; }
 
-        IHighProfitJudgement Judgement { get; set; }
+        IFixedIncomeHighProfitJudgement Judgement { get; set; }
 
         bool ProjectToAlert { get; set; }
 

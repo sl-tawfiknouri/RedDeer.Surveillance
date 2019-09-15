@@ -223,6 +223,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 this._judgementRepository,
                 this._ruleViolationService,
                 new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
+                new FixedIncomeHighProfitJudgementMapper(new NullLogger<FixedIncomeHighProfitJudgementMapper>()), 
                 new NullLogger<JudgementService>());
 
             this._exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();

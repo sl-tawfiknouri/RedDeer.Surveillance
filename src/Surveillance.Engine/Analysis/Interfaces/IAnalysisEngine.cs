@@ -8,6 +8,6 @@
 
     public interface IAnalysisEngine
     {
-        Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx);
+        Task Execute(ScheduledExecution execution, ISystemProcessOperationContext operationContext);
     }
 }

@@ -310,6 +310,7 @@
                 return;
             }
 
+            // post rule execution analysis
             universeAlertSubscriber.Flush();
             await this.ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await this.alertsRepository.Create(universeAlertSubscriber.Analytics);

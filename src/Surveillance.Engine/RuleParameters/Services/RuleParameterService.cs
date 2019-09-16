@@ -77,17 +77,17 @@
             this._logger.LogInformation("has fetched the rule parameters");
 
             return new RuleParameterDto
-                       {
-                           CancelledOrders = allCancelledOrders,
-                           HighProfits = allHighProfits,
-                           MarkingTheCloses = allMarkingTheClose,
-                           Spoofings = allSpoofings,
-                           Layerings = allLayerings,
-                           HighVolumes = allHighVolumes,
-                           WashTrades = allWashTrades,
-                           Rampings = allRampings,
-                           PlacingOrders = allPlacingOrders
-                       };
+           {
+               CancelledOrders = allCancelledOrders,
+               HighProfits = allHighProfits,
+               MarkingTheCloses = allMarkingTheClose,
+               Spoofings = allSpoofings,
+               Layerings = allLayerings,
+               HighVolumes = allHighVolumes,
+               WashTrades = allWashTrades,
+               Rampings = allRampings,
+               PlacingOrders = allPlacingOrders
+           };
         }
     }
 }

@@ -3,6 +3,7 @@
     using System;
 
     using Domain.Surveillance.Judgement.Equity.Interfaces;
+    using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using FakeItEasy;
 
@@ -13,457 +14,646 @@
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Judgements;
     using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
 
+    /// <summary>
+    /// The judgement service tests.
+    /// </summary>
     [TestFixture]
     public class JudgementServiceTests
     {
-        private ICancelledOrderJudgement _cancelledOrderJudgementContext;
+        /// <summary>
+        /// The cancelled order judgement context.
+        /// </summary>
+        private ICancelledOrderJudgement cancelledOrderJudgementContext;
 
-        private IHighProfitJudgementContext _highProfitJudgementContext;
+        /// <summary>
+        /// The high profit judgement context.
+        /// </summary>
+        private IHighProfitJudgementContext highProfitJudgementContext;
 
-        private IHighProfitJudgementMapper _highProfitJudgementMapper;
+        /// <summary>
+        /// The high profit judgement mapper.
+        /// </summary>
+        private IHighProfitJudgementMapper highProfitJudgementMapper;
 
-        private IFixedIncomeHighProfitJudgementMapper fixedIncomeJudgementMapper;
+        /// <summary>
+        /// The fixed income high profit judgement context.
+        /// </summary>
+        private IFixedIncomeHighProfitJudgementContext fixedIncomeProfitJudgementContext;
 
-        private IHighVolumeJudgement _highVolumeJudgementContext;
+        /// <summary>
+        /// The fixed income judgement mapper.
+        /// </summary>
+        private IFixedIncomeHighProfitJudgementMapper fixedIncomeProfitJudgementMapper;
 
-        private IJudgementRepository _judgementRepository;
+        /// <summary>
+        /// The high volume judgement context.
+        /// </summary>
+        private IHighVolumeJudgement highVolumeJudgementContext;
 
-        private ILayeringJudgement _layeringJudgementContext;
+        /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private IJudgementRepository judgementRepository;
 
-        private ILogger<JudgementService> _logger;
+        /// <summary>
+        /// The layering judgement context.
+        /// </summary>
+        private ILayeringJudgement layeringJudgementContext;
 
-        private IMarkingTheCloseJudgement _markingTheCloseJudgementContext;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<JudgementService> logger;
 
-        private IPlacingOrdersWithNoIntentToExecuteJudgement _placingOrdersWithNoIntentJudgementContext;
+        /// <summary>
+        /// The marking the close judgement context.
+        /// </summary>
+        private IMarkingTheCloseJudgement markingTheCloseJudgementContext;
 
-        private IRampingJudgement _rampingJudgementContext;
+        /// <summary>
+        /// The placing orders with no intent judgement context.
+        /// </summary>
+        private IPlacingOrdersWithNoIntentToExecuteJudgement placingOrdersWithNoIntentJudgementContext;
 
-        private IRuleViolationService _ruleViolationService;
+        /// <summary>
+        /// The ramping judgement context.
+        /// </summary>
+        private IRampingJudgement rampingJudgementContext;
 
-        private ISpoofingJudgement _spoofingJudgementContext;
+        /// <summary>
+        /// The rule violation service.
+        /// </summary>
+        private IRuleViolationService ruleViolationService;
 
-        [Test]
-        public void Ctor_NullHighProfitJudgementMapper_IsExceptional()
+        /// <summary>
+        /// The spoofing judgement context.
+        /// </summary>
+        private ISpoofingJudgement spoofingJudgementContext;
+
+        /// <summary>
+        /// The test setup.
+        /// </summary>
+        [SetUp]
+        public void Setup()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(
-                () => new JudgementService(
-                    this._judgementRepository,
-                    this._ruleViolationService, 
-                    null,
-                    this.fixedIncomeJudgementMapper,
-                    this._logger));
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.highProfitJudgementContext = A.Fake<IHighProfitJudgementContext>();
+            this.cancelledOrderJudgementContext = A.Fake<ICancelledOrderJudgement>();
+            this.highVolumeJudgementContext = A.Fake<IHighVolumeJudgement>();
+            this.layeringJudgementContext = A.Fake<ILayeringJudgement>();
+            this.placingOrdersWithNoIntentJudgementContext = A.Fake<IPlacingOrdersWithNoIntentToExecuteJudgement>();
+            this.rampingJudgementContext = A.Fake<IRampingJudgement>();
+            this.markingTheCloseJudgementContext = A.Fake<IMarkingTheCloseJudgement>();
+            this.spoofingJudgementContext = A.Fake<ISpoofingJudgement>();
+            this.highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
+            this.fixedIncomeProfitJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
+            this.fixedIncomeProfitJudgementContext = A.Fake<IFixedIncomeHighProfitJudgementContext>();
+            this.ruleViolationService = A.Fake<IRuleViolationService>();
+            this.logger = A.Fake<ILogger<JudgementService>>();
         }
 
+        /// <summary>
+        /// The constructor null high profit judgement mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullFixedIncomeHighProfitJudgementMapper_IsExceptional()
+        public void ConstructorNullHighProfitJudgementMapperIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementService(
-                    this._judgementRepository,
-                    this._ruleViolationService,
-                    this._highProfitJudgementMapper,
+                    this.judgementRepository,
+                    this.ruleViolationService, 
                     null,
-                    this._logger));
+                    this.fixedIncomeProfitJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null fixed income high profit judgement mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullJudgementRepository_IsExceptional()
+        public void ConstructorNullFixedIncomeHighProfitJudgementMapperIsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new JudgementService(
+                    this.judgementRepository,
+                    this.ruleViolationService,
+                    this.highProfitJudgementMapper,
+                    null,
+                    this.logger));
+        }
+
+        /// <summary>
+        /// The constructor_ null judgement repository_ is exceptional.
+        /// </summary>
+        [Test]
+        public void ConstructorNullJudgementRepositoryIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementService(
                     null,
-                    this._ruleViolationService,
-                    this._highProfitJudgementMapper,
-                    this.fixedIncomeJudgementMapper,
-                    this._logger));
+                    this.ruleViolationService,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeProfitJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor_ null logger_ is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullLogger_IsExceptional()
+        public void ConstructorNullLoggerIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementService(
-                    this._judgementRepository,
-                    this._ruleViolationService,
-                    this._highProfitJudgementMapper,
-                    this.fixedIncomeJudgementMapper,
+                    this.judgementRepository,
+                    this.ruleViolationService,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeProfitJudgementMapper,
                     null));
         }
 
+        /// <summary>
+        /// The ctor_ null rule violation service_ is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleViolationService_IsExceptional()
+        public void ConstructorNullRuleViolationServiceIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementService(
-                    this._judgementRepository,
+                    this.judgementRepository,
                     null,
-                    this._highProfitJudgementMapper,
-                    this.fixedIncomeJudgementMapper,
-                    this._logger));
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeProfitJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The judgement_ cancelled order judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_CancelledOrderJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementCancelledOrderJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._cancelledOrderJudgementContext);
+            service.Judgement(this.cancelledOrderJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void Judgement_CancelledOrderJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
-        {
-            var service = this.BuildService();
-
-            service.Judgement(this._cancelledOrderJudgementContext);
-
-            A.CallTo(() => this._judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ cancelled order judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_HighProfitJudgement_NullDoesNotThrowException()
+        public void JudgementCancelledOrderJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            this._highProfitJudgementContext.Judgement.OrderId = null;
+            service.Judgement(this.cancelledOrderJudgementContext);
 
-            service.Judgement(this._highProfitJudgementContext);
+            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
+        /// <summary>
+        /// The judgement_ high profit judgement_ null does not throw exception.
+        /// </summary>
+        [Test]
+        public void JudgementHighProfitJudgementNullDoesNotThrowException()
+        {
+            var service = this.BuildService();
+
+            this.highProfitJudgementContext.Judgement.OrderId = null;
+
+            service.Judgement(this.highProfitJudgementContext);
+
+            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ high profit judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_HighProfitJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementHighProfitJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            this._highProfitJudgementContext.RaiseRuleViolation = true;
-            this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
+            this.highProfitJudgementContext.RaiseRuleViolation = true;
+            this.highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
-            service.Judgement(this._highProfitJudgementContext);
+            service.Judgement(this.highProfitJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
+            A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ high profit judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_HighProfitJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementHighProfitJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            this._highProfitJudgementContext.RaiseRuleViolation = false;
-            this._highProfitJudgementContext.Judgement.OrderId = "test-order-id";
+            this.highProfitJudgementContext.RaiseRuleViolation = false;
+            this.highProfitJudgementContext.Judgement.OrderId = "test-order-id";
 
-            service.Judgement(this._highProfitJudgementContext);
+            service.Judgement(this.highProfitJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
+            A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ high volume judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_HighVolumeJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementHighVolumeJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._highVolumeJudgementContext);
+            service.Judgement(this.highVolumeJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ high volume judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_HighVolumeJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementHighVolumeJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._highVolumeJudgementContext);
+            service.Judgement(this.highVolumeJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ layering judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_LayeringJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementLayeringJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._layeringJudgementContext);
+            service.Judgement(this.layeringJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ layering judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_LayeringJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementLayeringJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._layeringJudgementContext);
+            service.Judgement(this.layeringJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ marking the close judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_MarkingTheCloseJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementMarkingTheCloseJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._markingTheCloseJudgementContext);
+            service.Judgement(this.markingTheCloseJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ marking the close judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_MarkingTheCloseJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementMarkingTheCloseJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._markingTheCloseJudgementContext);
+            service.Judgement(this.markingTheCloseJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ null cancelled order judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullCancelledOrderJudgement_NullDoesNotThrowException()
+        public void JudgementNullCancelledOrderJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ICancelledOrderJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ null high profit judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullHighProfitJudgement_NullDoesNotThrowException()
+        public void JudgementNullHighProfitJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IHighProfitJudgementContext)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ null high volume judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullHighVolumeJudgement_NullDoesNotThrowException()
+        public void JudgementNullHighVolumeJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IHighVolumeJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<IHighVolumeJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ null layering judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullLayeringJudgement_NullDoesNotThrowException()
+        public void JudgementNullLayeringJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ILayeringJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ null marking the close judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullMarkingTheCloseJudgement_NullDoesNotThrowException()
+        public void JudgementNullMarkingTheCloseJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IMarkingTheCloseJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement null placing orders with no intent judgement null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullPlacingOrdersWithNoIntentJudgement_NullDoesNotThrowException()
+        public void JudgementNullPlacingOrdersWithNoIntentJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IPlacingOrdersWithNoIntentToExecuteJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement null ramping judgement null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullRampingJudgement_NullDoesNotThrowException()
+        public void JudgementNullRampingJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((IRampingJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement_ null spoofing judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void Judgement_NullSpoofingJudgement_NullDoesNotThrowException()
+        public void JudgementNullSpoofingJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
             Assert.DoesNotThrow(() => service.Judgement((ISpoofingJudgement)null));
 
-            A.CallTo(() => this._judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The judgement placing orders with no intent judgement save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_PlacingOrdersWithNoIntentJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementPlacingOrdersWithNoIntentJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._placingOrdersWithNoIntentJudgementContext);
+            service.Judgement(this.placingOrdersWithNoIntentJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement placing orders with no intent judgement save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_PlacingOrdersWithNoIntentJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementPlacingOrdersWithNoIntentJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._placingOrdersWithNoIntentJudgementContext);
+            service.Judgement(this.placingOrdersWithNoIntentJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ ramping judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_RampingJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementRampingJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._rampingJudgementContext);
+            service.Judgement(this.rampingJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ ramping judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_RampingJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementRampingJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._rampingJudgementContext);
+            service.Judgement(this.rampingJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ spoofing judgement_ save does add to violation if project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_SpoofingJudgement_SaveDoesAddToViolationIfProjectToAlert()
+        public void JudgementSpoofingJudgementSaveDoesAddToViolationIfProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._spoofingJudgementContext);
+            service.Judgement(this.spoofingJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ spoofing judgement_ save does not add to violation if no project to alert.
+        /// </summary>
         [Test]
-        public void Judgement_SpoofingJudgement_SaveDoesNotAddToViolationIfNoProjectToAlert()
+        public void JudgementSpoofingJudgementSaveDoesNotAddToViolationIfNoProjectToAlert()
         {
             var service = this.BuildService();
 
-            service.Judgement(this._spoofingJudgementContext);
+            service.Judgement(this.spoofingJudgementContext);
 
-            A.CallTo(() => this._judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The judgement_ fixed income high profit judgement_ null does not throw exception.
+        /// </summary>
         [Test]
-        public void PassJudgement_Calls_RuleViolationsRepository()
+        public void JudgementFixedIncomeHighProfitJudgementNullDoesNotThrowException()
+        {
+            var service = this.BuildService();
+
+            this.fixedIncomeProfitJudgementContext.Judgement.OrderId = null;
+
+            service.Judgement(this.fixedIncomeProfitJudgementContext);
+
+            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.fixedIncomeProfitJudgementMapper.Map(A<IFixedIncomeHighProfitJudgementContext>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
+        }
+
+        /// <summary>
+        /// The judgement_ fixed income high profit judgement_ save does add to violation if project to alert.
+        /// </summary>
+        [Test]
+        public void JudgementFixedIncomeHighProfitJudgementSaveDoesAddToViolationIfProjectToAlert()
+        {
+            var service = this.BuildService();
+
+            this.fixedIncomeProfitJudgementContext.RaiseRuleViolation = true;
+            this.fixedIncomeProfitJudgementContext.Judgement.OrderId = "test-order-id";
+
+            service.Judgement(this.fixedIncomeProfitJudgementContext);
+
+            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.fixedIncomeProfitJudgementMapper.Map(A<IFixedIncomeHighProfitJudgementContext>.Ignored))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        /// <summary>
+        /// The pass judgement_ calls_ rule violations repository.
+        /// </summary>
+        [Test]
+        public void PassJudgementCallsRuleViolationsRepository()
         {
             var service = this.BuildService();
 
             service.PassJudgement();
 
-            A.CallTo(() => this._ruleViolationService.ProcessRuleViolationCache()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationService.ProcessRuleViolationCache()).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The build service.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="JudgementService"/>.
+        /// </returns>
         private JudgementService BuildService()
         {
             return new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
-                this._highProfitJudgementMapper,
-                this.fixedIncomeJudgementMapper,
-                this._logger);
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            this._judgementRepository = A.Fake<IJudgementRepository>();
-            this._highProfitJudgementContext = A.Fake<IHighProfitJudgementContext>();
-            this._cancelledOrderJudgementContext = A.Fake<ICancelledOrderJudgement>();
-            this._highVolumeJudgementContext = A.Fake<IHighVolumeJudgement>();
-            this._layeringJudgementContext = A.Fake<ILayeringJudgement>();
-            this._placingOrdersWithNoIntentJudgementContext = A.Fake<IPlacingOrdersWithNoIntentToExecuteJudgement>();
-            this._rampingJudgementContext = A.Fake<IRampingJudgement>();
-            this._markingTheCloseJudgementContext = A.Fake<IMarkingTheCloseJudgement>();
-            this._spoofingJudgementContext = A.Fake<ISpoofingJudgement>();
-            this._highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
-            this.fixedIncomeJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
-            this._ruleViolationService = A.Fake<IRuleViolationService>();
-            this._logger = A.Fake<ILogger<JudgementService>>();
+                this.judgementRepository,
+                this.ruleViolationService,
+                this.highProfitJudgementMapper,
+                this.fixedIncomeProfitJudgementMapper,
+                this.logger);
         }
     }
 }

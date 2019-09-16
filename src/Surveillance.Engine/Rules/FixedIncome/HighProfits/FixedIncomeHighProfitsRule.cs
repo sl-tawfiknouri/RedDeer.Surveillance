@@ -93,8 +93,8 @@
         {
             var cloneRule = new FixedIncomeHighProfitsRule(
                 this.fixedIncomeParameters,
-                (IFixedIncomeHighProfitsStreamRule)this.streamRule.Clone(factor),
-                (IFixedIncomeHighProfitsMarketClosureRule)this.marketClosureRule.Clone(factor),
+                this.streamRule.Clone(factor) as IFixedIncomeHighProfitsStreamRule, 
+                this.marketClosureRule.Clone(factor) as IFixedIncomeHighProfitsMarketClosureRule,
                 this.logger);
 
             cloneRule.OrganisationFactorValue = factor;
@@ -134,7 +134,9 @@
         /// <summary>
         /// The on error event trigger
         /// </summary>
-        /// <param name="error"></param>
+        /// <param name="error">
+        /// exception that occurred
+        /// </param>
         public void OnError(Exception error)
         {
             this.logger.LogError("OnError() event received", error);
@@ -145,7 +147,9 @@
         /// <summary>
         /// The on next event trigger
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">
+        /// universe event to progress
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
             this.logger.LogInformation(

@@ -1,9 +1,4 @@
-﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 {
     using System;
 
@@ -17,9 +12,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Currency;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -32,6 +25,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates;
@@ -40,75 +37,147 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
     using TechTalk.SpecFlow;
     using TechTalk.SpecFlow.Assist;
 
+    /// <summary>
+    /// The high profit steps.
+    /// </summary>
     [Binding]
     public sealed class HighProfitSteps
     {
-        private readonly ExchangeRateSelection _exchangeRateSelection;
+        /// <summary>
+        /// The exchange rate selection.
+        /// </summary>
+        private readonly ExchangeRateSelection exchangeRateSelection;
 
-        private readonly ScenarioContext _scenarioContext;
+        /// <summary>
+        /// The scenario context.
+        /// </summary>
+        private readonly ScenarioContext scenarioContext;
 
-        private readonly UniverseSelectionState _universeSelectionState;
+        /// <summary>
+        /// The universe selection state.
+        /// </summary>
+        private readonly UniverseSelectionState universeSelectionState;
 
-        private IUniverseAlertStream _alertStream;
+        /// <summary>
+        /// The cost calculator factory.
+        /// </summary>
+        private ICostCalculatorFactory costCalculatorFactory;
 
-        private ICostCalculatorFactory _costCalculatorFactory;
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
-        private ICurrencyConverterService _currencyConverterService;
+        /// <summary>
+        /// The equity rule high profit factory.
+        /// </summary>
+        private EquityRuleHighProfitFactory equityRuleHighProfitFactory;
 
-        private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        /// <summary>
+        /// The exchange rate profit calculator.
+        /// </summary>
+        private IExchangeRateProfitCalculator exchangeRateProfitCalculator;
 
-        private EquityRuleHighProfitFactory _equityRuleHighProfitFactory;
+        /// <summary>
+        /// The high profit rule equities parameters.
+        /// </summary>
+        private HighProfitsRuleEquitiesParameters highProfitRuleEquitiesParameters;
 
-        private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+        /// <summary>
+        /// The interday universe market cache factory.
+        /// </summary>
+        private IUniverseMarketCacheFactory interdayUniverseMarketCacheFactory;
 
-        private HighProfitsRuleEquitiesParameters _highProfitRuleEquitiesParameters;
+        /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private IJudgementRepository judgementRepository;
 
-        private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        /// <summary>
+        /// The judgement service.
+        /// </summary>
+        private JudgementService judgementService;
 
-        private IJudgementRepository _judgementRepository;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<HighProfitsRule> logger;
 
-        private JudgementService _judgementService;
+        /// <summary>
+        /// The market data cache strategy factory.
+        /// </summary>
+        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
-        private IJudgementServiceFactory _judgementServiceFactory;
+        /// <summary>
+        /// The revenue calculator factory.
+        /// </summary>
+        private IRevenueCalculatorFactory revenueCalculatorFactory;
 
-        private ILogger<HighProfitsRule> _logger;
+        /// <summary>
+        /// The rule context.
+        /// </summary>
+        private ISystemProcessOperationRunRuleContext ruleContext;
 
-        private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
+        /// <summary>
+        /// The rule violation service.
+        /// </summary>
+        private IRuleViolationService ruleViolationService;
 
-        private IRevenueCalculatorFactory _revenueCalculatorFactory;
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private IMarketTradingHoursService tradingHoursService;
 
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
+        /// <summary>
+        /// The trading logger.
+        /// </summary>
+        private ILogger<TradingHistoryStack> tradingLogger;
 
-        private IRuleViolationService _ruleViolationService;
+        /// <summary>
+        /// The universe order filter service.
+        /// </summary>
+        private IUniverseEquityOrderFilterService universeOrderFilterService;
 
-        private IMarketTradingHoursService _tradingHoursService;
-
-        private ILogger<TradingHistoryStack> _tradingLogger;
-
-        private IUniverseEquityOrderFilterService _universeOrderFilterService;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighProfitSteps"/> class.
+        /// </summary>
+        /// <param name="scenarioContext">
+        /// The scenario context.
+        /// </param>
+        /// <param name="universeSelectionState">
+        /// The universe selection state.
+        /// </param>
+        /// <param name="exchangeRateSelection">
+        /// The exchange rate selection.
+        /// </param>
         public HighProfitSteps(
             ScenarioContext scenarioContext,
             UniverseSelectionState universeSelectionState,
             ExchangeRateSelection exchangeRateSelection)
         {
-            this._scenarioContext = scenarioContext;
-            this._universeSelectionState = universeSelectionState;
-            this._exchangeRateSelection = exchangeRateSelection;
+            this.scenarioContext = scenarioContext;
+            this.universeSelectionState = universeSelectionState;
+            this.exchangeRateSelection = exchangeRateSelection;
         }
 
+        /// <summary>
+        /// The given i have the high profit rule parameter values.
+        /// </summary>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
         [Given(@"I have the high profit rule parameter values")]
         public void GivenIHaveTheHighProfitRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
             {
-                this._scenarioContext.Pending();
+                this.scenarioContext.Pending();
                 return;
             }
 
             var parameters = ruleParameters.CreateInstance<HighProfitApiParameters>();
 
-            this._highProfitRuleEquitiesParameters = new HighProfitsRuleEquitiesParameters(
+            this.highProfitRuleEquitiesParameters = new HighProfitsRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 TimeSpan.FromHours(parameters.FutureHours),
@@ -123,13 +192,22 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 true);
         }
 
+        /// <summary>
+        /// The then i will have alerts.
+        /// </summary>
+        /// <param name="alertCount">
+        /// The alert count.
+        /// </param>
         [Then(@"I will have (.*) high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => this._ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+            A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(_ => _ == alertCount);
         }
 
+        /// <summary>
+        /// The when i run the high profit rule.
+        /// </summary>
         [When(@"I run the high profit rule")]
         public void WhenIRunTheHighProfitRule()
         {
@@ -137,23 +215,28 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
             this.Setup();
 
-            var highProfitRule = this._equityRuleHighProfitFactory.Build(
-                this._highProfitRuleEquitiesParameters,
-                this._ruleCtx,
-                this._ruleCtx,
-                this._dataRequestSubscriber,
-                this._judgementService,
+            var highProfitRule = this.equityRuleHighProfitFactory.Build(
+                this.highProfitRuleEquitiesParameters,
+                this.ruleContext,
+                this.ruleContext,
+                this.dataRequestSubscriber,
+                this.judgementService,
                 scheduledExecution);
 
-            foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
+            foreach (var universeEvent in this.universeSelectionState.SelectedUniverse.UniverseEvents)
+            {
                 highProfitRule.OnNext(universeEvent);
+            }
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         private void Setup()
         {
-            this._tradingHoursService = A.Fake<IMarketTradingHoursService>();
+            this.tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
-            A.CallTo(() => this._tradingHoursService.GetTradingHoursForMic("XLON")).Returns(
+            A.CallTo(() => this.tradingHoursService.GetTradingHoursForMic("XLON")).Returns(
                 new TradingHours
                     {
                         CloseOffsetInUtc = TimeSpan.FromHours(16),
@@ -162,7 +245,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                         OpenOffsetInUtc = TimeSpan.FromHours(8)
                     });
 
-            A.CallTo(() => this._tradingHoursService.GetTradingHoursForMic("NASDAQ")).Returns(
+            A.CallTo(() => this.tradingHoursService.GetTradingHoursForMic("NASDAQ")).Returns(
                 new TradingHours
                     {
                         CloseOffsetInUtc = TimeSpan.FromHours(23),
@@ -171,63 +254,57 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                         OpenOffsetInUtc = TimeSpan.FromHours(15)
                     });
 
-            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            var currencyLogger = new NullLogger<CurrencyConverterService>();
-            this._currencyConverterService = new CurrencyConverterService(
-                this._exchangeRateSelection.ExchangeRateRepository,
-                currencyLogger);
-            this._universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            this._logger = new NullLogger<HighProfitsRule>();
-            this._tradingLogger = new NullLogger<TradingHistoryStack>();
-            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this._alertStream = A.Fake<IUniverseAlertStream>();
-            this._dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            this._judgementServiceFactory = A.Fake<IJudgementServiceFactory>();
+            this.universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this.logger = new NullLogger<HighProfitsRule>();
+            this.tradingLogger = new NullLogger<TradingHistoryStack>();
+            this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
-            this._exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            this._marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+            this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
-            this._costCalculatorFactory = new CostCalculatorFactory(
+            this.costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(
-                    this._exchangeRateSelection.ExchangeRateRepository,
+                    this.exchangeRateSelection.ExchangeRateRepository,
                     new NullLogger<CurrencyConverterService>()),
                 new NullLogger<CostCalculator>(),
                 new NullLogger<CostCurrencyConvertingCalculator>());
 
-            this._revenueCalculatorFactory = new RevenueCalculatorFactory(
-                this._tradingHoursService,
+            this.revenueCalculatorFactory = new RevenueCalculatorFactory(
+                this.tradingHoursService,
                 new CurrencyConverterService(
-                    this._exchangeRateSelection.ExchangeRateRepository,
+                    this.exchangeRateSelection.ExchangeRateRepository,
                     new NullLogger<CurrencyConverterService>()),
                 new NullLogger<RevenueCurrencyConvertingCalculator>(),
                 new NullLogger<RevenueCalculator>());
 
-            this._equityRuleHighProfitFactory = new EquityRuleHighProfitFactory(
-                this._costCalculatorFactory,
-                this._revenueCalculatorFactory,
-                this._exchangeRateProfitCalculator,
-                this._universeOrderFilterService,
-                this._interdayUniverseMarketCacheFactory,
-                this._marketDataCacheStrategyFactory,
-                this._logger,
-                this._tradingLogger);
+            this.equityRuleHighProfitFactory = new EquityRuleHighProfitFactory(
+                this.costCalculatorFactory,
+                this.revenueCalculatorFactory,
+                this.exchangeRateProfitCalculator,
+                this.universeOrderFilterService,
+                this.interdayUniverseMarketCacheFactory,
+                this.marketDataCacheStrategyFactory,
+                this.logger,
+                this.tradingLogger);
 
-            this._judgementRepository = A.Fake<IJudgementRepository>();
-            this._ruleViolationService = A.Fake<IRuleViolationService>();
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.ruleViolationService = A.Fake<IRuleViolationService>();
 
-            this._judgementService = new JudgementService(
-                this._judgementRepository,
-                this._ruleViolationService,
+            this.judgementService = new JudgementService(
+                this.judgementRepository,
+                this.ruleViolationService,
                 new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
                 new FixedIncomeHighProfitJudgementMapper(new NullLogger<FixedIncomeHighProfitJudgementMapper>()), 
                 new NullLogger<JudgementService>());
 
-            this._exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            this._marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+            this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
         }
     }
 }

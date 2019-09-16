@@ -2,20 +2,41 @@
 {
     using System;
 
+    using Domain.Surveillance.Scheduling;
+
     using FakeItEasy;
 
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-
-    using RedDeer.Contracts.SurveillanceService.Rules;
-
+    
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
+    using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Currency;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Factories.FixedIncome;
+    using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Judgements;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Markets;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 
     using TechTalk.SpecFlow;
@@ -28,29 +49,24 @@
     public class FixedIncomeHighProfitSteps
     {
         /// <summary>
-        /// The _scenario context.
+        /// The scenario context.
         /// </summary>
         private readonly ScenarioContext scenarioContext;
 
         /// <summary>
-        /// The _universe selection state.
+        /// The universe selection state.
         /// </summary>
         private readonly UniverseSelectionState universeSelectionState;
+
+        /// <summary>
+        /// The exchange rate selection state.
+        /// </summary>
+        private readonly ExchangeRateSelection exchangeRateSelection;
 
         /// <summary>
         /// The alert stream.
         /// </summary>
         private IUniverseAlertStream alertStream;
-
-        /// <summary>
-        /// The interday universe market cache factory.
-        /// </summary>
-        private UniverseMarketCacheFactory interdayUniverseMarketCacheFactory;
-
-        /// <summary>
-        /// The order filter service.
-        /// </summary>
-        private IUniverseFixedIncomeOrderFilterService orderFilterService;
 
         /// <summary>
         /// The parameters.
@@ -63,6 +79,76 @@
         private ISystemProcessOperationRunRuleContext ruleContext;
 
         /// <summary>
+        /// The judgement service.
+        /// </summary>
+        private JudgementService judgementService;
+
+        /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private IJudgementRepository judgementRepository;
+
+        /// <summary>
+        /// The rule violation service.
+        /// </summary>
+        private IRuleViolationService ruleViolationService;
+
+        /// <summary>
+        /// The factory.
+        /// </summary>
+        private IFixedIncomeHighProfitFactory factory;
+
+        /// <summary>
+        /// The fixed income order filter service.
+        /// </summary>
+        private IUniverseFixedIncomeOrderFilterService fixedIncomeOrderFilterService;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseMarketCacheFactory marketCacheFactory;
+
+        /// <summary>
+        /// The market data cache strategy factory.
+        /// </summary>
+        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+
+        /// <summary>
+        /// The cost calculator factory.
+        /// </summary>
+        private ICostCalculatorFactory costCalculatorFactory;
+
+        /// <summary>
+        /// The revenue calculator factory.
+        /// </summary>
+        private IRevenueCalculatorFactory revenueCalculatorFactory;
+
+        /// <summary>
+        /// The exchange rate profit calculator.
+        /// </summary>
+        private IExchangeRateProfitCalculator exchangeRateProfitCalculator;
+
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private IUniverseDataRequestsSubscriber dataRequestSubscriber;
+
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private IMarketTradingHoursService tradingHoursService;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<FixedIncomeHighProfitsRule> logger;
+
+        /// <summary>
+        /// The stack logger.
+        /// </summary>
+        private ILogger<TradingHistoryStack> stackLogger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FixedIncomeHighProfitSteps"/> class.
         /// </summary>
         /// <param name="scenarioContext">
@@ -71,12 +157,17 @@
         /// <param name="universeSelectionState">
         /// The universe selection state.
         /// </param>
+        /// <param name="exchangeRateSelection">
+        /// The exchange rate selection.
+        /// </param>
         public FixedIncomeHighProfitSteps(
             ScenarioContext scenarioContext,
-            UniverseSelectionState universeSelectionState)
+            UniverseSelectionState universeSelectionState,
+            ExchangeRateSelection exchangeRateSelection)
         {
             this.scenarioContext = scenarioContext;
             this.universeSelectionState = universeSelectionState;
+            this.exchangeRateSelection = exchangeRateSelection;
         }
 
         /// <summary>
@@ -94,18 +185,18 @@
                 return;
             }
 
-            var parameters = ruleParameters.CreateInstance<FixedIncomeHighProfitApiParameters>();
+            var mappedParameters = ruleParameters.CreateInstance<FixedIncomeHighProfitApiParameters>();
 
             this.parameters = new HighProfitsRuleFixedIncomeParameters(
                 "0",
-                TimeSpan.FromHours(parameters.WindowHours),
-                TimeSpan.FromHours(parameters.FutureHours),
-                parameters.PerformHighProfitWindowAnalysis,
-                parameters.PerformHighProfitDailyAnalysis,
-                parameters.HighProfitPercentage,
-                parameters.HighProfitAbsolute,
-                parameters.HighProfitUseCurrencyConversions,
-                parameters.HighProfitCurrency,
+                TimeSpan.FromHours(mappedParameters.WindowHours),
+                TimeSpan.FromHours(mappedParameters.FutureHours),
+                mappedParameters.PerformHighProfitWindowAnalysis,
+                mappedParameters.PerformHighProfitDailyAnalysis,
+                mappedParameters.HighProfitPercentage,
+                mappedParameters.HighProfitAbsolute,
+                mappedParameters.HighProfitUseCurrencyConversions,
+                mappedParameters.HighProfitCurrency,
                 new[] { ClientOrganisationalFactors.None },
                 true,
                 true);
@@ -120,10 +211,9 @@
         [Then(@"I will have (.*) fixed income high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(
-                    () => this.alertStream.Add(
-                        A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent)))
-                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A
+                .CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(_ => _ == alertCount);
         }
 
         /// <summary>
@@ -136,14 +226,18 @@
 
             this.Setup();
 
-            var rule = new FixedIncomeHighProfitsRule(
+            var rule = this.factory.BuildRule(
                 this.parameters,
-                null,
-                null,
-                new NullLogger<FixedIncomeHighProfitsRule>());
+                this.ruleContext,
+                this.judgementService,
+                this.dataRequestSubscriber,
+                RuleRunMode.ForceRun,
+                scheduledExecution);
 
             foreach (var universeEvent in this.universeSelectionState.SelectedUniverse.UniverseEvents)
+            {
                 rule.OnNext(universeEvent);
+            }
         }
 
         /// <summary>
@@ -151,14 +245,79 @@
         /// </summary>
         private void Setup()
         {
-            this.orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
+            this.tradingHoursService = A.Fake<IMarketTradingHoursService>();
+
+            A.CallTo(() => this.tradingHoursService.GetTradingHoursForMic("XLON")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(16),
+                        IsValid = true,
+                        Mic = "XLON",
+                        OpenOffsetInUtc = TimeSpan.FromHours(8)
+                    });
+
+            A.CallTo(() => this.tradingHoursService.GetTradingHoursForMic("NASDAQ")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(23),
+                        IsValid = true,
+                        Mic = "NASDAQ",
+                        OpenOffsetInUtc = TimeSpan.FromHours(15)
+                    });
+
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this.alertStream = A.Fake<IUniverseAlertStream>();
+            this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
-            this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this.fixedIncomeOrderFilterService =
+                new UniverseFixedIncomeOrderFilterService(
+                    new NullLogger<UniverseFixedIncomeOrderFilterService>());
+            
+            this.logger = A.Fake<ILogger<FixedIncomeHighProfitsRule>>();
+            this.stackLogger = A.Fake<ILogger<TradingHistoryStack>>();
+
+            this.marketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
+
+            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+
+            this.costCalculatorFactory = new CostCalculatorFactory(
+                new CurrencyConverterService(
+                    this.exchangeRateSelection.ExchangeRateRepository,
+                    new NullLogger<CurrencyConverterService>()),
+                new NullLogger<CostCalculator>(),
+                new NullLogger<CostCurrencyConvertingCalculator>());
+
+            this.revenueCalculatorFactory = new RevenueCalculatorFactory(
+                this.tradingHoursService,
+                new CurrencyConverterService(
+                    this.exchangeRateSelection.ExchangeRateRepository,
+                    new NullLogger<CurrencyConverterService>()),
+                new NullLogger<RevenueCurrencyConvertingCalculator>(),
+                new NullLogger<RevenueCalculator>());
+
+            this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.ruleViolationService = A.Fake<IRuleViolationService>();
+
+            this.judgementService = new JudgementService(
+                this.judgementRepository,
+                this.ruleViolationService,
+                new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
+                new FixedIncomeHighProfitJudgementMapper(new NullLogger<FixedIncomeHighProfitJudgementMapper>()),
+                new NullLogger<JudgementService>());
+            
+            this.factory = new FixedIncomeHighProfitFactory(
+                this.fixedIncomeOrderFilterService,
+                this.marketCacheFactory,
+                this.marketDataCacheStrategyFactory,
+                this.costCalculatorFactory,
+                this.revenueCalculatorFactory,
+                this.exchangeRateProfitCalculator,
+                this.logger,
+                this.stackLogger);
         }
     }
 }

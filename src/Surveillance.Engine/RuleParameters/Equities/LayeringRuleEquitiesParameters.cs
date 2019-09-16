@@ -167,22 +167,22 @@
 
         public bool HasInternalFilters()
         {
-            return IFilterableRuleExtensions.HasInternalFilters(this);
+            return FilterableRuleExtensions.HasInternalFilters(this);
         }
 
         public bool HasMarketCapFilters()
         {
-            return IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+            return MarketCapFilterableExtensions.HasMarketCapFilters(this);
         }
 
         public bool HasReferenceDataFilters()
         {
-            return IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+            return ReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
         }
 
         public bool HasVenueVolumeFilters()
         {
-            return IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+            return HighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
         }
 
         public bool Valid()

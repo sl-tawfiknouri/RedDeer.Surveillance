@@ -396,7 +396,7 @@
         /// </returns>
         public bool HasInternalFilters()
         {
-            return IFilterableRuleExtensions.HasInternalFilters(this);
+            return FilterableRuleExtensions.HasInternalFilters(this);
         }
 
         /// <summary>
@@ -407,7 +407,7 @@
         /// </returns>
         public bool HasMarketCapFilters()
         {
-            return IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+            return MarketCapFilterableExtensions.HasMarketCapFilters(this);
         }
 
         /// <summary>
@@ -418,7 +418,7 @@
         /// </returns>
         public bool HasReferenceDataFilters()
         {
-            return IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+            return ReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
         }
 
         /// <summary>
@@ -429,7 +429,7 @@
         /// </returns>
         public bool HasVenueVolumeFilters()
         {
-            return IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+            return HighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
         }
 
         /// <summary>

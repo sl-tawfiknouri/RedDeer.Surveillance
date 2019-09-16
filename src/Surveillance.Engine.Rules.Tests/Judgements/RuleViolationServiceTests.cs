@@ -23,244 +23,304 @@
     using Surveillance.Engine.Rules.Tests.Trades;
     using Surveillance.Engine.Rules.Trades;
 
+    /// <summary>
+    /// The rule violation service tests.
+    /// </summary>
     [TestFixture]
     public class RuleViolationServiceTests
     {
-        private ILogger<RuleViolationService> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<RuleViolationService> logger;
 
-        private IQueueCasePublisher _queueCasePublisher;
+        /// <summary>
+        /// The queue case publisher.
+        /// </summary>
+        private IQueueCasePublisher queueCasePublisher;
 
-        private IRuleBreach _ruleBreach;
+        /// <summary>
+        /// The rule breach.
+        /// </summary>
+        private IRuleBreach ruleBreach;
 
-        private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
+        /// <summary>
+        /// The rule breach orders repository.
+        /// </summary>
+        private IRuleBreachOrdersRepository ruleBreachOrdersRepository;
 
-        private IRuleBreachRepository _ruleBreachRepository;
+        /// <summary>
+        /// The rule breach repository.
+        /// </summary>
+        private IRuleBreachRepository ruleBreachRepository;
 
-        private IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
+        /// <summary>
+        /// The rule breach to rule breach mapper.
+        /// </summary>
+        private IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper;
 
-        private IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
+        /// <summary>
+        /// The rule breach to rule breach orders mapper.
+        /// </summary>
+        private IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper;
 
+        /// <summary>
+        /// The add rule violation null rule breach does not throw.
+        /// </summary>
         [Test]
-        public void AddRuleViolation_NullRuleBreach_DoesNotThrow()
+        public void AddRuleViolationNullRuleBreachDoesNotThrow()
         {
             var ruleViolationService = new RuleViolationService(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
             Assert.DoesNotThrow(() => ruleViolationService.AddRuleViolation(null));
         }
 
+        /// <summary>
+        /// The add rule violation rule breach adds to rule breach repository.
+        /// </summary>
         [Test]
-        public void AddRuleViolation_RuleBreach_AddsToRuleBreachRepository()
+        public void AddRuleViolationRuleBreachAddsToRuleBreachRepository()
         {
             var ruleViolationService = new RuleViolationService(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
             var tradePosition = new TradePosition(new List<Order> { OrderHelper.Orders(OrderStatus.Filled) });
-            A.CallTo(() => this._ruleBreach.Trades).Returns(tradePosition);
-            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParameters).Returns(null);
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
+            A.CallTo(() => this.ruleBreach.Trades).Returns(tradePosition);
+            A.CallTo(() => this.ruleBreach.RuleParameters.TunedParameters).Returns(null);
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
 
-            ruleViolationService.AddRuleViolation(this._ruleBreach);
+            ruleViolationService.AddRuleViolation(this.ruleBreach);
             ruleViolationService.ProcessRuleViolationCache();
 
-            A.CallTo(() => this._ruleBreachToRuleBreachMapper.RuleBreachItem(this._ruleBreach))
+            A.CallTo(() => this.ruleBreachToRuleBreachMapper.RuleBreachItem(this.ruleBreach))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => this._ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
+                () => this.ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
                     A<IRuleBreach>.Ignored,
                     A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The add rule violation rule breach only sends once for multiple calls.
+        /// </summary>
         [Test]
-        public void AddRuleViolation_RuleBreach_OnlySendsOnceForMultipleCalls()
+        public void AddRuleViolationRuleBreachOnlySendsOnceForMultipleCalls()
         {
             var ruleViolationService = new RuleViolationService(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
             var tradePosition = new TradePosition(new List<Order> { OrderHelper.Orders(OrderStatus.Filled) });
-            A.CallTo(() => this._ruleBreach.Trades).Returns(tradePosition);
-            A.CallTo(() => this._ruleBreach.RuleParameters.TunedParameters).Returns(null);
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
+            A.CallTo(() => this.ruleBreach.Trades).Returns(tradePosition);
+            A.CallTo(() => this.ruleBreach.RuleParameters.TunedParameters).Returns(null);
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
 
-            ruleViolationService.AddRuleViolation(this._ruleBreach);
+            ruleViolationService.AddRuleViolation(this.ruleBreach);
             ruleViolationService.ProcessRuleViolationCache();
             ruleViolationService.ProcessRuleViolationCache();
 
-            A.CallTo(() => this._ruleBreachToRuleBreachMapper.RuleBreachItem(this._ruleBreach))
+            A.CallTo(() => this.ruleBreachToRuleBreachMapper.RuleBreachItem(this.ruleBreach))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => this._ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
+                () => this.ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
                     A<IRuleBreach>.Ignored,
                     A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The add rule violation rule breach for tuned parameter adds to rule breach repository but does not send.
+        /// </summary>
         [Test]
-        public void AddRuleViolation_RuleBreachForTunedParam_AddsToRuleBreachRepositoryButDoesNotSend()
+        public void AddRuleViolationRuleBreachForTunedParameterAddsToRuleBreachRepositoryButDoesNotSend()
         {
             var ruleViolationService = new RuleViolationService(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
             var tradePosition = new TradePosition(new List<Order> { OrderHelper.Orders(OrderStatus.Filled) });
-            A.CallTo(() => this._ruleBreach.Trades).Returns(tradePosition);
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
+            A.CallTo(() => this.ruleBreach.Trades).Returns(tradePosition);
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).Returns(100);
 
-            ruleViolationService.AddRuleViolation(this._ruleBreach);
+            ruleViolationService.AddRuleViolation(this.ruleBreach);
             ruleViolationService.ProcessRuleViolationCache();
 
-            A.CallTo(() => this._ruleBreachToRuleBreachMapper.RuleBreachItem(this._ruleBreach))
+            A.CallTo(() => this.ruleBreachToRuleBreachMapper.RuleBreachItem(this.ruleBreach))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => this._ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
+                () => this.ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
                     A<IRuleBreach>.Ignored,
                     A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.queueCasePublisher.Send(A<CaseMessage>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The add rule violation rule breach with no orders adds to rule breach repository.
+        /// </summary>
         [Test]
-        public void AddRuleViolation_RuleBreachWithNoOrders_AddsToRuleBreachRepository()
+        public void AddRuleViolationRuleBreachWithNoOrdersAddsToRuleBreachRepository()
         {
             var ruleViolationService = new RuleViolationService(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
-            ruleViolationService.AddRuleViolation(this._ruleBreach);
+            ruleViolationService.AddRuleViolation(this.ruleBreach);
             ruleViolationService.ProcessRuleViolationCache();
 
-            A.CallTo(() => this._ruleBreachToRuleBreachMapper.RuleBreachItem(this._ruleBreach)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleBreachToRuleBreachMapper.RuleBreachItem(this.ruleBreach)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleBreachRepository.Create(A<RuleBreach>.Ignored)).MustNotHaveHappened();
             A.CallTo(
-                () => this._ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
+                () => this.ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(
                     A<IRuleBreach>.Ignored,
                     A<string>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this._ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.ruleBreachRepository.HasDuplicate(A<string>.Ignored)).MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The constructor null logger is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullLogger_IsExceptional()
+        public void ConstructorNullLoggerIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
                     null));
         }
 
+        /// <summary>
+        /// The constructor null queue case publisher is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullQueueCasePublisher_IsExceptional()
+        public void ConstructorNullQueueCasePublisherIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
                     null,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachMapper_IsExceptional()
+        public void ConstructorNullRuleBreachMapperIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
                     null,
-                    this._logger));
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach orders mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachOrdersMapper_IsExceptional()
+        public void ConstructorNullRuleBreachOrdersMapperIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
                     null,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach orders repository is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachOrdersRepository_IsExceptional()
+        public void ConstructorNullRuleBreachOrdersRepositoryIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
                     null,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach repository is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachRepository_IsExceptional()
+        public void ConstructorNullRuleBreachRepositoryIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationService(
-                    this._queueCasePublisher,
+                    this.queueCasePublisher,
                     null,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._queueCasePublisher = A.Fake<IQueueCasePublisher>();
-            this._ruleBreachRepository = A.Fake<IRuleBreachRepository>();
-            this._ruleBreach = A.Fake<IRuleBreach>();
-            this._ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
-            this._ruleBreachToRuleBreachOrdersMapper = A.Fake<IRuleBreachToRuleBreachOrdersMapper>();
-            this._ruleBreachToRuleBreachMapper = A.Fake<IRuleBreachToRuleBreachMapper>();
-            this._logger = new NullLogger<RuleViolationService>();
+            this.queueCasePublisher = A.Fake<IQueueCasePublisher>();
+            this.ruleBreachRepository = A.Fake<IRuleBreachRepository>();
+            this.ruleBreach = A.Fake<IRuleBreach>();
+            this.ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
+            this.ruleBreachToRuleBreachOrdersMapper = A.Fake<IRuleBreachToRuleBreachOrdersMapper>();
+            this.ruleBreachToRuleBreachMapper = A.Fake<IRuleBreachToRuleBreachMapper>();
+            this.logger = new NullLogger<RuleViolationService>();
         }
     }
 }

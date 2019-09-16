@@ -64,11 +64,6 @@
         private readonly ExchangeRateSelection exchangeRateSelection;
 
         /// <summary>
-        /// The alert stream.
-        /// </summary>
-        private IUniverseAlertStream alertStream;
-
-        /// <summary>
         /// The parameters.
         /// </summary>
         private HighProfitsRuleFixedIncomeParameters parameters;
@@ -266,7 +261,6 @@
                     });
 
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this.alertStream = A.Fake<IUniverseAlertStream>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             this.fixedIncomeOrderFilterService =

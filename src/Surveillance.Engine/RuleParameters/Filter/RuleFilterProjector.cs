@@ -4,11 +4,26 @@
 
     using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 
-    public class RuleProjector : IRuleProjector
+    /// <summary>
+    /// The rule filter projector.
+    /// </summary>
+    public class RuleFilterProjector : IRuleFilterProjector
     {
+        /// <summary>
+        /// The project.
+        /// </summary>
+        /// <param name="filter">
+        /// The filter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RuleFilter"/>.
+        /// </returns>
         public RuleFilter Project(Filter filter)
         {
-            if (filter == null) return RuleFilter.None();
+            if (filter == null)
+            {
+                return RuleFilter.None();
+            }
 
             var type = RuleFilterType.None;
             switch (filter.Type)

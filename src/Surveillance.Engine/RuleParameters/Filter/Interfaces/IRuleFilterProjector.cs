@@ -2,7 +2,7 @@
 {
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
-    public interface IRuleProjector
+    public interface IRuleFilterProjector
     {
         RuleFilter Project(Filter filter);
     }

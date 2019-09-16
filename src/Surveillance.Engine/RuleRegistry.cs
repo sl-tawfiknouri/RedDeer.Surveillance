@@ -231,7 +231,7 @@ namespace Surveillance.Engine.Rules
                 .Use<TradePositionWeightedAverageExchangeRateService>();
 
             this.For<IApiHeartbeat>().Use<ApiHeartbeat>();
-            this.For<IRuleProjector>().Use<RuleProjector>();
+            this.For<IRuleFilterProjector>().Use<RuleFilterProjector>();
             this.For<IDecimalRangeRuleFilterProjector>().Use<DecimalRangeRuleFilterProjector>();
 
             this.For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();

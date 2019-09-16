@@ -1,5 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 {
+    using System;
+
     using Domain.Core.Financial.Money;
     using Domain.Surveillance.Judgement.FixedIncome;
     using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
@@ -24,9 +26,9 @@
         /// <param name="projectToAlert">
         /// The project to alert.
         /// </param>
-        public FixedIncomeHighProfitJudgementContext(FixedIncomeHighProfitJudgement judgement, bool projectToAlert)
+        public FixedIncomeHighProfitJudgementContext(IFixedIncomeHighProfitJudgement judgement, bool projectToAlert)
         {
-            this.Judgement = judgement;
+            this.Judgement = judgement ?? throw new ArgumentNullException(nameof(judgement));
             this.RaiseRuleViolation = projectToAlert;
         }
 
@@ -64,7 +66,7 @@
         /// The profit breakdown.
         /// </param>
         public FixedIncomeHighProfitJudgementContext(
-            FixedIncomeHighProfitJudgement judgement,
+            IFixedIncomeHighProfitJudgement judgement,
             bool projectToAlert,
             IRuleBreachContext ruleBreachContext,
             IHighProfitsRuleFixedIncomeParameters fixedIncomeParameters,

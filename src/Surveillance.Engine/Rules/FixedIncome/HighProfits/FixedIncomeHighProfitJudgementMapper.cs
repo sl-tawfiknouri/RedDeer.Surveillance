@@ -107,7 +107,7 @@
         private string HighAbsoluteProfitText(IFixedIncomeHighProfitJudgementContext judgementContext, decimal absoluteProfit)
         {
             return judgementContext.HasAbsoluteProfitBreach
-                       ? $" There was a high profit of {absoluteProfit} ({judgementContext.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {judgementContext.FixedIncomeParameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({judgementContext.FixedIncomeParameters.HighProfitCurrencyConversionTargetCurrency})."
+                       ? $" There was a high profit of {absoluteProfit} ({judgementContext.AbsoluteProfits.Value.Currency}) which exceeded the configured profit limit of {judgementContext.FixedIncomeParameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({judgementContext.FixedIncomeParameters.HighProfitCurrencyConversionTargetCurrency})."
                        : string.Empty;
         }
 

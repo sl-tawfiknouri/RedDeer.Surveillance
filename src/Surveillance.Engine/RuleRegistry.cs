@@ -142,6 +142,8 @@ namespace Surveillance.Engine.Rules
             this.For<IUniverseEquityOrderFilterService>().Use<UniverseEquityOrderFilterService>();
             this.For<IUniverseFixedIncomeOrderFilterService>().Use<UniverseFixedIncomeOrderFilterService>();
 
+            this.For<IFixedIncomeHighProfitJudgementMapper>().Use<FixedIncomeHighProfitJudgementMapper>();
+
             this.For<IUniverse>().Use<Universe.Universe>();
             this.For<IUniverseBuilder>().Use<UniverseBuilder>();
             this.For<IUniverseEvent>().Use<UniverseEvent>();

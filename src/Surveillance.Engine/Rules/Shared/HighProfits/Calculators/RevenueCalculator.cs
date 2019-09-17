@@ -1,28 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
+﻿namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Trading.Orders;
+    using Microsoft.Extensions.Logging;
+    using SharedKernel.Contracts.Markets;
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
     /// <summary>
     ///     Calculates revenues without attempting to convert currencies
     /// </summary>
     public class RevenueCalculator : IRevenueCalculator
     {
+        /// <summary>
+        /// The logger.
+        /// </summary>
         protected readonly ILogger Logger;
 
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
         protected readonly IMarketTradingHoursService TradingHoursService;
 
-        public RevenueCalculator(IMarketTradingHoursService tradingHoursService, ILogger<RevenueCalculator> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RevenueCalculator"/> class.
+        /// </summary>
+        /// <param name="tradingHoursService">
+        /// The trading hours service.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        public RevenueCalculator(
+            IMarketTradingHoursService tradingHoursService,
+            ILogger<RevenueCalculator> logger)
         {
             this.TradingHoursService =
                 tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
@@ -30,12 +47,27 @@ namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
         }
 
         /// <summary>
-        ///     Take realised profits and then for any remaining amount use virtual profits
+        /// The calculate revenue of position.
         /// </summary>
+        /// <param name="activeFulfilledTradeOrders">
+        /// The active fulfilled trade orders.
+        /// </param>
+        /// <param name="universeDateTime">
+        /// The universe date time.
+        /// </param>
+        /// <param name="ruleRunContext">
+        /// The rule run context.
+        /// </param>
+        /// <param name="marketCacheStrategy">
+        /// The market cache strategy.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task<RevenueMoney> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx,
+            ISystemProcessOperationRunRuleContext ruleRunContext,
             IMarketDataCacheStrategy marketCacheStrategy)
         {
             if (activeFulfilledTradeOrders == null || !activeFulfilledTradeOrders.Any())
@@ -73,7 +105,7 @@ namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
                 activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
                 security.Identifiers,
                 universeDateTime,
-                ctx,
+                ruleRunContext,
                 marketCacheStrategy.DataSource);
 
             if (marketDataRequest == null)
@@ -107,69 +139,135 @@ namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
             return await Task.FromResult(new RevenueMoney(false, totalMoneys));
         }
 
+        /// <summary>
+        /// The market data request.
+        /// </summary>
+        /// <param name="marketIdentifierCode">
+        /// The market identifier code.
+        /// </param>
+        /// <param name="identifiers">
+        /// The identifiers.
+        /// </param>
+        /// <param name="universeDateTime">
+        /// The universe date time.
+        /// </param>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MarketDataRequest"/>.
+        /// </returns>
         protected virtual MarketDataRequest MarketDataRequest(
-            string mic,
+            string marketIdentifierCode,
             InstrumentIdentifiers identifiers,
             DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx,
+            ISystemProcessOperationRunRuleContext context,
             DataSource dataSource)
         {
-            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mic);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(marketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 this.Logger.LogError(
-                    $"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                    $"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {marketIdentifierCode}. Unable to proceed with currency conversions.");
                 return null;
             }
 
             return new MarketDataRequest(
-                mic,
+                marketIdentifierCode,
                 string.Empty,
                 identifiers,
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
-                ctx?.Id(),
+                context?.Id(),
                 dataSource);
         }
 
+        /// <summary>
+        /// The calculate realized revenue.
+        /// </summary>
+        /// <param name="activeFulfilledTradeOrders">
+        /// The active fulfilled trade orders.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Money"/>.
+        /// </returns>
         private Money? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? true) return null;
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
+            {
+                return null;
+            }
 
             var filledOrders = activeFulfilledTradeOrders
-                .Where(
-                    afto => afto.OrderDirection == OrderDirections.SELL || afto.OrderDirection == OrderDirections.SHORT)
-                .Select(
-                    afto => new Money(
-                        afto.OrderFilledVolume.GetValueOrDefault(0)
-                        * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
-                        afto.OrderCurrency)).ToList();
+                .Where(_ => 
+                    _.OrderDirection == OrderDirections.SELL 
+                    || _.OrderDirection == OrderDirections.SHORT)
+                .Select(_ => 
+                    new Money(
+                        _.OrderFilledVolume.GetValueOrDefault(0)
+                        * _.OrderAverageFillPrice.GetValueOrDefault().Value,
+                        _.OrderCurrency))
+                .ToList();
 
-            if (!filledOrders.Any()) return null;
+            if (!filledOrders.Any())
+            {
+                return null;
+            }
 
-            var summedCurrency = filledOrders.Aggregate((x, y) => new Money(x.Value + y.Value, x.Currency));
+            var summedCurrency = filledOrders.Aggregate((_, __) => new Money(_.Value + __.Value, _.Currency));
 
             return summedCurrency;
         }
 
+        /// <summary>
+        /// The calculate total purchase volume.
+        /// </summary>
+        /// <param name="activeFulfilledTradeOrders">
+        /// The active fulfilled trade orders.
+        /// </param>
+        /// <returns>
+        /// The <see cref="decimal"/>.
+        /// </returns>
         private decimal CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? true) return 0;
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
+            {
+                return 0;
+            }
 
             return activeFulfilledTradeOrders
-                .Where(
-                    afto => afto.OrderDirection == OrderDirections.BUY || afto.OrderDirection == OrderDirections.COVER)
-                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0)).Sum();
+                .Where(_ => 
+                    _.OrderDirection == OrderDirections.BUY 
+                    || _.OrderDirection == OrderDirections.COVER)
+                .Select(_ => _.OrderFilledVolume.GetValueOrDefault(0))
+                .Sum();
         }
 
+        /// <summary>
+        /// The calculate total sales volume.
+        /// </summary>
+        /// <param name="activeFulfilledTradeOrders">
+        /// The active fulfilled trade orders.
+        /// </param>
+        /// <returns>
+        /// The <see cref="decimal"/>.
+        /// </returns>
         private decimal CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? true) return 0;
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
+            {
+                return 0;
+            }
 
             return activeFulfilledTradeOrders
-                .Where(
-                    afto => afto.OrderDirection == OrderDirections.SELL || afto.OrderDirection == OrderDirections.SHORT)
-                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0)).Sum();
+                .Where(_ => 
+                    _.OrderDirection == OrderDirections.SELL 
+                    || _.OrderDirection == OrderDirections.SHORT)
+                .Select(_ => _.OrderFilledVolume.GetValueOrDefault(0))
+                .Sum();
         }
     }
 }

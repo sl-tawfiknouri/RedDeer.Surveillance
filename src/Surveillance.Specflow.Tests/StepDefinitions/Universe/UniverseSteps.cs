@@ -289,7 +289,7 @@
                 orderParam.Direction,
                 new Currency(orderParam.Currency),
                 null,
-                OrderCleanDirty.NONE,
+                orderParam.CleanOrDirty,
                 null,
                 orderLimitPrice,
                 orderAveragePrice,

@@ -17,27 +17,27 @@ namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
         }
 
         protected override MarketDataRequest MarketDataRequest(
-            string mic,
+            string marketIdentifierCode,
             InstrumentIdentifiers identifiers,
             DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx,
+            ISystemProcessOperationRunRuleContext context,
             DataSource dataSource)
         {
-            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mic);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(marketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 this.Logger.LogError(
-                    $"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                    $"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {marketIdentifierCode}. Unable to proceed with currency conversions.");
                 return null;
             }
 
             return new MarketDataRequest(
-                mic,
+                marketIdentifierCode,
                 string.Empty,
                 identifiers,
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
                 tradingHours.ClosingInUtcForDay(universeDateTime),
-                ctx?.Id(),
+                context?.Id(),
                 dataSource);
         }
     }

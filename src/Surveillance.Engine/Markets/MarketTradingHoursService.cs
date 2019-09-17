@@ -30,6 +30,17 @@ namespace Surveillance.Engine.Rules.Markets
                 return new TradingHours { Mic = marketIdentifierCode, IsValid = false };
             }
 
+            if (string.Equals(marketIdentifierCode, "OTC", StringComparison.OrdinalIgnoreCase))
+            {
+                return new TradingHours
+                           {
+                               OpenOffsetInUtc = TimeSpan.Zero,
+                               CloseOffsetInUtc = TimeSpan.FromDays(1) - TimeSpan.FromSeconds(1),
+                               IsValid = true,
+                               Mic = "OTC"
+                           };
+            }
+
             var exchange = this.GetExchange(marketIdentifierCode);
 
             if (exchange == null)

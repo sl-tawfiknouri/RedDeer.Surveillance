@@ -288,17 +288,22 @@
 
                 return;
             }
-
+            
             var orderUnderAnalysis = this.UniverseEvent.UnderlyingEvent as Order;
             var activeTrades = history.ActiveTradeHistory();
             var liveTrades = activeTrades.Where(at => at.OrderStatus() == OrderStatus.Filled).ToList();
+            var filteredLiveTrades = this.FilterOnOtcMarketClosureVariant(liveTrades);
+            
+            this.Logger.LogInformation($"EvaluateHighProfits about to filter over clean / dirty with {filteredLiveTrades.Count} trades");
+            var cleanTrades = filteredLiveTrades.Where(_ => _.OrderCleanDirty == OrderCleanDirty.CLEAN).ToList();
+            this.Logger.LogInformation($"EvaluateHighProfits filtered by clean and had {cleanTrades.Count} trades");
 
             if (orderUnderAnalysis == null)
             {
                 orderUnderAnalysis = activeTrades.LastOrDefault();
             }
 
-            if (!liveTrades.Any())
+            if (!cleanTrades.Any())
             {
                 this.Logger.LogInformation($"EvaluateHighProfits had no active and filled trades, exiting");
                 this.SetNoLiveTradesJudgement(orderUnderAnalysis);
@@ -307,7 +312,7 @@
             }
 
             var targetCurrency = new Currency(this.FixedIncomeParameters.HighProfitCurrencyConversionTargetCurrency);
-            var allTradesInCommonCurrency = this.CheckTradesInCommonCurrency(liveTrades, targetCurrency);
+            var allTradesInCommonCurrency = this.CheckTradesInCommonCurrency(cleanTrades, targetCurrency);
             var costCalculator = this.GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
             var revenueCalculator = this.GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
@@ -316,15 +321,15 @@
                     ? this.marketDataCacheFactory.InterdayStrategy(this.UniverseEquityInterdayCache)
                     : this.marketDataCacheFactory.IntradayStrategy(intradayCache);
 
-            var costTask = costCalculator.CalculateCostOfPosition(liveTrades, this.UniverseDateTime, this.RuleCtx);
-            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, this.UniverseDateTime, this.RuleCtx, marketCache);
+            var costTask = costCalculator.CalculateCostOfPosition(cleanTrades, this.UniverseDateTime, this.RuleCtx);
+            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(cleanTrades, this.UniverseDateTime, this.RuleCtx, marketCache);
 
             var cost = costTask.Result;
             var revenueResponse = revenueTask.Result;
 
             if (revenueResponse.HadMissingMarketData)
             {
-                this.Logger.LogInformation($"Had missing market data for fixed income high profits, exiting {liveTrades.FirstOrDefault()?.Instrument?.Identifiers}");
+                this.Logger.LogInformation($"Had missing market data for fixed income high profits, exiting {cleanTrades.FirstOrDefault()?.Instrument?.Identifiers}");
                 this.SetMissingMarketDataJudgement(orderUnderAnalysis);
                 this.hasMissingData = true;
 
@@ -335,7 +340,7 @@
 
             if (revenue == null || revenue.Value.Value <= 0)
             {
-                this.Logger.LogInformation($"rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Returning.");
+                this.Logger.LogInformation($"rule had null for revenues for {cleanTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Returning.");
                 this.NoRevenueOrCostJudgement(orderUnderAnalysis);
 
                 return;
@@ -344,7 +349,7 @@
             if (cost == null || cost.Value.Value <= 0)
             {
                 this.Logger.LogInformation(
-                    $"We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Returning.");
+                    $"We have calculable revenues but not costs for {cleanTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Returning.");
                 this.NoRevenueOrCostJudgement(orderUnderAnalysis);
 
                 return;
@@ -364,7 +369,7 @@
                 this.Logger.LogInformation(
                     $"is set to use currency conversions and has a target conversion currency to {this.FixedIncomeParameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
 
-                exchangeRateProfits = this.SetExchangeRateProfits(liveTrades);
+                exchangeRateProfits = this.SetExchangeRateProfits(cleanTrades);
             }
 
             RuleBreachContext ruleBreachContext = null;
@@ -372,13 +377,13 @@
             if (hasHighProfitAbsolute || hasHighProfitPercentage)
             {
                 this.Logger.LogInformation(
-                    $"had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
+                    $"had a breach for {cleanTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
 
                 ruleBreachContext = new RuleBreachContext(
                     this.FixedIncomeParameters.Windows.BackwardWindowSize
                     + this.FixedIncomeParameters.Windows.FutureWindowSize,
-                    new TradePosition(liveTrades),
-                    liveTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
+                    new TradePosition(cleanTrades),
+                    cleanTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
                     this.RuleCtx.IsBackTest(),
                     this.RuleCtx.RuleParameterId(),
                     this.RuleCtx.SystemProcessOperationContext().Id.ToString(),
@@ -397,7 +402,6 @@
                 ruleBreachContext,
                 orderUnderAnalysis);
         }
-
 
         /// <summary>
         /// The filter.
@@ -526,6 +530,30 @@
                 true);
 
             this.JudgementService.Judgement(new FixedIncomeHighProfitJudgementContext(noTradesJudgement, false));
+        }
+
+        /// <summary>
+        /// The filter on over the counter market closure variant.
+        /// </summary>
+        /// <param name="orders">
+        /// The orders.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
+        private List<Order> FilterOnOtcMarketClosureVariant(List<Order> orders)
+        {
+            if (!this.MarketClosureRule)
+            {
+                return orders;
+            }
+
+            if (orders == null || !orders.Any())
+            {
+                return new List<Order>();
+            }
+
+            return orders.Where(_ => _.OrderType != OrderTypes.OTC).ToList();
         }
 
         /// <summary>

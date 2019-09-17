@@ -35,5 +35,7 @@
         public string SecurityName { get; set; }
 
         public OrderTypes Type { get; set; }
+
+        public OrderCleanDirty CleanOrDirty { get; set; } = OrderCleanDirty.NONE;
     }
 }

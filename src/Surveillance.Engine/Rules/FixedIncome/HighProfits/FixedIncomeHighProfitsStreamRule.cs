@@ -5,9 +5,9 @@
     using System.Linq;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
-    using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
 
@@ -292,7 +292,7 @@
             var orderUnderAnalysis = this.UniverseEvent.UnderlyingEvent as Order;
             var activeTrades = history.ActiveTradeHistory();
             var liveTrades = activeTrades.Where(at => at.OrderStatus() == OrderStatus.Filled).ToList();
-            var filteredLiveTrades = this.FilterOnOtcMarketClosureVariant(liveTrades);
+            var filteredLiveTrades = this.FilterOutOtc(liveTrades);
             
             this.Logger.LogInformation($"EvaluateHighProfits about to filter over clean / dirty with {filteredLiveTrades.Count} trades");
             var cleanTrades = filteredLiveTrades.Where(_ => _.OrderCleanDirty == OrderCleanDirty.CLEAN).ToList();
@@ -533,7 +533,7 @@
         }
 
         /// <summary>
-        /// The filter on over the counter market closure variant.
+        /// The filter out over the counter trades.
         /// </summary>
         /// <param name="orders">
         /// The orders.
@@ -541,19 +541,18 @@
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        private List<Order> FilterOnOtcMarketClosureVariant(List<Order> orders)
+        private List<Order> FilterOutOtc(IReadOnlyCollection<Order> orders)
         {
-            if (!this.MarketClosureRule)
-            {
-                return orders;
-            }
-
             if (orders == null || !orders.Any())
             {
                 return new List<Order>();
             }
 
-            return orders.Where(_ => _.OrderType != OrderTypes.OTC).ToList();
+            return 
+                orders
+                    .Where(_ => _.Market?.Type != MarketTypes.OTC)
+                    .Where(_ => _.OrderType != OrderTypes.OTC)
+                    .ToList();
         }
 
         /// <summary>

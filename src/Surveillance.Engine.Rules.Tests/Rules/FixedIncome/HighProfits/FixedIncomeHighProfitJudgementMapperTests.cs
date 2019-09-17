@@ -104,7 +104,7 @@
             var result = mapper.Map(this.judgementContext);
 
             Assert.AreEqual("Automated Fixed Income High Profit Rule Breach Detected", result.CaseTitle);
-            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY at 01/01/2019 15:03:00. There was a high profit ratio of 12.40% which exceeded the configured high profit ratio percentage threshold of 10.0%.", result.Description);
+            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY. There was a high profit ratio of 12.40% which exceeded the configured high profit ratio percentage threshold of 10.0%.", result.Description);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@
             var result = mapper.Map(this.judgementContext);
 
             Assert.AreEqual("Automated Fixed Income High Profit Rule Breach Detected", result.CaseTitle);
-            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY at 01/01/2019 15:03:00. There was a high profit of 12341 (GBP) which exceeded the configured profit limit of 12000(GBP).", result.Description);
+            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY. There was a high profit of 12341 (GBP) which exceeded the configured profit limit of 12000(GBP).", result.Description);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@
             var result = mapper.Map(this.judgementContext);
 
             Assert.AreEqual("Automated Fixed Income High Profit Rule Breach Detected", result.CaseTitle);
-            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY at 01/01/2019 15:03:00. There was a high profit of 12341 (GBP) which exceeded the configured profit limit of 12000(GBP). The position was acquired with a currency conversion between (GBP/USD) rate at a weighted exchange rate of 0.12 and sold at a weighted exchange rate of 0.32. The impact on profits from exchange rate movements was 99.00% and the absolute amount of profits due to exchange rates is () 9001.", result.Description);
+            Assert.AreEqual("High profit rule breach detected for GILT 5 YEAR MATURITY. There was a high profit of 12341 (GBP) which exceeded the configured profit limit of 12000(GBP). The position was acquired with a currency conversion between (GBP/USD) rate at a weighted exchange rate of 0.12 and sold at a weighted exchange rate of 0.32. The impact on profits from exchange rate movements was 99.00% and the absolute amount of profits due to exchange rates is () 9001.", result.Description);
         }
 
         /// <summary>

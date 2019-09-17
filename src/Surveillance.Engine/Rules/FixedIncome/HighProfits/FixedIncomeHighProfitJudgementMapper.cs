@@ -1,6 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 {
     using System;
+    using System.Globalization;
 
     using Microsoft.Extensions.Logging;
 
@@ -89,7 +90,7 @@
             var highProfitExchangeRatesSection = this.HighProfitExchangeRateText(judgementContext);
 
             return
-                $"High profit rule breach detected for {judgementContext.RuleBreachContext.Security.Name} at {judgementContext.RuleBreachContext.UniverseDateTime}.{highRelativeProfitSection}{highAbsoluteProfitSection}{highProfitExchangeRatesSection}";
+                $"High profit rule breach detected for {judgementContext.RuleBreachContext.Security.Name}.{highRelativeProfitSection}{highAbsoluteProfitSection}{highProfitExchangeRatesSection}";
         }
 
         /// <summary>

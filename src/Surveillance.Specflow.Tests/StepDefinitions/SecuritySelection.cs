@@ -6,26 +6,39 @@
     using Domain.Core.Markets;
 
     /// <summary>
-    ///     static list of securities for specflow testing
+    /// The security selection.
     /// </summary>
     public class SecuritySelection
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecuritySelection"/> class.
+        /// </summary>
         public SecuritySelection()
         {
             this.Securities = new Dictionary<string, SecurityMarketPair>
-                                  {
-                                      { "Vodafone", this.Vodafone() },
-                                      { "Barclays", this.Barclays() },
-                                      { "BAE", this.Bae() },
-                                      { "AMD", this.Amd() },
-                                      { "Nvidia", this.Nvidia() },
-                                      { "Micron", this.Micron() },
-                                      { "UKGovtBond", this.UKGovtBond() }
-                                  };
+              {
+                  { "Vodafone", this.Vodafone() },
+                  { "Barclays", this.Barclays() },
+                  { "BAE", this.Bae() },
+                  { "AMD", this.Amd() },
+                  { "Nvidia", this.Nvidia() },
+                  { "Micron", this.Micron() },
+                  { "UKGovtBond", this.UkGovernmentBond() },
+                  { "UKGovtBondSecondaryMarket", this.UkGovernmentBondSecondaryMarket() }
+              };
         }
 
+        /// <summary>
+        /// Gets or sets the securities.
+        /// </summary>
         public IReadOnlyDictionary<string, SecurityMarketPair> Securities { get; set; }
 
+        /// <summary>
+        /// The advanced micro devices
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Amd()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -54,6 +67,12 @@
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
+        /// <summary>
+        /// The british aerospace
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Bae()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -77,11 +96,17 @@
                 "GBX",
                 "BAE Systems Plc");
 
-            var market = this.Xlon();
+            var market = this.LondonStockExchange();
 
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
+        /// <summary>
+        /// The constructor for bank security.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Barclays()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -105,11 +130,17 @@
                 "GBX",
                 "Barclays plc");
 
-            var market = this.Xlon();
+            var market = this.LondonStockExchange();
 
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
+        /// <summary>
+        /// The micron technology market.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Micron()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -138,11 +169,23 @@
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
+        /// <summary>
+        /// The nasdaq exchange.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Market"/>.
+        /// </returns>
         private Market Nasdaq()
         {
             return new Market("0", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
         }
 
+        /// <summary>
+        /// The chip maker corporation.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Nvidia()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -171,12 +214,24 @@
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
-        private Market OTC()
+        /// <summary>
+        /// The over the counter market.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Market"/>.
+        /// </returns>
+        private Market OverTheCounter()
         {
             return new Market("0", "OTC", "OTC", MarketTypes.OTC);
         }
 
-        private SecurityMarketPair UKGovtBond()
+        /// <summary>
+        /// The UK government bond.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
+        private SecurityMarketPair UkGovernmentBond()
         {
             var identifiers = new InstrumentIdentifiers(
                 "UKGovtBond",
@@ -199,11 +254,62 @@
                 "GBX",
                 "Government of United Kingdom");
 
-            var market = this.OTC();
+            var market = this.OverTheCounter();
 
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
+        /// <summary>
+        /// The UK government bond secondary market.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
+        private SecurityMarketPair UkGovernmentBondSecondaryMarket()
+        {
+            var identifiers = new InstrumentIdentifiers(
+                "UKGovtBond",
+                "RD01D",
+                "RD01D",
+                "UNITED KINGDOM OF GREAT BRITAI  0%32",
+                string.Empty,
+                "GB00B3D4VD98",
+                "BBG0000VN0M0",
+                "G924502U1",
+                "UKTI 1.25 11/22/32 3MO Govt",
+                string.Empty,
+                "UKTI 1.25 11/22/32 3MO Govt");
+
+            var financialInstrument = new FinancialInstrument(
+                InstrumentTypes.Bond,
+                identifiers,
+                "UKGovtBond",
+                "dbftfb",
+                "GBX",
+                "Government of United Kingdom");
+
+            var market = this.Diversity();
+
+            return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
+        }
+
+        /// <summary>
+        /// The diversity market.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Market"/>.
+        /// </returns>
+        private Market Diversity()
+        {
+            return new Market("99", "Diversity", "Diversity", MarketTypes.STOCKEXCHANGE);
+        }
+
+        /// <summary>
+        /// The european phone maker security.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SecurityMarketPair"/>.
+        /// </returns>
         private SecurityMarketPair Vodafone()
         {
             var identifiers = new InstrumentIdentifiers(
@@ -227,20 +333,35 @@
                 "GBX",
                 "Vodafone plc");
 
-            var market = this.Xlon();
+            var market = this.LondonStockExchange();
 
             return new SecurityMarketPair { Instrument = financialInstrument, Market = market };
         }
 
-        private Market Xlon()
+        /// <summary>
+        /// The london stock exchange.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Market"/>.
+        /// </returns>
+        private Market LondonStockExchange()
         {
             return new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
         }
 
+        /// <summary>
+        /// The security market pair.
+        /// </summary>
         public class SecurityMarketPair
         {
+            /// <summary>
+            /// Gets or sets the instrument.
+            /// </summary>
             public FinancialInstrument Instrument { get; set; }
 
+            /// <summary>
+            /// Gets or sets the market.
+            /// </summary>
             public Market Market { get; set; }
         }
     }

@@ -12,7 +12,6 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Currency;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories;
@@ -259,6 +258,16 @@
                         Mic = "NASDAQ",
                         OpenOffsetInUtc = TimeSpan.FromHours(15)
                     });
+
+            A.CallTo(() => this.tradingHoursService.GetTradingHoursForMic("Diversity")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(16),
+                        IsValid = true,
+                        Mic = "Diversity",
+                        OpenOffsetInUtc = TimeSpan.FromHours(8)
+                    });
+
 
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();

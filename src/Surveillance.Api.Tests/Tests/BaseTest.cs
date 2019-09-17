@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
 {
-    public class BaseTest
+    public abstract class BaseTest
     {
         protected Infrastructure.DbContext _dbContext { get => Dependencies.DbContext; }
         protected ApiClient _apiClient { get => Dependencies.ApiClient; }

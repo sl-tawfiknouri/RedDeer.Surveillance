@@ -27,6 +27,7 @@ namespace Surveillance.Api.App.Infrastructure
             IFinancialInstrumentRepository financialInstrumentRepository,
             IOrderRepository orderRepository,
             IMarketRepository marketRepository,
+            IBrokerRepository brokerRepository,
             IRuleBreachRepository ruleBreachRepository,
             ISystemProcessOperationRuleRunRepository ruleRunRepository,
             ISystemProcessOperationUploadFileRepository fileUploadRepository,
@@ -150,6 +151,22 @@ namespace Surveillance.Api.App.Infrastructure
                     IQueryable<IMarket> MicQuery(IQueryable<IMarket> i) => i.Where(x => id == null || x.MarketId == id);
 
                     return marketRepository.Query(MicQuery);
+                    });
+
+            this.Field<ListGraphType<BrokerGraphType>>(
+                "brokers",
+                "The list of brokers that  orders have been placed with",
+                new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
+                context =>
+                    {
+                        var id = context.GetArgument<int?>("id");
+
+                        IQueryable<IBroker> IdQuery(IQueryable<IBroker> i)
+                        {
+                            return i.Where(x => id == null || x.Id == id);
+                        }
+                        
+                        return brokerRepository.Query(IdQuery);
                 });
 
             Field<ListGraphType<RuleBreachGraphType>>(

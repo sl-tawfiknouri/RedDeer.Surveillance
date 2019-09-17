@@ -1,4 +1,6 @@
 ﻿using System;
+    using System.Collections.Generic;
+    using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
@@ -31,6 +33,25 @@ namespace Surveillance.Api.DataAccess.Repositories
                     .SingleOrDefaultAsync(s => s.Id == id);
 
                 return broker;
+            }
+        }
+
+        /// <summary>
+        /// The query for broker entities.
+        /// </summary>
+        /// <param name="query">
+        /// The query to filter further by.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<IEnumerable<IBroker>> Query(Func<IQueryable<IBroker>, IQueryable<IBroker>> query)
+        {
+            using (var databaseContext = this._factory.Build())
+            {
+                var brokers = await query(databaseContext.Broker).AsNoTracking().ToListAsync();
+
+                return brokers;
             }
         }
     }

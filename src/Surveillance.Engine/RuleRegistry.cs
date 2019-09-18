@@ -87,8 +87,8 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;

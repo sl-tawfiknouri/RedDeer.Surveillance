@@ -27,7 +27,7 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;

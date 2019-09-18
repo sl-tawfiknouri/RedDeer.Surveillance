@@ -11,8 +11,8 @@
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 

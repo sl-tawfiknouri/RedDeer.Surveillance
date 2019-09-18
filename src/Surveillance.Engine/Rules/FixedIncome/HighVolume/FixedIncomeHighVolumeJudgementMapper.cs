@@ -1,11 +1,11 @@
-﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
 {
     using System;
 
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
 
     /// <summary>

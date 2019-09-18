@@ -20,7 +20,7 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Interfaces;
     using Surveillance.Engine.Rules.Rules;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;

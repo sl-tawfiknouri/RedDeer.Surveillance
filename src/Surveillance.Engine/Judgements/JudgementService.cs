@@ -19,6 +19,7 @@
     using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
 
     /// <summary>
     /// The judgement service.

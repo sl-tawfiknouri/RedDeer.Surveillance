@@ -7,6 +7,7 @@
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
 
     /// <summary>
     /// The judgement service factory.

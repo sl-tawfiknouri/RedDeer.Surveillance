@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
 {
     using System;
     using System.Linq;
@@ -19,8 +19,7 @@
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Trades.Interfaces;

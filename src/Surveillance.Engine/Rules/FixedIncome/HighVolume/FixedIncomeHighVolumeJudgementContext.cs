@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
 {
     using System;
 
@@ -9,7 +9,7 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    
+
     /// <summary>
     /// Judgement context for fixed income
     /// </summary>

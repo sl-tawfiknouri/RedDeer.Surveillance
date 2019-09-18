@@ -18,7 +18,7 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;

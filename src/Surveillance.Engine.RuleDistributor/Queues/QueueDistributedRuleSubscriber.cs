@@ -15,24 +15,72 @@
     using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
     using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 
+    /// <summary>
+    /// The queue distributed rule subscriber.
+    /// </summary>
     public class QueueDistributedRuleSubscriber : IQueueDistributedRuleSubscriber
     {
-        private readonly IAwsConfiguration _awsConfiguration;
+        /// <summary>
+        /// The aws configuration.
+        /// </summary>
+        private readonly IAwsConfiguration awsConfiguration;
 
-        private readonly IAwsQueueClient _awsQueueClient;
+        /// <summary>
+        /// The aws queue client.
+        /// </summary>
+        private readonly IAwsQueueClient awsQueueClient;
 
-        private readonly ILogger<QueueDistributedRuleSubscriber> _logger;
+        /// <summary>
+        /// The message bus serializer.
+        /// </summary>
+        private readonly IScheduledExecutionMessageBusSerialiser messageBusSerializer;
 
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+        /// <summary>
+        /// The schedule disassembler.
+        /// </summary>
+        private readonly IScheduleDisassembler scheduleDisassembler;
 
-        private readonly IScheduleDisassembler _scheduleDisassembler;
+        /// <summary>
+        /// The system process context.
+        /// </summary>
+        private readonly ISystemProcessContext systemProcessContext;
 
-        private readonly ISystemProcessContext _systemProcessContext;
+        /// <summary>
+        /// The message bus cancellation token source.
+        /// </summary>
+        private CancellationTokenSource messageBusCancellationTokenSource;
+        
+        /// <summary>
+        /// The token.
+        /// </summary>
+        private AwsResusableCancellationToken token;
 
-        private CancellationTokenSource _messageBusCts;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<QueueDistributedRuleSubscriber> logger;
 
-        private AwsResusableCancellationToken _token;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueueDistributedRuleSubscriber"/> class.
+        /// </summary>
+        /// <param name="scheduleDisassembler">
+        /// The schedule disassembler.
+        /// </param>
+        /// <param name="awsQueueClient">
+        /// The aws queue client.
+        /// </param>
+        /// <param name="awsConfiguration">
+        /// The aws configuration.
+        /// </param>
+        /// <param name="messageBusSerialiser">
+        /// The message bus serializer.
+        /// </param>
+        /// <param name="systemProcessContext">
+        /// The system process context.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public QueueDistributedRuleSubscriber(
             IScheduleDisassembler scheduleDisassembler,
             IAwsQueueClient awsQueueClient,
@@ -41,67 +89,86 @@
             ISystemProcessContext systemProcessContext,
             ILogger<QueueDistributedRuleSubscriber> logger)
         {
-            this._scheduleDisassembler =
+            this.scheduleDisassembler =
                 scheduleDisassembler ?? throw new ArgumentNullException(nameof(scheduleDisassembler));
-            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            this._messageBusSerialiser =
+            this.awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this.awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this.messageBusSerializer =
                 messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            this._systemProcessContext =
+            this.systemProcessContext =
                 systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
 
+        /// <summary>
+        /// The execute non distributed message.
+        /// </summary>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="messageBody">
+        /// The message body.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task ExecuteNonDistributedMessage(string messageId, string messageBody)
         {
             try
             {
-                var opCtx = this._systemProcessContext.CreateAndStartOperationContext();
+                var operationContext = this.systemProcessContext.CreateAndStartOperationContext();
 
-                this._logger.LogInformation(
-                    $"read message {messageId} with body {messageBody} from {this._awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
+                this.logger.LogInformation(
+                    $"read message {messageId} with body {messageBody} from {this.awsConfiguration.ScheduledRuleQueueName} for operation {operationContext.Id}");
 
-                var execution = this._messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
+                var execution = this.messageBusSerializer.DeserialisedScheduledExecution(messageBody);
 
                 if (execution == null)
                 {
-                    this._logger.LogError($"was unable to deserialise the message {messageId}");
-                    opCtx.EndEventWithError($"was unable to deserialise the message {messageId}");
+                    this.logger.LogError($"was unable to deserialise the message {messageId}");
+                    operationContext.EndEventWithError($"was unable to deserialise the message {messageId}");
+
                     return;
                 }
 
-                await this._scheduleDisassembler.Disassemble(opCtx, execution, messageId, messageBody);
+                await this.scheduleDisassembler.Disassemble(operationContext, execution, messageId, messageBody);
             }
             catch (Exception e)
             {
-                this._logger.LogError(
+                this.logger.LogError(
                     $"execute non distributed message encountered a top level exception. {e.Message} {e.InnerException?.Message}",
                     e);
             }
         }
 
+        /// <summary>
+        /// The initiate.
+        /// </summary>
         public void Initiate()
         {
-            this._logger.LogInformation("initiating");
-            this._messageBusCts?.Cancel();
-            this._messageBusCts = new CancellationTokenSource();
-            this._token = new AwsResusableCancellationToken();
+            this.logger.LogInformation("initiating");
+            this.messageBusCancellationTokenSource?.Cancel();
+            this.messageBusCancellationTokenSource = new CancellationTokenSource();
+            this.token = new AwsResusableCancellationToken();
 
-            this._awsQueueClient.SubscribeToQueueAsync(
-                this._awsConfiguration.ScheduledRuleQueueName,
+            this.awsQueueClient.SubscribeToQueueAsync(
+                this.awsConfiguration.ScheduledRuleQueueName,
                 async (s1, s2) => { await this.ExecuteNonDistributedMessage(s1, s2); },
-                this._messageBusCts.Token,
-                this._token);
+                this.messageBusCancellationTokenSource.Token,
+                this.token);
 
-            this._logger.LogInformation("completed initiating");
+            this.logger.LogInformation("completed initiating");
         }
 
+        /// <summary>
+        /// The terminate.
+        /// </summary>
         public void Terminate()
         {
-            this._logger.LogInformation("sent terminate signal to cancellation token reading message bus");
-            this._messageBusCts?.Cancel();
-            this._messageBusCts = null;
+            this.logger.LogInformation("sent terminate signal to cancellation token reading message bus");
+            this.messageBusCancellationTokenSource?.Cancel();
+            this.messageBusCancellationTokenSource = null;
         }
     }
 }

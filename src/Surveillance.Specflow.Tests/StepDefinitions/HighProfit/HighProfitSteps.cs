@@ -24,6 +24,7 @@
     using Surveillance.Engine.Rules.RuleParameters.Equities;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
@@ -301,6 +302,7 @@
                 this.ruleViolationService,
                 new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
                 new FixedIncomeHighProfitJudgementMapper(new NullLogger<FixedIncomeHighProfitJudgementMapper>()), 
+                new FixedIncomeHighVolumeJudgementMapper(new NullLogger<FixedIncomeHighVolumeJudgementMapper>()), 
                 new NullLogger<JudgementService>());
 
             this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();

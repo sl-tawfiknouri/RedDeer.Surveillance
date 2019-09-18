@@ -5,8 +5,10 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
@@ -32,7 +34,7 @@
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly ILogger<FixedIncomeHighVolumeIssuanceRule> logger;
+        private readonly ILogger<FixedIncomeHighVolumeRule> logger;
 
         /// <summary>
         /// The trading logger required for the base class.
@@ -57,7 +59,7 @@
         public FixedIncomeHighVolumeFactory(
             IUniverseFixedIncomeOrderFilterService filterService,
             IUniverseMarketCacheFactory marketCacheFactory,
-            ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
+            ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
             this.filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
@@ -81,6 +83,12 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
+        /// <param name="judgementService">
+        /// The judgement service/
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
         /// <param name="runMode">
         /// The run mode.
         /// </param>
@@ -90,13 +98,17 @@
         public IFixedIncomeHighVolumeRule BuildRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             ISystemProcessOperationRunRuleContext operationContext,
+            IFixedIncomeHighVolumeJudgementService judgementService,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode)
         {
-            return new FixedIncomeHighVolumeIssuanceRule(
+            return new FixedIncomeHighVolumeRule(
                 parameters,
                 this.filterService,
                 operationContext,
                 this.marketCacheFactory,
+                judgementService,
+                dataRequestSubscriber,
                 runMode,
                 this.logger,
                 this.tradingLogger);

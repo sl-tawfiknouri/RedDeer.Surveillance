@@ -5,19 +5,19 @@
     using Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces;
 
     /// <summary>
-    /// The FixedIncomeHighProfitJudgementService interface (interface segregation principle).
+    /// The FixedIncomeHighVolumeJudgementService interface.
     /// </summary>
-    public interface IFixedIncomeHighProfitJudgementService
+    public interface IFixedIncomeHighVolumeJudgementService
     {
         /// <summary>
         /// The judgement.
         /// </summary>
-        /// <param name="judgementContext">
-        /// The judgement context.
+        /// <param name="highVolumeJudgementContext">
+        /// The high volume judgement context.
         /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        Task Judgement(IFixedIncomeHighProfitJudgementContext judgementContext);
+        Task Judgement(IFixedIncomeHighVolumeJudgementContext highVolumeJudgementContext);
     }
 }

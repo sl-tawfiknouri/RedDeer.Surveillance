@@ -87,5 +87,16 @@
         /// The <see cref="Task"/>.
         /// </returns>
         Task Save(IFixedIncomeHighProfitJudgement highProfit);
+
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="highVolume">
+        /// The high volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task Save(IFixedIncomeHighVolumeJudgement highVolume);
     }
 }

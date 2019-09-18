@@ -1,5 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Judgements.Interfaces
 {
+    using System.Threading.Tasks;
+
     using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
 
     /// <summary>
@@ -13,6 +15,9 @@
         /// <param name="judgementContext">
         /// The judgement context.
         /// </param>
-        void Judgement(IHighProfitJudgementContext judgementContext);
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task Judgement(IHighProfitJudgementContext judgementContext);
     }
 }

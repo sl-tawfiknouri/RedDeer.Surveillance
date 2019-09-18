@@ -140,6 +140,7 @@
                 execution,
                 operationContext,
                 dataRequestSubscriber,
+                judgementService,
                 highVolumeParameters);
 
             return subscriptions;
@@ -214,6 +215,9 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
+        /// <param name="judgementService">
+        /// The judgement Service.
+        /// </param>
         /// <param name="dataRequestSubscriber">
         /// The data request subscriber.
         /// </param>
@@ -226,10 +230,11 @@
         private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
+            IJudgementService judgementService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters)
         {
-            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
+            var ruleContext = operationContext.CreateAndStartRuleRunContext(
                 Rules.FixedIncomeHighVolumeIssuance.GetDescription(),
                 FixedIncomeHighVolumeFactory.Version,
                 parameters.Id,
@@ -241,7 +246,12 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highVolume = this.fixedIncomeRuleHighVolumeFactory.BuildRule(parameters, ruleCtx, runMode);
+            var highVolume = this.fixedIncomeRuleHighVolumeFactory.BuildRule(
+                parameters, 
+                ruleContext,
+                judgementService,
+                dataRequestSubscriber,
+                runMode);
             var highVolumeOrgFactors = this.brokerServiceFactory.Build(
                 highVolume,
                 parameters.Factors,
@@ -251,7 +261,7 @@
                 parameters,
                 highVolumeOrgFactors,
                 dataRequestSubscriber,
-                ruleCtx,
+                ruleContext,
                 runMode);
 
             return highVolumeFilters;
@@ -269,6 +279,9 @@
         /// <param name="dataRequestSubscriber">
         /// The data request subscriber.
         /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
         /// <param name="highVolumeParameters">
         /// The high volume parameters.
         /// </param>
@@ -279,6 +292,7 @@
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
             IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> highVolumeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -291,6 +305,7 @@
                     var paramSubscriptions = this.SubscribeToParameters(
                         execution,
                         operationContext,
+                        judgementService,
                         dataRequestSubscriber,
                         param);
 
@@ -300,7 +315,7 @@
             else
             {
                 var errorMessage =
-                    $"tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set";
+                    $"tried to schedule a {nameof(FixedIncomeHighVolumeRule)} rule execution with no parameters set";
                 this.logger.LogError(errorMessage);
                 operationContext.EventError(errorMessage);
             }

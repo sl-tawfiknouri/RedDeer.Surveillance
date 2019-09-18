@@ -14,7 +14,7 @@
 
         string OrderId { get; set; }
 
-        string Parameters { get; }
+        string SerialisedParameters { get; }
 
         decimal? PercentageHighProfit { get; }
 

@@ -206,7 +206,7 @@ namespace Surveillance.Engine.Rules
             this.For<IClusteringService>().Use<ClusteringService>().Singleton();
 
             this.For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
-            this.For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeIssuanceRule>();
+            this.For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
             this.For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
 
             this.For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
@@ -311,6 +311,7 @@ namespace Surveillance.Engine.Rules
             this.For<IRampingJudgementService>().Use<JudgementService>();
             this.For<ISpoofingJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
+            this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
         }
     }
 }

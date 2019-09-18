@@ -4,17 +4,22 @@
     using System.Linq;
 
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Judgement.FixedIncome;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
+
+    using Newtonsoft.Json;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Trades;
@@ -26,8 +31,12 @@
     /// <summary>
     /// The fixed income high volume issuance rule.
     /// </summary>
-    public class FixedIncomeHighVolumeIssuanceRule : BaseUniverseRule, IFixedIncomeHighVolumeRule
+    public class FixedIncomeHighVolumeRule : BaseUniverseRule, IFixedIncomeHighVolumeRule
     {
+        // potentially useful?
+        private readonly IMarketTradingHoursService tradingHoursService;
+        private readonly ICurrencyConverterService currencyConverterService;
+
         /// <summary>
         /// The order filter service for CFI codes.
         /// </summary>
@@ -38,19 +47,28 @@
         /// </summary>
         private readonly IHighVolumeIssuanceRuleFixedIncomeParameters parameters;
 
-        // potentially useful?
-        private readonly IMarketTradingHoursService tradingHoursService;
-        private readonly IUniverseDataRequestsSubscriber dataRequestSubscriber;
-        private readonly ICurrencyConverterService currencyConverterService;
+        /// <summary>
+        /// The judgement service.
+        /// </summary>
+        private readonly IFixedIncomeHighVolumeJudgementService judgementService;
 
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly ILogger<FixedIncomeHighVolumeIssuanceRule> logger;
+        private readonly ILogger<FixedIncomeHighVolumeRule> logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FixedIncomeHighVolumeIssuanceRule"/> class.
+        /// The had missing market data.
+        /// </summary>
+        private bool hadMissingMarketData;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FixedIncomeHighVolumeRule"/> class.
         /// </summary>
         /// <param name="parameters">
         /// The parameters.
@@ -64,6 +82,12 @@
         /// <param name="factory">
         /// The factory.
         /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber
+        /// </param>
         /// <param name="runMode">
         /// The run mode.
         /// </param>
@@ -73,13 +97,15 @@
         /// <param name="tradingStackLogger">
         /// The trading stack logger.
         /// </param>
-        public FixedIncomeHighVolumeIssuanceRule(
+        public FixedIncomeHighVolumeRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory factory,
+            IFixedIncomeHighVolumeJudgementService judgementService,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
-            ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
+            ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters.Windows.BackwardWindowSize,
@@ -87,7 +113,7 @@
                 parameters.Windows.FutureWindowSize,
                 Rules.FixedIncomeHighVolumeIssuance,
                 FixedIncomeHighVolumeFactory.Version,
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",
+                $"{nameof(FixedIncomeHighVolumeRule)}",
                 ruleContext,
                 factory,
                 runMode,
@@ -96,6 +122,8 @@
         {
             this.parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             this.orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
+            this.judgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
+            this.dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -115,7 +143,7 @@
         /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            var clone = (FixedIncomeHighVolumeIssuanceRule)this.Clone();
+            var clone = (FixedIncomeHighVolumeRule)this.Clone();
             clone.OrganisationFactorValue = factor;
 
             return clone;
@@ -129,12 +157,12 @@
         /// </returns>
         public object Clone()
         {
-            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} Clone called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} Clone called at {this.UniverseDateTime}");
 
-            var clone = (FixedIncomeHighVolumeIssuanceRule)this.MemberwiseClone();
+            var clone = (FixedIncomeHighVolumeRule)this.MemberwiseClone();
             clone.BaseClone();
 
-            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} Clone completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} Clone completed for {this.UniverseDateTime}");
 
             return clone;
         }
@@ -148,10 +176,10 @@
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} RunOrderFilledEvent called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} RunOrderFilledEvent completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -171,10 +199,10 @@
         protected override void EndOfUniverse()
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} EndOfUniverse called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} EndOfUniverse called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} EndOfUniverse completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} EndOfUniverse completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -197,10 +225,10 @@
         protected override void Genesis()
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} Genesis called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} Genesis called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} Genesis completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} Genesis completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -212,10 +240,10 @@
         protected override void MarketClose(MarketOpenClose exchange)
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} MarketClose called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} MarketClose called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} MarketClose completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} MarketClose completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -227,10 +255,10 @@
         protected override void MarketOpen(MarketOpenClose exchange)
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} MarketOpen called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} MarketOpen called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} MarketOpen completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} MarketOpen completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -242,10 +270,10 @@
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunInitialSubmissionRule called at {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} RunInitialSubmissionRule called at {this.UniverseDateTime}");
 
             this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunInitialSubmissionRule completed for {this.UniverseDateTime}");
+                $"{nameof(FixedIncomeHighVolumeRule)} RunInitialSubmissionRule completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -267,13 +295,15 @@
         /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunRule called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} RunRule called at {this.UniverseDateTime}");
 
             var tradeWindow = history?.ActiveTradeHistory();
 
             if (tradeWindow == null
                 || !tradeWindow.Any())
             {
+                this.logger.LogInformation($"RunPostOrderEvent had an empty trade window");
+
                 return;
             }
 
@@ -286,7 +316,23 @@
             var dailyBreach = this.CheckDailyVolume(mostRecentTrade, tradedVolume);
             var windowBreach = this.CheckWindowVolume(mostRecentTrade, tradedVolume);
 
-            // handle judgement marshalling here
+            if (!dailyBreach && !windowBreach)
+            {
+                this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily or window breach for {mostRecentTrade.Instrument.Identifiers}");
+                this.PassJudgementForNoBreach(mostRecentTrade);
+            }
+
+            if (windowBreach)
+            {
+                this.logger.LogInformation($"RunPostOrderEvent passing judgement with window breach for {mostRecentTrade.Instrument.Identifiers}");
+                this.PassJudgementForWindowBreach(mostRecentTrade, null);
+            }
+
+            if (dailyBreach)
+            {
+                this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily breach for {mostRecentTrade.Instrument.Identifiers}");
+                this.PassJudgementForDailyBreach(mostRecentTrade, null);
+            }
         }
 
         /// <summary>
@@ -299,6 +345,94 @@
         {
             // do nothing
         }
+
+        /// <summary>
+        /// The pass judgement for no breach.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        private void PassJudgementForNoBreach(Order mostRecentTrade)
+        {
+            var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
+
+            var judgement =
+                new FixedIncomeHighVolumeJudgement(
+                    this.RuleCtx.RuleParameterId(),
+                    this.RuleCtx.CorrelationId(),
+                    mostRecentTrade?.ReddeerOrderId?.ToString(),
+                    mostRecentTrade?.OrderId?.ToString(),
+                    serialisedParameters,
+                    this.hadMissingMarketData,
+                    false,
+                    null,
+                    null);
+
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false);
+
+            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+        }
+
+        /// <summary>
+        /// The pass judgement for window breach.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="breachDetails">
+        /// The breach details.
+        /// </param>
+        private void PassJudgementForWindowBreach(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        {
+            var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
+
+            var judgement =
+                new FixedIncomeHighVolumeJudgement(
+                    this.RuleCtx.RuleParameterId(),
+                    this.RuleCtx.CorrelationId(),
+                    mostRecentTrade?.ReddeerOrderId?.ToString(),
+                    mostRecentTrade?.OrderId?.ToString(),
+                    serialisedParameters,
+                    this.hadMissingMarketData,
+                    false,
+                    breachDetails,
+                    null);
+
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
+
+            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+        }
+
+        /// <summary>
+        /// The pass judgement for daily breach.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="breachDetails">
+        /// The breach details.
+        /// </param>
+        private void PassJudgementForDailyBreach(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        {
+            var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
+
+            var judgement =
+                new FixedIncomeHighVolumeJudgement(
+                    this.RuleCtx.RuleParameterId(),
+                    this.RuleCtx.CorrelationId(),
+                    mostRecentTrade?.ReddeerOrderId?.ToString(),
+                    mostRecentTrade?.OrderId?.ToString(),
+                    serialisedParameters,
+                    this.hadMissingMarketData,
+                    false,
+                    null,
+                    breachDetails);
+
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
+
+            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+        }
+
 
         /// <summary>
         /// The check daily volume.

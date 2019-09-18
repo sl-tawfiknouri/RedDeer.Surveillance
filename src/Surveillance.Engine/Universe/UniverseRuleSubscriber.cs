@@ -280,7 +280,7 @@
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
                 this._logger.LogInformation(
-                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
+                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeRule)}");
                 player.Subscribe(sub);
             }
 

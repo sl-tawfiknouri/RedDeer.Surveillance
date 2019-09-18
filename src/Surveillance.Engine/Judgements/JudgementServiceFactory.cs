@@ -24,6 +24,11 @@
         private readonly IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper;
 
         /// <summary>
+        /// The fixed income high volume judgement mapper.
+        /// </summary>
+        private readonly IFixedIncomeHighVolumeJudgementMapper fixedIncomeHighVolumeJudgementMapper;
+
+        /// <summary>
         /// The judgement repository.
         /// </summary>
         private readonly IJudgementRepository judgementRepository;
@@ -53,6 +58,9 @@
         /// <param name="fixedIncomeHighProfitJudgementMapper">
         /// The fixed income high profit judgement mapper.
         /// </param>
+        /// <param name="fixedIncomeHighVolumeJudgementMapper">
+        /// The fixed income high volume judgement mapper.
+        /// </param>
         /// <param name="logger">
         /// The logger.
         /// </param>
@@ -61,6 +69,7 @@
             IJudgementRepository judgementRepository,
             IHighProfitJudgementMapper highProfitJudgementMapper,
             IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper,
+            IFixedIncomeHighVolumeJudgementMapper fixedIncomeHighVolumeJudgementMapper,
             ILogger<JudgementService> logger)
         {
             this.ruleViolationServiceFactory =
@@ -74,6 +83,8 @@
 
             this.fixedIncomeHighProfitJudgementMapper =
                 fixedIncomeHighProfitJudgementMapper ?? throw new ArgumentNullException(nameof(fixedIncomeHighProfitJudgementMapper));
+            this.fixedIncomeHighVolumeJudgementMapper = 
+                fixedIncomeHighVolumeJudgementMapper ?? throw new ArgumentNullException(nameof(fixedIncomeHighVolumeJudgementMapper));
 
             this.logger =
                 logger ?? throw new ArgumentNullException(nameof(logger));
@@ -92,6 +103,7 @@
                 this.ruleViolationServiceFactory.Build(),
                 this.highProfitJudgementMapper,
                 this.fixedIncomeHighProfitJudgementMapper,
+                this.fixedIncomeHighVolumeJudgementMapper,
                 this.logger);
         }
     }

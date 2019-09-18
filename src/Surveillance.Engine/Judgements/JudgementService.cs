@@ -1,6 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Judgements
 {
     using System;
+    using System.Threading.Tasks;
 
     using Domain.Surveillance.Judgement.Equity.Interfaces;
 
@@ -36,6 +37,11 @@
         private readonly IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper;
 
         /// <summary>
+        /// The fixed income high volume judgement mapper.
+        /// </summary>
+        private readonly IFixedIncomeHighVolumeJudgementMapper fixedIncomeHighVolumeJudgementMapper;
+
+        /// <summary>
         /// The judgement repository.
         /// </summary>
         private readonly IJudgementRepository judgementRepository;
@@ -65,6 +71,9 @@
         /// <param name="fixedIncomeHighProfitJudgementMapper">
         /// The fixed income high profit judgement mapper
         /// </param>
+        /// <param name="fixedIncomeHighVolumeJudgementMapper">
+        /// The fixed income high volume judgement mapper for secondary market and percentage issuance
+        /// </param>
         /// <param name="logger">
         /// The logger.
         /// </param>
@@ -73,6 +82,7 @@
             IRuleViolationService ruleViolationService,
             IHighProfitJudgementMapper equityHighProfitJudgementMapper,
             IFixedIncomeHighProfitJudgementMapper fixedIncomeHighProfitJudgementMapper,
+            IFixedIncomeHighVolumeJudgementMapper fixedIncomeHighVolumeJudgementMapper,
             ILogger<JudgementService> logger)
         {
             this.judgementRepository =
@@ -81,22 +91,28 @@
                 equityHighProfitJudgementMapper ?? throw new ArgumentNullException(nameof(equityHighProfitJudgementMapper));
             this.fixedIncomeHighProfitJudgementMapper =
                 fixedIncomeHighProfitJudgementMapper ?? throw new ArgumentNullException(nameof(fixedIncomeHighProfitJudgementMapper));
+            this.fixedIncomeHighVolumeJudgementMapper = 
+                fixedIncomeHighVolumeJudgementMapper ?? throw new ArgumentNullException(nameof(fixedIncomeHighVolumeJudgementMapper));
             this.ruleViolationService =
                 ruleViolationService ?? throw new ArgumentNullException(nameof(ruleViolationService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        /// The judgement of a high profit analysis context.
+        /// The judgement.
         /// </summary>
         /// <param name="judgementContext">
         /// The judgement context.
         /// </param>
-        public void Judgement(IHighProfitJudgementContext judgementContext)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task Judgement(IHighProfitJudgementContext judgementContext)
         {
             if (judgementContext == null)
             {
                 this.logger?.LogError("Equity High Profit Judgement was null");
+
                 return;
             }
 
@@ -107,7 +123,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(judgementContext.Judgement);
+            await this.judgementRepository.Save(judgementContext.Judgement);
 
             if (!judgementContext.RaiseRuleViolation)
             {
@@ -119,13 +135,15 @@
         }
 
         /// <summary>
-        /// The judgement for a fixed income high profit judgement.
-        /// Will pass onto judgements if there is an alert
+        /// The judgement.
         /// </summary>
         /// <param name="judgementContext">
         /// The judgement context.
         /// </param>
-        public void Judgement(IFixedIncomeHighProfitJudgementContext judgementContext)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task Judgement(IFixedIncomeHighProfitJudgementContext judgementContext)
         {
             if (judgementContext == null)
             {
@@ -140,7 +158,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(judgementContext.Judgement);
+            await this.judgementRepository.Save(judgementContext.Judgement);
 
             if (!judgementContext.RaiseRuleViolation)
             {
@@ -152,33 +170,12 @@
         }
 
         /// <summary>
-        /// The judgement for a cancelled order - auto save as alert.
-        /// </summary>
-        /// <param name="cancelledOrder">
-        /// The cancelled order.
-        /// </param>
-        public void Judgement(ICancelledOrderJudgement cancelledOrder)
-        {
-            if (cancelledOrder == null)
-            {
-                this.logger?.LogError("Cancelled Order Judgement was null");
-                return;
-            }
-
-            this.judgementRepository.Save(cancelledOrder);
-
-            // judgement is also a rule breach
-            var projectedBreach = (ICancelledOrderRuleBreach)null;
-            this.ruleViolationService.AddRuleViolation(projectedBreach);
-        }
-
-        /// <summary>
         /// The judgement for high volume - auto save as alert.
         /// </summary>
         /// <param name="highVolume">
         /// The high volume.
         /// </param>
-        public void Judgement(IHighVolumeJudgement highVolume)
+        public async Task Judgement(IHighVolumeJudgement highVolume)
         {
             if (highVolume == null)
             {
@@ -194,12 +191,69 @@
         }
 
         /// <summary>
+        /// The judgement.
+        /// </summary>
+        /// <param name="highVolumeJudgementContext">
+        /// The high volume judgement context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task Judgement(IFixedIncomeHighVolumeJudgementContext highVolumeJudgementContext)
+        {
+            if (highVolumeJudgementContext == null)
+            {
+                this.logger?.LogError("Fixed Income High Volume Judgement was null");
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(highVolumeJudgementContext?.Judgement?.OrderId))
+            {
+                this.logger?.LogError("Fixed Income High Volume Judgement had no order id");
+
+                return;
+            }
+
+            await this.judgementRepository.Save(highVolumeJudgementContext.Judgement);
+
+            if (!highVolumeJudgementContext.RaiseRuleViolation)
+            {
+                return;
+            }
+
+            var projectedBreach = this.fixedIncomeHighVolumeJudgementMapper.Map(highVolumeJudgementContext);
+            this.ruleViolationService.AddRuleViolation(projectedBreach);
+        }
+
+        /// <summary>
+        /// The judgement for a cancelled order - auto save as alert.
+        /// </summary>
+        /// <param name="cancelledOrder">
+        /// The cancelled order.
+        /// </param>
+        public async Task Judgement(ICancelledOrderJudgement cancelledOrder)
+        {
+            if (cancelledOrder == null)
+            {
+                this.logger?.LogError("Cancelled Order Judgement was null");
+                return;
+            }
+
+            this.judgementRepository.Save(cancelledOrder);
+
+            // judgement is also a rule breach
+            var projectedBreach = (ICancelledOrderRuleBreach)null;
+            this.ruleViolationService.AddRuleViolation(projectedBreach);
+        }
+
+        /// <summary>
         /// The judgement for layering - auto save as alert.
         /// </summary>
         /// <param name="layering">
         /// The layering.
         /// </param>
-        public void Judgement(ILayeringJudgement layering)
+        public async Task Judgement(ILayeringJudgement layering)
         {
             if (layering == null)
             {
@@ -220,7 +274,7 @@
         /// <param name="markingTheClose">
         /// The marking the close.
         /// </param>
-        public void Judgement(IMarkingTheCloseJudgement markingTheClose)
+        public async Task Judgement(IMarkingTheCloseJudgement markingTheClose)
         {
             if (markingTheClose == null)
             {
@@ -241,7 +295,7 @@
         /// <param name="placingOrders">
         /// The placing orders.
         /// </param>
-        public void Judgement(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
+        public async Task Judgement(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
         {
             if (placingOrders == null)
             {
@@ -262,7 +316,7 @@
         /// <param name="ramping">
         /// The ramping.
         /// </param>
-        public void Judgement(IRampingJudgement ramping)
+        public async Task Judgement(IRampingJudgement ramping)
         {
             if (ramping == null)
             {
@@ -278,12 +332,15 @@
         }
 
         /// <summary>
-        /// The judgement for spoofing - auto save as alert.
+        /// The judgement.
         /// </summary>
         /// <param name="spoofing">
         /// The spoofing.
         /// </param>
-        public void Judgement(ISpoofingJudgement spoofing)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task Judgement(ISpoofingJudgement spoofing)
         {
             if (spoofing == null)
             {

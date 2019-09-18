@@ -30,6 +30,11 @@
         private IFixedIncomeHighProfitJudgementMapper fixedIncomeJudgementMapper;
 
         /// <summary>
+        /// The fixed income high volume judgement mapper.
+        /// </summary>
+        private IFixedIncomeHighVolumeJudgementMapper fixedIncomeHighVolumeJudgementMapper;
+        
+        /// <summary>
         /// The judgement repository.
         /// </summary>
         private IJudgementRepository judgementRepository;
@@ -55,7 +60,9 @@
                 this.judgementRepository,
                 this.highProfitJudgementMapper,
                 this.fixedIncomeJudgementMapper,
+                this.fixedIncomeHighVolumeJudgementMapper,
                 this.logger);
+
             var result = serviceFactory.Build();
 
             A.CallTo(() => this.ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
@@ -63,10 +70,10 @@
         }
 
         /// <summary>
-        /// The ctor null high profit judgement mapper throws exception.
+        /// The constructor null high profit judgement mapper throws exception.
         /// </summary>
         [Test]
-        public void CtorNullHighProfitJudgementMapperThrowsException()
+        public void ConstructorNullHighProfitJudgementMapperThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
@@ -75,14 +82,15 @@
                     this.judgementRepository,
                     null,
                     this.fixedIncomeJudgementMapper,
+                    this.fixedIncomeHighVolumeJudgementMapper,
                     this.logger));
         }
 
         /// <summary>
-        /// The ctor null judgement repository throws exception.
+        /// The constructor null judgement repository throws exception.
         /// </summary>
         [Test]
-        public void CtorNullJudgementRepositoryThrowsException()
+        public void ConstructorNullJudgementRepositoryThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
@@ -91,14 +99,15 @@
                     null,
                     this.highProfitJudgementMapper,
                     this.fixedIncomeJudgementMapper,
+                    this.fixedIncomeHighVolumeJudgementMapper,
                     this.logger));
         }
 
         /// <summary>
-        /// The ctor null logger throws exception.
+        /// The constructor null logger throws exception.
         /// </summary>
         [Test]
-        public void CtorNullLoggerThrowsException()
+        public void ConstructorNullLoggerThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
@@ -107,14 +116,15 @@
                     this.judgementRepository,
                     this.highProfitJudgementMapper,
                     this.fixedIncomeJudgementMapper,
+                    this.fixedIncomeHighVolumeJudgementMapper,
                     null));
         }
 
         /// <summary>
-        /// The ctor null rule violation service factory throws exception.
+        /// The constructor null rule violation service factory throws exception.
         /// </summary>
         [Test]
-        public void CtorNullRuleViolationServiceFactoryThrowsException()
+        public void ConstructorNullRuleViolationServiceFactoryThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
@@ -123,6 +133,24 @@
                     this.judgementRepository,
                     this.highProfitJudgementMapper,
                     this.fixedIncomeJudgementMapper,
+                    this.fixedIncomeHighVolumeJudgementMapper,
+                    this.logger));
+        }
+
+        /// <summary>
+        /// The constructor null fixed income high volume judgement mapper throws exception.
+        /// </summary>
+        [Test]
+        public void ConstructorNullFixedIncomeHighVolumeJudgementMapperThrowsException()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new JudgementServiceFactory(
+                    null,
+                    this.judgementRepository,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
+                    null,
                     this.logger));
         }
 
@@ -137,6 +165,7 @@
                 this.judgementRepository,
                 this.highProfitJudgementMapper,
                 this.fixedIncomeJudgementMapper,
+                this.fixedIncomeHighVolumeJudgementMapper,
                 this.logger);
 
             Assert.DoesNotThrow(() => factory.Build());
@@ -153,6 +182,7 @@
             this.fixedIncomeJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
             this.judgementRepository = A.Fake<IJudgementRepository>();
             this.highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
+            this.fixedIncomeHighVolumeJudgementMapper = A.Fake<IFixedIncomeHighVolumeJudgementMapper>();
             this.logger = A.Fake<ILogger<JudgementService>>();
         }
     }

@@ -10,10 +10,11 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -21,44 +22,83 @@
     [TestFixture]
     public class FixedIncomeHighVolumeTests
     {
+        /// <summary>
+        /// The _run mode.
+        /// </summary>
         private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
 
-        private IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFile;
+        /// <summary>
+        /// The fixed income order file.
+        /// </summary>
+        private IUniverseFixedIncomeOrderFilterService fixedIncomeOrderFile;
 
-        private ILogger<FixedIncomeHighProfitsRule> _logger;
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseMarketCacheFactory marketCacheFactory;
 
-        private IUniverseMarketCacheFactory _marketCacheFactory;
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        private IHighVolumeIssuanceRuleFixedIncomeParameters parameters;
 
-        private IHighVolumeIssuanceRuleFixedIncomeParameters _parameters;
+        /// <summary>
+        /// The rule context.
+        /// </summary>
+        private ISystemProcessOperationRunRuleContext ruleContext;
 
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
+        /// <summary>
+        /// The judgement service.
+        /// </summary>
+        private IFixedIncomeHighVolumeJudgementService judgementService;
 
-        private ILogger<TradingHistoryStack> _tradingStackLogger;
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<FixedIncomeHighVolumeRule> logger;
+
+        /// <summary>
+        /// The trading stack logger.
+        /// </summary>
+        private ILogger<TradingHistoryStack> tradingStackLogger;
+
+        /// <summary>
+        /// The constructor logger null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_Logger_Null_Throws_Exception()
+        public void ConstructorLoggerNullThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new FixedIncomeHighVolumeIssuanceRule(
-                    this._parameters,
-                    this._fixedIncomeOrderFile,
-                    this._ruleCtx,
-                    this._marketCacheFactory,
+                () => new FixedIncomeHighVolumeRule(
+                    this.parameters,
+                    this.fixedIncomeOrderFile,
+                    this.ruleContext,
+                    this.marketCacheFactory,
+                    this.judgementService,
+                    this.dataRequestSubscriber,
                     this._runMode,
                     null,
-                    this._tradingStackLogger));
+                    this.tradingStackLogger));
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._parameters = A.Fake<IHighVolumeIssuanceRuleFixedIncomeParameters>();
-            this._fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
-            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            this._logger = new NullLogger<FixedIncomeHighProfitsRule>();
-            this._tradingStackLogger = new NullLogger<TradingHistoryStack>();
+            this.parameters = A.Fake<IHighVolumeIssuanceRuleFixedIncomeParameters>();
+            this.fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
+            this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this.marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this.logger = new NullLogger<FixedIncomeHighVolumeRule>();
+            this.tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }
     }
 }

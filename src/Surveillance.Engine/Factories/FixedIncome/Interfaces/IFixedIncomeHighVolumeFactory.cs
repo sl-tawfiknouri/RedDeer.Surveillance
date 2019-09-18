@@ -6,11 +6,32 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
 
+    /// <summary>
+    /// The FixedIncomeHighVolumeFactory interface.
+    /// </summary>
     public interface IFixedIncomeHighVolumeFactory
     {
+        /// <summary>
+        /// The build rule.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFixedIncomeHighVolumeRule"/>.
+        /// </returns>
         IFixedIncomeHighVolumeRule BuildRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);
     }

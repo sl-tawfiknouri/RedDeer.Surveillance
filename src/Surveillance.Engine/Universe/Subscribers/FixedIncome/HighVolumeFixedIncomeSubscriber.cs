@@ -27,18 +27,54 @@
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 
+    /// <summary>
+    /// The high volume fixed income subscriber.
+    /// </summary>
     public class HighVolumeFixedIncomeSubscriber : IHighVolumeFixedIncomeSubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IFixedIncomeHighVolumeFactory _fixedIncomeRuleHighVolumeFactory;
+        /// <summary>
+        /// The fixed income rule high volume factory.
+        /// </summary>
+        private readonly IFixedIncomeHighVolumeFactory fixedIncomeRuleHighVolumeFactory;
 
-        private readonly ILogger<HighVolumeFixedIncomeSubscriber> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<HighVolumeFixedIncomeSubscriber> logger;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighVolumeFixedIncomeSubscriber"/> class.
+        /// </summary>
+        /// <param name="fixedIncomeRuleHighVolumeFactory">
+        /// The fixed income rule high volume factory.
+        /// </param>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public HighVolumeFixedIncomeSubscriber(
             IFixedIncomeHighVolumeFactory fixedIncomeRuleHighVolumeFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
@@ -46,18 +82,41 @@
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeFixedIncomeSubscriber> logger)
         {
-            this._fixedIncomeRuleHighVolumeFactory = fixedIncomeRuleHighVolumeFactory
-                                                     ?? throw new ArgumentNullException(
-                                                         nameof(fixedIncomeRuleHighVolumeFactory));
-            this._ruleParameterMapper =
+            this.fixedIncomeRuleHighVolumeFactory = 
+                fixedIncomeRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeRuleHighVolumeFactory));
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
@@ -67,41 +126,67 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.FixedIncomeHighVolumeIssuance) ?? true)
+            {
                 return new IObserver<IUniverseEvent>[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos = ruleParameters.FixedIncomeHighVolumeIssuance.Where(
                 hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var highVolumeParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var highVolumeParameters = this.ruleParameterMapper.Map(execution, dtos);
+
             var subscriptions = this.SubscribeToUniverse(
                 execution,
                 operationContext,
-                alertStream,
                 dataRequestSubscriber,
                 highVolumeParameters);
 
             return subscriptions;
         }
 
+        /// <summary>
+        /// The decorate with filters.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="highVolume">
+        /// The high volume.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilters(
-            ISystemProcessOperationContext opCtx,
-            IHighVolumeIssuanceRuleFixedIncomeParameters param,
+            ISystemProcessOperationContext operationContext,
+            IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseRule highVolume,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters())
+            if (parameters.HasInternalFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} operation context");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameters.Accounts,
+                    parameters.Traders,
+                    parameters.Markets,
+                    parameters.Funds,
+                    parameters.Strategies,
                     null,
                     null,
                     null,
@@ -111,6 +196,7 @@
                     "High Volume Fixed Income",
                     universeDataRequestsSubscriber,
                     processOperationRunRuleContext);
+
                 filteredUniverse.Subscribe(highVolume);
 
                 return filteredUniverse;
@@ -119,17 +205,34 @@
             return highVolume;
         }
 
-        private IUniverseRule SubscribeToParams(
+        /// <summary>
+        /// The subscribe to parameters.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IHighVolumeIssuanceRuleFixedIncomeParameters param)
+            IHighVolumeIssuanceRuleFixedIncomeParameters parameters)
         {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
                 Rules.FixedIncomeHighVolumeIssuance.GetDescription(),
                 FixedIncomeHighVolumeFactory.Version,
-                param.Id,
+                parameters.Id,
                 (int)Rules.FixedIncomeHighVolumeIssuance,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -138,14 +241,14 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highVolume = this._fixedIncomeRuleHighVolumeFactory.BuildRule(param, ruleCtx, alertStream, runMode);
-            var highVolumeOrgFactors = this._brokerServiceFactory.Build(
+            var highVolume = this.fixedIncomeRuleHighVolumeFactory.BuildRule(parameters, ruleCtx, runMode);
+            var highVolumeOrgFactors = this.brokerServiceFactory.Build(
                 highVolume,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameters.Factors,
+                parameters.AggregateNonFactorableIntoOwnCategory);
             var highVolumeFilters = this.DecorateWithFilters(
-                opCtx,
-                param,
+                operationContext,
+                parameters,
                 highVolumeOrgFactors,
                 dataRequestSubscriber,
                 ruleCtx,
@@ -154,10 +257,27 @@
             return highVolumeFilters;
         }
 
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="highVolumeParameters">
+        /// The high volume parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IHighVolumeIssuanceRuleFixedIncomeParameters"/>.
+        /// </returns>
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> highVolumeParameters)
         {
@@ -168,12 +288,12 @@
             {
                 foreach (var param in highVolumeParameters)
                 {
-                    var paramSubscriptions = this.SubscribeToParams(
+                    var paramSubscriptions = this.SubscribeToParameters(
                         execution,
-                        opCtx,
-                        alertStream,
+                        operationContext,
                         dataRequestSubscriber,
                         param);
+
                     subscriptions.Add(paramSubscriptions);
                 }
             }
@@ -181,8 +301,8 @@
             {
                 var errorMessage =
                     $"tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                this.logger.LogError(errorMessage);
+                operationContext.EventError(errorMessage);
             }
 
             return subscriptions;

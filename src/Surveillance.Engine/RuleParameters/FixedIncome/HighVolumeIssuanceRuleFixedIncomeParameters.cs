@@ -9,9 +9,45 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
+    /// <summary>
+    /// The high volume issuance rule fixed income parameters.
+    /// </summary>
     [Serializable]
     public class HighVolumeIssuanceRuleFixedIncomeParameters : IHighVolumeIssuanceRuleFixedIncomeParameters
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighVolumeIssuanceRuleFixedIncomeParameters"/> class.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <param name="windowSize">
+        /// The window size.
+        /// </param>
+        /// <param name="accounts">
+        /// The accounts.
+        /// </param>
+        /// <param name="traders">
+        /// The traders.
+        /// </param>
+        /// <param name="markets">
+        /// The markets.
+        /// </param>
+        /// <param name="funds">
+        /// The funds.
+        /// </param>
+        /// <param name="strategies">
+        /// The strategies.
+        /// </param>
+        /// <param name="factors">
+        /// The factors.
+        /// </param>
+        /// <param name="aggregateNonFactorableIntoOwnCategory">
+        /// The aggregate non factorable into own category.
+        /// </param>
+        /// <param name="performTuning">
+        /// The perform tuning.
+        /// </param>
         public HighVolumeIssuanceRuleFixedIncomeParameters(
             string id,
             TimeSpan windowSize,
@@ -37,6 +73,10 @@
 
             this.PerformTuning = performTuning;
         }
+
+        public decimal? FixedIncomeHighVolumePercentageDaily { get; set; }
+
+        public decimal? FixedIncomeHighVolumePercentageWindow { get; set; }
 
         public RuleFilter Accounts { get; set; }
 
@@ -74,11 +114,23 @@
             return castObj.Windows == this.Windows;
         }
 
+        /// <summary>
+        /// The get hash code.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public override int GetHashCode()
         {
             return this.Windows.GetHashCode();
         }
 
+        /// <summary>
+        /// The has internal filters check.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool HasInternalFilters()
         {
             return this.Accounts?.Type != RuleFilterType.None || this.Traders?.Type != RuleFilterType.None
@@ -87,6 +139,12 @@
                                                               || this.Strategies?.Type != RuleFilterType.None;
         }
 
+        /// <summary>
+        /// The valid settings check.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Valid()
         {
             return !string.IsNullOrWhiteSpace(this.Id);

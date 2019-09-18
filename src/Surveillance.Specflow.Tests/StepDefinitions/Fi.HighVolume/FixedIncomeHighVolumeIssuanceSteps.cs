@@ -95,7 +95,6 @@
                 this._ruleCtx,
                 this._interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,
-                this._alertStream,
                 new NullLogger<FixedIncomeHighVolumeIssuanceRule>(),
                 new NullLogger<TradingHistoryStack>());
 

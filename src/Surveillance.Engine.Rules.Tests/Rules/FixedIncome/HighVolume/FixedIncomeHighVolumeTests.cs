@@ -10,7 +10,6 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
@@ -23,8 +22,6 @@
     public class FixedIncomeHighVolumeTests
     {
         private readonly RuleRunMode _runMode = RuleRunMode.ForceRun;
-
-        private IUniverseAlertStream _alertStream;
 
         private IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFile;
 
@@ -49,7 +46,6 @@
                     this._ruleCtx,
                     this._marketCacheFactory,
                     this._runMode,
-                    this._alertStream,
                     null,
                     this._tradingStackLogger));
         }
@@ -61,7 +57,6 @@
             this._fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            this._alertStream = A.Fake<IUniverseAlertStream>();
             this._logger = new NullLogger<FixedIncomeHighProfitsRule>();
             this._tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }

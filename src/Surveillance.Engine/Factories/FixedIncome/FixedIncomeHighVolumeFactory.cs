@@ -5,7 +5,6 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
@@ -82,9 +81,6 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
-        /// <param name="alertStream">
-        /// The alert stream.
-        /// </param>
         /// <param name="runMode">
         /// The run mode.
         /// </param>
@@ -94,7 +90,6 @@
         public IFixedIncomeHighVolumeRule BuildRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             ISystemProcessOperationRunRuleContext operationContext,
-            IUniverseAlertStream alertStream,
             RuleRunMode runMode)
         {
             return new FixedIncomeHighVolumeIssuanceRule(
@@ -103,7 +98,6 @@
                 operationContext,
                 this.marketCacheFactory,
                 runMode,
-                alertStream,
                 this.logger,
                 this.tradingLogger);
         }

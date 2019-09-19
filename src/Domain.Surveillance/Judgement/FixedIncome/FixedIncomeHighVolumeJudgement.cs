@@ -40,9 +40,6 @@
         /// <param name="dailyBreach">
         /// The daily Breach.
         /// </param>
-        /// <param name="tradePosition">
-        /// The trade position.
-        /// </param>
         public FixedIncomeHighVolumeJudgement(
             string ruleRunId,
             string ruleRunCorrelationId,
@@ -52,8 +49,7 @@
             bool hadMissingMarketData,
             bool noAnalysis,
             BreachDetails windowBreach,
-            BreachDetails dailyBreach,
-            TradePosition tradePosition)
+            BreachDetails dailyBreach)
         {
             this.RuleRunId = ruleRunId;
             this.RuleRunCorrelationId = ruleRunCorrelationId;
@@ -65,7 +61,6 @@
             this.NoAnalysis = noAnalysis;
             this.WindowBreach = windowBreach;
             this.DailyBreach = dailyBreach;
-            this.TradePosition = tradePosition;
         }
 
         /// <summary>
@@ -112,11 +107,6 @@
         /// Gets the window breach.
         /// </summary>
         public BreachDetails WindowBreach { get; }
-
-        /// <summary>
-        /// Gets the trade position.
-        /// </summary>
-        public TradePosition TradePosition { get; }
 
         /// <summary>
         /// The breach details.

@@ -3,6 +3,7 @@
     using System;
 
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading;
     using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces;
@@ -24,10 +25,17 @@
         /// <param name="raiseRuleViolation">
         /// The project to alert.
         /// </param>
-        public FixedIncomeHighVolumeJudgementContext(IFixedIncomeHighVolumeJudgement judgement, bool raiseRuleViolation)
+        /// <param name="tradePosition">
+        /// The trade position.
+        /// </param>
+        public FixedIncomeHighVolumeJudgementContext(
+            IFixedIncomeHighVolumeJudgement judgement,
+            bool raiseRuleViolation,
+            TradePosition tradePosition)
         {
             this.Judgement = judgement ?? throw new ArgumentNullException(nameof(judgement));
             this.RaiseRuleViolation = raiseRuleViolation;
+            this.TradePosition = tradePosition ?? throw new ArgumentNullException(nameof(tradePosition));
         }
 
         /// <summary>
@@ -60,6 +68,9 @@
         /// <param name="isIssuanceBreach">
         /// The is issuance breach.
         /// </param>
+        /// <param name="tradePosition">
+        /// The trade Position.
+        /// </param>
         public FixedIncomeHighVolumeJudgementContext(
             IFixedIncomeHighVolumeJudgement judgement,
             bool raiseRuleViolation,
@@ -69,7 +80,8 @@
             FinancialInstrument security,
             HighVolumeRuleBreach.BreachDetails windowBreach,
             HighVolumeRuleBreach.BreachDetails dailyBreach,
-            bool isIssuanceBreach)
+            bool isIssuanceBreach,
+            TradePosition tradePosition)
         {
             this.Judgement = judgement;
             this.RaiseRuleViolation = raiseRuleViolation;
@@ -80,6 +92,7 @@
             this.WindowBreach = windowBreach;
             this.DailyBreach = dailyBreach;
             this.IsIssuanceBreach = isIssuanceBreach;
+            this.TradePosition = tradePosition;
         }
 
         /// <summary>
@@ -121,6 +134,11 @@
         /// Gets or sets the daily breach.
         /// </summary>
         public HighVolumeRuleBreach.BreachDetails DailyBreach { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trade position.
+        /// </summary>
+        public TradePosition TradePosition { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is issuance breach.

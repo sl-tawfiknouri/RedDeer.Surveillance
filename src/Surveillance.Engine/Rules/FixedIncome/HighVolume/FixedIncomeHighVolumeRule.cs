@@ -211,11 +211,20 @@
         /// </summary>
         protected override void EndOfUniverse()
         {
-            this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeRule)} EndOfUniverse called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"Universe Eschaton occurred at {this.UniverseDateTime}.");
 
-            this.logger.LogInformation(
-                $"{nameof(FixedIncomeHighVolumeRule)} EndOfUniverse completed for {this.UniverseDateTime}");
+            if (this.hadMissingMarketData && this.RunMode == RuleRunMode.ValidationRun)
+            {
+                this.logger.LogInformation("Submitting data requests - had missing data and is validation run");
+                this.dataRequestSubscriber.SubmitRequest();
+                this.RuleCtx?.EndEvent();
+            }
+            else
+            {
+                this.RuleCtx?.EndEvent();
+            }
+            
+            this.logger.LogInformation($"Universe Eschaton completed for {this.UniverseDateTime}");
         }
 
         /// <summary>
@@ -385,10 +394,9 @@
                     this.hadMissingMarketData,
                     false,
                     null,
-                    null,
-                    tradePosition);
+                    null);
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false);
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false, tradePosition);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -425,10 +433,9 @@
                     this.hadMissingMarketData,
                     false,
                     breachDetails,
-                    null,
-                    tradePosition);
+                    null);
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true, tradePosition);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -441,6 +448,9 @@
         /// </param>
         /// <param name="breachDetails">
         /// The breach details.
+        /// </param>
+        /// <param name="tradePosition">
+        /// The trade position.
         /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
@@ -462,10 +472,9 @@
                     this.hadMissingMarketData,
                     false,
                     null,
-                    breachDetails,
-                    tradePosition);
+                    breachDetails);
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
+            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true, tradePosition);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -706,7 +715,7 @@
             }
 
             var securityDataTicks = marketResult.Response;
-            var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
+            var windowVolume = securityDataTicks.Sum(_ => _.SpreadTimeBar.Volume.Traded);
             var threshold = this.CalculateBreachThreshold(windowVolume);
             var breachPercentage = this.CalculateTradedVolumePercentageInWindow(tradedVolume, windowVolume);
 

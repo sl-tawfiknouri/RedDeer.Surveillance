@@ -1,6 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces
 {
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading;
     using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
@@ -51,6 +52,11 @@
         /// Gets or sets the daily breach.
         /// </summary>
         HighVolumeRuleBreach.BreachDetails DailyBreach { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trade position.
+        /// </summary>
+        TradePosition TradePosition { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is issuance breach.

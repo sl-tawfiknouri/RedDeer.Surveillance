@@ -49,7 +49,7 @@
             await senderManager.Send(null);
 
             A.CallTo(
-                    () => this._dailyBarRepository.GetWithTransientFaultHandling(
+                    () => this._dailyBarRepository.GetWithTransientFaultHandlingAsync(
                         A<FactsetSecurityDailyRequest>.Ignored))
                 .MustNotHaveHappened();
         }
@@ -63,7 +63,7 @@
             await senderManager.Send(factsetRequests);
 
             A.CallTo(
-                    () => this._dailyBarRepository.GetWithTransientFaultHandling(
+                    () => this._dailyBarRepository.GetWithTransientFaultHandlingAsync(
                         A<FactsetSecurityDailyRequest>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }

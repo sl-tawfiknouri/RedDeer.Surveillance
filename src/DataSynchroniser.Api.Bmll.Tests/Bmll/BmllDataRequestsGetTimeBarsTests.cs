@@ -67,7 +67,7 @@
 
             var result = getTimeBars.GetTimeBars(keyDtos);
 
-            A.CallTo(() => this._timeBarRepository.GetMinuteBars(A<GetMinuteBarsRequest>.Ignored))
+            A.CallTo(() => this._timeBarRepository.GetMinuteBarsAsync(A<GetMinuteBarsRequest>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -84,7 +84,7 @@
 
             var result = getTimeBars.GetTimeBars(keyDtos);
 
-            A.CallTo(() => this._timeBarRepository.GetMinuteBars(A<GetMinuteBarsRequest>.Ignored))
+            A.CallTo(() => this._timeBarRepository.GetMinuteBarsAsync(A<GetMinuteBarsRequest>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
 
@@ -100,7 +100,7 @@
 
             var result = getTimeBars.GetTimeBars(keyDtos);
 
-            A.CallTo(() => this._timeBarRepository.GetMinuteBars(A<GetMinuteBarsRequest>.Ignored))
+            A.CallTo(() => this._timeBarRepository.GetMinuteBarsAsync(A<GetMinuteBarsRequest>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
 
@@ -116,7 +116,7 @@
 
             var result = getTimeBars.GetTimeBars(keyDtos);
 
-            A.CallTo(() => this._timeBarRepository.GetMinuteBars(A<GetMinuteBarsRequest>.Ignored))
+            A.CallTo(() => this._timeBarRepository.GetMinuteBarsAsync(A<GetMinuteBarsRequest>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 

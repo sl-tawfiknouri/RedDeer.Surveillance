@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Reddeer.ApiClient.Tests.ExchangeRate
+﻿namespace Surveillance.Reddeer.ApiClient.Tests.MarketOpenClose
 {
     using System;
     using System.Threading.Tasks;
@@ -14,16 +14,16 @@
     using PollyFacade.Policies.Interfaces;
 
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
-    using Surveillance.Reddeer.ApiClient.ExchangeRate;
+    using Surveillance.Reddeer.ApiClient.MarketOpenClose;
     using Surveillance.Reddeer.ApiClient.Tests.Helpers;
 
     // ReSharper disable ObjectCreationAsStatement
 
     /// <summary>
-    /// The exchange rate api repository tests.
+    /// The market open close api tests.
     /// </summary>
     [TestFixture]
-    public class ExchangeRateApiRepositoryTests
+    public class MarketOpenCloseApiTests
     {
         /// <summary>
         /// The configuration.
@@ -43,20 +43,26 @@
         /// <summary>
         /// The logger.
         /// </summary>
-        private ILogger<ExchangeRateApi> logger;
+        private ILogger<MarketOpenCloseApi> logger;
 
         /// <summary>
-        /// The constructor null logger considered throws exception.
+        /// The constructor throws for null market open close.
         /// </summary>
         [Test]
-        public void ConstructorNullLoggerConsideredThrowsException()
+        public void ConstructorThrowsForNullApiRepository()
         {
             Assert.Throws<ArgumentNullException>(
-                () => new ExchangeRateApi(
-                    this.configuration, 
-                    this.httpClientFactory,
-                    this.policyFactory, 
-                    null));
+                () => new MarketOpenCloseApi(null, this.httpClientFactory, this.policyFactory, this.logger));
+        }
+
+        /// <summary>
+        /// The constructor throws for null logger.
+        /// </summary>
+        [Test]
+        public void ConstructorThrowsForNullLogger()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () => new MarketOpenCloseApi(this.configuration, this.httpClientFactory, this.policyFactory, null));
         }
 
         /// <summary>
@@ -66,20 +72,17 @@
         /// The <see cref="Task"/>.
         /// </returns>
         [Test]
-        [Explicit]
+        [Explicit(
+            "you will need to ensure that the url and token are correct for your local environment. Don't want this running on a build server.")]
         public async Task Get()
         {
-            var repository = new ExchangeRateApi(
+            var repository = new MarketOpenCloseApi(
                 this.configuration,
                 this.httpClientFactory,
                 this.policyFactory,
                 this.logger);
 
-            var response =
-                await repository
-                    .GetAsync(
-                        new DateTime(2017, 09, 25),
-                        new DateTime(2017, 09, 29));
+            var response = await repository.GetAsync();
 
             Assert.IsNotNull(response);
             Assert.IsNotEmpty(response);
@@ -94,7 +97,7 @@
             this.httpClientFactory = A.Fake<IHttpClientFactory>();
             this.configuration = TestHelpers.Config();
             this.policyFactory = A.Fake<IPolicyFactory>();
-            this.logger = A.Fake<ILogger<ExchangeRateApi>>();
+            this.logger = A.Fake<ILogger<MarketOpenCloseApi>>();
         }
     }
 }

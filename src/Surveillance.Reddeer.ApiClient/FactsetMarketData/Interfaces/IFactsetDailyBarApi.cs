@@ -5,12 +5,42 @@
 
     using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 
+    /// <summary>
+    /// The DailyBar interface.
+    /// </summary>
     public interface IFactsetDailyBarApi
     {
-        Task<FactsetSecurityResponseDto> Get(FactsetSecurityDailyRequest request);
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<FactsetSecurityResponseDto> GetAsync(FactsetSecurityDailyRequest request);
 
-        Task<FactsetSecurityResponseDto> GetWithTransientFaultHandling(FactsetSecurityDailyRequest request);
+        /// <summary>
+        /// The get with transient fault handling async.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<FactsetSecurityResponseDto> GetWithTransientFaultHandlingAsync(FactsetSecurityDailyRequest request);
 
-        Task<bool> HeartBeating(CancellationToken token);
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<bool> HeartBeatingAsync(CancellationToken token);
     }
 }

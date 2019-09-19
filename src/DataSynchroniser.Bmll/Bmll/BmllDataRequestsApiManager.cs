@@ -112,7 +112,7 @@
             await policyWrap.ExecuteAsync(
                 async () =>
                     {
-                        minuteBarResult = await this._timeBarRepository.StatusMinuteBars(request);
+                        minuteBarResult = await this._timeBarRepository.StatusMinuteBarsAsync(request);
 
                         return minuteBarResult;
                     });
@@ -128,7 +128,7 @@
 
             var request = new CreateMinuteBarRequestCommand { Keys = keys?.ToList() };
 
-            await this._timeBarRepository.RequestMinuteBars(request);
+            await this._timeBarRepository.RequestMinuteBarsAsync(request);
 
             this._logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} CreateMinuteBarRequest complete");
         }

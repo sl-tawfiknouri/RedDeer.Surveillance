@@ -19,18 +19,51 @@
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
 
+    /// <summary>
+    /// The exchange rate.
+    /// </summary>
     public class ExchangeRateApi : BaseClientServiceApi, IExchangeRateApi
     {
+        /// <summary>
+        /// The heartbeat route.
+        /// </summary>
         private const string HeartbeatRoute = "api/exchangerates/heartbeat";
 
+        /// <summary>
+        /// The route.
+        /// </summary>
         private const string Route = "api/exchangerates/get/v1";
 
-        private readonly IApiClientConfiguration _apiClientConfiguration;
+        /// <summary>
+        /// The client configuration.
+        /// </summary>
+        private readonly IApiClientConfiguration apiClientConfiguration;
 
-        private readonly IHttpClientFactory _httpClientFactory;
+        /// <summary>
+        /// The http client factory.
+        /// </summary>
+        private readonly IHttpClientFactory httpClientFactory;
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExchangeRateApi"/> class.
+        /// </summary>
+        /// <param name="apiClientConfiguration">
+        /// The client configuration.
+        /// </param>
+        /// <param name="httpClientFactory">
+        /// The http client factory.
+        /// </param>
+        /// <param name="policyFactory">
+        /// The policy factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public ExchangeRateApi(
             IApiClientConfiguration apiClientConfiguration,
             IHttpClientFactory httpClientFactory,
@@ -38,18 +71,29 @@
             ILogger<ExchangeRateApi> logger)
             : base(apiClientConfiguration, httpClientFactory, policyFactory, logger)
         {
-            this._apiClientConfiguration =
+            this.apiClientConfiguration =
                 apiClientConfiguration ?? throw new ArgumentNullException(nameof(apiClientConfiguration));
-            this._httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="commencement">
+        /// The commencement.
+        /// </param>
+        /// <param name="termination">
+        /// The termination.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> GetAsync(
             DateTime commencement,
             DateTime termination)
         {
-            this._logger.LogInformation(
-                $"ExchangeRateApiRepository GET request for date {commencement} to {termination}");
+            this.logger.LogInformation($"ExchangeRateApiRepository GET request for date {commencement} to {termination}");
 
             try
             {
@@ -59,15 +103,15 @@
                 var routeWithQString =
                     $"{Route}?commencement={commencement.ToString("MM/dd/yyyy")}&termination={termination.ToString("MM/dd/yyyy")}";
 
-                using (var httpClient = this._httpClientFactory.ClientServiceHttpClient(
-                    this._apiClientConfiguration.ClientServiceUrl,
-                    this._apiClientConfiguration.SurveillanceUserApiAccessToken))
+                using (var httpClient = this.httpClientFactory.ClientServiceHttpClient(
+                    this.apiClientConfiguration.ClientServiceUrl,
+                    this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    var response = await httpClient.GetAsync(routeWithQString);
+                    var response = await httpClient.GetAsync(routeWithQString).ConfigureAwait(false);
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
-                        this._logger.LogWarning(
+                        this.logger.LogWarning(
                             $"Unsuccessful exchange rate api repository GET request. {response?.StatusCode}");
 
                         return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
@@ -78,7 +122,7 @@
 
                     if (deserialisedResponse == null || !deserialisedResponse.Any())
                     {
-                        this._logger.LogWarning(
+                        this.logger.LogWarning(
                             "ExchangeRateApiRepository GET request returned a null or empty response");
                         return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
                     }
@@ -87,22 +131,31 @@
                         i => i.Key,
                         i => i.ToList() as IReadOnlyCollection<ExchangeRateDto>);
 
-                    this._logger.LogInformation("ExchangeRateApiRepository GET request returning results");
+                    this.logger.LogInformation("ExchangeRateApiRepository GET request returning results");
 
                     return result;
                 }
             }
             catch (Exception e)
             {
-                this._logger.LogError("ExchangeRateApiRepository: " + e.Message);
+                this.logger.LogError("ExchangeRateApiRepository: " + e.Message);
             }
 
             return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
         }
 
-        public async Task<bool> HeartBeating(CancellationToken token)
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeat(HeartbeatRoute, token);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
         }
     }
 }

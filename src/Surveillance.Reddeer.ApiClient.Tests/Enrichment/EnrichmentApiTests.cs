@@ -1,6 +1,5 @@
-﻿namespace Surveillance.Reddeer.ApiClient.Tests.ExchangeRate
+﻿namespace Surveillance.Reddeer.ApiClient.Tests.Enrichment
 {
-    using System;
     using System.Threading.Tasks;
 
     using FakeItEasy;
@@ -13,17 +12,17 @@
 
     using PollyFacade.Policies.Interfaces;
 
+    using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
+
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
-    using Surveillance.Reddeer.ApiClient.ExchangeRate;
+    using Surveillance.Reddeer.ApiClient.Enrichment;
     using Surveillance.Reddeer.ApiClient.Tests.Helpers;
 
-    // ReSharper disable ObjectCreationAsStatement
-
     /// <summary>
-    /// The exchange rate api repository tests.
+    /// The enrichment api tests.
     /// </summary>
     [TestFixture]
-    public class ExchangeRateApiRepositoryTests
+    public class EnrichmentApiTests
     {
         /// <summary>
         /// The configuration.
@@ -43,21 +42,7 @@
         /// <summary>
         /// The logger.
         /// </summary>
-        private ILogger<ExchangeRateApi> logger;
-
-        /// <summary>
-        /// The constructor null logger considered throws exception.
-        /// </summary>
-        [Test]
-        public void ConstructorNullLoggerConsideredThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(
-                () => new ExchangeRateApi(
-                    this.configuration, 
-                    this.httpClientFactory,
-                    this.policyFactory, 
-                    null));
-        }
+        private ILogger<EnrichmentApi> logger;
 
         /// <summary>
         /// The get.
@@ -69,20 +54,20 @@
         [Explicit]
         public async Task Get()
         {
-            var repository = new ExchangeRateApi(
+            var repo = new EnrichmentApi(
                 this.configuration,
                 this.httpClientFactory,
                 this.policyFactory,
                 this.logger);
 
-            var response =
-                await repository
-                    .GetAsync(
-                        new DateTime(2017, 09, 25),
-                        new DateTime(2017, 09, 29));
+            var message = new SecurityEnrichmentMessage
+              {
+                  Securities = new[] { new SecurityEnrichmentDto { Sedol = "0408284" } }
+              };
 
-            Assert.IsNotNull(response);
-            Assert.IsNotEmpty(response);
+            await repo.PostAsync(message);
+
+            Assert.IsTrue(true);
         }
 
         /// <summary>
@@ -94,7 +79,7 @@
             this.httpClientFactory = A.Fake<IHttpClientFactory>();
             this.configuration = TestHelpers.Config();
             this.policyFactory = A.Fake<IPolicyFactory>();
-            this.logger = A.Fake<ILogger<ExchangeRateApi>>();
+            this.logger = A.Fake<ILogger<EnrichmentApi>>();
         }
     }
 }

@@ -63,7 +63,7 @@
 
             var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
-            A.CallTo(() => repository.Get()).Returns(
+            A.CallTo(() => repository.GetAsync()).Returns(
                 new[]
                     {
                         new ExchangeDto

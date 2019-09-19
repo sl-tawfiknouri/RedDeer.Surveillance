@@ -68,10 +68,10 @@
                 this._enrichmentApi,
                 this._logger);
 
-            A.CallTo(() => this._exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._exchangeRateApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Throws<ArgumentNullException>();
-            A.CallTo(() => this._marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
-            A.CallTo(() => this._ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._marketApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._ruleApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
 
             var result = await heartbeat.HeartsBeating();
 
@@ -88,11 +88,11 @@
                 this._enrichmentApi,
                 this._logger);
 
-            A.CallTo(() => this._exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._exchangeRateApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Returns(Task.FromResult(true));
-            A.CallTo(() => this._marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
-            A.CallTo(() => this._ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
-            A.CallTo(() => this._enrichmentApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._marketApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._ruleApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._enrichmentApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Returns(Task.FromResult(true));
 
             var result = await heartbeat.HeartsBeating();
@@ -110,10 +110,10 @@
                 this._enrichmentApi,
                 this._logger);
 
-            A.CallTo(() => this._exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._exchangeRateApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Returns(Task.FromResult(false));
-            A.CallTo(() => this._marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
-            A.CallTo(() => this._ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._marketApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._ruleApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
 
             var result = await heartbeat.HeartsBeating();
 
@@ -129,10 +129,10 @@
                 this._ruleApi,
                 this._enrichmentApi,
                 this._logger);
-            A.CallTo(() => this._exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._exchangeRateApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Returns(Task.FromResult(true));
-            A.CallTo(() => this._marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
-            A.CallTo(() => this._ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._marketApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
+            A.CallTo(() => this._ruleApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
 
             var result = await heartbeat.HeartsBeating();
 
@@ -149,10 +149,10 @@
                 this._enrichmentApi,
                 this._logger);
 
-            A.CallTo(() => this._exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored))
+            A.CallTo(() => this._exchangeRateApi.HeartBeatingAsync(A<CancellationToken>.Ignored))
                 .Returns(Task.FromResult(true));
-            A.CallTo(() => this._marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
-            A.CallTo(() => this._ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
+            A.CallTo(() => this._marketApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => this._ruleApi.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
 
             var result = await heartbeat.HeartsBeating();
 

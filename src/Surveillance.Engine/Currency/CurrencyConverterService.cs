@@ -153,7 +153,7 @@ namespace Surveillance.Engine.Rules.Currency
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             dayOfRate = dayOfRate.Date;
-            var exchRate = await this._exchangeRateApi.Get(dayOfRate, dayOfRate);
+            var exchRate = await this._exchangeRateApi.GetAsync(dayOfRate, dayOfRate);
 
             // cycle through last two weeks of exchange rates
             var offset = 0;

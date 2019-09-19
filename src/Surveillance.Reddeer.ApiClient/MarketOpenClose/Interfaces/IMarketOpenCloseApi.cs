@@ -7,8 +7,17 @@
 
     using Surveillance.Reddeer.ApiClient.Interfaces;
 
+    /// <summary>
+    /// The MarketOpenClose interface.
+    /// </summary>
     public interface IMarketOpenCloseApi : IHeartbeatApi
     {
-        Task<IReadOnlyCollection<ExchangeDto>> Get();
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<IReadOnlyCollection<ExchangeDto>> GetAsync();
     }
 }

@@ -43,7 +43,7 @@
 
             try
             {
-                var result = await this._dailyBarRepository.GetWithTransientFaultHandling(request);
+                var result = await this._dailyBarRepository.GetWithTransientFaultHandlingAsync(request);
 
                 return result;
             }

@@ -35,7 +35,7 @@
                                                  Rate = 0.015d
                                              };
 
-                A.CallTo(() => this.ExchangeRateRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
+                A.CallTo(() => this.ExchangeRateRepository.GetAsync(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
                     new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
                         {
                             { new DateTime(2018, 01, 01), new[] { exchangeRateDto, exchangeRateDtoEur } }

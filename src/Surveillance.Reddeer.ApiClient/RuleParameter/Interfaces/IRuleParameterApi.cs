@@ -6,10 +6,28 @@
 
     using Surveillance.Reddeer.ApiClient.Interfaces;
 
+    /// <summary>
+    /// The Rule Parameter interface.
+    /// </summary>
     public interface IRuleParameterApi : IHeartbeatApi
     {
-        Task<RuleParameterDto> Get();
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<RuleParameterDto> GetAsync();
 
-        Task<RuleParameterDto> Get(string id);
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<RuleParameterDto> GetAsync(string id);
     }
 }

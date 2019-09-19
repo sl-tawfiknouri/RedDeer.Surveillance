@@ -104,7 +104,7 @@
                     return;
                 }
 
-                var parameters = await this.ruleParameterApiRepository.Get().ConfigureAwait(false);
+                var parameters = await this.ruleParameterApiRepository.GetAsync().ConfigureAwait(false);
                 var ruleCtx = this.BuildRuleContext(operationContext, execution);
                 await this.ScheduleRule(execution, parameters, ruleCtx).ConfigureAwait(false);
 

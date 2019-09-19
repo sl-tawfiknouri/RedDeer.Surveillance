@@ -5,10 +5,31 @@
 
     using RedDeer.Contracts.SurveillanceService.Api.BrokerEnrichment;
 
+    /// <summary>
+    /// The Broker interface.
+    /// </summary>
     public interface IBrokerApi
     {
-        Task<bool> HeartBeating(CancellationToken token);
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<bool> HeartBeatingAsync(CancellationToken token);
 
-        Task<BrokerEnrichmentMessage> Post(BrokerEnrichmentMessage message);
+        /// <summary>
+        /// The post async.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<BrokerEnrichmentMessage> PostAsync(BrokerEnrichmentMessage message);
     }
 }

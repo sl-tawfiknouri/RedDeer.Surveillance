@@ -30,7 +30,7 @@
         {
             this._logger.LogInformation($"fetching market events from {start} to {end}");
 
-            var markets = await this._marketOpenCloseRepository.Get();
+            var markets = await this._marketOpenCloseRepository.GetAsync();
             var exchangeMarkets = markets.Select(m => new ExchangeMarket(m)).ToList();
 
             var extendedStart = start.AddDays(-1);

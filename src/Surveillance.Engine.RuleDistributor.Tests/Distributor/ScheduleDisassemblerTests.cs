@@ -67,7 +67,7 @@
         [Test]
         public async Task InitiateRuleRunForEightDaysJustRunsRuleWithTimeWindowOf10Days()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -96,7 +96,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -110,7 +110,7 @@
         [Test]
         public async Task InitiateRuleRunForEightDaysRunsRuleWithTimeWindowOf1DaysOverTwoExecutions()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -139,7 +139,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 2);
         }
@@ -153,7 +153,7 @@
         [Test]
         public async Task InitiateRuleRunForFourteenDaysJustRunsRuleWithTimeWindowOf1DaysThreeTimes()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -182,7 +182,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 3);
         }
@@ -196,7 +196,7 @@
         [Test]
         public async Task InitiateRuleRunForLessThanOneDayJustRunsRule()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -238,7 +238,7 @@
         [Test]
         public async Task InitiateRuleRunForOneHourOnlyJustRunsRule()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -280,7 +280,7 @@
         [Test]
         public async Task InitiateRuleRunForOneYearJustRunsRuleWithTimeWindowOfEightDaysSchedules22Runs()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -309,7 +309,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 22);
         }
@@ -323,7 +323,7 @@
         [Test]
         public async Task InitiateRuleRunForOneYearJustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -352,7 +352,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 52);
         }
@@ -366,7 +366,7 @@
         [Test]
         public async Task InitiateRuleRunForSevenDaysJustRunsRule()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -408,7 +408,7 @@
         [Test]
         public async Task InitiateRuleRunForSixDaysJustRunsRule()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -450,7 +450,7 @@
         [Test]
         public async Task InitiateRuleRunForTwoWeeksButNullParamsDoesNotDoAnything()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(new RuleParameterDto { HighProfits = null });
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(new RuleParameterDto { HighProfits = null });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
             var scheduler = this.Build();
@@ -483,7 +483,7 @@
         [Ignore("Not supporting this atm")]
         public async Task InitiateRuleRunTwoRulesForOneYearJustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
         {
-            A.CallTo(() => this.apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighProfits =
@@ -519,7 +519,7 @@
 
             await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this.apiRepository.Get()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 74);
         }

@@ -191,7 +191,7 @@ namespace Surveillance.Engine.Rules.Markets
                 return null;
             }
 
-            var resultTask = _repository.Get();
+            var resultTask = _repository.GetAsync();
             var result = resultTask.Result;
 
             var exchange = result.FirstOrDefault(res => string.Equals(res.Code, marketIdentifierCode, StringComparison.InvariantCultureIgnoreCase));

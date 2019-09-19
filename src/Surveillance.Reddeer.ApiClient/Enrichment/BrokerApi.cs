@@ -15,14 +15,41 @@
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.Enrichment.Interfaces;
 
+    /// <summary>
+    /// The broker.
+    /// </summary>
     public class BrokerApi : BaseClientServiceApi, IBrokerApi
     {
+        /// <summary>
+        /// The heartbeat route.
+        /// </summary>
         private const string HeartbeatRoute = "api/BrokerEnrichment/Heartbeat";
 
+        /// <summary>
+        /// The route.
+        /// </summary>
         private const string Route = "api/BrokerEnrichment/Enrichment/V1";
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BrokerApi"/> class.
+        /// </summary>
+        /// <param name="apiClientConfiguration">
+        /// The client configuration.
+        /// </param>
+        /// <param name="httpClientFactory">
+        /// The http client factory.
+        /// </param>
+        /// <param name="pollyFactory">
+        /// The polly factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public BrokerApi(
             IApiClientConfiguration apiClientConfiguration,
             IHttpClientFactory httpClientFactory,
@@ -30,19 +57,37 @@
             ILogger<BrokerApi> logger)
             : base(apiClientConfiguration, httpClientFactory, pollyFactory, logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> HeartBeating(CancellationToken token)
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeat(HeartbeatRoute, token);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
         }
 
-        public async Task<BrokerEnrichmentMessage> Post(BrokerEnrichmentMessage message)
+        /// <summary>
+        /// The post async.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<BrokerEnrichmentMessage> PostAsync(BrokerEnrichmentMessage message)
         {
-            this._logger.LogInformation($"get called with broker enrichment message for {Route}");
-            var response = await this.Post(message, Route);
-            this._logger.LogInformation($"get completed with broker enrichment message for {Route}");
+            this.logger.LogInformation($"get called with broker enrichment message for {Route}");
+            var response = await this.PostAsync(message, Route).ConfigureAwait(false);
+            this.logger.LogInformation($"get completed with broker enrichment message for {Route}");
 
             return response;
         }

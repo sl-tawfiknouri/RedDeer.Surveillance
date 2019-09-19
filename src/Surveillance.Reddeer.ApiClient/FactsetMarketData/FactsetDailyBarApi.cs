@@ -19,40 +19,85 @@
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.FactsetMarketData.Interfaces;
 
+    /// <summary>
+    /// The factset daily bar.
+    /// </summary>
     public class FactsetDailyBarApi : IFactsetDailyBarApi
     {
+        /// <summary>
+        /// The heartbeat route.
+        /// </summary>
         private const string HeartbeatRoute = "api/factset/heartbeat";
 
+        /// <summary>
+        /// The route.
+        /// </summary>
         private const string Route = "api/factset/surveillance/v1";
 
-        private readonly IApiClientConfiguration _apiClientConfiguration;
+        /// <summary>
+        /// The api client configuration.
+        /// </summary>
+        private readonly IApiClientConfiguration apiClientConfiguration;
 
-        private readonly IHttpClientFactory _httpClientFactory;
+        /// <summary>
+        /// The http client factory.
+        /// </summary>
+        private readonly IHttpClientFactory httpClientFactory;
 
-        private readonly ILogger<FactsetDailyBarApi> _logger;
+        /// <summary>
+        /// The policy factory.
+        /// </summary>
+        private readonly IPolicyFactory policyFactory;
 
-        private readonly IPolicyFactory _policyFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<FactsetDailyBarApi> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FactsetDailyBarApi"/> class.
+        /// </summary>
+        /// <param name="dataLayerConfiguration">
+        /// The data layer configuration.
+        /// </param>
+        /// <param name="httpClientFactory">
+        /// The http client factory.
+        /// </param>
+        /// <param name="policyFactory">
+        /// The policy factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public FactsetDailyBarApi(
             IApiClientConfiguration dataLayerConfiguration,
             IHttpClientFactory httpClientFactory,
             IPolicyFactory policyFactory,
             ILogger<FactsetDailyBarApi> logger)
         {
-            this._apiClientConfiguration =
+            this.apiClientConfiguration =
                 dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
-            this._httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            this._policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            this.policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<FactsetSecurityResponseDto> Get(FactsetSecurityDailyRequest request)
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<FactsetSecurityResponseDto> GetAsync(FactsetSecurityDailyRequest request)
         {
-            this._logger.LogInformation("has received a request to get daily bars from the client service");
+            this.logger.LogInformation("has received a request to get daily bars from the client service");
 
             if (request == null)
             {
-                this._logger.LogInformation("received a null request. Returning an empty response");
+                this.logger.LogInformation("received a null request. Returning an empty response");
 
                 return new FactsetSecurityResponseDto
                            {
@@ -62,54 +107,67 @@
 
             try
             {
-                using (var httpClient = this._httpClientFactory.ClientServiceHttpClient(
-                    this._apiClientConfiguration.ClientServiceUrl,
-                    this._apiClientConfiguration.SurveillanceUserApiAccessToken))
+                using (var httpClient = this.httpClientFactory.ClientServiceHttpClient(
+                    this.apiClientConfiguration.ClientServiceUrl,
+                    this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
                     var json = JsonConvert.SerializeObject(request);
-                    var response = await httpClient.PostAsync(
+
+                    var response =
+                        await httpClient
+                            .PostAsync(
                                        Route,
-                                       new StringContent(json, Encoding.UTF8, "application/json"));
+                                       new StringContent(json, Encoding.UTF8, "application/json"))
+                            .ConfigureAwait(false);
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
-                        this._logger.LogError(
+                        this.logger.LogError(
                             $"Unsuccessful factset time bar api repository GET request. {response?.StatusCode}");
 
                         return new FactsetSecurityResponseDto();
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
 
                     if (deserialisedResponse == null)
                     {
-                        this._logger.LogError("was unable to deserialise the response");
+                        this.logger.LogError("was unable to deserialise the response");
                         return new FactsetSecurityResponseDto();
                     }
 
-                    this._logger.LogInformation("returning deserialised GET response");
+                    this.logger.LogInformation("returning deserialised GET response");
                     return deserialisedResponse;
                 }
             }
             catch (Exception e)
             {
-                this._logger?.LogError("Get encountered an exception: " + e.Message + " " + e.InnerException?.Message);
+                this.logger?.LogError("Get encountered an exception: " + e.Message + " " + e.InnerException?.Message);
             }
 
-            this._logger?.LogInformation("Get received a response from the client. Returning result.");
+            this.logger?.LogInformation("Get received a response from the client. Returning result.");
 
             return new FactsetSecurityResponseDto();
         }
 
-        public async Task<FactsetSecurityResponseDto> GetWithTransientFaultHandling(FactsetSecurityDailyRequest request)
+        /// <summary>
+        /// The get with transient fault handling async.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<FactsetSecurityResponseDto> GetWithTransientFaultHandlingAsync(FactsetSecurityDailyRequest request)
         {
-            this._logger.LogInformation(
+            this.logger.LogInformation(
                 "GetWithTransientFaultHandling has received a request to get daily bars from the client service");
 
             if (request == null)
             {
-                this._logger.LogInformation(
+                this.logger.LogInformation(
                     "GetWithTransientFaultHandling received a null request. Returning an empty response");
 
                 return new FactsetSecurityResponseDto
@@ -118,70 +176,88 @@
                            };
             }
 
-            using (var httpClient = this._httpClientFactory.ClientServiceHttpClient(
-                this._apiClientConfiguration.ClientServiceUrl,
-                this._apiClientConfiguration.SurveillanceUserApiAccessToken))
+            using (var httpClient = this.httpClientFactory.ClientServiceHttpClient(
+                this.apiClientConfiguration.ClientServiceUrl,
+                this.apiClientConfiguration.SurveillanceUserApiAccessToken))
             {
                 var json = JsonConvert.SerializeObject(request);
-                var policy = this._policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
+                var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
                     TimeSpan.FromMinutes(3),
                     i => !i.IsSuccessStatusCode,
                     5,
                     TimeSpan.FromMinutes(1));
 
                 HttpResponseMessage responseMessage = null;
-                await policy.ExecuteAsync(
-                    async () =>
+                await policy
+                    .ExecuteAsync(async () =>
                         {
-                            responseMessage = await httpClient.PostAsync(
-                                                  Route,
-                                                  new StringContent(json, Encoding.UTF8, "application/json"));
+                            responseMessage = 
+                                await httpClient
+                                    .PostAsync(
+                                          Route,
+                                          new StringContent(json, Encoding.UTF8, "application/json"))
+                                      .ConfigureAwait(false);
 
                             return responseMessage;
-                        });
+                        })
+                    .ConfigureAwait(false);
 
                 if (responseMessage == null || !responseMessage.IsSuccessStatusCode)
                 {
-                    this._logger.LogError(
+                    this.logger.LogError(
                         $"GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
                     return new FactsetSecurityResponseDto();
                 }
 
-                var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+                var jsonResponse = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
 
                 if (deserialisedResponse == null)
                 {
-                    this._logger.LogError("GetWithTransientFaultHandling was unable to deserialise the response");
+                    this.logger.LogError("GetWithTransientFaultHandling was unable to deserialise the response");
                     return new FactsetSecurityResponseDto();
                 }
 
-                this._logger.LogInformation("GetWithTransientFaultHandling returning deserialised GET response");
+                this.logger.LogInformation("GetWithTransientFaultHandling returning deserialised GET response");
 
                 return deserialisedResponse;
             }
         }
 
-        public async Task<bool> HeartBeating(CancellationToken token)
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
             try
             {
-                using (var httpClient = this._httpClientFactory.ClientServiceHttpClient(
-                    this._apiClientConfiguration.ClientServiceUrl,
-                    this._apiClientConfiguration.SurveillanceUserApiAccessToken))
+                using (var httpClient = this.httpClientFactory.ClientServiceHttpClient(
+                    this.apiClientConfiguration.ClientServiceUrl,
+                    this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    var response = await httpClient.GetAsync(HeartbeatRoute, token);
+                    var response = await httpClient.GetAsync(HeartbeatRoute, token).ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
-                        this._logger.LogError("HEARTBEAT FOR FACTSET TIME BAR DATA API REPOSITORY NEGATIVE");
-                    else this._logger.LogInformation("HEARTBEAT POSITIVE FOR FACTSET TIME BAR API REPOSITORY");
+                    {
+                        this.logger.LogError("HEARTBEAT FOR FACTSET TIME BAR DATA API REPOSITORY NEGATIVE");
+                    }
+                    else
+                    {
+                        this.logger.LogInformation("HEARTBEAT POSITIVE FOR FACTSET TIME BAR API REPOSITORY");
+                    }
 
                     return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception e)
             {
-                this._logger.LogError("HEARTBEAT FOR FACTSET TIME BAR API REPOSITORY NEGATIVE", e);
+                this.logger.LogError("HEARTBEAT FOR FACTSET TIME BAR API REPOSITORY NEGATIVE", e);
             }
 
             return false;

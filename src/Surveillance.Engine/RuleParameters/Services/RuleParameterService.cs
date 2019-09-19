@@ -36,7 +36,7 @@
             if (!execution.IsBackTest)
             {
                 this._logger.LogInformation("Subscribe Rules noted not a back test run. Fetching all dtos.");
-                return await this._ruleParameterApiRepository.Get();
+                return await this._ruleParameterApiRepository.GetAsync();
             }
 
             var executionJson = JsonConvert.SerializeObject(execution);
@@ -47,7 +47,7 @@
             foreach (var id in ids)
             {
                 this._logger.LogInformation($"Subscribe Rules fetching rule dto for {id}");
-                var apiResult = await this._ruleParameterApiRepository.Get(id);
+                var apiResult = await this._ruleParameterApiRepository.GetAsync(id);
 
                 if (apiResult != null) ruleDtos.Add(apiResult);
                 else this._logger.LogError($"Subscribe Rules fetching rule dto for {id} returned null from api");

@@ -115,7 +115,7 @@
             A.CallTo(() => this._marketDataRequestProjector.ProjectToRequestKeys(A<List<MarketDataRequest>>.Ignored))
                 .Returns(bmllRequestDtos);
 
-            A.CallTo(() => this._timeBarRepository.StatusMinuteBars(A<GetMinuteBarRequestStatusesRequest>.Ignored))
+            A.CallTo(() => this._timeBarRepository.StatusMinuteBarsAsync(A<GetMinuteBarRequestStatusesRequest>.Ignored))
                 .Returns(BmllStatusMinuteBarResult.Completed);
 
             var result = await sender.Send(bmllRequests, true);
@@ -150,7 +150,7 @@
             this._policyFactory = A.Fake<IPolicyFactory>();
             this._logger = A.Fake<ILogger<BmllDataRequestsApiManager>>();
 
-            A.CallTo(() => this._timeBarRepository.HeartBeating(A<CancellationToken>.Ignored)).Returns(true);
+            A.CallTo(() => this._timeBarRepository.HeartBeatingAsync(A<CancellationToken>.Ignored)).Returns(true);
         }
 
         private BmllDataRequestsApiManager BuildSenderManager()

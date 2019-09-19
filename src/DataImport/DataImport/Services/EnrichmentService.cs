@@ -53,7 +53,7 @@
         public async Task Initialise()
         {
             var tokenSource = new CancellationTokenSource(60000);
-            var heartBeating = await this._api.HeartBeating(tokenSource.Token);
+            var heartBeating = await this._api.HeartBeatingAsync(tokenSource.Token);
 
             if (!heartBeating)
                 this._logger.LogError(
@@ -63,7 +63,7 @@
             {
                 Thread.Sleep(15000);
                 var loopTokenSource = new CancellationTokenSource(10000);
-                heartBeating = await this._api.HeartBeating(loopTokenSource.Token);
+                heartBeating = await this._api.HeartBeatingAsync(loopTokenSource.Token);
             }
 
             var timer = new Timer(ScanFrequencyInSeconds * 1000)
@@ -82,7 +82,7 @@
             var brokers = await this._orderBrokerRepository.GetUnEnrichedBrokers();
 
             var scanTokenSource = new CancellationTokenSource(10000);
-            var apiCheck = await this._api.HeartBeating(scanTokenSource.Token);
+            var apiCheck = await this._api.HeartBeatingAsync(scanTokenSource.Token);
             if (!apiCheck)
             {
                 this._logger.LogError(
@@ -98,7 +98,7 @@
 
                 this._logger.LogInformation("We need to add enrichment for brokers");
 
-                var enrichmentResponse = await this._api.Post(message);
+                var enrichmentResponse = await this._api.PostAsync(message);
                 await this._marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
 
                 response = enrichmentResponse?.Securities?.Any() ?? false;
@@ -121,7 +121,7 @@
 
                 this._logger.LogInformation("We need to add enrichment for brokers");
 
-                var enrichmentResponse = await this._brokerApi.Post(message);
+                var enrichmentResponse = await this._brokerApi.PostAsync(message);
                 await this._orderBrokerRepository.UpdateEnrichedBroker(enrichmentResponse.Brokers);
                 response = true;
             }

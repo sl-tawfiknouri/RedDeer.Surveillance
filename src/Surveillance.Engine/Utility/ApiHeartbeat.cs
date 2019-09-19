@@ -86,10 +86,10 @@
 
             try
             {
-                var exchangeBeating = await this.exchangeRateApi.HeartBeating(token.Token);
-                var marketBeating = await this.marketRateApi.HeartBeating(token.Token);
-                var rulesBeating = await this.rulesApi.HeartBeating(token.Token);
-                var enrichmentBeating = await this.enrichmentApi.HeartBeating(token.Token);
+                var exchangeBeating = await this.exchangeRateApi.HeartBeatingAsync(token.Token);
+                var marketBeating = await this.marketRateApi.HeartBeatingAsync(token.Token);
+                var rulesBeating = await this.rulesApi.HeartBeatingAsync(token.Token);
+                var enrichmentBeating = await this.enrichmentApi.HeartBeatingAsync(token.Token);
 
                 return exchangeBeating && marketBeating && rulesBeating && enrichmentBeating;
             }

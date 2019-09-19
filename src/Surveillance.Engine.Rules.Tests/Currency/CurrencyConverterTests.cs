@@ -64,13 +64,13 @@
             var targetCurrency = new Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>());
 
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNull(conversion);
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -85,7 +85,7 @@
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Code, "CNY");
 
-            A.CallTo(() => this._apiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this._apiRepository.GetAsync(A<DateTime>.Ignored, A<DateTime>.Ignored)).MustNotHaveHappened();
         }
 
         [Test]
@@ -109,7 +109,7 @@
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNull(conversion);
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappened();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappened();
         }
 
         [Test]
@@ -132,14 +132,14 @@
                                 { targetDate, new[] { rate } }
                             };
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).Returns(rates);
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).Returns(rates);
 
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -171,14 +171,14 @@
                                 { targetDate, new[] { cnyRate, usdRate } }
                             };
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).Returns(rates);
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).Returns(rates);
 
             var conversion = await converter.Convert(monies, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 20);
             Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -202,14 +202,14 @@
                                 { targetDate, new[] { cnyRate } }
                             };
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).Returns(rates);
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).Returns(rates);
 
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [TestCase(1, 1, 100)]
@@ -247,14 +247,14 @@
                                 { targetDate, new[] { cnyRate, eurRate } }
                             };
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).Returns(rates);
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).Returns(rates);
 
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, expected);
             Assert.AreEqual(conversion.Value.Currency.Code, "EUR");
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -278,14 +278,14 @@
                                 { targetDate, new[] { cnyRate } }
                             };
 
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).Returns(rates);
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).Returns(rates);
 
             var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, this._ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
-            A.CallTo(() => this._apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._apiRepository.GetAsync(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
         [SetUp]

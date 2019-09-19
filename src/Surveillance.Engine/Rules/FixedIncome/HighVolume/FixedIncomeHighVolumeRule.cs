@@ -5,6 +5,8 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Domain.Core.Markets;
+    using Domain.Core.Markets.Timebars;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
     using Domain.Surveillance.Scheduling;
@@ -12,6 +14,8 @@
     using Microsoft.Extensions.Logging;
 
     using Newtonsoft.Json;
+
+    using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -308,6 +312,7 @@
             }
 
             var tradedSecurities = tradeWindow.Where(_ => _.OrderFilledVolume.GetValueOrDefault() > 0).ToList();
+            tradedSecurities = this.FilterOutOtc(tradedSecurities);
             var tradedVolume = tradedSecurities.Sum(_ => _.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradedSecurities.ToList());
@@ -478,8 +483,130 @@
                 return FixedIncomeHighVolumeJudgement.BreachDetails.None();
             }
 
+            return this.DailyVolumeAnalysis(order, tradedVolume);
+        }
+
+        /// <summary>
+        /// The daily volume analysis.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FixedIncomeHighVolumeJudgement.BreachDetails"/>.
+        /// </returns>
+        private FixedIncomeHighVolumeJudgement.BreachDetails DailyVolumeAnalysis(Order order, decimal tradedVolume)
+        {
+            var tradingHours = this.tradingHoursService.GetTradingHoursForMic(order.Market?.MarketIdentifierCode);
+
+            if (!tradingHours.IsValid)
+            {
+                this.logger.LogError($"Request for trading hours was invalid. MIC - {order.Market?.MarketIdentifierCode}");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            var marketDataRequest = this.ConstructMarketDataRequest(order, tradingHours);
+            var securityResult = this.UniverseEquityInterdayCache.Get(marketDataRequest);
+
+            if (securityResult.HadMissingData)
+            {
+                this.hadMissingMarketData = true;
+                this.logger.LogWarning($"Missing data for {marketDataRequest}.");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            var securityDailyData = securityResult.Response;
+            var threshold = this.CalculateDailyVolumeThresholdPercentage(securityDailyData);
+
+            if (threshold <= 0)
+            {
+                this.hadMissingMarketData = true;
+                this.logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            var breachPercentage = this.CalculateDailyVolumePercentage(securityDailyData, tradedVolume);
+
+            if (tradedVolume >= threshold)
+            {
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(true, breachPercentage, threshold, order.Market);
+            }
+
             // replace with daily volume implementation
             return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+        }
+
+        /// <summary>
+        /// The construct market data request.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradingHours">
+        /// The trading hours.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MarketDataRequest"/>.
+        /// </returns>
+        private MarketDataRequest ConstructMarketDataRequest(Order order, ITradingHours tradingHours)
+        {
+            var opening = tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize));
+            var closing = tradingHours.ClosingInUtcForDay(this.UniverseDateTime);
+
+            return new MarketDataRequest(
+                order.Market?.MarketIdentifierCode,
+                order.Instrument.Cfi,
+                order.Instrument.Identifiers,
+                opening,
+                closing,
+                this.RuleCtx?.Id(),
+                DataSource.AllInterday);
+        }
+
+        /// <summary>
+        /// The calculate daily volume threshold percentage.
+        /// </summary>
+        /// <param name="securityTimeBar">
+        /// The security time bar.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        private long CalculateDailyVolumeThresholdPercentage(EquityInstrumentInterDayTimeBar securityTimeBar)
+        {
+            return (long)Math.Ceiling(
+                this.parameters.FixedIncomeHighVolumePercentageDaily.GetValueOrDefault(0)
+                * securityTimeBar.DailySummaryTimeBar.DailyVolume.Traded);
+        }
+
+        /// <summary>
+        /// The calculate daily volume percentage.
+        /// </summary>
+        /// <param name="securityTimeBar">
+        /// The security.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="decimal"/>.
+        /// </returns>
+        private decimal CalculateDailyVolumePercentage(EquityInstrumentInterDayTimeBar securityTimeBar, decimal tradedVolume)
+        {
+            if (securityTimeBar.DailySummaryTimeBar.DailyVolume.Traded != 0 && tradedVolume != 0)
+            {
+                return tradedVolume / securityTimeBar.DailySummaryTimeBar.DailyVolume.Traded;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         /// <summary>
@@ -553,6 +680,29 @@
         private bool HasEmptyTradeWindow(Stack<Order> tradeWindow)
         {
             return tradeWindow == null || !tradeWindow.Any();
+        }
+
+        /// <summary>
+        /// The filter out over the counter trades.
+        /// </summary>
+        /// <param name="orders">
+        /// The orders.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Order"/>.
+        /// </returns>
+        private List<Order> FilterOutOtc(IReadOnlyCollection<Order> orders)
+        {
+            if (orders == null || !orders.Any())
+            {
+                return new List<Order>();
+            }
+
+            return
+                orders
+                    .Where(_ => _.Market?.Type != MarketTypes.OTC)
+                    .Where(_ => _.OrderType != OrderTypes.OTC)
+                    .ToList();
         }
     }
 }

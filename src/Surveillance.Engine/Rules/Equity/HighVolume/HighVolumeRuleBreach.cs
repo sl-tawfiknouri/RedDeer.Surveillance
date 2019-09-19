@@ -13,6 +13,7 @@
     using Surveillance.Engine.Rules.Trades.Interfaces;
 
     using Domain.Core.Markets;
+    using Domain.Core.Trading.Interfaces;
 
     public class HighVolumeRuleBreach : IHighVolumeRuleBreach
     {

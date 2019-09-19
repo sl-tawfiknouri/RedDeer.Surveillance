@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Rules;
 

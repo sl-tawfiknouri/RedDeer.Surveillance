@@ -2,6 +2,8 @@
 
 namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces
 {
+    using Domain.Core.Trading.Interfaces;
+
     public interface IExchangeRateProfitBreakdown
     {
         Domain.Core.Financial.Money.Currency FixedCurrency { get; }

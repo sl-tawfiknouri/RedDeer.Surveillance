@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Execution.Interfaces;
     using Domain.Core.Trading.Factories.Interfaces;

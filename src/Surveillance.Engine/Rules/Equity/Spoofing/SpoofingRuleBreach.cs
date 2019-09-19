@@ -4,6 +4,8 @@
     using System.Linq;
 
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading;
+    using Domain.Core.Trading.Interfaces;
     using Domain.Core.Trading.Orders;
 
     using Surveillance.Auditing.Context.Interfaces;

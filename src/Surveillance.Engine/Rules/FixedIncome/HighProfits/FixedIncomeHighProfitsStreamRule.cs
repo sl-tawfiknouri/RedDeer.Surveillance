@@ -6,6 +6,7 @@
 
     using Domain.Core.Financial.Money;
     using Domain.Core.Markets;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
 

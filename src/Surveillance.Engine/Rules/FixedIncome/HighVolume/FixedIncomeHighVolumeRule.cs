@@ -5,8 +5,10 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Domain.Core.Dates;
     using Domain.Core.Markets;
     using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
     using Domain.Surveillance.Scheduling;
@@ -18,7 +20,6 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -331,19 +332,19 @@
             if (this.HasNoBreach(dailyBreach, windowBreach))
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily or window breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForNoBreachAsync(mostRecentTrade).Wait();
+                this.PassJudgementForNoBreachAsync(mostRecentTrade, tradePosition).Wait();
             }
 
             if (windowBreach.HasBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with window breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForWindowBreachAsync(mostRecentTrade, null).Wait();
+                this.PassJudgementForWindowBreachAsync(mostRecentTrade, windowBreach, tradePosition).Wait();
             }
 
             if (dailyBreach.HasBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForDailyBreachAsync(mostRecentTrade, null).Wait();
+                this.PassJudgementForDailyBreachAsync(mostRecentTrade, dailyBreach, tradePosition).Wait();
             }
         }
 
@@ -364,10 +365,13 @@
         /// <param name="mostRecentTrade">
         /// The most recent trade.
         /// </param>
+        /// <param name="tradePosition">
+        /// The traded position
+        /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        private async Task PassJudgementForNoBreachAsync(Order mostRecentTrade)
+        private async Task PassJudgementForNoBreachAsync(Order mostRecentTrade, TradePosition tradePosition)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
@@ -381,7 +385,8 @@
                     this.hadMissingMarketData,
                     false,
                     null,
-                    null);
+                    null,
+                    tradePosition);
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false);
 
@@ -397,13 +402,19 @@
         /// <param name="breachDetails">
         /// The breach details.
         /// </param>
+        /// <param name="tradePosition">
+        /// The trade position.
+        /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        private async Task PassJudgementForWindowBreachAsync(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        private async Task PassJudgementForWindowBreachAsync(
+            Order mostRecentTrade,
+            FixedIncomeHighVolumeJudgement.BreachDetails breachDetails,
+            TradePosition tradePosition)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
-
+            
             var judgement =
                 new FixedIncomeHighVolumeJudgement(
                     this.RuleCtx.RuleParameterId(),
@@ -414,7 +425,8 @@
                     this.hadMissingMarketData,
                     false,
                     breachDetails,
-                    null);
+                    null,
+                    tradePosition);
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
@@ -433,7 +445,10 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        private async Task PassJudgementForDailyBreachAsync(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        private async Task PassJudgementForDailyBreachAsync(
+            Order mostRecentTrade,
+            FixedIncomeHighVolumeJudgement.BreachDetails breachDetails,
+            TradePosition tradePosition)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
@@ -447,7 +462,8 @@
                     this.hadMissingMarketData,
                     false,
                     null,
-                    breachDetails);
+                    breachDetails,
+                    tradePosition);
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
@@ -652,8 +668,147 @@
                 return FixedIncomeHighVolumeJudgement.BreachDetails.None();
             }
 
-            // replace with window volume implementation
+            return this.WindowVolumeAnalysis(order, tradedVolume);
+        }
+
+        /// <summary>
+        /// The window volume analysis.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FixedIncomeHighVolumeJudgement.BreachDetails"/>.
+        /// </returns>
+        private FixedIncomeHighVolumeJudgement.BreachDetails WindowVolumeAnalysis(Order order, decimal tradedVolume)
+        {
+            var tradingHours = this.tradingHoursService.GetTradingHoursForMic(order.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                this.logger.LogError($"Request for trading hours was invalid. MIC - {order.Market?.MarketIdentifierCode}");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            var tradingDates = this.SetTradingHourRange(tradingHours, order);
+            var marketRequest = this.ConstructMarketDataRequestWindowAnalysis(order, tradingHours);
+            var marketResult = this.UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, this.RunMode);
+
+            if (marketResult.HadMissingData)
+            {
+                this.logger.LogTrace($"Unable to fetch market data frames for {order?.Market?.MarketIdentifierCode} at {this.UniverseDateTime}.");
+                this.hadMissingMarketData = true;
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            var securityDataTicks = marketResult.Response;
+            var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
+            var threshold = this.CalculateBreachThreshold(windowVolume);
+            var breachPercentage = this.CalculateTradedVolumePercentageInWindow(tradedVolume, windowVolume);
+
+            if (threshold <= 0)
+            {
+                this.hadMissingMarketData = true;
+                this.logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            if (tradedVolume >= threshold)
+            {
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(true, breachPercentage, threshold, order.Market);
+            }
+
             return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+        }
+
+        /// <summary>
+        /// The set trading hour range.
+        /// </summary>
+        /// <param name="tradingHours">
+        /// The trading hours.
+        /// </param>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateRange"/>.
+        /// </returns>
+        private IReadOnlyCollection<DateRange> SetTradingHourRange(ITradingHours tradingHours, Order order)
+        {
+            var tradingHourFrom = tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize));
+            var tradingHourTo = tradingHours.ClosingInUtcForDay(this.UniverseDateTime);
+
+            var tradingDates = this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHourFrom,
+                tradingHourTo,
+                order.Market?.MarketIdentifierCode);
+
+            return tradingDates;
+        }
+
+        /// <summary>
+        /// The calculate breach threshold.
+        /// </summary>
+        /// <param name="windowVolume">
+        /// The window volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        private long CalculateBreachThreshold(long windowVolume)
+        {
+            return (long)Math.Ceiling(this.parameters.FixedIncomeHighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+        }
+
+        /// <summary>
+        /// The calculate traded volume percentage in window.
+        /// </summary>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <param name="windowVolume">
+        /// The window volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="decimal"/>.
+        /// </returns>
+        private decimal CalculateTradedVolumePercentageInWindow(decimal tradedVolume, long windowVolume)
+        {
+            return windowVolume != 0 && tradedVolume != 0
+                ? (decimal)tradedVolume / (decimal)windowVolume
+                : 0;
+        }
+
+        /// <summary>
+        /// The construct market data request window analysis.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradingHours">
+        /// The trading hours.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MarketDataRequest"/>.
+        /// </returns>
+        private MarketDataRequest ConstructMarketDataRequestWindowAnalysis(Order order, ITradingHours tradingHours)
+        {
+            var openingHours = tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize));
+            var closingHours = tradingHours.ClosingInUtcForDay(this.UniverseDateTime);
+
+            return new MarketDataRequest(
+                order.Market?.MarketIdentifierCode,
+                order.Instrument.Cfi,
+                order.Instrument.Identifiers,
+                openingHours,
+                closingHours,
+                this.RuleCtx?.Id(),
+                DataSource.AllIntraday);
         }
 
         /// <summary>

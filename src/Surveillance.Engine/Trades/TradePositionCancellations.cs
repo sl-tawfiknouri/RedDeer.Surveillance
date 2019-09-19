@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Domain.Core.Trading.Interfaces;
     using Domain.Core.Trading.Orders;
 
     using Microsoft.Extensions.Logging;

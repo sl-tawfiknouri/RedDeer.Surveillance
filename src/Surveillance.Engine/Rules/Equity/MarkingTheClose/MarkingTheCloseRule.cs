@@ -21,6 +21,8 @@ using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {
+    using Domain.Core.Trading;
+
     public class MarkingTheCloseRule : BaseUniverseRule, IMarkingTheCloseRule
     {
         private readonly IMarkingTheCloseEquitiesParameters _equitiesParameters;

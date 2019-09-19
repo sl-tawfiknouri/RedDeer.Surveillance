@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
 
     using Microsoft.Extensions.Logging;
@@ -279,7 +280,7 @@
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"Window volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 

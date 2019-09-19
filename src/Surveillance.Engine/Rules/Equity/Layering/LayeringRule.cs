@@ -22,6 +22,9 @@ using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {
+    using Domain.Core.Trading;
+    using Domain.Core.Trading.Interfaces;
+
     public class LayeringRule : BaseUniverseRule, ILayeringRule
     {
         private readonly ILogger _logger;

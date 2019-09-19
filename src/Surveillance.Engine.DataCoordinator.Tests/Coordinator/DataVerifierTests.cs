@@ -42,7 +42,7 @@
         {
             var coordinator = new DataVerifier(this.ordersRepository, this.orderAllocationRepository, this.logger);
 
-            Assert.DoesNotThrowAsync(async () => await coordinator.Scan().ConfigureAwait(false));
+            Assert.DoesNotThrowAsync(async () => await coordinator.Scan());
         }
 
         /// <summary>

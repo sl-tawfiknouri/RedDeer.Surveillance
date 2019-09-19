@@ -93,7 +93,7 @@
                     this
                         .awsQueueClient
                         .SendToQueue(this.awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token)
-                        .ConfigureAwait(false);
+                        ;
 
                 this.logger.LogInformation($"finished dispatching to {this.awsConfiguration.ScheduledRuleQueueName}");
             }

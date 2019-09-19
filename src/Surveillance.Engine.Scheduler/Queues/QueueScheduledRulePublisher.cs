@@ -82,7 +82,7 @@
                         this.awsConfiguration.ScheduledRuleQueueName,
                         request.JsonSqsMessage,
                         messageBusCts.Token)
-                    .ConfigureAwait(false);
+                    ;
 
                 this.logger.LogInformation($"finished dispatching to {this.awsConfiguration.ScheduledRuleQueueName}");
             }

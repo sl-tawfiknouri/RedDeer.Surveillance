@@ -83,7 +83,7 @@
                         this.awsConfiguration.ScheduleRuleDistributedWorkQueueName,
                         request.JsonSqsMessage,
                         cancellationToken.Token)
-                    .ConfigureAwait(false);
+                    ;
 
                 this.logger.LogInformation(
                     $"published message to {this.awsConfiguration.ScheduleRuleDistributedWorkQueueName}");

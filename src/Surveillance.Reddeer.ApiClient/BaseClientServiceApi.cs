@@ -90,7 +90,7 @@
                 3,
                 TimeSpan.FromSeconds(15));
 
-            return await this.GetAsync<T>(route, policy).ConfigureAwait(false);
+            return await this.GetAsync<T>(route, policy);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@
                                 response = await httpClient.GetAsync(route);
                                 this.logger.LogInformation($"policy received post response or timed out for {route}");
                                 return response;
-                            }).ConfigureAwait(false);
+                            });
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -134,7 +134,7 @@
                         return null;
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<T>(jsonResponse);
 
                     if (deserialisedResponse == null)
@@ -174,7 +174,7 @@
                 2,
                 TimeSpan.FromSeconds(2));
 
-            return await this.GetHeartbeatAsync(route, token, policy).ConfigureAwait(false);
+            return await this.GetHeartbeatAsync(route, token, policy);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@
                     this.apiClientConfiguration.ClientServiceUrl,
                     this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    var response = await httpClient.GetAsync(route, token).ConfigureAwait(false);
+                    var response = await httpClient.GetAsync(route, token);
 
                     if (!response.IsSuccessStatusCode) this.logger.LogError($"heartbeat for {route} was negative");
                     else this.logger.LogInformation($"heartbeat for {route} was positive");
@@ -242,7 +242,7 @@
                 3,
                 TimeSpan.FromSeconds(15));
 
-            return await this.PostAsync(message, route, policy).ConfigureAwait(false);
+            return await this.PostAsync(message, route, policy);
         }
 
         /// <summary>
@@ -285,11 +285,11 @@
                                                .PostAsync(
                                                    route,
                                                    new StringContent(json, Encoding.UTF8, "application/json"))
-                                               .ConfigureAwait(false);
+                                               ;
                                 this.logger.LogInformation("policy received post response or timed out");
                                 return response;
                             })
-                        .ConfigureAwait(false);
+                        ;
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -299,7 +299,7 @@
                         return new T();
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<T>(jsonResponse);
 
                     if (deserialisedResponse == null)

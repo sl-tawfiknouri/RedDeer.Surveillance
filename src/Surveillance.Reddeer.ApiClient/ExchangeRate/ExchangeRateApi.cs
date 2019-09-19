@@ -107,7 +107,7 @@
                     this.apiClientConfiguration.ClientServiceUrl,
                     this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    var response = await httpClient.GetAsync(routeWithQString).ConfigureAwait(false);
+                    var response = await httpClient.GetAsync(routeWithQString);
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -155,7 +155,7 @@
         /// </returns>
         public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
     }
 }

@@ -75,7 +75,7 @@
             }
 
             this.logger.LogInformation("Fetching market open/close data in the cached repository");
-            this.cachedMarketData = await this.decorated.GetAsync().ConfigureAwait(false);
+            this.cachedMarketData = await this.decorated.GetAsync();
             this.cacheExpiry = DateTime.UtcNow.Add(this.cacheLength);
 
             return this.cachedMarketData;
@@ -97,7 +97,7 @@
                 return false;
             }
 
-            return await this.decorated.HeartBeatingAsync(token).ConfigureAwait(false);
+            return await this.decorated.HeartBeatingAsync(token);
         }
     }
 }

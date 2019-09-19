@@ -77,7 +77,7 @@
         public async Task ScheduleDueTasksAsync()
         {
             this.logger.LogInformation("schedule due tasks scanning repository for due tasks");
-            var tasks = await this.taskSchedulerRepository.ReadUnprocessedTask(DateTime.UtcNow).ConfigureAwait(false);
+            var tasks = await this.taskSchedulerRepository.ReadUnprocessedTask(DateTime.UtcNow);
 
             if (tasks == null || !tasks.Any())
             {
@@ -93,10 +93,10 @@
                     continue;
                 }
 
-                await this.ScheduleAsync(request).ConfigureAwait(false);
+                await this.ScheduleAsync(request);
             }
 
-            await this.taskSchedulerRepository.MarkTasksProcessed(tasks).ConfigureAwait(false);
+            await this.taskSchedulerRepository.MarkTasksProcessed(tasks);
 
             this.logger.LogInformation("schedule due tasks scanning repository for due tasks found null or empty requests");
         }
@@ -126,14 +126,14 @@
                         "schedule due tasks found a data synchroniser request reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DistributedRule:
-                    await this.RescheduleDistributedRule(request).ConfigureAwait(false);
+                    await this.RescheduleDistributedRule(request);
                     break;
                 case SurveillanceSqsQueue.ScheduleRuleCancellation:
                     this.logger.LogError(
                         "schedule due tasks found schedule rule cancellation reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.ScheduledRule:
-                    await this.RescheduleScheduledRule(request).ConfigureAwait(false);
+                    await this.RescheduleScheduledRule(request);
                     break;
                 case SurveillanceSqsQueue.TestRuleRunUpdate:
                     this.logger.LogError(
@@ -157,7 +157,7 @@
         /// </returns>
         private async Task RescheduleDistributedRule(AdHocScheduleRequest request)
         {
-            await this.distributedScheduledRulePublisher.Publish(request).ConfigureAwait(false);
+            await this.distributedScheduledRulePublisher.Publish(request);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@
         /// </returns>
         private async Task RescheduleScheduledRule(AdHocScheduleRequest request)
         {
-            await this.scheduledRulePublisher.Publish(request).ConfigureAwait(false);
+            await this.scheduledRulePublisher.Publish(request);
         }
     }
 }

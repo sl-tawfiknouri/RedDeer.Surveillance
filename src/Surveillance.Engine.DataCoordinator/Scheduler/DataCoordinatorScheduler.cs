@@ -104,8 +104,8 @@
             try
             {
                 this.logger.LogInformation("heart beat. Scanning data verifier and auto scheduler");
-                await this.dataVerifier.Scan().ConfigureAwait(false);
-                await this.autoScheduler.Scan().ConfigureAwait(false);
+                await this.dataVerifier.Scan();
+                await this.autoScheduler.Scan();
                 this.logger.LogInformation("heart beat complete");
             }
             catch (Exception a)

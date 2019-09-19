@@ -139,8 +139,8 @@
                     return;
                 }
 
-                await this.dataVerifier.Scan().ConfigureAwait(false);
-                await this.autoSchedule.Scan().ConfigureAwait(false);
+                await this.dataVerifier.Scan();
+                await this.autoSchedule.Scan();
 
                 this.logger.LogInformation(
                     $"QueueSubscriber completed processing message {messageId} with body {messageBody} from {this.awsConfiguration.UploadCoordinatorQueueName} for operation {operationContext.Id}");
@@ -165,7 +165,7 @@
 
             this.awsQueueClient.SubscribeToQueueAsync(
                 this.awsConfiguration.UploadCoordinatorQueueName,
-                async (s1, s2) => { await this.ExecuteCoordinationMessageAsync(s1, s2).ConfigureAwait(false); },
+                async (s1, s2) => { await this.ExecuteCoordinationMessageAsync(s1, s2); },
                 this.messageBusCancellationTokenSource.Token,
                 this.token);
 

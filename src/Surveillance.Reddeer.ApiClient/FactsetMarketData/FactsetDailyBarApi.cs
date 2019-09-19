@@ -118,7 +118,7 @@
                             .PostAsync(
                                        Route,
                                        new StringContent(json, Encoding.UTF8, "application/json"))
-                            .ConfigureAwait(false);
+                            ;
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -128,7 +128,7 @@
                         return new FactsetSecurityResponseDto();
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
 
                     if (deserialisedResponse == null)
@@ -196,11 +196,11 @@
                                     .PostAsync(
                                           Route,
                                           new StringContent(json, Encoding.UTF8, "application/json"))
-                                      .ConfigureAwait(false);
+                                      ;
 
                             return responseMessage;
                         })
-                    .ConfigureAwait(false);
+                    ;
 
                 if (responseMessage == null || !responseMessage.IsSuccessStatusCode)
                 {
@@ -209,7 +209,7 @@
                     return new FactsetSecurityResponseDto();
                 }
 
-                var jsonResponse = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
                 var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
 
                 if (deserialisedResponse == null)
@@ -241,7 +241,7 @@
                     this.apiClientConfiguration.ClientServiceUrl,
                     this.apiClientConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    var response = await httpClient.GetAsync(HeartbeatRoute, token).ConfigureAwait(false);
+                    var response = await httpClient.GetAsync(HeartbeatRoute, token);
 
                     if (!response.IsSuccessStatusCode)
                     {

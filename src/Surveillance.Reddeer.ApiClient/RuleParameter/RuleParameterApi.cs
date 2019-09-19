@@ -74,7 +74,7 @@
             var routeId = $"{RouteV2}/{id}";
 
             this.logger.LogInformation($"http client making get request to {routeId}");
-            var response = await this.GetAsync<RuleParameterDto>(routeId).ConfigureAwait(false);
+            var response = await this.GetAsync<RuleParameterDto>(routeId);
             this.logger.LogInformation($"http client making get request to {routeId}");
 
             return response;
@@ -89,7 +89,7 @@
         public async Task<RuleParameterDto> GetAsync()
         {
             this.logger.LogInformation($"http client making get request to {RouteV2}");
-            var response = await this.GetAsync<RuleParameterDto>(RouteV2).ConfigureAwait(false);
+            var response = await this.GetAsync<RuleParameterDto>(RouteV2);
             this.logger.LogInformation($"http client making get request to {RouteV2}");
 
             return response;
@@ -106,7 +106,7 @@
         /// </returns>
         public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
     }
 }

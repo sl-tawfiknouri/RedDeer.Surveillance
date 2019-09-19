@@ -59,7 +59,7 @@
 
             this.timer = new Timer(HeartbeatFrequency) { AutoReset = true, Interval = HeartbeatFrequency };
 
-            this.timer.Elapsed += async (_, __) => await this.Scan(_, __).ConfigureAwait(false);
+            this.timer.Elapsed += async (_, __) => await this.Scan(_, __);
             this.timer.Start();
         }
 
@@ -90,7 +90,7 @@
             try
             {
                 this.logger?.LogInformation("scanning delayed scheduler");
-                await this.delayedScheduler.ScheduleDueTasksAsync().ConfigureAwait(false);
+                await this.delayedScheduler.ScheduleDueTasksAsync();
                 this.logger?.LogInformation("scanning delayed scheduler completed");
             }
             catch (Exception a)

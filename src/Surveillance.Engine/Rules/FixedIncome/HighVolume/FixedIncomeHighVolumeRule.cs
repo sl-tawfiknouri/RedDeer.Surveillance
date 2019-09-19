@@ -378,7 +378,7 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false);
 
-            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
 
         /// <summary>
@@ -411,7 +411,7 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
-            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
 
         /// <summary>
@@ -444,7 +444,7 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
-            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
 
         /// <summary>

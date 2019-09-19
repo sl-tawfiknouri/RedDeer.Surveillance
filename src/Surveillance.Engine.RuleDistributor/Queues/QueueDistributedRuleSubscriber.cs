@@ -132,7 +132,7 @@
                     return;
                 }
 
-                await this.scheduleDisassembler.Disassemble(operationContext, execution, messageId, messageBody).ConfigureAwait(false);
+                await this.scheduleDisassembler.Disassemble(operationContext, execution, messageId, messageBody);
             }
             catch (Exception e)
             {
@@ -154,7 +154,7 @@
 
             this.awsQueueClient.SubscribeToQueueAsync(
                 this.awsConfiguration.ScheduledRuleQueueName,
-                async (s1, s2) => { await this.ExecuteNonDistributedMessage(s1, s2).ConfigureAwait(false); },
+                async (s1, s2) => { await this.ExecuteNonDistributedMessage(s1, s2); },
                 this.messageBusCancellationTokenSource.Token,
                 this.token);
 

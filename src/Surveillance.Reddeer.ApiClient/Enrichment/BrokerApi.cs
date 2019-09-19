@@ -71,7 +71,7 @@
         /// </returns>
         public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@
         public async Task<BrokerEnrichmentMessage> PostAsync(BrokerEnrichmentMessage message)
         {
             this.logger.LogInformation($"get called with broker enrichment message for {Route}");
-            var response = await this.PostAsync(message, Route).ConfigureAwait(false);
+            var response = await this.PostAsync(message, Route);
             this.logger.LogInformation($"get completed with broker enrichment message for {Route}");
 
             return response;

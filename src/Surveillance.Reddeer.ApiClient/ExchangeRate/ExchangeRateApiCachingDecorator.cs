@@ -91,7 +91,7 @@
                 return cachedRates.Dtos;
             }
 
-            var results = await this.api.GetAsync(commencement, termination).ConfigureAwait(false);
+            var results = await this.api.GetAsync(commencement, termination);
 
             var cacheRates = new CachedRates { Dtos = results, Expiry = DateTime.UtcNow.Add(this.Expiry) };
             this.cache.Add(dateRange, cacheRates);
@@ -115,7 +115,7 @@
                 return false;
             }
 
-            var result = await this.api.HeartBeatingAsync(token).ConfigureAwait(false);
+            var result = await this.api.HeartBeatingAsync(token);
 
             return result;
         }

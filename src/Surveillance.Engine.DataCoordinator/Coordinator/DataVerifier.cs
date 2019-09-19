@@ -67,14 +67,14 @@
             this.logger.LogInformation("Scanning");
 
             this.logger.LogInformation("livening completed order sets");
-            await this.ordersRepository.LivenCompletedOrderSets().ConfigureAwait(false);
+            await this.ordersRepository.LivenCompletedOrderSets();
             this.logger.LogInformation("completed livening order sets");
 
             var stalenessIndicator = DateTime.UtcNow.AddHours(-1);
 
             this.logger.LogInformation($"fetching stale orders unlivened and older then {stalenessIndicator}");
-            var staleOrders = await this.ordersRepository.StaleOrders(stalenessIndicator).ConfigureAwait(false);
-            var staleOrderAllocations = await this.orderAllocationsRepository.GetStaleOrderAllocations(stalenessIndicator).ConfigureAwait(false);
+            var staleOrders = await this.ordersRepository.StaleOrders(stalenessIndicator);
+            var staleOrderAllocations = await this.orderAllocationsRepository.GetStaleOrderAllocations(stalenessIndicator);
             this.logger.LogInformation($"completed fetching stale orders unlivened and older then {stalenessIndicator}");
 
             if (staleOrders != null && staleOrders.Any())

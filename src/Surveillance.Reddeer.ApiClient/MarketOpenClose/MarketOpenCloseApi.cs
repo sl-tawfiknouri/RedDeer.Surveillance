@@ -89,7 +89,7 @@
         /// </returns>
         public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
     }
 }

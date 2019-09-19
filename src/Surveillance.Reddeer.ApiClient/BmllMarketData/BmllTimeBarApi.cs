@@ -137,7 +137,7 @@
                                 this.logger.LogInformation("GetMinuteBars policy received post response or timed out");
                                 return response;
                             })
-                        .ConfigureAwait(false);
+                        ;
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -147,7 +147,7 @@
                         return new GetMinuteBarsResponse();
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<GetMinuteBarsResponse>(jsonResponse);
 
                     if (deserialisedResponse == null)
@@ -255,7 +255,7 @@
                                 "RequestMinuteBars policy received post response or timed out");
                             return response;
                         })
-                        .ConfigureAwait(false);
+                        ;
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -265,7 +265,7 @@
                         return;
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse = JsonConvert.DeserializeObject<CreateMinuteBarRequestResponse>(jsonResponse);
 
                     if (deserialisedResponse == null)
@@ -334,7 +334,7 @@
                                 this.logger.LogInformation(
                                     "StatusMinuteBars policy received post response or timed out");
                                 return response;
-                            }).ConfigureAwait(false);
+                            });
 
                     if (response == null || !response.IsSuccessStatusCode)
                     {
@@ -343,7 +343,7 @@
                         return BmllStatusMinuteBarResult.InProgress;
                     }
 
-                    var jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
                     var deserialisedResponse =
                         JsonConvert.DeserializeObject<GetMinuteBarRequestStatusesResponse>(jsonResponse);
 

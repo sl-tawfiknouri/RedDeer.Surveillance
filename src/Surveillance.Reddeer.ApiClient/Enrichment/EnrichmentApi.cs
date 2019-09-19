@@ -72,7 +72,7 @@
         public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
             this.logger.LogInformation($"about to make a heartbeat request to {HeartbeatRoute}");
-            var response = await this.GetHeartbeatAsync(HeartbeatRoute, token).ConfigureAwait(false);
+            var response = await this.GetHeartbeatAsync(HeartbeatRoute, token);
             this.logger.LogInformation($"about to make a heartbeat request to {HeartbeatRoute}");
 
             return response;
@@ -90,7 +90,7 @@
         public async Task<SecurityEnrichmentMessage> PostAsync(SecurityEnrichmentMessage message)
         {
             this.logger.LogInformation($"about to make a request to {Route}");
-            var response = await this.PostAsync(message, Route).ConfigureAwait(false);
+            var response = await this.PostAsync(message, Route);
             this.logger.LogInformation($"completed a request to {Route}");
 
             return response;

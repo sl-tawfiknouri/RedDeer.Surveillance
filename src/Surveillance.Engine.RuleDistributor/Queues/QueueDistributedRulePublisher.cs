@@ -93,7 +93,7 @@
                         this.awsConfiguration.ScheduleRuleDistributedWorkQueueName,
                         serialisedDistributedExecution,
                         this.messageBusCancellationTokenSource.Token)
-                    .ConfigureAwait(false);
+                    ;
         }
     }
 }

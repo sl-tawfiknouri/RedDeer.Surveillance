@@ -86,10 +86,14 @@
 
             this.messageBusCancellationTokenSource = this.messageBusCancellationTokenSource ?? new CancellationTokenSource();
 
-            await this.awsQueueClient.SendToQueue(
-                this.awsConfiguration.ScheduleRuleDistributedWorkQueueName,
-                serialisedDistributedExecution,
-                this.messageBusCancellationTokenSource.Token);
+            await 
+                this
+                    .awsQueueClient
+                    .SendToQueue(
+                        this.awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+                        serialisedDistributedExecution,
+                        this.messageBusCancellationTokenSource.Token)
+                    .ConfigureAwait(false);
         }
     }
 }

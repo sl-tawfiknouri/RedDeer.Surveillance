@@ -104,9 +104,9 @@
                     return;
                 }
 
-                var parameters = await this.ruleParameterApiRepository.Get();
+                var parameters = await this.ruleParameterApiRepository.Get().ConfigureAwait(false);
                 var ruleCtx = this.BuildRuleContext(operationContext, execution);
-                await this.ScheduleRule(execution, parameters, ruleCtx);
+                await this.ScheduleRule(execution, parameters, ruleCtx).ConfigureAwait(false);
 
                 ruleCtx.EndEvent().EndEvent();
 
@@ -210,42 +210,43 @@
             ISystemProcessOperationDistributeRuleContext ruleContext)
         {
             foreach (var rule in execution.Rules.Where(ru => ru != null))
+            {
                 switch (rule.Rule)
                 {
                     case Rules.CancelledOrders:
                         var cancelledOrderRuleRuns =
                             parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.HighProfits:
                         var highProfitRuleRuns =
                             parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, highProfitRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, highProfitRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.HighVolume:
                         var highVolumeRuleRuns =
                             parameters.HighVolumes?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.MarkingTheClose:
                         var markingTheCloseRuleRuns =
                             parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.WashTrade:
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.UniverseFilter:
                         break;
                     case Rules.Spoofing:
                         var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.PlacingOrderWithNoIntentToExecute:
                         var placingOrderRuleRuns =
                             parameters.PlacingOrders?.Select(_ => _ as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, placingOrderRuleRuns, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, placingOrderRuleRuns, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.Layering:
                         // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
@@ -254,21 +255,21 @@
                     case Rules.FixedIncomeHighProfits:
                         var fixedIncomeHighProfits = parameters.FixedIncomeHighProfits
                             ?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, fixedIncomeHighProfits, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, fixedIncomeHighProfits, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.FixedIncomeHighVolumeIssuance:
                         var fixedIncomeHighVolumeIssuance = parameters.FixedIncomeHighVolumeIssuance
                             ?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, fixedIncomeHighVolumeIssuance, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, fixedIncomeHighVolumeIssuance, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.FixedIncomeWashTrades:
                         var fixedIncomeWashTrade = parameters.FixedIncomeWashTrades
                             ?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleContext).ConfigureAwait(false);
                         break;
                     case Rules.Ramping:
                         var ramping = parameters.Rampings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await this.ScheduleRuleRuns(execution, ramping, rule, ruleContext);
+                        await this.ScheduleRuleRuns(execution, ramping, rule, ruleContext).ConfigureAwait(false);
                         break;
                     default:
                         this.logger.LogError(
@@ -277,6 +278,7 @@
                             $"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         break;
                 }
+            }
         }
 
         /// <summary>
@@ -309,7 +311,7 @@
             if (ruleParameterTimeWindow == null || ruleTimespan.TotalDays < 7)
             {
                 this.logger.LogInformation("had a rule time span below 7 days. Scheduling single execution.");
-                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
+                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId).ConfigureAwait(false);
                 return;
             }
 
@@ -317,7 +319,7 @@
             {
                 this.logger.LogInformation(
                     "had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
-                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
+                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId).ConfigureAwait(false);
                 return;
             }
 
@@ -328,18 +330,20 @@
                 this.logger.LogInformation(
                     $"had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
 
-                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
+                await this.ScheduleSingleExecution(ruleIdentifier, execution, correlationId).ConfigureAwait(false);
                 return;
             }
 
             this.logger.LogInformation(
                 "had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
-            await this.TimeSplitter(
-                ruleIdentifier,
-                execution,
-                ruleParameterTimeWindow,
-                daysToRunRuleFor,
-                correlationId);
+            await this
+                .TimeSplitter(
+                    ruleIdentifier,
+                    execution,
+                    ruleParameterTimeWindow,
+                    daysToRunRuleFor,
+                    correlationId)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -372,12 +376,13 @@
                 return;
             }
 
-            if (rule.Ids == null || !rule.Ids.Any())
+            if (rule.Ids == null
+                || !rule.Ids.Any())
             {
                 foreach (var ruleSet in identifiableRules)
                 {
                     var ruleInstance = new RuleIdentifier { Rule = rule.Rule, Ids = new[] { ruleSet.Id } };
-                    await this.ScheduleRule(ruleInstance, execution, ruleSet.WindowSize, ruleContext.Id);
+                    await this.ScheduleRule(ruleInstance, execution, ruleSet.WindowSize, ruleContext.Id).ConfigureAwait(false);
                 }
             }
             else
@@ -435,7 +440,7 @@
                IsBackTest = execution.IsBackTest
            };
 
-            await this.rulePublisher.ScheduleExecution(distributedExecution);
+            await this.rulePublisher.ScheduleExecution(distributedExecution).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -500,7 +505,7 @@
 
             foreach (var executionSplit in executions)
             {
-                await this.rulePublisher.ScheduleExecution(executionSplit);
+                await this.rulePublisher.ScheduleExecution(executionSplit).ConfigureAwait(false);
             }
         }
     }

@@ -12,8 +12,14 @@
     using Surveillance.Engine.Scheduler.Scheduler;
     using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
 
+    /// <summary>
+    /// The rule scheduler registry.
+    /// </summary>
     public class RuleSchedulerRegistry : Registry
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleSchedulerRegistry"/> class.
+        /// </summary>
         public RuleSchedulerRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();

@@ -13,43 +13,75 @@
     using Surveillance.Engine.Scheduler.Queues.Interfaces;
     using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
 
+    /// <summary>
+    /// The delayed scheduler.
+    /// </summary>
     public class DelayedScheduler : IDelayedScheduler
     {
-        private readonly IQueueDelayedRuleDistributedPublisher _distributedScheduledRulePublisher;
+        /// <summary>
+        /// The distributed scheduled rule publisher.
+        /// </summary>
+        private readonly IQueueDelayedRuleDistributedPublisher distributedScheduledRulePublisher;
 
-        private readonly ILogger<DelayedScheduler> _logger;
+        /// <summary>
+        /// The scheduled rule publisher.
+        /// </summary>
+        private readonly IQueueScheduledRulePublisher scheduledRulePublisher;
 
-        private readonly IQueueScheduledRulePublisher _scheduledRulePublisher;
+        /// <summary>
+        /// The task scheduler repository.
+        /// </summary>
+        private readonly ITaskSchedulerRepository taskSchedulerRepository;
 
-        private readonly ITaskSchedulerRepository _taskSchedulerRepository;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<DelayedScheduler> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DelayedScheduler"/> class.
+        /// </summary>
+        /// <param name="taskSchedulerRepository">
+        /// The task scheduler repository.
+        /// </param>
+        /// <param name="scheduledRulePublisher">
+        /// The scheduled rule publisher.
+        /// </param>
+        /// <param name="distributedScheduledRulePublisher">
+        /// The distributed scheduled rule publisher.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public DelayedScheduler(
             ITaskSchedulerRepository taskSchedulerRepository,
             IQueueScheduledRulePublisher scheduledRulePublisher,
             IQueueDelayedRuleDistributedPublisher distributedScheduledRulePublisher,
             ILogger<DelayedScheduler> logger)
         {
-            this._taskSchedulerRepository = taskSchedulerRepository
-                                            ?? throw new ArgumentNullException(nameof(taskSchedulerRepository));
-            this._scheduledRulePublisher =
+            this.taskSchedulerRepository =
+                taskSchedulerRepository ?? throw new ArgumentNullException(nameof(taskSchedulerRepository));
+            this.scheduledRulePublisher =
                 scheduledRulePublisher ?? throw new ArgumentNullException(nameof(scheduledRulePublisher));
-            this._distributedScheduledRulePublisher = distributedScheduledRulePublisher
-                                                      ?? throw new ArgumentNullException(
-                                                          nameof(distributedScheduledRulePublisher));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.distributedScheduledRulePublisher =
+                distributedScheduledRulePublisher ?? throw new ArgumentNullException(nameof(distributedScheduledRulePublisher));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        ///     Check for due tasks and schedules them
+        /// The schedule due tasks.
         /// </summary>
-        public async Task ScheduleDueTasks()
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task ScheduleDueTasksAsync()
         {
-            this._logger.LogInformation("schedule due tasks scanning repository for due tasks");
-            var tasks = await this._taskSchedulerRepository.ReadUnprocessedTask(DateTime.UtcNow);
+            this.logger.LogInformation("schedule due tasks scanning repository for due tasks");
+            var tasks = await this.taskSchedulerRepository.ReadUnprocessedTask(DateTime.UtcNow).ConfigureAwait(false);
 
             if (tasks == null || !tasks.Any())
             {
-                this._logger.LogInformation(
+                this.logger.LogInformation(
                     "schedule due tasks scanning repository for due tasks found null or empty requests");
                 return;
             }
@@ -57,61 +89,89 @@
             foreach (var request in tasks)
             {
                 if (request == null)
+                {
                     continue;
+                }
 
-                this.Schedule(request);
+                await this.ScheduleAsync(request).ConfigureAwait(false);
             }
 
-            await this._taskSchedulerRepository.MarkTasksProcessed(tasks);
+            await this.taskSchedulerRepository.MarkTasksProcessed(tasks).ConfigureAwait(false);
 
-            this._logger.LogInformation(
-                "schedule due tasks scanning repository for due tasks found null or empty requests");
+            this.logger.LogInformation("schedule due tasks scanning repository for due tasks found null or empty requests");
         }
 
-        private void RescheduleDistributedRule(AdHocScheduleRequest request)
-        {
-            this._distributedScheduledRulePublisher.Publish(request).Wait();
-        }
-
-        private void RescheduleScheduledRule(AdHocScheduleRequest request)
-        {
-            this._scheduledRulePublisher.Publish(request).Wait();
-        }
-
-        private void Schedule(AdHocScheduleRequest request)
+        /// <summary>
+        /// The schedule.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task ScheduleAsync(AdHocScheduleRequest request)
         {
             switch (request.Queue)
             {
                 case SurveillanceSqsQueue.CaseMessage:
-                    this._logger.LogError("schedule due tasks found a case message reschedule which is not supported");
+                    this.logger.LogError("schedule due tasks found a case message reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DataImportS3Upload:
-                    this._logger.LogError(
+                    this.logger.LogError(
                         "schedule due tasks found a data import s3 upload reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DataSynchroniserRequest:
-                    this._logger.LogError(
+                    this.logger.LogError(
                         "schedule due tasks found a data synchroniser request reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.DistributedRule:
-                    this.RescheduleDistributedRule(request);
+                    await this.RescheduleDistributedRule(request).ConfigureAwait(false);
                     break;
                 case SurveillanceSqsQueue.ScheduleRuleCancellation:
-                    this._logger.LogError(
+                    this.logger.LogError(
                         "schedule due tasks found schedule rule cancellation reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.ScheduledRule:
-                    this.RescheduleScheduledRule(request);
+                    await this.RescheduleScheduledRule(request).ConfigureAwait(false);
                     break;
                 case SurveillanceSqsQueue.TestRuleRunUpdate:
-                    this._logger.LogError(
+                    this.logger.LogError(
                         "schedule due tasks found a test rule run update reschedule which is not supported");
                     break;
                 case SurveillanceSqsQueue.UploadCoordinator:
-                    this._logger.LogError(
+                    this.logger.LogError(
                         "schedule due tasks found a upload coordinator reschedule which is not supported");
                     break;
             }
+        }
+
+        /// <summary>
+        /// The reschedule distributed rule.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task RescheduleDistributedRule(AdHocScheduleRequest request)
+        {
+            await this.distributedScheduledRulePublisher.Publish(request).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// The reschedule scheduled rule.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task RescheduleScheduledRule(AdHocScheduleRequest request)
+        {
+            await this.scheduledRulePublisher.Publish(request).ConfigureAwait(false);
         }
     }
 }

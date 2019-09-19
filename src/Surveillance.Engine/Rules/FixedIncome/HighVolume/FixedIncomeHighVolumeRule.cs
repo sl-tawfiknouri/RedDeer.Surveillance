@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
@@ -318,19 +319,19 @@
             if (this.HasNoBreach(dailyBreach, windowBreach))
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily or window breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForNoBreach(mostRecentTrade);
+                this.PassJudgementForNoBreachAsync(mostRecentTrade).Wait();
             }
 
-            if (windowBreach)
+            if (windowBreach.HasBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with window breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForWindowBreach(mostRecentTrade, null);
+                this.PassJudgementForWindowBreachAsync(mostRecentTrade, null).Wait();
             }
 
-            if (dailyBreach)
+            if (dailyBreach.HasBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForDailyBreach(mostRecentTrade, null);
+                this.PassJudgementForDailyBreachAsync(mostRecentTrade, null).Wait();
             }
         }
 
@@ -346,12 +347,15 @@
         }
 
         /// <summary>
-        /// The pass judgement for no breach.
+        /// The pass judgement for no breach async.
         /// </summary>
         /// <param name="mostRecentTrade">
         /// The most recent trade.
         /// </param>
-        private void PassJudgementForNoBreach(Order mostRecentTrade)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task PassJudgementForNoBreachAsync(Order mostRecentTrade)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
@@ -369,11 +373,11 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false);
 
-            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// The pass judgement for window breach.
+        /// The pass judgement for window breach async.
         /// </summary>
         /// <param name="mostRecentTrade">
         /// The most recent trade.
@@ -381,7 +385,10 @@
         /// <param name="breachDetails">
         /// The breach details.
         /// </param>
-        private void PassJudgementForWindowBreach(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task PassJudgementForWindowBreachAsync(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
@@ -399,11 +406,11 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
-            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// The pass judgement for daily breach.
+        /// The pass judgement for daily breach async.
         /// </summary>
         /// <param name="mostRecentTrade">
         /// The most recent trade.
@@ -411,7 +418,10 @@
         /// <param name="breachDetails">
         /// The breach details.
         /// </param>
-        private void PassJudgementForDailyBreach(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task PassJudgementForDailyBreachAsync(Order mostRecentTrade, FixedIncomeHighVolumeJudgement.BreachDetails breachDetails)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
@@ -429,9 +439,8 @@
 
             var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true);
 
-            this.judgementService.Judgement(fixedIncomeHighVolumeContext).Wait();
+            await this.judgementService.Judgement(fixedIncomeHighVolumeContext).ConfigureAwait(false);
         }
-
 
         /// <summary>
         /// The check daily volume.
@@ -445,9 +454,32 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CheckDailyVolume(Order order, decimal tradedVolume)
+        private FixedIncomeHighVolumeJudgement.BreachDetails CheckDailyVolume(Order order, decimal tradedVolume)
         {
-            return false;
+            if (this.parameters.FixedIncomeHighVolumePercentageDaily == null)
+            {
+                this.logger.LogDebug(
+                    $"Check Daily Volume called for {order?.Instrument?.Identifiers} at {this.UniverseDateTime} but has null daily percentage parameter");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            if (order == null)
+            {
+                this.logger.LogDebug($"Check Daily Volume called at {this.UniverseDateTime} but had a null order");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            if (tradedVolume <= 0)
+            {
+                this.logger.LogDebug($"Check Daily Volume called at {this.UniverseDateTime} but had a traded volume of zero");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            // replace with daily volume implementation
+            return FixedIncomeHighVolumeJudgement.BreachDetails.None();
         }
 
         /// <summary>
@@ -462,9 +494,32 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CheckWindowVolume(Order order, decimal tradedVolume)
+        private FixedIncomeHighVolumeJudgement.BreachDetails CheckWindowVolume(Order order, decimal tradedVolume)
         {
-            return false;
+            if (this.parameters.FixedIncomeHighVolumePercentageWindow == null)
+            {
+                this.logger.LogDebug(
+                    $"Check Window Volume called for {order?.Instrument?.Identifiers} at {this.UniverseDateTime} but has null window percentage parameter");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            if (order == null)
+            {
+                this.logger.LogDebug($"Check Window Volume called at {this.UniverseDateTime} but had a null order");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            if (tradedVolume <= 0)
+            {
+                this.logger.LogDebug($"Check Window Volume called at {this.UniverseDateTime} but had a traded volume of zero");
+
+                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            }
+
+            // replace with window volume implementation
+            return FixedIncomeHighVolumeJudgement.BreachDetails.None();
         }
 
         /// <summary>
@@ -479,9 +534,11 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool HasNoBreach(bool dailyBreach, bool windowBreach)
+        private bool HasNoBreach(
+            FixedIncomeHighVolumeJudgement.BreachDetails dailyBreach,
+            FixedIncomeHighVolumeJudgement.BreachDetails windowBreach)
         {
-            return !dailyBreach && !windowBreach;
+            return !dailyBreach.HasBreach && !windowBreach.HasBreach;
         }
 
         /// <summary>

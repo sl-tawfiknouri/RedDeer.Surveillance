@@ -99,9 +99,7 @@
                         tr.OrderFilledVolume.GetValueOrDefault() > 0)
                     .ToList();
 
-            var tradedVolume =
-                tradedSecurities
-                    .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
+            var tradedVolume = tradedSecurities.Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradedSecurities.ToList());
             var mostRecentTrade = tradeWindow.Peek();

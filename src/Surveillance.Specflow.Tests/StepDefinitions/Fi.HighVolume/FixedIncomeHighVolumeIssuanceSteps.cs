@@ -14,6 +14,8 @@
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Markets;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
@@ -71,6 +73,11 @@
         /// The judgement service.
         /// </summary>
         private IFixedIncomeHighVolumeJudgementService judgementService;
+
+        /// <summary>
+        /// The market trading hours service.
+        /// </summary>
+        private IMarketTradingHoursService marketTradingHoursService;
 
         /// <summary>
         /// The data request subscriber.
@@ -156,6 +163,7 @@
                 this.interdayUniverseMarketCacheFactory,
                 this.judgementService,
                 this.dataRequestSubscriber,
+                this.marketTradingHoursService,
                 RuleRunMode.ForceRun,
                 new NullLogger<FixedIncomeHighVolumeRule>(),
                 new NullLogger<TradingHistoryStack>());
@@ -176,6 +184,34 @@
             this.alertStream = A.Fake<IUniverseAlertStream>();
             this.judgementService = A.Fake<IJudgementService>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            this.marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
+
+            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("XLON")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(16),
+                        IsValid = true,
+                        Mic = "XLON",
+                        OpenOffsetInUtc = TimeSpan.FromHours(8)
+                    });
+
+            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("NASDAQ")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(23),
+                        IsValid = true,
+                        Mic = "NASDAQ",
+                        OpenOffsetInUtc = TimeSpan.FromHours(15)
+                    });
+
+            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("Diversity")).Returns(
+                new TradingHours
+                    {
+                        CloseOffsetInUtc = TimeSpan.FromHours(16),
+                        IsValid = true,
+                        Mic = "Diversity",
+                        OpenOffsetInUtc = TimeSpan.FromHours(8)
+                    });
 
             this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),

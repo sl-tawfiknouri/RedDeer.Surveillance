@@ -9,6 +9,7 @@
     using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
@@ -30,6 +31,11 @@
         /// The market cache factory.
         /// </summary>
         private readonly IUniverseMarketCacheFactory marketCacheFactory;
+
+        /// <summary>
+        /// The market trading hours service.
+        /// </summary>
+        private readonly IMarketTradingHoursService marketTradingHoursService;
 
         /// <summary>
         /// The logger.
@@ -56,15 +62,20 @@
         /// <param name="tradingLogger">
         /// The trading logger.
         /// </param>
+        /// <param name="marketTradingHoursService">
+        /// The trading hours service.
+        /// </param>
         public FixedIncomeHighVolumeFactory(
             IUniverseFixedIncomeOrderFilterService filterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<FixedIncomeHighVolumeRule> logger,
-            ILogger<TradingHistoryStack> tradingLogger)
+            ILogger<TradingHistoryStack> tradingLogger,
+            IMarketTradingHoursService marketTradingHoursService)
         {
             this.filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
             this.marketCacheFactory =
                 marketCacheFactory ?? throw new ArgumentNullException(nameof(this.marketCacheFactory));
+            this.marketTradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.tradingLogger = tradingLogger ?? throw new ArgumentNullException(nameof(tradingLogger));
         }
@@ -109,6 +120,7 @@
                 this.marketCacheFactory,
                 judgementService,
                 dataRequestSubscriber,
+                this.marketTradingHoursService,
                 runMode,
                 this.logger,
                 this.tradingLogger);

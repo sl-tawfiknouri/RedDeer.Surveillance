@@ -38,9 +38,10 @@
     /// </summary>
     public class FixedIncomeHighVolumeRule : BaseUniverseRule, IFixedIncomeHighVolumeRule
     {
-        // potentially useful?
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
         private readonly IMarketTradingHoursService tradingHoursService;
-        private readonly ICurrencyConverterService currencyConverterService;
 
         /// <summary>
         /// The order filter service for CFI codes.
@@ -93,6 +94,9 @@
         /// <param name="dataRequestSubscriber">
         /// The data request subscriber
         /// </param>
+        /// <param name="tradingHoursService">
+        /// The trading hours service
+        /// </param>
         /// <param name="runMode">
         /// The run mode.
         /// </param>
@@ -109,9 +113,11 @@
             IUniverseMarketCacheFactory factory,
             IFixedIncomeHighVolumeJudgementService judgementService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IMarketTradingHoursService tradingHoursService,
             RuleRunMode runMode,
             ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
+
             : base(
                 parameters.Windows.BackwardWindowSize,
                 parameters.Windows.BackwardWindowSize,
@@ -129,6 +135,7 @@
             this.orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             this.judgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
             this.dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+            this.tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

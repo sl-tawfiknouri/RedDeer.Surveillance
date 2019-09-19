@@ -13,12 +13,18 @@
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    // ReSharper disable ObjectCreationAsStatement
+
+    /// <summary>
+    /// The fixed income high volume tests.
+    /// </summary>
     [TestFixture]
     public class FixedIncomeHighVolumeTests
     {
@@ -58,6 +64,11 @@
         private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
         /// <summary>
+        /// The market trading hours service.
+        /// </summary>
+        private IMarketTradingHoursService marketTradingHoursService;
+
+        /// <summary>
         /// The logger.
         /// </summary>
         private ILogger<FixedIncomeHighVolumeRule> logger;
@@ -73,7 +84,6 @@
         [Test]
         public void ConstructorLoggerNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new FixedIncomeHighVolumeRule(
                     this.parameters,
@@ -82,6 +92,7 @@
                     this.marketCacheFactory,
                     this.judgementService,
                     this.dataRequestSubscriber,
+                    this.marketTradingHoursService,
                     this._runMode,
                     null,
                     this.tradingStackLogger));
@@ -97,6 +108,7 @@
             this.fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this.marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this.marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
             this.logger = new NullLogger<FixedIncomeHighVolumeRule>();
             this.tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }

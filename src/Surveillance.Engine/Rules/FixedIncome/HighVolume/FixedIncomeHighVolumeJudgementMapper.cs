@@ -38,11 +38,12 @@
         /// <returns>
         /// The <see cref="IRuleBreach"/>.
         /// </returns>
-        public IRuleBreach Map(IFixedIncomeHighVolumeJudgementContext judgementContext)
+        public IRuleBreach MapContextToBreach(IFixedIncomeHighVolumeJudgementContext judgementContext)
         {
             if (judgementContext == null)
             {
                 this.logger?.LogInformation($"{nameof(judgementContext)} was null in map. Returning.");
+
                 return null;
             }
 
@@ -69,41 +70,71 @@
             var issuanceTitleSegment = judgementContext.IsIssuanceBreach ? " (%) issuance" : string.Empty;
             var description = $"Fixed Income High Volume{issuanceTitleSegment} rule breach detected for {judgementContext.Security?.Name}.";
 
-            var venueDailyDescription =
-                judgementContext.DailyBreach.Venue != null
-                ? $" at the venue ({judgementContext.DailyBreach.Venue?.MarketIdentifierCode}) {judgementContext.DailyBreach.Venue?.Name}"
-                : string.Empty;
-            var venueWindowDescription =
-                judgementContext.WindowBreach.Venue != null
-                    ? $" at the venue ({judgementContext.WindowBreach.Venue?.MarketIdentifierCode}) {judgementContext.WindowBreach.Venue?.Name}"
-                    : string.Empty;
-
-            var dailyDescription = string.Empty;
-            var windowDescription = string.Empty;
-
-            if (judgementContext.DailyBreach.HasBreach)
-            {
-                var dailyPercentage = Math.Ceiling(
-                    judgementContext.FixedIncomeParameters.FixedIncomeHighVolumePercentageDaily.GetValueOrDefault(0) * 100);
-                var dailyBreachPercentage =
-                    Math.Ceiling(judgementContext.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-
-                dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {judgementContext.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
-            }
-
-            if (judgementContext.WindowBreach.HasBreach)
-            {
-                var windowPercentage = Math.Ceiling(
-                    judgementContext.FixedIncomeParameters.FixedIncomeHighVolumePercentageWindow.GetValueOrDefault(0) * 100);
-                var windowBreachPercentage =
-                    Math.Ceiling(judgementContext.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-
-                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext.FixedIncomeParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.WindowBreach.BreachThresholdAmount.ToString("0.##")}.";
-            }
+            var dailyDescription = this.BuildDailyBreachDescription(judgementContext);
+            var windowDescription = this.BuildWindowBreachDescription(judgementContext);
 
             description = $"{description}{dailyDescription}{windowDescription}";
 
             return description;
         }
+
+        /// <summary>
+        /// The build daily breach description.
+        /// </summary>
+        /// <param name="judgementContext">
+        /// The judgement context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string BuildDailyBreachDescription(IFixedIncomeHighVolumeJudgementContext judgementContext)
+        {
+            if (!judgementContext.DailyBreach.HasBreach)
+            {
+                return string.Empty;
+            }
+
+            var dailyPercentage = Math.Ceiling(judgementContext.FixedIncomeParameters.FixedIncomeHighVolumePercentageDaily.GetValueOrDefault(0) * 100);
+            var dailyBreachPercentage = Math.Ceiling(judgementContext.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
+
+            var venueDailyDescription =
+                judgementContext.DailyBreach.Venue != null
+                    ? $" at the venue ({judgementContext.DailyBreach.Venue?.MarketIdentifierCode}) {judgementContext.DailyBreach.Venue?.Name}"
+                    : string.Empty;
+
+            var dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {judgementContext.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
+
+            return dailyDescription;
+        }
+
+        /// <summary>
+        /// The build window breach description.
+        /// </summary>
+        /// <param name="judgementContext">
+        /// The judgement context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string BuildWindowBreachDescription(IFixedIncomeHighVolumeJudgementContext judgementContext)
+        {
+            if (!judgementContext.WindowBreach.HasBreach)
+            {
+                return string.Empty;
+            }
+
+            var windowPercentage = Math.Ceiling(judgementContext.FixedIncomeParameters.FixedIncomeHighVolumePercentageWindow.GetValueOrDefault(0) * 100);
+            var windowBreachPercentage = Math.Ceiling(judgementContext.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
+
+            var venueWindowDescription =
+                judgementContext.WindowBreach.Venue != null
+                ? $" at the venue ({judgementContext.WindowBreach.Venue?.MarketIdentifierCode}) {judgementContext.WindowBreach.Venue?.Name}"
+                : string.Empty;
+
+            var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext.FixedIncomeParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.WindowBreach.BreachThresholdAmount.ToString("0.##")}.";
+
+            return windowDescription;
+        }
+
     }
 }

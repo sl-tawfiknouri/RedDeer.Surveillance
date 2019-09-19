@@ -17,6 +17,6 @@
         /// <returns>
         /// The <see cref="IRuleBreach"/>.
         /// </returns>
-        IRuleBreach Map(IFixedIncomeHighVolumeJudgementContext judgementContext);
+        IRuleBreach MapContextToBreach(IFixedIncomeHighVolumeJudgementContext judgementContext);
     }
 }

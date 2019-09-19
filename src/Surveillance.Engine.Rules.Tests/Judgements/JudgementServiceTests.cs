@@ -662,7 +662,7 @@
             await service.Judgement(this.fixedIncomeHighVolumeJudgementContext);
 
             A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.Map(A<IFixedIncomeHighVolumeJudgementContext>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.MapContextToBreach(A<IFixedIncomeHighVolumeJudgementContext>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -684,7 +684,7 @@
 
             A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.Map(A<IFixedIncomeHighVolumeJudgementContext>.Ignored))
+            A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.MapContextToBreach(A<IFixedIncomeHighVolumeJudgementContext>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();

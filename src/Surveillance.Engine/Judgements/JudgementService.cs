@@ -223,7 +223,7 @@
                 return;
             }
 
-            var projectedBreach = this.fixedIncomeHighVolumeJudgementMapper.Map(highVolumeJudgementContext);
+            var projectedBreach = this.fixedIncomeHighVolumeJudgementMapper.MapContextToBreach(highVolumeJudgementContext);
             this.ruleViolationService.AddRuleViolation(projectedBreach);
         }
 

@@ -17,8 +17,14 @@
     using Surveillance.Engine.DataCoordinator.Scheduler;
     using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
 
+    /// <summary>
+    /// The data coordinator registry.
+    /// </summary>
     public class DataCoordinatorRegistry : Registry
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataCoordinatorRegistry"/> class.
+        /// </summary>
         public DataCoordinatorRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
@@ -26,7 +32,7 @@
             this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             this.For<ICoordinatorMediator>().Use<Mediator>();
-            this.For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
+            this.For<IQueueSubscriber>().Use<QueueAutoScheduleSubscriber>();
             this.For<IQueueScheduleRulePublisher>().Use<QueueScheduleRulePublisher>();
             this.For<IAutoSchedule>().Use<AutoSchedule>();
             this.For<IDataVerifier>().Use<DataVerifier>();

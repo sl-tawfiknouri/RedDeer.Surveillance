@@ -8,38 +8,68 @@
     using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
     using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
 
+    /// <summary>
+    /// The mediator.
+    /// </summary>
     public class Mediator : ICoordinatorMediator
     {
-        private readonly IDataCoordinatorScheduler _dataScheduler;
+        /// <summary>
+        /// The data scheduler.
+        /// </summary>
+        private readonly IDataCoordinatorScheduler dataScheduler;
 
-        private readonly ILogger<Mediator> _logger;
+        /// <summary>
+        /// The queue subscriber.
+        /// </summary>
+        private readonly IQueueSubscriber queueSubscriber;
 
-        private readonly IQueueSubscriber _queueSubscriber;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<Mediator> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Mediator"/> class.
+        /// </summary>
+        /// <param name="dataScheduler">
+        /// The data scheduler.
+        /// </param>
+        /// <param name="queueSubscriber">
+        /// The queue subscriber.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public Mediator(
             IDataCoordinatorScheduler dataScheduler,
             IQueueSubscriber queueSubscriber,
             ILogger<Mediator> logger)
         {
-            this._dataScheduler = dataScheduler ?? throw new ArgumentNullException(nameof(dataScheduler));
-            this._queueSubscriber = queueSubscriber ?? throw new ArgumentNullException(nameof(queueSubscriber));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.dataScheduler = dataScheduler ?? throw new ArgumentNullException(nameof(dataScheduler));
+            this.queueSubscriber = queueSubscriber ?? throw new ArgumentNullException(nameof(queueSubscriber));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The initiate.
+        /// </summary>
         public void Initiate()
         {
-            this._logger?.LogInformation("Initiating");
-            this._dataScheduler.Initialise();
-            this._queueSubscriber.Initiate();
-            this._logger?.LogInformation("Initiation Completed");
+            this.logger?.LogInformation("Initiating");
+            this.dataScheduler.Initialise();
+            this.queueSubscriber.Initiate();
+            this.logger?.LogInformation("Initiation Completed");
         }
 
+        /// <summary>
+        /// The terminate.
+        /// </summary>
         public void Terminate()
         {
-            this._logger?.LogInformation("Terminating");
-            this._dataScheduler.Terminate();
-            this._queueSubscriber.Terminate();
-            this._logger?.LogInformation("Termination Completed");
+            this.logger?.LogInformation("Terminating");
+            this.dataScheduler.Terminate();
+            this.queueSubscriber.Terminate();
+            this.logger?.LogInformation("Termination Completed");
         }
     }
 }

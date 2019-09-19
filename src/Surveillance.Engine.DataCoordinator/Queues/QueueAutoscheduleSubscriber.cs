@@ -18,108 +18,185 @@
     using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
 
     /// <summary>
-    ///     Enable push based auto scheduling
+    /// The queue auto schedule subscriber.
     /// </summary>
-    public class QueueAutoscheduleSubscriber : IQueueSubscriber
+    public class QueueAutoScheduleSubscriber : IQueueSubscriber
     {
-        private readonly IAutoSchedule _autoSchedule;
+        /// <summary>
+        /// The auto schedule.
+        /// </summary>
+        private readonly IAutoSchedule autoSchedule;
 
-        private readonly IAwsConfiguration _awsConfiguration;
+        /// <summary>
+        /// The aws configuration.
+        /// </summary>
+        private readonly IAwsConfiguration awsConfiguration;
 
-        private readonly IAwsQueueClient _awsQueueClient;
+        /// <summary>
+        /// The aws queue client.
+        /// </summary>
+        private readonly IAwsQueueClient awsQueueClient;
 
-        private readonly IDataVerifier _dataVerifier;
+        /// <summary>
+        /// The data verifier.
+        /// </summary>
+        private readonly IDataVerifier dataVerifier;
 
-        private readonly ILogger<QueueAutoscheduleSubscriber> _logger;
+        /// <summary>
+        /// The serializer.
+        /// </summary>
+        private readonly IMessageBusSerialiser serializer;
 
-        private readonly IMessageBusSerialiser _serialiser;
+        /// <summary>
+        /// The system process context.
+        /// </summary>
+        private readonly ISystemProcessContext systemProcessContext;
 
-        private readonly ISystemProcessContext _systemProcessContext;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<QueueAutoScheduleSubscriber> logger;
 
-        private CancellationTokenSource _messageBusCts;
+        /// <summary>
+        /// The message bus cancellation token source.
+        /// </summary>
+        private CancellationTokenSource messageBusCancellationTokenSource;
 
-        private AwsResusableCancellationToken _token;
+        /// <summary>
+        /// The token.
+        /// </summary>
+        private AwsResusableCancellationToken token;
 
-        public QueueAutoscheduleSubscriber(
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueueAutoScheduleSubscriber"/> class.
+        /// </summary>
+        /// <param name="dataVerifier">
+        /// The data verifier.
+        /// </param>
+        /// <param name="autoSchedule">
+        /// The auto schedule.
+        /// </param>
+        /// <param name="awsQueueClient">
+        /// The aws queue client.
+        /// </param>
+        /// <param name="awsConfiguration">
+        /// The aws configuration.
+        /// </param>
+        /// <param name="serialiser">
+        /// The serializer.
+        /// </param>
+        /// <param name="systemProcessContext">
+        /// The system process context.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        public QueueAutoScheduleSubscriber(
             IDataVerifier dataVerifier,
             IAutoSchedule autoSchedule,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IMessageBusSerialiser serialiser,
             ISystemProcessContext systemProcessContext,
-            ILogger<QueueAutoscheduleSubscriber> logger)
+            ILogger<QueueAutoScheduleSubscriber> logger)
         {
-            this._dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
-            this._autoSchedule = autoSchedule ?? throw new ArgumentNullException(nameof(autoSchedule));
-            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            this._serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
-            this._systemProcessContext =
-                systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
+            this.autoSchedule = autoSchedule ?? throw new ArgumentNullException(nameof(autoSchedule));
+            this.awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this.awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this.serializer = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
+            this.systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task ExecuteCoordinationMessage(string messageId, string messageBody)
+        /// <summary>
+        /// The execute coordination message async.
+        /// </summary>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="messageBody">
+        /// The message body.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task ExecuteCoordinationMessageAsync(string messageId, string messageBody)
         {
             try
             {
-                var opCtx = this._systemProcessContext.CreateAndStartOperationContext();
+                var operationContext = this.systemProcessContext.CreateAndStartOperationContext();
 
-                this._logger.LogInformation(
-                    $"QueueSubscriber read message {messageId} with body {messageBody} from {this._awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
+                this.logger.LogInformation(
+                    $"QueueSubscriber read message {messageId} with body {messageBody} from {this.awsConfiguration.UploadCoordinatorQueueName} for operation {operationContext.Id}");
 
                 var coordinateUpload = this.Deserialise(messageBody);
 
                 if (coordinateUpload == null)
                 {
-                    this._logger.LogError($"QueueSubscriber was unable to deserialise the message {messageId}");
-                    opCtx.EndEventWithError($"QueueSubscriber was unable to deserialise the message {messageId}");
+                    this.logger.LogError($"QueueSubscriber was unable to deserialise the message {messageId}");
+                    operationContext.EndEventWithError($"QueueSubscriber was unable to deserialise the message {messageId}");
                     return;
                 }
 
-                await this._dataVerifier.Scan();
-                await this._autoSchedule.Scan();
+                await this.dataVerifier.Scan().ConfigureAwait(false);
+                await this.autoSchedule.Scan().ConfigureAwait(false);
 
-                this._logger.LogInformation(
-                    $"QueueSubscriber completed processing message {messageId} with body {messageBody} from {this._awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
+                this.logger.LogInformation(
+                    $"QueueSubscriber completed processing message {messageId} with body {messageBody} from {this.awsConfiguration.UploadCoordinatorQueueName} for operation {operationContext.Id}");
             }
             catch (Exception e)
             {
-                this._logger.LogError(
+                this.logger.LogError(
                     "QueueSubscriber execute non distributed message encountered a top level exception.",
                     e);
             }
         }
 
+        /// <summary>
+        /// The initiate.
+        /// </summary>
         public void Initiate()
         {
-            this._logger.LogInformation("QueueSubscriber initiating");
-            this._messageBusCts?.Cancel();
-            this._messageBusCts = new CancellationTokenSource();
-            this._token = new AwsResusableCancellationToken();
+            this.logger.LogInformation("QueueSubscriber initiating");
+            this.messageBusCancellationTokenSource?.Cancel();
+            this.messageBusCancellationTokenSource = new CancellationTokenSource();
+            this.token = new AwsResusableCancellationToken();
 
-            this._awsQueueClient.SubscribeToQueueAsync(
-                this._awsConfiguration.UploadCoordinatorQueueName,
-                async (s1, s2) => { await this.ExecuteCoordinationMessage(s1, s2); },
-                this._messageBusCts.Token,
-                this._token);
+            this.awsQueueClient.SubscribeToQueueAsync(
+                this.awsConfiguration.UploadCoordinatorQueueName,
+                async (s1, s2) => { await this.ExecuteCoordinationMessageAsync(s1, s2).ConfigureAwait(false); },
+                this.messageBusCancellationTokenSource.Token,
+                this.token);
 
-            this._logger.LogInformation("QueueSubscriber completed initiating");
+            this.logger.LogInformation("QueueSubscriber completed initiating");
         }
 
+        /// <summary>
+        /// The terminate.
+        /// </summary>
         public void Terminate()
         {
-            this._logger.LogInformation(
+            this.logger.LogInformation(
                 "QueueSubscriber sent terminate signal to cancellation token reading message bus");
-            this._messageBusCts?.Cancel();
-            this._messageBusCts = null;
+            this.messageBusCancellationTokenSource?.Cancel();
+            this.messageBusCancellationTokenSource = null;
         }
 
+        /// <summary>
+        /// The deserialize message to auto schedule message.
+        /// </summary>
+        /// <param name="messageBody">
+        /// The message body.
+        /// </param>
+        /// <returns>
+        /// The <see cref="AutoScheduleMessage"/>.
+        /// </returns>
         private AutoScheduleMessage Deserialise(string messageBody)
         {
             try
             {
-                return this._serialiser.Deserialise<AutoScheduleMessage>(messageBody);
+                return this.serializer.Deserialise<AutoScheduleMessage>(messageBody);
             }
             catch
             {

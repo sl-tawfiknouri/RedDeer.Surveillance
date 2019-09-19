@@ -23,175 +23,232 @@
     using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
     using Surveillance.Engine.DataCoordinator.Queues;
 
+    // ReSharper disable ObjectCreationAsStatement
+
+    /// <summary>
+    /// The queue subscriber tests.
+    /// </summary>
     [TestFixture]
     public class QueueSubscriberTests
     {
-        private IAutoSchedule _autoSchedule;
+        /// <summary>
+        /// The auto schedule.
+        /// </summary>
+        private IAutoSchedule autoSchedule;
 
-        private IAwsConfiguration _awsConfiguration;
+        /// <summary>
+        /// The aws configuration.
+        /// </summary>
+        private IAwsConfiguration awsConfiguration;
 
-        private IAwsQueueClient _awsQueueClient;
+        /// <summary>
+        /// The aws queue client.
+        /// </summary>
+        private IAwsQueueClient awsQueueClient;
 
-        private IDataVerifier _dataVerifier;
+        /// <summary>
+        /// The data verifier.
+        /// </summary>
+        private IDataVerifier dataVerifier;
 
-        private ILogger<QueueAutoscheduleSubscriber> _logger;
+        /// <summary>
+        /// The serializer.
+        /// </summary>
+        private IMessageBusSerialiser serialiser;
 
-        private IMessageBusSerialiser _serialiser;
+        /// <summary>
+        /// The system process context.
+        /// </summary>
+        private ISystemProcessContext systemProcessContext;
 
-        private ISystemProcessContext _systemProcessContext;
+        /// <summary>
+        /// The system process operation context.
+        /// </summary>
+        private ISystemProcessOperationContext systemProcessOperationContext;
 
-        private ISystemProcessOperationContext _systemProcessOperationContext;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<QueueAutoScheduleSubscriber> logger;
 
+        /// <summary>
+        /// The constructor aws configuration null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_AwsConfiguration_Null_Throws_Exception()
+        public void ConstructorAwsConfigurationNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new QueueAutoscheduleSubscriber(
-                    this._dataVerifier,
-                    this._autoSchedule,
-                    this._awsQueueClient,
+                () => new QueueAutoScheduleSubscriber(
+                    this.dataVerifier,
+                    this.autoSchedule,
+                    this.awsQueueClient,
                     null,
-                    this._serialiser,
-                    this._systemProcessContext,
-                    this._logger));
+                    this.serialiser,
+                    this.systemProcessContext,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor aws queue client null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_AwsQueueClient_Null_Throws_Exception()
+        public void ConstructorAwsQueueClientNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new QueueAutoscheduleSubscriber(
-                    this._dataVerifier,
-                    this._autoSchedule,
+                () => new QueueAutoScheduleSubscriber(
+                    this.dataVerifier,
+                    this.autoSchedule,
                     null,
-                    this._awsConfiguration,
-                    this._serialiser,
-                    this._systemProcessContext,
-                    this._logger));
+                    this.awsConfiguration,
+                    this.serialiser,
+                    this.systemProcessContext,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor logger null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_Logger_Null_Throws_Exception()
+        public void ConstructorLoggerNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new QueueAutoscheduleSubscriber(
-                    this._dataVerifier,
-                    this._autoSchedule,
-                    this._awsQueueClient,
-                    this._awsConfiguration,
-                    this._serialiser,
-                    this._systemProcessContext,
+                () => new QueueAutoScheduleSubscriber(
+                    this.dataVerifier,
+                    this.autoSchedule,
+                    this.awsQueueClient,
+                    this.awsConfiguration,
+                    this.serialiser,
+                    this.systemProcessContext,
                     null));
         }
 
+        /// <summary>
+        /// The constructor serializer null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_Serialiser_Null_Throws_Exception()
+        public void ConstructorSerialiserNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new QueueAutoscheduleSubscriber(
-                    this._dataVerifier,
-                    this._autoSchedule,
-                    this._awsQueueClient,
-                    this._awsConfiguration,
+                () => new QueueAutoScheduleSubscriber(
+                    this.dataVerifier,
+                    this.autoSchedule,
+                    this.awsQueueClient,
+                    this.awsConfiguration,
                     null,
-                    this._systemProcessContext,
-                    this._logger));
+                    this.systemProcessContext,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor system process context null throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_SystmeProcessContext_Null_Throws_Exception()
+        public void ConstructorSystemProcessContextNullThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new QueueAutoscheduleSubscriber(
-                    this._dataVerifier,
-                    this._autoSchedule,
-                    this._awsQueueClient,
-                    this._awsConfiguration,
-                    this._serialiser,
+                () => new QueueAutoScheduleSubscriber(
+                    this.dataVerifier,
+                    this.autoSchedule,
+                    this.awsQueueClient,
+                    this.awsConfiguration,
+                    this.serialiser,
                     null,
-                    this._logger));
+                    this.logger));
         }
 
+        /// <summary>
+        /// The execute coordination message calls analyze file id for valid upload message.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task ExecuteCoordinationMessage_Calls_AnalyseFileId_For_Valid_UploadMessage()
+        public async Task ExecuteCoordinationMessageCallsAnalyseFileIdForValidUploadMessage()
         {
-            var subscriber = new QueueAutoscheduleSubscriber(
-                this._dataVerifier,
-                this._autoSchedule,
-                this._awsQueueClient,
-                this._awsConfiguration,
-                this._serialiser,
-                this._systemProcessContext,
-                this._logger);
+            var subscriber = new QueueAutoScheduleSubscriber(
+                this.dataVerifier,
+                this.autoSchedule,
+                this.awsQueueClient,
+                this.awsConfiguration,
+                this.serialiser,
+                this.systemProcessContext,
+                this.logger);
             var uploadMessage = new AutoScheduleMessage();
-            var message = this._serialiser.Serialise(uploadMessage);
+            var message = this.serialiser.Serialise(uploadMessage);
 
-            await subscriber.ExecuteCoordinationMessage("message-id", message);
+            await subscriber.ExecuteCoordinationMessageAsync("message-id", message);
 
-            A.CallTo(() => this._dataVerifier.Scan()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.dataVerifier.Scan()).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The execute coordination message ends event with error if not able to deserialize.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task ExecuteCoordinationMessage_Ends_Event_With_Error_If_Not_Deserialisable()
+        public async Task ExecuteCoordinationMessageEndsEventWithErrorIfNotDeserialisable()
         {
-            var subscriber = new QueueAutoscheduleSubscriber(
-                this._dataVerifier,
-                this._autoSchedule,
-                this._awsQueueClient,
-                this._awsConfiguration,
-                this._serialiser,
-                this._systemProcessContext,
-                this._logger);
+            var subscriber = new QueueAutoScheduleSubscriber(
+                this.dataVerifier,
+                this.autoSchedule,
+                this.awsQueueClient,
+                this.awsConfiguration,
+                this.serialiser,
+                this.systemProcessContext,
+                this.logger);
 
-            await subscriber.ExecuteCoordinationMessage("message-id", "not-a-upload-message");
+            await subscriber.ExecuteCoordinationMessageAsync("message-id", "not-a-upload-message");
 
-            A.CallTo(() => this._systemProcessOperationContext.EndEventWithError(A<string>.Ignored))
+            A.CallTo(() => this.systemProcessOperationContext.EndEventWithError(A<string>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate subscribes to queue.
+        /// </summary>
         [Test]
-        public void Initiate_Subscribes_To_Queue()
+        public void InitiateSubscribesToQueue()
         {
-            A.CallTo(() => this._awsConfiguration.UploadCoordinatorQueueName).Returns("a-queue-name");
+            A.CallTo(() => this.awsConfiguration.UploadCoordinatorQueueName).Returns("a-queue-name");
 
-            var subscriber = new QueueAutoscheduleSubscriber(
-                this._dataVerifier,
-                this._autoSchedule,
-                this._awsQueueClient,
-                this._awsConfiguration,
-                this._serialiser,
-                this._systemProcessContext,
-                this._logger);
+            var subscriber = new QueueAutoScheduleSubscriber(
+                this.dataVerifier,
+                this.autoSchedule,
+                this.awsQueueClient,
+                this.awsConfiguration,
+                this.serialiser,
+                this.systemProcessContext,
+                this.logger);
 
             subscriber.Initiate();
 
             A.CallTo(
-                () => this._awsQueueClient.SubscribeToQueueAsync(
+                () => this.awsQueueClient.SubscribeToQueueAsync(
                     "a-queue-name",
                     A<Func<string, string, Task>>.Ignored,
                     A<CancellationToken>.Ignored,
                     A<AwsResusableCancellationToken>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._dataVerifier = A.Fake<IDataVerifier>();
-            this._autoSchedule = A.Fake<IAutoSchedule>();
-            this._awsQueueClient = A.Fake<IAwsQueueClient>();
-            this._awsConfiguration = A.Fake<IAwsConfiguration>();
-            this._serialiser = new MessageBusSerialiser();
-            this._systemProcessContext = A.Fake<ISystemProcessContext>();
-            this._systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
-            this._logger = new NullLogger<QueueAutoscheduleSubscriber>();
+            this.dataVerifier = A.Fake<IDataVerifier>();
+            this.autoSchedule = A.Fake<IAutoSchedule>();
+            this.awsQueueClient = A.Fake<IAwsQueueClient>();
+            this.awsConfiguration = A.Fake<IAwsConfiguration>();
+            this.serialiser = new MessageBusSerialiser();
+            this.systemProcessContext = A.Fake<ISystemProcessContext>();
+            this.systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
+            this.logger = new NullLogger<QueueAutoScheduleSubscriber>();
 
-            A.CallTo(() => this._systemProcessContext.CreateAndStartOperationContext())
-                .Returns(this._systemProcessOperationContext);
+            A.CallTo(() => this.systemProcessContext.CreateAndStartOperationContext())
+                .Returns(this.systemProcessOperationContext);
         }
     }
 }

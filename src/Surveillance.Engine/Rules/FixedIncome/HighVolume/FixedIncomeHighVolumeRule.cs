@@ -1,6 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using Domain.Core.Trading.Orders;
@@ -296,10 +297,9 @@
         {
             this.logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} RunRule called at {this.UniverseDateTime}");
 
-            var tradeWindow = history?.ActiveTradeHistory();
+            var tradeWindow = history?.ActiveTradeHistory() ?? new Stack<Order>();
 
-            if (tradeWindow == null
-                || !tradeWindow.Any())
+            if (this.HasEmptyTradeWindow(tradeWindow))
             {
                 this.logger.LogInformation($"RunPostOrderEvent had an empty trade window");
 
@@ -315,7 +315,7 @@
             var dailyBreach = this.CheckDailyVolume(mostRecentTrade, tradedVolume);
             var windowBreach = this.CheckWindowVolume(mostRecentTrade, tradedVolume);
 
-            if (!dailyBreach && !windowBreach)
+            if (this.HasNoBreach(dailyBreach, windowBreach))
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily or window breach for {mostRecentTrade.Instrument.Identifiers}");
                 this.PassJudgementForNoBreach(mostRecentTrade);
@@ -465,6 +465,37 @@
         private bool CheckWindowVolume(Order order, decimal tradedVolume)
         {
             return false;
+        }
+
+        /// <summary>
+        /// The has no breach.
+        /// </summary>
+        /// <param name="dailyBreach">
+        /// The daily breach.
+        /// </param>
+        /// <param name="windowBreach">
+        /// The window breach.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool HasNoBreach(bool dailyBreach, bool windowBreach)
+        {
+            return !dailyBreach && !windowBreach;
+        }
+
+        /// <summary>
+        /// The has empty trade window.
+        /// </summary>
+        /// <param name="tradeWindow">
+        /// The trade window.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool HasEmptyTradeWindow(Stack<Order> tradeWindow)
+        {
+            return tradeWindow == null || !tradeWindow.Any();
         }
     }
 }

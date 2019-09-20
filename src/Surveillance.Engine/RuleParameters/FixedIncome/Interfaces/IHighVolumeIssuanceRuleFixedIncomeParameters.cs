@@ -7,7 +7,10 @@
     /// </summary>
     public interface IHighVolumeIssuanceRuleFixedIncomeParameters : IFilterableRule,
                                                                     IRuleParameter,
-                                                                    IOrganisationalFactorable
+                                                                    IOrganisationalFactorable,
+                                                                    IReferenceDataFilterable,
+                                                                    IMarketCapFilterable,
+                                                                    IVenueVolumeFilterable
     {
         /// <summary>
         /// Gets the windows.

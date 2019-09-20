@@ -1,5 +1,4 @@
 ﻿@fixedincomehighvolumedailyvolume
-@fixedincomehighvolumeissuancepercentagenon
 Feature: Fixed Income High Volume Daily Volume
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
@@ -8,7 +7,7 @@ Feature: Fixed Income High Volume Daily Volume
 
 Background:
 			Given I have the fixed income high volume rule parameter values
-			| WindowHours | FixedIncomeHighVolumePercentageDaily | FixedIncomeHighVolumePercentageDaily |
+			| WindowHours | FixedIncomeHighVolumePercentageDaily | FixedIncomeHighVolumePercentageWindow |
 			| 1           | 0.01                                 |                                      |
 
 @fixedincomehighvolumedailyvolume

@@ -94,7 +94,7 @@
 
             var description = mapper.BuildDescription(this.context);
 
-            Assert.AreEqual("Fixed Income High Volume rule breach detected for ryan-test-security. Percentage of daily volume breach has occured. A daily volume limit of 0% was exceeded by trading 30% of daily volume at the venue () . 0 volume was the allocated fill against a breach threshold volume of 69.", description);
+            Assert.AreEqual("Fixed Income High Volume rule breach detected for ryan-test-security. Percentage of daily volume breach has occured. A daily volume limit of 10% was exceeded by trading 30% of daily volume at the venue () . 230 volume was the allocated fill against a breach threshold volume of 69.", description);
         }
 
         /// <summary>

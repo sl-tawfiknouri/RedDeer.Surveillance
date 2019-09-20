@@ -352,7 +352,7 @@
             if (dailyBreach.VolumeBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForDailyBreachAsync(mostRecentTrade, tradePosition, dailyBreach).Wait();
+                this.PassJudgementForDailyBreachAsync(mostRecentTrade, tradePosition, dailyBreach)?.Wait();
             }
         }
 

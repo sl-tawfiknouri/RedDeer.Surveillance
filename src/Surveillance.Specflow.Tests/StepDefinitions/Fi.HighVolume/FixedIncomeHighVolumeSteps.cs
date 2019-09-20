@@ -10,9 +10,10 @@
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Judgements;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Markets;
     using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -20,7 +21,9 @@
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;
@@ -32,7 +35,7 @@
     /// The fixed income high volume issuance steps.
     /// </summary>
     [Binding]
-    public class FixedIncomeHighVolumeIssuanceSteps
+    public class FixedIncomeHighVolumeSteps
     {
         /// <summary>
         /// The scenario context.
@@ -43,11 +46,6 @@
         /// The universe selection state.
         /// </summary>
         private readonly UniverseSelectionState universeSelectionState;
-
-        /// <summary>
-        /// The alert stream.
-        /// </summary>
-        private IUniverseAlertStream alertStream;
 
         /// <summary>
         /// The interday universe market cache factory.
@@ -70,6 +68,16 @@
         private ISystemProcessOperationRunRuleContext ruleContext;
 
         /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private IJudgementRepository judgementRepository;
+
+        /// <summary>
+        /// The rule violation service.
+        /// </summary>
+        private IRuleViolationService ruleViolationService;
+
+        /// <summary>
         /// The judgement service.
         /// </summary>
         private IFixedIncomeHighVolumeJudgementService judgementService;
@@ -85,7 +93,7 @@
         private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FixedIncomeHighVolumeIssuanceSteps"/> class.
+        /// Initializes a new instance of the <see cref="FixedIncomeHighVolumeSteps"/> class.
         /// </summary>
         /// <param name="scenarioContext">
         /// The scenario context.
@@ -93,7 +101,7 @@
         /// <param name="universeSelectionState">
         /// The universe selection state.
         /// </param>
-        public FixedIncomeHighVolumeIssuanceSteps(
+        public FixedIncomeHighVolumeSteps(
             ScenarioContext scenarioContext,
             UniverseSelectionState universeSelectionState)
         {
@@ -107,7 +115,7 @@
         /// <param name="ruleParameters">
         /// The rule parameters.
         /// </param>
-        [Given(@"I have the fixed income high volume issuance rule parameter values")]
+        [Given(@"I have the fixed income high volume rule parameter values")]
         public void GivenIHaveTheFixedIncomeHighVolumeIssuanceRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
@@ -116,7 +124,7 @@
                 return;
             }
 
-            var highVolumeParameters = ruleParameters.CreateInstance<FixedIncomeHighVolumeIssuanceApiParameters>();
+            var highVolumeParameters = ruleParameters.CreateInstance<FixedIncomeHighVolumeApiParameters>();
 
             this.parameters = new HighVolumeIssuanceRuleFixedIncomeParameters(
                 "0",
@@ -145,19 +153,18 @@
         /// <param name="alertCount">
         /// The alert count.
         /// </param>
-        [Then(@"I will have (.*) fixed income high volume issuance alerts")]
+        [Then(@"I will have (.*) fixed income high volume alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(
-                    () => this.alertStream.Add(
-                        A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent)))
-                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A
+                .CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(_ => _ == alertCount);
         }
 
         /// <summary>
         /// The when i run the fixed income high profit rule.
         /// </summary>
-        [When(@"I run the fixed income high volume issuance rule")]
+        [When(@"I run the fixed income high volume rule")]
         public void WhenIRunTheFixedIncomeHighProfitRule()
         {
             var scheduledExecution = new ScheduledExecution { IsForceRerun = true };
@@ -189,10 +196,19 @@
         {
             this.orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this.alertStream = A.Fake<IUniverseAlertStream>();
-            this.judgementService = A.Fake<IJudgementService>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             this.marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
+
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.ruleViolationService = A.Fake<IRuleViolationService>();
+
+            this.judgementService = new JudgementService(
+                this.judgementRepository,
+                this.ruleViolationService,
+                new HighProfitJudgementMapper(new NullLogger<HighProfitJudgementMapper>()),
+                new FixedIncomeHighProfitJudgementMapper(new NullLogger<FixedIncomeHighProfitJudgementMapper>()),
+                new FixedIncomeHighVolumeJudgementMapper(new NullLogger<FixedIncomeHighVolumeJudgementMapper>()),
+                new NullLogger<JudgementService>());
 
             A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("XLON")).Returns(
                 new TradingHours

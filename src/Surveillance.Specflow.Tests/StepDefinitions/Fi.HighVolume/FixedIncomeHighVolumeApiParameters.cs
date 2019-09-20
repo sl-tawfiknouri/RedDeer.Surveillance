@@ -3,7 +3,7 @@
     /// <summary>
     /// The fixed income high volume issuance parameters.
     /// </summary>
-    public class FixedIncomeHighVolumeIssuanceApiParameters
+    public class FixedIncomeHighVolumeApiParameters
     {
         /// <summary>
         /// Gets or sets the window hours.

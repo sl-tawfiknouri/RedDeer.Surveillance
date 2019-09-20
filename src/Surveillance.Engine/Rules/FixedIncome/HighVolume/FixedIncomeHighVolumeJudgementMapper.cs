@@ -123,7 +123,7 @@
                 return string.Empty;
             }
 
-            var windowPercentage = Math.Ceiling(judgementContext.FixedIncomeParameters.FixedIncomeHighVolumePercentageWindow.GetValueOrDefault(0) * 100);
+            var windowPercentage = Math.Ceiling(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdPercentage.GetValueOrDefault(0) * 100);
             var windowBreachPercentage = Math.Ceiling(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeTradedPercentage.GetValueOrDefault(0) * 100);
 
             var venueWindowDescription =
@@ -131,7 +131,7 @@
                 ? $" at the venue ({judgementContext.Venue?.MarketIdentifierCode}) {judgementContext.Venue?.Name}"
                 : string.Empty;
 
-            var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext.FixedIncomeParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdAmount.GetValueOrDefault(0).ToString("0.##")}.";
+            var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext.FixedIncomeParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext.Judgement.WindowAnalysisAnalysis.VolumeTradedAmount.GetValueOrDefault(0).ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdAmount.GetValueOrDefault(0).ToString("0.##")}.";
 
             return windowDescription;
         }

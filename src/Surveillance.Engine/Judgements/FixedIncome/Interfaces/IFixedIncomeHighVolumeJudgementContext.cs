@@ -1,8 +1,10 @@
 ﻿namespace Surveillance.Engine.Rules.Judgements.FixedIncome.Interfaces
 {
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Assets.Interfaces;
     using Domain.Core.Markets;
     using Domain.Core.Trading;
+    using Domain.Core.Trading.Interfaces;
     using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
@@ -41,12 +43,12 @@
         /// <summary>
         /// Gets or sets the security.
         /// </summary>
-        FinancialInstrument Security { get; set; }
+        IFinancialInstrument Security { get; set; }
 
         /// <summary>
         /// Gets or sets the trade position.
         /// </summary>
-        TradePosition TradePosition { get; set; }
+        ITradePosition TradePosition { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is issuance breach.

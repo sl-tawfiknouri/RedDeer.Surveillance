@@ -555,7 +555,12 @@
             {
                 this.logger.LogError($"Request for trading hours was invalid. MIC - {order.Market?.MarketIdentifierCode}");
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    null,
+                    this.parameters.FixedIncomeHighVolumePercentageDaily,
+                    tradedVolume,
+                    null,
+                    false);
             }
 
             var marketDataRequest = this.ConstructMarketDataRequest(order, tradingHours);
@@ -566,7 +571,12 @@
                 this.hadMissingMarketData = true;
                 this.logger.LogWarning($"Missing data for {marketDataRequest}.");
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    null, 
+                    this.parameters.FixedIncomeHighVolumePercentageDaily, 
+                    tradedVolume, 
+                    null, 
+                    false);
             }
 
             var securityDailyData = securityResult.Response;
@@ -577,7 +587,12 @@
                 this.hadMissingMarketData = true;
                 this.logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    null,
+                    this.parameters.FixedIncomeHighVolumePercentageDaily,
+                    tradedVolume,
+                    null,
+                    false);
             }
 
             var breachPercentage = this.CalculateDailyVolumePercentage(securityDailyData, tradedVolume);
@@ -715,7 +730,12 @@
             {
                 this.logger.LogError($"Request for trading hours was invalid. MIC - {order.Market?.MarketIdentifierCode}");
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    null,
+                    this.parameters.FixedIncomeHighVolumePercentageWindow,
+                    tradedVolume,
+                    null,
+                    false);
             }
 
             var tradingDates = this.SetTradingHourRange(tradingHours, order);
@@ -727,7 +747,12 @@
                 this.logger.LogTrace($"Unable to fetch market data frames for {order?.Market?.MarketIdentifierCode} at {this.UniverseDateTime}.");
                 this.hadMissingMarketData = true;
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    null,
+                    this.parameters.FixedIncomeHighVolumePercentageWindow,
+                    tradedVolume,
+                    null,
+                    false);
             }
 
             var securityDataTicks = marketResult.Response;
@@ -740,7 +765,12 @@
                 this.hadMissingMarketData = true;
                 this.logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
 
-                return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+                return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                    threshold,
+                    this.parameters.FixedIncomeHighVolumePercentageWindow,
+                    tradedVolume,
+                    breachPercentage,
+                    false);
             }
 
             var hasBreach = tradedVolume >= threshold;

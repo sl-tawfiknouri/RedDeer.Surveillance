@@ -379,10 +379,12 @@
                 this.WindowVolumeThresholdPercentage = judgement.WindowAnalysisAnalysis?.VolumeThresholdPercentage;
                 this.WindowVolumeTradedAmount = judgement.WindowAnalysisAnalysis?.VolumeTradedAmount;
                 this.WindowVolumeTradedPercentage = judgement.WindowAnalysisAnalysis?.VolumeTradedPercentage;
+                this.WindowVolumeBreach = judgement?.WindowAnalysisAnalysis?.VolumeBreach ?? false;
                 this.DailyVolumeThresholdAmount = judgement.DailyAnalysisAnalysis?.VolumeThresholdAmount;
                 this.DailyVolumeThresholdPercentage = judgement.DailyAnalysisAnalysis?.VolumeThresholdPercentage;
                 this.DailyVolumeTradedAmount = judgement.DailyAnalysisAnalysis?.VolumeTradedAmount;
                 this.DailyVolumeTradedPercentage = judgement.DailyAnalysisAnalysis?.VolumeTradedPercentage;
+                this.DailyVolumeBreach = judgement?.DailyAnalysisAnalysis?.VolumeBreach ?? false;
             }
 
             /// <summary>
@@ -406,6 +408,11 @@
             public decimal? WindowVolumeTradedPercentage { get; set; }
 
             /// <summary>
+            /// Gets or sets a value indicating whether window volume breach.
+            /// </summary>
+            public bool WindowVolumeBreach { get; set; }
+
+            /// <summary>
             /// Gets or sets the daily volume threshold amount.
             /// </summary>
             public decimal? DailyVolumeThresholdAmount { get; set; }
@@ -424,6 +431,11 @@
             /// Gets or sets the daily volume traded percentage.
             /// </summary>
             public decimal? DailyVolumeTradedPercentage { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether daily volume breach.
+            /// </summary>
+            public bool DailyVolumeBreach { get; set; }
         }
 
         /// <summary>

@@ -6,6 +6,7 @@
 
     using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
 
@@ -21,7 +22,8 @@
             string absoluteProfitCurrency,
             Money? absoluteProfits,
             decimal? relativeProfits,
-            IExchangeRateProfitBreakdown exchangeRateProfits)
+            IExchangeRateProfitBreakdown exchangeRateProfits,
+            HighProfitComponents components)
         {
             this.Judgement = judgement;
             this.ProjectToAlert = projectToAlert;
@@ -33,6 +35,7 @@
             this.AbsoluteProfits = absoluteProfits;
             this.RelativeProfits = relativeProfits;
             this.ExchangeRateProfits = exchangeRateProfits;
+            Components = components;
         }
 
         public string AbsoluteProfitCurrency { get; set; }
@@ -42,6 +45,7 @@
         public IHighProfitsRuleEquitiesParameters EquitiesParameters { get; set; }
 
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; set; }
+        public HighProfitComponents Components { get; set; }
 
         public bool HasAbsoluteProfitBreach { get; set; }
 

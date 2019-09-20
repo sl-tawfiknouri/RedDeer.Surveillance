@@ -60,7 +60,7 @@
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning realised profits only.");
 
                 // fully traded out position; return its value
-                return new RevenueMoney(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
             // has a virtual position; calculate its value
@@ -70,7 +70,7 @@
                 this.Logger.LogWarning(
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
 
-                return new RevenueMoney(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
             var marketDataRequest = this.MarketDataRequest(
@@ -85,7 +85,7 @@
                 this.Logger.LogWarning(
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
 
-                return new RevenueMoney(false, null);
+                return new RevenueMoney(false, null, HighProfitComponents.Realised);
             }
 
             var marketDataResult = marketCacheStrategy.Query(marketDataRequest);
@@ -93,7 +93,7 @@
             {
                 this.Logger.LogWarning(
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
-                return new RevenueMoney(true, null);
+                return new RevenueMoney(true, null, HighProfitComponents.Realised);
             }
 
             var virtualRevenue = (marketDataResult.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
@@ -103,12 +103,17 @@
             {
                 this.Logger.LogWarning(
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({money.Currency}) {money.Value}.");
-                return new RevenueMoney(false, money);
+                return new RevenueMoney(false, money, HighProfitComponents.Virtual);
             }
 
             var totalMoneys = realisedRevenue + money;
 
-            return await Task.FromResult(new RevenueMoney(false, totalMoneys));
+            var component = 
+                (realisedRevenue.HasValue && realisedRevenue.Value.Value > 0) 
+                ? HighProfitComponents.Hybrid 
+                : HighProfitComponents.Virtual;
+
+            return await Task.FromResult(new RevenueMoney(false, totalMoneys, component));
         }
 
         protected virtual MarketDataRequest MarketDataRequest(

@@ -10,7 +10,7 @@
 
     using DbContext = Surveillance.Api.Tests.Infrastructure.DbContext;
 
-    public class BaseTest
+    public abstract class BaseTest
     {
         protected ApiClient _apiClient => Dependencies.ApiClient;
 

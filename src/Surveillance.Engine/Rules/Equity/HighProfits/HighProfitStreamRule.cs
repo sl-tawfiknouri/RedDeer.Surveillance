@@ -228,7 +228,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 hasHighProfitPercentage,
                 exchangeRateProfits,
                 ruleBreachContext,
-                orderUnderAnalysis);
+                orderUnderAnalysis,
+                revenueResponse.Components);
         }
 
         private void SetJudgementForFullAnalysis(
@@ -238,7 +239,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             bool hasHighProfitPercentage,
             IExchangeRateProfitBreakdown exchangeRateProfits,
             RuleBreachContext ruleBreachContext,
-            Order orderUnderAnalysis)
+            Order orderUnderAnalysis,
+            HighProfitComponents component)
         {
             var absoluteHighProfit =
                 hasHighProfitAbsolute
@@ -280,7 +282,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     profitRatio,
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
-                    exchangeRateProfits));
+                    exchangeRateProfits,
+                    component));
         }
 
         private void NoRevenueOrCostJudgement(Order orderUnderAnalysis)

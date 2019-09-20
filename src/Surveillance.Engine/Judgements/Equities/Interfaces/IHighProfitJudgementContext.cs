@@ -1,6 +1,7 @@
 ﻿using Domain.Core.Financial.Money;
 using Domain.Surveillance.Judgement.Equity.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 
@@ -19,5 +20,6 @@ namespace Surveillance.Engine.Rules.Judgements.Equities.Interfaces
         Money? AbsoluteProfits { get; set; }
         decimal? RelativeProfits { get; set; }
         IExchangeRateProfitBreakdown ExchangeRateProfits { get; set; }
+        HighProfitComponents Components { get; set; }
     }
 }

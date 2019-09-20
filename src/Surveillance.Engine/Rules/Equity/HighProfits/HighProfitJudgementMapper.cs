@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return null;
             }
 
-            var caseTitle = "Automated High Profit Rule Breach Detected";
+            var caseTitle = $"Automated {this.ComponentName(judgementContext.Components)}High Profit Rule Breach Detected";
             var description = BuildDescription(judgementContext);
 
             var ruleBreach = 
@@ -33,6 +33,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     caseTitle);
 
             return ruleBreach;
+        }
+
+        private string ComponentName(HighProfitComponents component)
+        {
+            switch (component)
+            {
+                case HighProfitComponents.Hybrid: return "Hybrid ";
+                case HighProfitComponents.Realised: return "Realised ";
+                case HighProfitComponents.Virtual: return "Virtual ";
+                case HighProfitComponents.None: return string.Empty;
+                default: throw new ArgumentOutOfRangeException(nameof(component));
+            }
         }
 
         private string BuildDescription(IHighProfitJudgementContext judgementContext)

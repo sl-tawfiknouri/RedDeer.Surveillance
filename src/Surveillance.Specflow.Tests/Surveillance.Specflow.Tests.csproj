@@ -24,7 +24,6 @@
     <ProjectReference Include="..\Surveillance\Surveillance\Surveillance.csproj" />
   </ItemGroup>
 
-
   <PropertyGroup>
     <Pickles_Generate>True</Pickles_Generate>
     <Pickles_DocumentationFormat>dhtml</Pickles_DocumentationFormat>

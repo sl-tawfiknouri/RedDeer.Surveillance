@@ -30,7 +30,8 @@
         /// The save high volume.
         /// </summary>
         private const string SaveHighVolume =
-            @"INSERT INTO JudgementEquityHighVolumeRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, Analysis) VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @Analysis);";
+            @"INSERT INTO JudgementEquityHighVolumeRule(RuleRunId, RuleRunCorrelationId, OrderId, ClientOrderId, Parameter, Analysis, WindowVolumeThresholdAmount, WindowVolumeThresholdPercentage, WindowVolumeTradedAmount, WindowVolumeTradedPercentage, WindowVolumeBreach, DailyVolumeThresholdAmount, DailyVolumeThresholdPercentage, DailyVolumeTradedAmount, DailyVolumeTradedPercentage, DailyVolumeBreach)
+                VALUES(@RuleRunId, @RuleRunCorrelationId, @OrderId, @ClientOrderId, @Parameter, @Analysis, @WindowVolumeThresholdAmount, @WindowVolumeThresholdPercentage, @WindowVolumeTradedAmount, @WindowVolumeTradedPercentage, @WindowVolumeBreach, @DailyVolumeThresholdAmount, @DailyVolumeThresholdPercentage, @DailyVolumeTradedAmount, @DailyVolumeTradedPercentage, @DailyVolumeBreach);";
 
         /// <summary>
         /// The database connection factory.
@@ -374,8 +375,55 @@
                 judgement?.RuleRunCorrelationId,
                 judgement?.RuleRunId)
             {
-                   // TODO fill this out
+                this.WindowVolumeThresholdAmount = judgement.WindowAnalysisAnalysis?.VolumeThresholdAmount;
+                this.WindowVolumeThresholdPercentage = judgement.WindowAnalysisAnalysis?.VolumeThresholdPercentage;
+                this.WindowVolumeTradedAmount = judgement.WindowAnalysisAnalysis?.VolumeTradedAmount;
+                this.WindowVolumeTradedPercentage = judgement.WindowAnalysisAnalysis?.VolumeTradedPercentage;
+                this.DailyVolumeThresholdAmount = judgement.DailyAnalysisAnalysis?.VolumeThresholdAmount;
+                this.DailyVolumeThresholdPercentage = judgement.DailyAnalysisAnalysis?.VolumeThresholdPercentage;
+                this.DailyVolumeTradedAmount = judgement.DailyAnalysisAnalysis?.VolumeTradedAmount;
+                this.DailyVolumeTradedPercentage = judgement.DailyAnalysisAnalysis?.VolumeTradedPercentage;
             }
+
+            /// <summary>
+            /// Gets or sets the window volume threshold amount.
+            /// </summary>
+            public decimal? WindowVolumeThresholdAmount { get; set; }
+
+            /// <summary>
+            /// Gets or sets the window volume threshold percentage.
+            /// </summary>
+            public decimal? WindowVolumeThresholdPercentage { get; set; }
+
+            /// <summary>
+            /// Gets or sets the window volume traded amount.
+            /// </summary>
+            public decimal? WindowVolumeTradedAmount { get; set; }
+
+            /// <summary>
+            /// Gets or sets the window volume traded percentage.
+            /// </summary>
+            public decimal? WindowVolumeTradedPercentage { get; set; }
+
+            /// <summary>
+            /// Gets or sets the daily volume threshold amount.
+            /// </summary>
+            public decimal? DailyVolumeThresholdAmount { get; set; }
+
+            /// <summary>
+            /// Gets or sets the daily volume threshold percentage.
+            /// </summary>
+            public decimal? DailyVolumeThresholdPercentage { get; set; }
+
+            /// <summary>
+            /// Gets or sets the daily volume traded amount.
+            /// </summary>
+            public decimal? DailyVolumeTradedAmount { get; set; }
+
+            /// <summary>
+            /// Gets or sets the daily volume traded percentage.
+            /// </summary>
+            public decimal? DailyVolumeTradedPercentage { get; set; }
         }
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿namespace Domain.Surveillance.Judgement.FixedIncome
 {
-    using Domain.Core.Financial.Money;
     using Domain.Core.Markets;
-    using Domain.Core.Trading;
     using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
 
     /// <summary>
@@ -13,6 +11,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="FixedIncomeHighVolumeJudgement"/> class.
         /// </summary>
+        /// <param name="market">
+        /// Venue that the trade executed on
+        /// </param>
         /// <param name="ruleRunId">
         /// The rule run id.
         /// </param>
@@ -34,13 +35,14 @@
         /// <param name="noAnalysis">
         /// The no analysis.
         /// </param>
-        /// <param name="windowBreach">
-        /// The window Breach.
+        /// <param name="windowAnalysis">
+        /// The window analysis
         /// </param>
-        /// <param name="dailyBreach">
-        /// The daily Breach.
+        /// <param name="dailyAnalysis">
+        /// The daily analysis
         /// </param>
         public FixedIncomeHighVolumeJudgement(
+            Market market,
             string ruleRunId,
             string ruleRunCorrelationId,
             string orderId,
@@ -48,9 +50,10 @@
             string parameters,
             bool hadMissingMarketData,
             bool noAnalysis,
-            BreachDetails windowBreach,
-            BreachDetails dailyBreach)
+            BreachDetails windowAnalysis,
+            BreachDetails dailyAnalysis)
         {
+            this.Market = market;
             this.RuleRunId = ruleRunId;
             this.RuleRunCorrelationId = ruleRunCorrelationId;
             this.OrderId = orderId;
@@ -59,9 +62,15 @@
             this.Parameters = parameters;
             this.HadMissingMarketData = hadMissingMarketData;
             this.NoAnalysis = noAnalysis;
-            this.WindowBreach = windowBreach;
-            this.DailyBreach = dailyBreach;
+
+            this.WindowAnalysisAnalysis = windowAnalysis;
+            this.DailyAnalysisAnalysis = dailyAnalysis;
         }
+
+        /// <summary>
+        /// Gets or sets the market.
+        /// </summary>
+        public Market Market { get; set; }
 
         /// <summary>
         /// Gets or sets the client order id.
@@ -99,14 +108,14 @@
         public string RuleRunId { get; }
 
         /// <summary>
-        /// Gets the daily breach.
+        /// Gets or sets the window analysis analysis.
         /// </summary>
-        public BreachDetails DailyBreach { get; }
+        public BreachDetails WindowAnalysisAnalysis { get; set; }
 
         /// <summary>
-        /// Gets the window breach.
+        /// Gets or sets the daily analysis analysis.
         /// </summary>
-        public BreachDetails WindowBreach { get; }
+        public BreachDetails DailyAnalysisAnalysis { get; set; }
 
         /// <summary>
         /// The breach details.
@@ -116,91 +125,67 @@
             /// <summary>
             /// Initializes a new instance of the <see cref="BreachDetails"/> class.
             /// </summary>
-            /// <param name="hasBreach">
-            /// The has breach.
+            /// <param name="volumeThresholdAmount">
+            /// The volume threshold amount.
             /// </param>
-            /// <param name="breachPercentage">
-            /// The breach percentage.
+            /// <param name="volumeThresholdPercentage">
+            /// The volume threshold percentage.
             /// </param>
-            /// <param name="breachThresholdAmount">
-            /// The breach threshold amount.
+            /// <param name="volumeTradedAmount">
+            /// The volume traded amount.
             /// </param>
-            /// <param name="venue">
-            /// The venue.
+            /// <param name="volumeTradedPercentage">
+            /// The volume traded percentage.
+            /// </param>
+            /// <param name="volumeBreach">
+            /// The volume breach.
             /// </param>
             public BreachDetails(
-                bool hasBreach,
-                decimal? breachPercentage,
-                decimal breachThresholdAmount,
-                Market venue)
+                decimal? volumeThresholdAmount,
+                decimal? volumeThresholdPercentage,
+                decimal? volumeTradedAmount,
+                decimal? volumeTradedPercentage,
+                bool volumeBreach)
             {
-                this.HasBreach = hasBreach;
-                this.BreachPercentage = breachPercentage;
-                this.BreachThresholdAmount = breachThresholdAmount;
-                this.Venue = venue;
+                this.VolumeThresholdAmount = volumeThresholdAmount;
+                this.VolumeThresholdPercentage = volumeThresholdPercentage;
+                this.VolumeTradedAmount = volumeTradedAmount;
+                this.VolumeTradedPercentage = volumeTradedPercentage;
+                this.VolumeBreach = volumeBreach;
             }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="BreachDetails"/> class.
+            /// Prevents a default instance of the <see cref="BreachDetails"/> class from being created.
             /// </summary>
-            /// <param name="hasBreach">
-            /// The has breach.
-            /// </param>
-            /// <param name="breachPercentage">
-            /// The breach percentage.
-            /// </param>
-            /// <param name="breachThresholdMoney">
-            /// The breach threshold money.
-            /// </param>
-            /// <param name="breachTradedMoney">
-            /// The breach traded money.
-            /// </param>
-            /// <param name="venue">
-            /// The venue.
-            /// </param>
-            public BreachDetails(
-                bool hasBreach,
-                decimal? breachPercentage,
-                Money breachThresholdMoney,
-                Money breachTradedMoney,
-                Market venue)
+            private BreachDetails()
             {
-                this.HasBreach = hasBreach;
-                this.BreachPercentage = breachPercentage;
-                this.BreachThresholdMoney = breachThresholdMoney;
-                this.BreachTradedMoney = breachTradedMoney;
-                this.Venue = venue;
+                // used by None
             }
 
             /// <summary>
-            /// Gets the breach percentage.
+            /// Gets or sets the volume threshold amount.
             /// </summary>
-            public decimal? BreachPercentage { get; }
+            public decimal? VolumeThresholdAmount { get; set; }
 
             /// <summary>
-            /// Gets the breach threshold amount.
+            /// Gets or sets the volume threshold percentage.
             /// </summary>
-            public decimal BreachThresholdAmount { get; }
+            public decimal? VolumeThresholdPercentage { get; set; }
 
             /// <summary>
-            /// Gets the breach threshold money.
+            /// Gets or sets the volume traded amount.
             /// </summary>
-            public Money BreachThresholdMoney { get; }
+            public decimal? VolumeTradedAmount { get; set; }
 
             /// <summary>
-            /// Gets the breach traded money.
+            /// Gets or sets the volume traded percentage.
             /// </summary>
-            public Money BreachTradedMoney { get; }
+            public decimal? VolumeTradedPercentage { get; set; }
 
             /// <summary>
-            /// Gets a value indicating whether has breach.
+            /// Gets or sets a value indicating whether volume breach.
             /// </summary>
-            public bool HasBreach { get; }
-
-            /// <summary>
-            /// Gets the venue.
-            /// </summary>
-            public Market Venue { get; }
+            public bool VolumeBreach { get; set; }
 
             /// <summary>
             /// The none.
@@ -210,7 +195,7 @@
             /// </returns>
             public static BreachDetails None()
             {
-                return new BreachDetails(false, null, 0, null);
+                return new BreachDetails();
             }
         }
     }

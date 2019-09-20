@@ -118,7 +118,6 @@
             RuleRunMode runMode,
             ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
-
             : base(
                 parameters.Windows.BackwardWindowSize,
                 parameters.Windows.BackwardWindowSize,
@@ -344,16 +343,16 @@
                 this.PassJudgementForNoBreachAsync(mostRecentTrade, tradePosition).Wait();
             }
 
-            if (windowBreach.HasBreach)
+            if (windowBreach.VolumeBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with window breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForWindowBreachAsync(mostRecentTrade, windowBreach, tradePosition).Wait();
+                this.PassJudgementForWindowBreachAsync(mostRecentTrade, tradePosition, windowBreach).Wait();
             }
 
-            if (dailyBreach.HasBreach)
+            if (dailyBreach.VolumeBreach)
             {
                 this.logger.LogInformation($"RunPostOrderEvent passing judgement with no daily breach for {mostRecentTrade.Instrument.Identifiers}");
-                this.PassJudgementForDailyBreachAsync(mostRecentTrade, dailyBreach, tradePosition).Wait();
+                this.PassJudgementForDailyBreachAsync(mostRecentTrade, tradePosition, dailyBreach).Wait();
             }
         }
 
@@ -386,6 +385,7 @@
 
             var judgement =
                 new FixedIncomeHighVolumeJudgement(
+                    mostRecentTrade?.Market,
                     this.RuleCtx.RuleParameterId(),
                     this.RuleCtx.CorrelationId(),
                     mostRecentTrade?.ReddeerOrderId?.ToString(),
@@ -393,10 +393,15 @@
                     serialisedParameters,
                     this.hadMissingMarketData,
                     false,
-                    null,
-                    null);
+                    FixedIncomeHighVolumeJudgement.BreachDetails.None(),
+                    FixedIncomeHighVolumeJudgement.BreachDetails.None());
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, false, tradePosition);
+            var fixedIncomeHighVolumeContext = 
+                new FixedIncomeHighVolumeJudgementContext(
+                    judgement, 
+                    false, 
+                    tradePosition,
+                    mostRecentTrade?.Market);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -407,24 +412,25 @@
         /// <param name="mostRecentTrade">
         /// The most recent trade.
         /// </param>
-        /// <param name="breachDetails">
-        /// The breach details.
-        /// </param>
         /// <param name="tradePosition">
         /// The trade position.
+        /// </param>
+        /// <param name="windowAnalysis">
+        /// The window Analysis.
         /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
         private async Task PassJudgementForWindowBreachAsync(
             Order mostRecentTrade,
-            FixedIncomeHighVolumeJudgement.BreachDetails breachDetails,
-            TradePosition tradePosition)
+            TradePosition tradePosition,
+            FixedIncomeHighVolumeJudgement.BreachDetails windowAnalysis)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
             
             var judgement =
                 new FixedIncomeHighVolumeJudgement(
+                    mostRecentTrade?.Market,
                     this.RuleCtx.RuleParameterId(),
                     this.RuleCtx.CorrelationId(),
                     mostRecentTrade?.ReddeerOrderId?.ToString(),
@@ -432,10 +438,15 @@
                     serialisedParameters,
                     this.hadMissingMarketData,
                     false,
-                    breachDetails,
-                    null);
+                    windowAnalysis,
+                    FixedIncomeHighVolumeJudgement.BreachDetails.None());
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true, tradePosition);
+            var fixedIncomeHighVolumeContext = 
+                new FixedIncomeHighVolumeJudgementContext(
+                    judgement, 
+                    true, 
+                    tradePosition,
+                    mostRecentTrade?.Market);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -446,24 +457,25 @@
         /// <param name="mostRecentTrade">
         /// The most recent trade.
         /// </param>
-        /// <param name="breachDetails">
-        /// The breach details.
-        /// </param>
         /// <param name="tradePosition">
         /// The trade position.
+        /// </param>
+        /// <param name="dailyAnalysis">
+        /// The daily Analysis.
         /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
         private async Task PassJudgementForDailyBreachAsync(
             Order mostRecentTrade,
-            FixedIncomeHighVolumeJudgement.BreachDetails breachDetails,
-            TradePosition tradePosition)
+            TradePosition tradePosition,
+            FixedIncomeHighVolumeJudgement.BreachDetails dailyAnalysis)
         {
             var serialisedParameters = JsonConvert.SerializeObject(this.parameters);
 
             var judgement =
                 new FixedIncomeHighVolumeJudgement(
+                    mostRecentTrade?.Market,
                     this.RuleCtx.RuleParameterId(),
                     this.RuleCtx.CorrelationId(),
                     mostRecentTrade?.ReddeerOrderId?.ToString(),
@@ -471,10 +483,15 @@
                     serialisedParameters,
                     this.hadMissingMarketData,
                     false,
-                    null,
-                    breachDetails);
+                    FixedIncomeHighVolumeJudgement.BreachDetails.None(),
+                    dailyAnalysis);
 
-            var fixedIncomeHighVolumeContext = new FixedIncomeHighVolumeJudgementContext(judgement, true, tradePosition);
+            var fixedIncomeHighVolumeContext =
+                new FixedIncomeHighVolumeJudgementContext(
+                    judgement, 
+                    true, 
+                    tradePosition,
+                    mostRecentTrade?.Market);
 
             await this.judgementService.Judgement(fixedIncomeHighVolumeContext);
         }
@@ -565,13 +582,12 @@
 
             var breachPercentage = this.CalculateDailyVolumePercentage(securityDailyData, tradedVolume);
 
-            if (tradedVolume >= threshold)
-            {
-                return new FixedIncomeHighVolumeJudgement.BreachDetails(true, breachPercentage, threshold, order.Market);
-            }
-
-            // replace with daily volume implementation
-            return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                threshold,
+                this.parameters.FixedIncomeHighVolumePercentageDaily,
+                tradedVolume,
+                breachPercentage,
+                tradedVolume >= threshold);
         }
 
         /// <summary>
@@ -727,12 +743,14 @@
                 return FixedIncomeHighVolumeJudgement.BreachDetails.None();
             }
 
-            if (tradedVolume >= threshold)
-            {
-                return new FixedIncomeHighVolumeJudgement.BreachDetails(true, breachPercentage, threshold, order.Market);
-            }
+            var hasBreach = tradedVolume >= threshold;
 
-            return FixedIncomeHighVolumeJudgement.BreachDetails.None();
+            return new FixedIncomeHighVolumeJudgement.BreachDetails(
+                threshold,
+                this.parameters.FixedIncomeHighVolumePercentageWindow,
+                windowVolume,
+                breachPercentage,
+                hasBreach);
         }
 
         /// <summary>
@@ -836,7 +854,7 @@
             FixedIncomeHighVolumeJudgement.BreachDetails dailyBreach,
             FixedIncomeHighVolumeJudgement.BreachDetails windowBreach)
         {
-            return !dailyBreach.HasBreach && !windowBreach.HasBreach;
+            return !dailyBreach.VolumeBreach && !windowBreach.VolumeBreach;
         }
 
         /// <summary>

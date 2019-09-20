@@ -156,6 +156,9 @@
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\45 - Judgements High Volume.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\44 - Judgements.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

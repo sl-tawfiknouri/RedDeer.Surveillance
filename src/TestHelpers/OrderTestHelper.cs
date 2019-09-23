@@ -1,4 +1,4 @@
-﻿namespace TestHelpers
+﻿namespace Domain.Core.Tests.Helpers
 {
     using System;
 
@@ -49,8 +49,8 @@
                 null,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Money.Currency("GBP"),
-                new Domain.Core.Financial.Money.Currency("GBP"),
+                new Currency("GBP"),
+                new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(price.GetValueOrDefault(20), "GBP"),

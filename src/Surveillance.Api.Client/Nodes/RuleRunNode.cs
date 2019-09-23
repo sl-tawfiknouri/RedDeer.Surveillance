@@ -1,18 +1,47 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class RuleRunNode : Node<RuleRunNode>
     {
-        public RuleRunNode(Parent parent) : base(parent) { }
+        public RuleRunNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public RuleRunNode FieldId() => AddField("id");
-        public RuleRunNode FieldCorrelationId() => AddField("correlationId");
-        public RuleRunNode FieldRuleDescription() => AddField("ruleDescription");
-        public RuleRunNode FieldRuleVersion() => AddField("ruleVersion");
-        public RuleRunNode FieldScheduleRuleStart() => AddField("scheduleRuleStart");
-        public RuleRunNode FieldScheduleRuleEnd() => AddField("scheduleRuleEnd");
-        public ProcessOperationNode FieldProcessOperation() => AddChild("processOperation", new ProcessOperationNode(this));
+        public RuleRunNode FieldCorrelationId()
+        {
+            return this.AddField("correlationId");
+        }
 
+        public RuleRunNode FieldId()
+        {
+            return this.AddField("id");
+        }
+
+        public ProcessOperationNode FieldProcessOperation()
+        {
+            return this.AddChild("processOperation", new ProcessOperationNode(this));
+        }
+
+        public RuleRunNode FieldRuleDescription()
+        {
+            return this.AddField("ruleDescription");
+        }
+
+        public RuleRunNode FieldRuleVersion()
+        {
+            return this.AddField("ruleVersion");
+        }
+
+        public RuleRunNode FieldScheduleRuleEnd()
+        {
+            return this.AddField("scheduleRuleEnd");
+        }
+
+        public RuleRunNode FieldScheduleRuleStart()
+        {
+            return this.AddField("scheduleRuleStart");
+        }
     }
 }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
-
-namespace Surveillance.Api.App.Logging
+﻿namespace Surveillance.Api.App.Logging
 {
+    using Microsoft.AspNetCore.Builder;
+
     public static class LoggingApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseRequestResponseLoggingMiddleware(this IApplicationBuilder builder)
-            => builder.UseMiddleware<RequestResponseLoggingMiddleware>();
+        {
+            return builder.UseMiddleware<RequestResponseLoggingMiddleware>();
+        }
     }
 }

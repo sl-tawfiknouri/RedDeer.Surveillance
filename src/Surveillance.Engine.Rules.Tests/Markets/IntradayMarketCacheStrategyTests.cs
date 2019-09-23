@@ -1,22 +1,20 @@
-﻿using System;
-using FakeItEasy;
-using NUnit.Framework;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Engine.Rules.Markets;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Markets
+﻿namespace Surveillance.Engine.Rules.Tests.Markets
 {
+    using System;
+
+    using FakeItEasy;
+
+    using NUnit.Framework;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Engine.Rules.Markets;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+
     [TestFixture]
     public class IntradayMarketCacheStrategyTests
     {
         private IUniverseEquityIntradayCache _cache;
-
-        [SetUp]
-        public void Setup()
-        {
-            _cache = A.Fake<IUniverseEquityIntradayCache>();
-        }
 
         [Test]
         public void Constructor_Cache_Null_Throws_Exception()
@@ -28,15 +26,20 @@ namespace Surveillance.Engine.Rules.Tests.Markets
         [Test]
         public void Query_Request_Passed_To_Underlying_Cache()
         {
-            var strategy = new IntradayMarketCacheStrategy(_cache);
+            var strategy = new IntradayMarketCacheStrategy(this._cache);
             var marketDataRequest = MarketDataRequest.Null();
 
             var result = strategy.Query(marketDataRequest);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IntradayMarketDataResponse>(result);
-            A.CallTo(() => _cache.GetForLatestDayOnly(marketDataRequest))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._cache.GetForLatestDayOnly(marketDataRequest)).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._cache = A.Fake<IUniverseEquityIntradayCache>();
         }
     }
 }

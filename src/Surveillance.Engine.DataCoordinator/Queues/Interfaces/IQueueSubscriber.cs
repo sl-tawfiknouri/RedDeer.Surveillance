@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
-
-namespace Surveillance.Engine.DataCoordinator.Queues.Interfaces
+﻿namespace Surveillance.Engine.DataCoordinator.Queues.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface IQueueSubscriber
     {
-        void Initiate();
-        void Terminate();
         Task ExecuteCoordinationMessage(string messageId, string messageBody);
+
+        void Initiate();
+
+        void Terminate();
     }
 }

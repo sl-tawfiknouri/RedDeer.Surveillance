@@ -1,14 +1,32 @@
-﻿using RedDeer.Surveillance.Api.Client.Infrastructure;
-
-namespace RedDeer.Surveillance.Api.Client.Nodes
+﻿namespace RedDeer.Surveillance.Api.Client.Nodes
 {
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+
     public class BrokerNode : Node<BrokerNode>
     {
-        public BrokerNode(Parent parent) : base(parent) { }
+        public BrokerNode(Parent parent)
+            : base(parent)
+        {
+        }
 
-        public BrokerNode FieldId() => AddField("id");
-        public BrokerNode FieldExternalId() => AddField("externalId");
-        public BrokerNode FieldName() => AddField("name");
-        public BrokerNode FieldCreatedOn() => AddField("createdOn");
+        public BrokerNode FieldCreatedOn()
+        {
+            return this.AddField("createdOn");
+        }
+
+        public BrokerNode FieldExternalId()
+        {
+            return this.AddField("externalId");
+        }
+
+        public BrokerNode FieldId()
+        {
+            return this.AddField("id");
+        }
+
+        public BrokerNode FieldName()
+        {
+            return this.AddField("name");
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Surveillance.Engine.Rules.Judgements.Interfaces
+﻿namespace Surveillance.Engine.Rules.Judgements.Interfaces
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public interface IPlacingOrdersJudgementService
     {
         void Judgement(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders);

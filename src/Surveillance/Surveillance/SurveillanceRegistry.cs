@@ -1,19 +1,22 @@
-﻿using StructureMap;
-using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
-using Surveillance.Interfaces;
-
-namespace Surveillance
+﻿namespace Surveillance
 {
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Extensions.Logging;
+
+    using StructureMap;
+
+    using Surveillance.Interfaces;
+
     public class SurveillanceRegistry : Registry
     {
         public SurveillanceRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
-            For(typeof(ILoggerFactory)).Use(loggerFactory);
-            For(typeof(ILogger<>)).Use(typeof(Logger<>));
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<IMediator>().Use<Mediator>();
+            this.For<IMediator>().Use<Mediator>();
         }
     }
 }

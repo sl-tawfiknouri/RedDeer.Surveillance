@@ -1,15 +1,17 @@
-﻿using Domain.Core.Trading.Orders;
-using SharedKernel.Files.Orders.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace SharedKernel.Files.Orders
+﻿namespace SharedKernel.Files.Orders
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Trading.Orders;
+
+    using SharedKernel.Files.Orders.Interfaces;
+
     /// <summary>
-    /// Receive a list of (OMS) versioned files
-    /// Consolidate records and return combined state
-    /// Supports monotonic integer versioning mechanism
+    ///     Receive a list of (OMS) versioned files
+    ///     Consolidate records and return combined state
+    ///     Supports monotonic integer versioning mechanism
     /// </summary>
     public class OmsVersioner : IOmsVersioner
     {
@@ -17,21 +19,15 @@ namespace SharedKernel.Files.Orders
 
         public OmsVersioner(IOmsOrderFieldCompression omsOrderFieldCompression)
         {
-            _omsOrderFieldCompression = omsOrderFieldCompression ?? throw new ArgumentNullException(nameof(omsOrderFieldCompression));
+            this._omsOrderFieldCompression = omsOrderFieldCompression
+                                             ?? throw new ArgumentNullException(nameof(omsOrderFieldCompression));
         }
 
         public IReadOnlyCollection<Order> ProjectOmsVersion(IReadOnlyCollection<Order> orders)
         {
-            if (orders == null
-                || !orders.Any())
-            {
-                return new Order[0];
-            }
+            if (orders == null || !orders.Any()) return new Order[0];
 
-            var orderVersions =
-                orders
-                .GroupBy(i => i.OrderVersionLinkId)
-                .SelectMany(OmsVersionLinkCompression)
+            var orderVersions = orders.GroupBy(i => i.OrderVersionLinkId).SelectMany(this.OmsVersionLinkCompression)
                 .ToList();
 
             return orderVersions;
@@ -39,42 +35,27 @@ namespace SharedKernel.Files.Orders
 
         private IEnumerable<Order> OmsVersionLinkCompression(IEnumerable<Order> orders)
         {
-            if (orders == null
-                || !orders.Any())
-            {
-                return new Order[0];
-            }
+            if (orders == null || !orders.Any()) return new Order[0];
 
             orders = orders.Where(i => i != null);
 
-            if (orders.Count() <= 1)
-            {
-                return orders;
-            }
+            if (orders.Count() <= 1) return orders;
 
-            if (orders.Any(y => string.IsNullOrWhiteSpace(y.OrderVersionLinkId)))
-            {
-                return orders;
-            }
+            if (orders.Any(y => string.IsNullOrWhiteSpace(y.OrderVersionLinkId))) return orders;
 
-            var keyedOrders =
-                orders
-                .Select(i =>
-                {
-                    var orderVersion = 0;
-                    int.TryParse(i.OrderVersion, out orderVersion);
+            var keyedOrders = orders.Select(
+                i =>
+                    {
+                        var orderVersion = 0;
+                        int.TryParse(i.OrderVersion, out orderVersion);
 
-                    return new OrderWithKey(orderVersion, i);
-                })
-                .OrderBy(i => i.Key)
-                .ToList();
+                        return new OrderWithKey(orderVersion, i);
+                    }).OrderBy(i => i.Key).ToList();
 
-            if (!keyedOrders.Any())
-            {
-                return orders;
-            }
+            if (!keyedOrders.Any()) return orders;
 
-            var compressedOrder = keyedOrders.Aggregate((OrderWithKey x, OrderWithKey y) => new OrderWithKey(y.Key, _omsOrderFieldCompression.Compress(x.Order, y.Order)));
+            var compressedOrder = keyedOrders.Aggregate(
+                (x, y) => new OrderWithKey(y.Key, this._omsOrderFieldCompression.Compress(x.Order, y.Order)));
 
             return new[] { compressedOrder?.Order };
         }
@@ -83,11 +64,12 @@ namespace SharedKernel.Files.Orders
         {
             public OrderWithKey(int key, Order order)
             {
-                Key = key;
-                Order = order;
+                this.Key = key;
+                this.Order = order;
             }
 
             public int Key { get; }
+
             public Order Order { get; }
         }
     }

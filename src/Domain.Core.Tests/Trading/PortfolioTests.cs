@@ -1,63 +1,27 @@
-﻿using Domain.Core.Trading;
-using FakeItEasy;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Financial.Money;
-using Domain.Core.Trading.Interfaces;
-using Domain.Core.Trading.Orders;
-
-namespace Domain.Core.Tests.Trading
+﻿namespace Domain.Core.Tests.Trading
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
+    using Domain.Core.Trading.Interfaces;
+    using Domain.Core.Trading.Orders;
+
+    using FakeItEasy;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class PortfolioTests
     {
         private IOrderLedger _orderLedger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _orderLedger = A.Fake<IOrderLedger>();
-        }
-
-        [Test]
-        public void Constructor_HasNullOrderLedger_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => new Portfolio(null));
-        }
-
-        [Test]
-        public void Add_HasNullCollection_DoesNotThrow()
-        {
-            var portfolio = BuildPortfolio();
-
-            Assert.DoesNotThrow(() => portfolio.Add((List<Order>)null));
-        }
-
-        [Test]
-        public void Add_HasNullOrder_DoesNotThrow()
-        {
-            var portfolio = BuildPortfolio();
-
-            Assert.DoesNotThrow(() => portfolio.Add((Order)null));
-        }
-
-        [Test]
-        public void Add_NewOrder_PassedToLedger()
-        {
-            var portfolio = BuildPortfolio();
-            var order = A.Fake<Order>();
-
-            portfolio.Add(order);
-
-            A.CallTo(() => _orderLedger.Add(A<Order>.Ignored)).MustHaveHappenedOnceExactly();
-        }
-
         [Test]
         public void Accounts_ForNoOrders_YieldsZerodFigures()
         {
-            var portfolio = BuildPortfolioConcrete();
+            var portfolio = this.BuildPortfolioConcrete();
 
             var profitAndLoss = portfolio.ProfitAndLoss(DateTime.UtcNow, TimeSpan.FromMinutes(1));
 
@@ -75,7 +39,7 @@ namespace Domain.Core.Tests.Trading
         [Test]
         public void Accounts_ForTwoOrders_Yields200Profits()
         {
-            var portfolio = BuildPortfolioConcrete();
+            var portfolio = this.BuildPortfolioConcrete();
             var startDate = new DateTime(2018, 01, 01);
 
             var order1 = A.Fake<Order>();
@@ -111,7 +75,7 @@ namespace Domain.Core.Tests.Trading
         [Test]
         public void Accounts_ForTwoOrders_YieldsZerodFigures()
         {
-            var portfolio = BuildPortfolioConcrete();
+            var portfolio = this.BuildPortfolioConcrete();
             var startDate = new DateTime(2018, 01, 01);
 
             var order1 = A.Fake<Order>();
@@ -144,9 +108,48 @@ namespace Domain.Core.Tests.Trading
             Assert.AreEqual(orderProfitAndLoss.Profits().Value, 0);
         }
 
+        [Test]
+        public void Add_HasNullCollection_DoesNotThrow()
+        {
+            var portfolio = this.BuildPortfolio();
+
+            Assert.DoesNotThrow(() => portfolio.Add((List<Order>)null));
+        }
+
+        [Test]
+        public void Add_HasNullOrder_DoesNotThrow()
+        {
+            var portfolio = this.BuildPortfolio();
+
+            Assert.DoesNotThrow(() => portfolio.Add((Order)null));
+        }
+
+        [Test]
+        public void Add_NewOrder_PassedToLedger()
+        {
+            var portfolio = this.BuildPortfolio();
+            var order = A.Fake<Order>();
+
+            portfolio.Add(order);
+
+            A.CallTo(() => this._orderLedger.Add(A<Order>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void Constructor_HasNullOrderLedger_ThrowsException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Portfolio(null));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._orderLedger = A.Fake<IOrderLedger>();
+        }
+
         private Portfolio BuildPortfolio()
         {
-            return new Portfolio(_orderLedger);
+            return new Portfolio(this._orderLedger);
         }
 
         private Portfolio BuildPortfolioConcrete()

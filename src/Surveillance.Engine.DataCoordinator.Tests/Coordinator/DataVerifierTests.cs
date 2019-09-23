@@ -1,55 +1,63 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Surveillance.Engine.DataCoordinator.Coordinator;
-
-namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
+﻿namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Coordinator;
+
     [TestFixture]
     public class DataVerifierTests
     {
-        private IOrdersRepository _ordersRepository;
-        private IOrderAllocationRepository _orderAllocationRepository;
         private ILogger<DataVerifier> _logger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _ordersRepository = A.Fake<IOrdersRepository>();
-            _orderAllocationRepository = A.Fake<IOrderAllocationRepository>();
-            _logger = new NullLogger<DataVerifier>();
-        }
+        private IOrderAllocationRepository _orderAllocationRepository;
+
+        private IOrdersRepository _ordersRepository;
 
         [Test]
-        public void Constructor_OrdersRepository_Null_Throws_Exception()
+        public void AnalyseFileId_Null_Message_Returns()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataVerifier(null, _orderAllocationRepository, _logger));
-        }
+            var coordinator = new DataVerifier(this._ordersRepository, this._orderAllocationRepository, this._logger);
 
-        [Test]
-        public void Constructor_OrderAllocationsRepository_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataVerifier(_ordersRepository, null, _logger));
+            Assert.DoesNotThrow(() => coordinator.Scan().Wait());
         }
 
         [Test]
         public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataVerifier(_ordersRepository, _orderAllocationRepository, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new DataVerifier(this._ordersRepository, this._orderAllocationRepository, null));
         }
 
         [Test]
-        public void AnalyseFileId_Null_Message_Returns()
+        public void Constructor_OrderAllocationsRepository_Null_Throws_Exception()
         {
-            var coordinator = new DataVerifier(_ordersRepository, _orderAllocationRepository, _logger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new DataVerifier(this._ordersRepository, null, this._logger));
+        }
 
-            Assert.DoesNotThrow(() => coordinator.Scan().Wait());
+        [Test]
+        public void Constructor_OrdersRepository_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new DataVerifier(null, this._orderAllocationRepository, this._logger));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._ordersRepository = A.Fake<IOrdersRepository>();
+            this._orderAllocationRepository = A.Fake<IOrderAllocationRepository>();
+            this._logger = new NullLogger<DataVerifier>();
         }
     }
 }

@@ -2,10 +2,14 @@
 {
     public interface IRampingStrategySummaryPanel
     {
-        IRampingStrategySummary OneDayAnalysis { get; }
-        IRampingStrategySummary FiveDayAnalysis { get; }
         IRampingStrategySummary FifteenDayAnalysis { get; }
+
+        IRampingStrategySummary FiveDayAnalysis { get; }
+
+        IRampingStrategySummary OneDayAnalysis { get; }
+
         IRampingStrategySummary ThirtyDayAnalysis { get; }
+
         bool HasRampingStrategy();
     }
 }

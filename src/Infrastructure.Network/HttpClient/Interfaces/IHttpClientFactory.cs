@@ -1,8 +1,11 @@
 ﻿namespace Infrastructure.Network.HttpClient.Interfaces
 {
+    using System.Net.Http;
+
     public interface IHttpClientFactory
     {
-        System.Net.Http.HttpClient ClientServiceHttpClient(string clientServiceUrl, string apiAccessToken);
-        System.Net.Http.HttpClient GenericHttpClient(string url);
+        HttpClient ClientServiceHttpClient(string clientServiceUrl, string apiAccessToken);
+
+        HttpClient GenericHttpClient(string url);
     }
 }

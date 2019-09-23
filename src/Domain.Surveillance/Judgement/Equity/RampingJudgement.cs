@@ -1,12 +1,12 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Domain.Surveillance.Judgement.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public class RampingJudgement : IRampingJudgement
     {
         public RampingJudgement(decimal? autoCorrelationCoefficient)
         {
-            AutoCorrelationCoefficient = autoCorrelationCoefficient;
+            this.AutoCorrelationCoefficient = autoCorrelationCoefficient;
         }
 
         public decimal? AutoCorrelationCoefficient { get; }

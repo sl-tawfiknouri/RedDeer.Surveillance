@@ -2,36 +2,32 @@
 {
     public class Market
     {
-        public Market(
-            string id,
-            string marketIdentifierCode,
-            string name,
-            MarketTypes type)
+        public Market(string id, string marketIdentifierCode, string name, MarketTypes type)
         {
-            Id = id ?? string.Empty;
-            MarketIdentifierCode = marketIdentifierCode;
-            Name = name;
-            Type = type;
+            this.Id = id ?? string.Empty;
+            this.MarketIdentifierCode = marketIdentifierCode ?? string.Empty;
+            this.Name = name ?? string.Empty;
+            this.Type = type;
         }
 
         /// <summary>
-        /// MIC
+        ///     Primary Key
+        /// </summary>
+        public string Id { get; }
+
+        /// <summary>
+        ///     MIC
         /// </summary>
         public string MarketIdentifierCode { get; }
 
         /// <summary>
-        /// Colloquial name for the market
+        ///     Colloquial name for the market
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// The market category
+        ///     The market category
         /// </summary>
         public MarketTypes Type { get; }
-
-        /// <summary>
-        /// Primary Key
-        /// </summary>
-        public string Id { get; }
     }
 }

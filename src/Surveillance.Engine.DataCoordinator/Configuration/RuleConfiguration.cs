@@ -1,10 +1,11 @@
-﻿using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator.Configuration
+﻿namespace Surveillance.Engine.DataCoordinator.Configuration
 {
+    using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+
     public class RuleConfiguration : IRuleConfiguration
     {
-        public bool? AutoScheduleRules { get; set; }
         public bool? AlwaysRequireAllocations { get; set; }
+
+        public bool? AutoScheduleRules { get; set; }
     }
 }

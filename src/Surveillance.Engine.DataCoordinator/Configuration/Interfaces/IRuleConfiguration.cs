@@ -2,11 +2,11 @@
 {
     public interface IRuleConfiguration
     {
+        bool? AlwaysRequireAllocations { get; set; }
+
         /// <summary>
-        /// Auto schedule rules
+        ///     Auto schedule rules
         /// </summary>
         bool? AutoScheduleRules { get; set; }
-
-        bool? AlwaysRequireAllocations { get; set; }
     }
 }

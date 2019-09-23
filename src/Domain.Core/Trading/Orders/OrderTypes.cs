@@ -3,7 +3,9 @@
     public enum OrderTypes
     {
         NONE,
+
         MARKET,
+
         LIMIT
     }
 }

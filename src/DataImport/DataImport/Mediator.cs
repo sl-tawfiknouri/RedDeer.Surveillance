@@ -1,24 +1,32 @@
-﻿using System;
-using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DataImport.Disk_IO.EtlFile.Interfaces;
-using DataImport.Disk_IO.Interfaces;
-using DataImport.File_Scanner.Interfaces;
-using DataImport.Interfaces;
-using DataImport.S3_IO.Interfaces;
-using DataImport.Services.Interfaces;
-using Microsoft.Extensions.Logging;
-
-namespace DataImport
+﻿namespace DataImport
 {
+    using System;
+
+    using DataImport.Disk_IO.AllocationFile.Interfaces;
+    using DataImport.Disk_IO.EtlFile.Interfaces;
+    using DataImport.Disk_IO.Interfaces;
+    using DataImport.File_Scanner.Interfaces;
+    using DataImport.Interfaces;
+    using DataImport.S3_IO.Interfaces;
+    using DataImport.Services.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
     public class Mediator : IMediator
     {
-        private readonly IEnrichmentService _enrichmentService;
         private readonly IUploadAllocationFileMonitor _allocationFileMonitor;
-        private readonly IUploadTradeFileMonitor _tradeFileMonitor;
+
+        private readonly IEnrichmentService _enrichmentService;
+
         private readonly IUploadEtlFileMonitor _etlFileMonitor;
-        private readonly IS3FileUploadMonitoringProcess _s3FileUploadProcess;
+
         private readonly IFileScannerScheduler _fileScanner;
+
         private readonly ILogger _logger;
+
+        private readonly IS3FileUploadMonitoringProcess _s3FileUploadProcess;
+
+        private readonly IUploadTradeFileMonitor _tradeFileMonitor;
 
         public Mediator(
             IEnrichmentService enrichmentService,
@@ -29,51 +37,44 @@ namespace DataImport
             IFileScannerScheduler fileScanner,
             ILogger<Mediator> logger)
         {
-            _enrichmentService =
-                enrichmentService
-                ?? throw new ArgumentNullException(nameof(enrichmentService));
+            this._enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
 
-            _allocationFileMonitor =
-                allocationFileMonitor
-                ?? throw new ArgumentNullException(nameof(allocationFileMonitor));
+            this._allocationFileMonitor =
+                allocationFileMonitor ?? throw new ArgumentNullException(nameof(allocationFileMonitor));
 
-            _tradeFileMonitor =
-                tradeFileMonitor
-                ?? throw new ArgumentNullException(nameof(tradeFileMonitor));
+            this._tradeFileMonitor = tradeFileMonitor ?? throw new ArgumentNullException(nameof(tradeFileMonitor));
 
-            _etlFileMonitor =
-                etlFileMonitor
-                ?? throw new ArgumentNullException(nameof(etlFileMonitor));
+            this._etlFileMonitor = etlFileMonitor ?? throw new ArgumentNullException(nameof(etlFileMonitor));
 
-            _s3FileUploadProcess =
-                s3FileUploadProcess
-                ?? throw new ArgumentNullException(nameof(s3FileUploadProcess));
+            this._s3FileUploadProcess =
+                s3FileUploadProcess ?? throw new ArgumentNullException(nameof(s3FileUploadProcess));
 
-            _fileScanner =
-                fileScanner
-                ?? throw new ArgumentNullException(nameof(fileScanner));
+            this._fileScanner = fileScanner ?? throw new ArgumentNullException(nameof(fileScanner));
 
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
             try
             {
-                _logger.LogInformation("Initiating data import in mediator");
+                this._logger.LogInformation("Initiating data import in mediator");
 
-                _enrichmentService.Initialise();
-                _tradeFileMonitor.Initiate();
-                _allocationFileMonitor.Initiate();
-                _etlFileMonitor.Initiate();
-                _fileScanner.Initialise();
-                _s3FileUploadProcess.Initialise(_allocationFileMonitor, _tradeFileMonitor, _etlFileMonitor);
+                this._enrichmentService.Initialise();
+                this._tradeFileMonitor.Initiate();
+                this._allocationFileMonitor.Initiate();
+                this._etlFileMonitor.Initiate();
+                this._fileScanner.Initialise();
+                this._s3FileUploadProcess.Initialise(
+                    this._allocationFileMonitor,
+                    this._tradeFileMonitor,
+                    this._etlFileMonitor);
 
-                _logger.LogInformation("Completed initiating data import in mediator");
+                this._logger.LogInformation("Completed initiating data import in mediator");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Mediator exception {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError($"Mediator exception {e.Message} - {e?.InnerException?.Message}");
             }
         }
     }

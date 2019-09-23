@@ -1,7 +1,7 @@
-﻿using DataSynchroniser.Api.Interfaces;
-
-namespace DataSynchroniser.Api.Markit.Interfaces
+﻿namespace DataSynchroniser.Api.Markit.Interfaces
 {
+    using DataSynchroniser.Api.Interfaces;
+
     public interface IMarkitDataSynchroniser : IDataSynchroniser
     {
     }

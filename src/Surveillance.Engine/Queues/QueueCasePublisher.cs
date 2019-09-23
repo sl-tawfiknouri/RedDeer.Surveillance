@@ -1,20 +1,27 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService;
-using RedDeer.Contracts.SurveillanceService.Interfaces;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-
-namespace Surveillance.Engine.Rules.Queues
+﻿namespace Surveillance.Engine.Rules.Queues
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService;
+    using RedDeer.Contracts.SurveillanceService.Interfaces;
+
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+
     public class QueueCasePublisher : IQueueCasePublisher
     {
-        private readonly IMessageBusSerialiser _serialiser;
-        private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
+
+        private readonly IAwsQueueClient _awsQueueClient;
+
         private readonly ILogger<QueueCasePublisher> _logger;
+
+        private readonly IMessageBusSerialiser _serialiser;
 
         public QueueCasePublisher(
             IMessageBusSerialiser serialiser,
@@ -22,32 +29,37 @@ namespace Surveillance.Engine.Rules.Queues
             IAwsConfiguration awsConfiguration,
             ILogger<QueueCasePublisher> logger)
         {
-            _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
+            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Send(CaseMessage message)
         {
             if (message == null)
             {
-                _logger.LogWarning("tried to send a null case message. Did not send to AWS.");
+                this._logger.LogWarning("tried to send a null case message. Did not send to AWS.");
                 return;
             }
 
-            var caseMessage = _serialiser.Serialise(message);
+            var caseMessage = this._serialiser.Serialise(message);
             var messageBusCts = new CancellationTokenSource();
 
             try
             {
-                _logger.LogInformation($"Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
-                  await _awsQueueClient.SendToQueue(_awsConfiguration.CaseMessageQueueName, caseMessage, messageBusCts.Token);
-                _logger.LogInformation($"Send | now dispatched case with id {message.RuleBreachId}");
+                this._logger.LogInformation($"Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
+                await this._awsQueueClient.SendToQueue(
+                    this._awsConfiguration.CaseMessageQueueName,
+                    caseMessage,
+                    messageBusCts.Token);
+                this._logger.LogInformation($"Send | now dispatched case with id {message.RuleBreachId}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}", e);
+                this._logger.LogError(
+                    $"Exception sending message '{caseMessage}' to bus on queue {this._awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}",
+                    e);
             }
         }
     }

@@ -1,49 +1,54 @@
-﻿using System;
-using Domain.Surveillance.Scheduling;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Subscribers
+﻿namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
+
     public class UniversePercentageCompletionLogger : IUniversePercentageCompletionLogger
     {
         private readonly IUniversePercentageOfEventCompletionLogger _percentageOfEventsLogger;
+
         private readonly IUniversePercentageOfTimeCompletionLogger _percentOfTimeLogger;
 
         public UniversePercentageCompletionLogger(
             IUniversePercentageOfEventCompletionLogger percentageOfEventsLogger,
             IUniversePercentageOfTimeCompletionLogger percentOfTimeLogger)
         {
-            _percentageOfEventsLogger = percentageOfEventsLogger ?? throw new ArgumentNullException(nameof(percentageOfEventsLogger));
-            _percentOfTimeLogger = percentOfTimeLogger ?? throw new ArgumentNullException(nameof(percentOfTimeLogger));
-        }
-
-        public void InitiateTimeLogger(ScheduledExecution execution)
-        {
-            _percentOfTimeLogger?.InitiateTimeLogger(execution);
+            this._percentageOfEventsLogger = percentageOfEventsLogger
+                                             ?? throw new ArgumentNullException(nameof(percentageOfEventsLogger));
+            this._percentOfTimeLogger =
+                percentOfTimeLogger ?? throw new ArgumentNullException(nameof(percentOfTimeLogger));
         }
 
         public void InitiateEventLogger(IUniverse universe)
         {
-            _percentageOfEventsLogger?.InitiateEventLogger(universe);
+            this._percentageOfEventsLogger?.InitiateEventLogger(universe);
+        }
+
+        public void InitiateTimeLogger(ScheduledExecution execution)
+        {
+            this._percentOfTimeLogger?.InitiateTimeLogger(execution);
         }
 
         public void OnCompleted()
         {
-            _percentageOfEventsLogger.OnCompleted();
-            _percentOfTimeLogger.OnCompleted();
+            this._percentageOfEventsLogger.OnCompleted();
+            this._percentOfTimeLogger.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _percentageOfEventsLogger.OnError(error);
-            _percentOfTimeLogger.OnError(error);
+            this._percentageOfEventsLogger.OnError(error);
+            this._percentOfTimeLogger.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
-            _percentageOfEventsLogger.OnNext(value);
-            _percentOfTimeLogger.OnNext(value);
+            this._percentageOfEventsLogger.OnNext(value);
+            this._percentOfTimeLogger.OnNext(value);
         }
     }
 }

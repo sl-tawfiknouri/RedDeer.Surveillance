@@ -1,50 +1,57 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
+﻿namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers;
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+
     [TestFixture]
     public class UniverseDataRequestsSubscriberFactoryTests
     {
-        private IQueueDataSynchroniserRequestPublisher _publisher;
-        private ILogger<UniverseDataRequestsSubscriber> _logger;
         private ISystemProcessOperationContext _ctx;
 
-        [SetUp]
-        public void Setup()
-        {
-            _publisher = A.Fake<IQueueDataSynchroniserRequestPublisher>();
-            _logger = A.Fake<ILogger<UniverseDataRequestsSubscriber>>();
-            _ctx = A.Fake<ISystemProcessOperationContext>();
-        }
+        private ILogger<UniverseDataRequestsSubscriber> _logger;
+
+        private IQueueDataSynchroniserRequestPublisher _publisher;
 
         [Test]
-        public void Constructor_Considers_Null_Message_Sender_To_Be_Throws_Exception()
+        public void Build_Returns_Non_Null()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriberFactory(null, _logger));
+            var factory = new UniverseDataRequestsSubscriberFactory(this._publisher, this._logger);
+
+            var result = factory.Build(this._ctx);
+
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void Constructor_Considers_Null_Logger_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriberFactory(_publisher, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new UniverseDataRequestsSubscriberFactory(this._publisher, null));
         }
 
         [Test]
-        public void Build_Returns_Non_Null()
+        public void Constructor_Considers_Null_Message_Sender_To_Be_Throws_Exception()
         {
-            var factory = new UniverseDataRequestsSubscriberFactory(_publisher, _logger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriberFactory(null, this._logger));
+        }
 
-            var result = factory.Build(_ctx);
-
-            Assert.IsNotNull(result);
+        [SetUp]
+        public void Setup()
+        {
+            this._publisher = A.Fake<IQueueDataSynchroniserRequestPublisher>();
+            this._logger = A.Fake<ILogger<UniverseDataRequestsSubscriber>>();
+            this._ctx = A.Fake<ISystemProcessOperationContext>();
         }
     }
 }

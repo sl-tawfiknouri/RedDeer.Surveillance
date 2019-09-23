@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Core.Financial.Assets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Core.Financial.Assets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+
     public class PlacingOrderWithNoIntentToExecuteRuleRuleBreach : IPlacingOrdersWithNoIntentToExecuteRuleBreach
     {
         public PlacingOrderWithNoIntentToExecuteRuleRuleBreach(
-            TimeSpan window, 
+            TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
             IFactorValue factorValue,
@@ -26,72 +28,92 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             string caseTitle,
             DateTime universeDateTime)
         {
-            Window = window;
-            Trades = trades;
-            Security = security;
+            this.Window = window;
+            this.Trades = trades;
+            this.Security = security;
 
-            FactorValue = factorValue;
-            Parameters = parameters;
+            this.FactorValue = factorValue;
+            this.Parameters = parameters;
 
-            MeanPrice = meanPrice;
-            StandardDeviationPrice = sdPrice;
-            ProbabilityForOrders = probabilityForOrders ?? new List<ProbabilityOfExecution>();
+            this.MeanPrice = meanPrice;
+            this.StandardDeviationPrice = sdPrice;
+            this.ProbabilityForOrders = probabilityForOrders ?? new List<ProbabilityOfExecution>();
 
-            RuleParameterId = parameters.Id;
-            SystemOperationId = ctx.Id();
-            CorrelationId = ctx.CorrelationId();
-            RuleParameters = parameters;
-            Description = description ?? string.Empty;
-            CaseTitle = caseTitle ?? string.Empty;
-            UniverseDateTime = universeDateTime;
+            this.RuleParameterId = parameters.Id;
+            this.SystemOperationId = ctx.Id();
+            this.CorrelationId = ctx.CorrelationId();
+            this.RuleParameters = parameters;
+            this.Description = description ?? string.Empty;
+            this.CaseTitle = caseTitle ?? string.Empty;
+            this.UniverseDateTime = universeDateTime;
         }
 
-        public TimeSpan Window { get; }
-        public ITradePosition Trades { get; }
-        public FinancialInstrument Security { get; }
-        public string RuleParameterId { get; set; }
-        public string SystemOperationId { get; set; }
-        public string CorrelationId { get; set; }
-        public decimal MeanPrice { get; set; }
-        public decimal StandardDeviationPrice { get; set; }
-        public IFactorValue FactorValue { get; set; }
-        public IRuleParameter RuleParameters { get; set; }
-        public DateTime UniverseDateTime { get; set; }
-        public string Description { get; set; }
         public string CaseTitle { get; set; }
-        public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
-        public IReadOnlyCollection<ProbabilityOfExecution> ProbabilityForOrders { get; set; }
+
+        public string CorrelationId { get; set; }
+
+        public string Description { get; set; }
+
+        public IFactorValue FactorValue { get; set; }
 
         public bool IsBackTestRun { get; set; }
+
+        public decimal MeanPrice { get; set; }
+
+        public IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters Parameters { get; set; }
+
+        public IReadOnlyCollection<ProbabilityOfExecution> ProbabilityForOrders { get; set; }
+
+        public string RuleParameterId { get; set; }
+
+        public IRuleParameter RuleParameters { get; set; }
+
+        public FinancialInstrument Security { get; }
+
+        public decimal StandardDeviationPrice { get; set; }
+
+        public string SystemOperationId { get; set; }
+
+        public ITradePosition Trades { get; }
+
+        public DateTime UniverseDateTime { get; set; }
+
+        public TimeSpan Window { get; }
 
         public class ProbabilityOfExecution
         {
             public ProbabilityOfExecution(
-                string orderId, 
+                string orderId,
                 decimal sd,
                 decimal mean,
                 decimal observed,
-                decimal probabilityNormal, 
+                decimal probabilityNormal,
                 decimal sigma)
             {
-                OrderId = orderId;
-                Sd = sd;
-                Mean = mean;
-                Observed = observed;
-                ProbabilityNormal = probabilityNormal;
-                Sigma = sigma;
+                this.OrderId = orderId;
+                this.Sd = sd;
+                this.Mean = mean;
+                this.Observed = observed;
+                this.ProbabilityNormal = probabilityNormal;
+                this.Sigma = sigma;
             }
 
-            public string OrderId { get; set; }
-            public decimal Sd { get; set; }
             public decimal Mean { get; set; }
+
             public decimal Observed { get; set; }
+
+            public string OrderId { get; set; }
+
             public decimal ProbabilityNormal { get; set; }
+
+            public decimal Sd { get; set; }
+
             public decimal Sigma { get; set; }
 
             public override string ToString()
             {
-                return $"Order: {OrderId} had a probability of execution of :{ProbabilityNormal * 100}% Sd: {Sd} Mean: {Mean} Value(Z): {Observed} Sigma: {Sigma}";
+                return
+                    $"Order: {this.OrderId} had a probability of execution of :{this.ProbabilityNormal * 100}% Sd: {this.Sd} Mean: {this.Mean} Value(Z): {this.Observed} Sigma: {this.Sigma}";
             }
         }
     }

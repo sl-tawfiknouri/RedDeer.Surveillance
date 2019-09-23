@@ -1,26 +1,14 @@
-﻿using System;
-using Domain.Core.Dates;
-using NUnit.Framework;
-
-namespace Domain.Core.Tests.Dates
+﻿namespace Domain.Core.Tests.Dates
 {
+    using System;
+
+    using Domain.Core.Dates;
+
+    using NUnit.Framework;
+
     [TestFixture]
     public class DateRangeTests
     {
-        [Test]
-        public void Does_Length_Return_Expected_TimeSpan()
-        {
-            var dr = new DateRange(DateTime.Parse("2018/01/01"), DateTime.Parse("2018/01/02"));
-
-            Assert.AreEqual(dr.Length, TimeSpan.FromDays(1));
-        }
-
-        [Test]
-        public void Does_Length_Return_Expected_TimeSpan_Bad_Order()
-        {
-            Assert.Throws<ArgumentNullException>(() => new DateRange(DateTime.Parse("2018/01/03"), DateTime.Parse("2018/01/02")));
-        }
-
         [Test]
         public void Does_Intersection_With_Intersection_Return_True()
         {
@@ -37,6 +25,24 @@ namespace Domain.Core.Tests.Dates
             var dr2 = new DateRange(DateTime.Parse("2018/01/01"), DateTime.Parse("2018/01/02"));
 
             Assert.IsTrue(dr2.Intersection(dr1));
+        }
+
+        [Test]
+        public void Does_Intersection_With_Non_Intersecting_Dates_Inverted_Return_False()
+        {
+            var dr1 = new DateRange(DateTime.Parse("2018/01/01"), DateTime.Parse("2018/01/10"));
+            var dr2 = new DateRange(DateTime.Parse("2017/01/02"), DateTime.Parse("2017/01/02"));
+
+            Assert.IsFalse(dr1.Intersection(dr2));
+        }
+
+        [Test]
+        public void Does_Intersection_With_Non_Intersecting_Dates_Return_False()
+        {
+            var dr1 = new DateRange(DateTime.Parse("2017/01/01"), DateTime.Parse("2017/01/10"));
+            var dr2 = new DateRange(DateTime.Parse("2018/01/02"), DateTime.Parse("2018/01/02"));
+
+            Assert.IsFalse(dr1.Intersection(dr2));
         }
 
         [Test]
@@ -58,21 +64,18 @@ namespace Domain.Core.Tests.Dates
         }
 
         [Test]
-        public void Does_Intersection_With_Non_Intersecting_Dates_Return_False()
+        public void Does_Length_Return_Expected_TimeSpan()
         {
-            var dr1 = new DateRange(DateTime.Parse("2017/01/01"), DateTime.Parse("2017/01/10"));
-            var dr2 = new DateRange(DateTime.Parse("2018/01/02"), DateTime.Parse("2018/01/02"));
+            var dr = new DateRange(DateTime.Parse("2018/01/01"), DateTime.Parse("2018/01/02"));
 
-            Assert.IsFalse(dr1.Intersection(dr2));
+            Assert.AreEqual(dr.Length, TimeSpan.FromDays(1));
         }
 
         [Test]
-        public void Does_Intersection_With_Non_Intersecting_Dates_Inverted_Return_False()
+        public void Does_Length_Return_Expected_TimeSpan_Bad_Order()
         {
-            var dr1 = new DateRange(DateTime.Parse("2018/01/01"), DateTime.Parse("2018/01/10"));
-            var dr2 = new DateRange(DateTime.Parse("2017/01/02"), DateTime.Parse("2017/01/02"));
-
-            Assert.IsFalse(dr1.Intersection(dr2));
+            Assert.Throws<ArgumentNullException>(
+                () => new DateRange(DateTime.Parse("2018/01/03"), DateTime.Parse("2018/01/02")));
         }
     }
 }

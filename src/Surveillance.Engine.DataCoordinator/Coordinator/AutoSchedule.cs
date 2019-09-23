@@ -1,23 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Surveillance.Rules;
-using Domain.Surveillance.Rules.Interfaces;
-using Domain.Surveillance.Scheduling;
-using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
-using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator.Coordinator
+﻿namespace Surveillance.Engine.DataCoordinator.Coordinator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Domain.Surveillance.Rules.Interfaces;
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+
     public class AutoSchedule : IAutoSchedule
     {
-        private readonly IOrdersRepository _ordersRepository;
-        private readonly IQueueScheduleRulePublisher _publisher;
         private readonly IActiveRulesService _activeRulesService;
+
         private readonly ILogger<AutoSchedule> _logger;
+
+        private readonly IOrdersRepository _ordersRepository;
+
+        private readonly IQueueScheduleRulePublisher _publisher;
 
         public AutoSchedule(
             IOrdersRepository ordersRepository,
@@ -25,25 +30,25 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             IActiveRulesService activeRulesService,
             ILogger<AutoSchedule> logger)
         {
-            _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
-            _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-            _activeRulesService = activeRulesService ?? throw new ArgumentNullException(nameof(activeRulesService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            this._publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
+            this._activeRulesService =
+                activeRulesService ?? throw new ArgumentNullException(nameof(activeRulesService));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Scan()
         {
             try
             {
-                _logger?.LogInformation($"about to scan for auto scheduling.");
+                this._logger?.LogInformation("about to scan for auto scheduling.");
 
-                var orders = await _ordersRepository.LiveUnscheduledOrders();
+                var orders = await this._ordersRepository.LiveUnscheduledOrders();
                 var filteredOrders = orders?.Where(i => i?.PlacedDate != null)?.ToList();
 
-                if (filteredOrders == null
-                    || !filteredOrders.Any())
+                if (filteredOrders == null || !filteredOrders.Any())
                 {
-                    _logger?.LogInformation($"found no orders requiring scheduling. Exiting.");
+                    this._logger?.LogInformation("found no orders requiring scheduling. Exiting.");
                     return;
                 }
 
@@ -52,50 +57,44 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
                 if (initiationDate == null)
                 {
-                    _logger?.LogInformation($"found no orders requiring scheduling with valid date sets. Exiting.");
+                    this._logger?.LogInformation("found no orders requiring scheduling with valid date sets. Exiting.");
                     return;
                 }
 
-                _logger?.LogInformation($"found orders requiring scheduling. Constructing schedule.");
-                var schedule = BuildSchedule(initiationDate.Value, terminationDate);
+                this._logger?.LogInformation("found orders requiring scheduling. Constructing schedule.");
+                var schedule = this.BuildSchedule(initiationDate.Value, terminationDate);
 
-                _logger?.LogInformation($"about to dispatch schedule to the queue");
-                await _publisher.Send(schedule);
-                _logger?.LogInformation($"finished dispatched schedule to the queue");
+                this._logger?.LogInformation("about to dispatch schedule to the queue");
+                await this._publisher.Send(schedule);
+                this._logger?.LogInformation("finished dispatched schedule to the queue");
 
-                await _ordersRepository.SetOrdersScheduled(filteredOrders);
-                _logger?.LogInformation($"finished updating orders with scheduled status. Completing.");
+                await this._ordersRepository.SetOrdersScheduled(filteredOrders);
+                this._logger?.LogInformation("finished updating orders with scheduled status. Completing.");
             }
             catch (Exception e)
             {
-                _logger?.LogError($"exception {e.Message}");
+                this._logger?.LogError($"exception {e.Message}");
             }
         }
 
         private ScheduledExecution BuildSchedule(DateTime initiation, DateTime termination)
         {
-            if (initiation > termination)
-            {
-                initiation = termination;
-            }
+            if (initiation > termination) initiation = termination;
 
             var schedule = new ScheduledExecution
-            {
-                Rules = GetAllRules(),
-                TimeSeriesInitiation = initiation,
-                TimeSeriesTermination = termination
-            };
+                               {
+                                   Rules = this.GetAllRules(),
+                                   TimeSeriesInitiation = initiation,
+                                   TimeSeriesTermination = termination
+                               };
 
             return schedule;
         }
 
         private List<RuleIdentifier> GetAllRules()
         {
-            return 
-                _activeRulesService
-                    .EnabledRules()
-                    .Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] })
-                    .ToList();
+            return this._activeRulesService.EnabledRules()
+                .Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] }).ToList();
         }
     }
 }

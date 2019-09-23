@@ -1,57 +1,64 @@
-﻿using FakeItEasy;
-using Microsoft.Extensions.Logging.Abstractions;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.Universe;
-using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.BMLL;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Specflow.Tests.StepDefinitions.Universe;
+
+    using TechTalk.SpecFlow;
+    using TechTalk.SpecFlow.Assist;
+
     [Binding]
     public class CancelledOrdersSteps
     {
-        private readonly ScenarioContext _scenarioContext;
-        private readonly UniverseSelectionState _universeSelectionState;
-
         private readonly IUniverseAlertStream _alertStream;
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
 
-        private IUniverseEquityOrderFilterService _universeOrderFilterService;
-        private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private readonly UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        private readonly ScenarioContext _scenarioContext;
+
+        private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
+
+        private readonly UniverseSelectionState _universeSelectionState;
 
         private CancelledOrderRuleEquitiesParameters _parameters;
 
-        public CancelledOrdersSteps(
-            ScenarioContext scenarioContext,
-            UniverseSelectionState universeSelectionState)
+        public CancelledOrdersSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {
-            _scenarioContext = scenarioContext;
-            _universeSelectionState = universeSelectionState;
+            this._scenarioContext = scenarioContext;
+            this._universeSelectionState = universeSelectionState;
 
-            _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            _alertStream = A.Fake<IUniverseAlertStream>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
 
-            _equityRuleCancelledOrderFactory = new EquityRuleCancelledOrderFactory(
-                _universeOrderFilterService,
-                _interdayUniverseMarketCacheFactory,
+            this._equityRuleCancelledOrderFactory = new EquityRuleCancelledOrderFactory(
+                this._universeOrderFilterService,
+                this._interdayUniverseMarketCacheFactory,
                 new NullLogger<CancelledOrderRule>(),
                 new NullLogger<TradingHistoryStack>());
         }
@@ -61,42 +68,42 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
         {
             if (cancelledOrderParameters.RowCount != 1)
             {
-                _scenarioContext.Pending();
+                this._scenarioContext.Pending();
                 return;
             }
 
             var parameters = cancelledOrderParameters.CreateInstance<CancelledOrderApiParameters>();
 
-            _parameters = new CancelledOrderRuleEquitiesParameters(
+            this._parameters = new CancelledOrderRuleEquitiesParameters(
                 "0",
-                new System.TimeSpan(parameters.WindowHours, 0, 0),
+                new TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.CancelledOrderPercentagePositionThreshold,
                 parameters.CancelledOrderCountPercentageThreshold,
                 parameters.MinimumNumberOfTradesToApplyRuleTo,
                 parameters.MaximumNumberOfTradesToApplyRuleTo,
-                new []{ ClientOrganisationalFactors.None},
-                true, 
+                new[] { ClientOrganisationalFactors.None },
+                true,
                 true);
-        }
-
-        [When(@"I run the cancelled orders rule")]
-        public void WhenIRunTheCancelledOrderRule()
-        {
-            var cancelledOrders =
-                _equityRuleCancelledOrderFactory.Build(
-                    _parameters,
-                    _ruleCtx,
-                    _alertStream,
-                    RuleRunMode.ForceRun);
-
-            foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
-                cancelledOrders.OnNext(universeEvent);
         }
 
         [Then(@"I will have (.*) cancelled orders alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A.CallTo(() => this._alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+        }
+
+        [When(@"I run the cancelled orders rule")]
+        public void WhenIRunTheCancelledOrderRule()
+        {
+            var cancelledOrders = this._equityRuleCancelledOrderFactory.Build(
+                this._parameters,
+                this._ruleCtx,
+                this._alertStream,
+                RuleRunMode.ForceRun);
+
+            foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
+                cancelledOrders.OnNext(universeEvent);
         }
     }
 }

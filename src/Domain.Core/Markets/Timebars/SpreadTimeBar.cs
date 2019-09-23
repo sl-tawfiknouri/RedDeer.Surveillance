@@ -1,41 +1,37 @@
-﻿using Domain.Core.Financial.Money;
-
-namespace Domain.Core.Markets.Timebars
+﻿namespace Domain.Core.Markets.Timebars
 {
+    using Domain.Core.Financial.Money;
+
     /// <summary>
-    /// bid / ask / market clearing price
+    ///     bid / ask / market clearing price
     /// </summary>
     public struct SpreadTimeBar
     {
-        public SpreadTimeBar(
-            Money bid,
-            Money ask,
-            Money price,
-            Volume volume)
+        public SpreadTimeBar(Money bid, Money ask, Money price, Volume volume)
         {
-            Bid = bid;
-            Ask = ask;
-            Price = price;
-            Volume = volume;
+            this.Bid = bid;
+            this.Ask = ask;
+            this.Price = price;
+            this.Volume = volume;
         }
 
         /// <summary>
-        /// Last buy price
+        ///     Last buy price
         /// </summary>
         public Money Bid { get; }
 
         /// <summary>
-        /// Last sell price
+        ///     Last sell price
         /// </summary>
         public Money Ask { get; }
 
         /// <summary>
-        /// The price the market resolved to
+        ///     The price the market resolved to
         /// </summary>
         public Money Price { get; }
 
         /// <summary>
-        /// The volume of the security traded since the last time bar
+        ///     The volume of the security traded since the last time bar
         /// </summary>
         public Volume Volume { get; }
     }

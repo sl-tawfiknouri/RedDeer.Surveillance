@@ -3,10 +3,15 @@
     public enum MarketTypes
     {
         NONE = 0,
-        STOCKEXCHANGE,
-        OTC,
-        MTF,
-        DarkPool,
-        DealerBooks        
+
+        STOCKEXCHANGE = 1,
+
+        OTC = 2,
+
+        MTF = 3,
+
+        DarkPool = 4,
+
+        DealerBooks = 5
     }
 }

@@ -1,34 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+
     /// <summary>
-    /// Calculates revenues without attempting to convert currencies
+    ///     Calculates revenues without attempting to convert currencies
     /// </summary>
     public class RevenueCalculator : IRevenueCalculator
     {
-        protected readonly IMarketTradingHoursService TradingHoursService;
         protected readonly ILogger Logger;
+
+        protected readonly IMarketTradingHoursService TradingHoursService;
 
         public RevenueCalculator(IMarketTradingHoursService tradingHoursService, ILogger<RevenueCalculator> logger)
         {
-            TradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.TradingHoursService =
+                tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        /// Take realised profits and then for any remaining amount use virtual profits
+        ///     Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
         public async Task<RevenueMoney> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
@@ -36,21 +42,22 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             ISystemProcessOperationRunRuleContext ctx,
             IMarketDataCacheStrategy marketCacheStrategy)
         {
-            if (activeFulfilledTradeOrders == null
-                || !activeFulfilledTradeOrders.Any())
+            if (activeFulfilledTradeOrders == null || !activeFulfilledTradeOrders.Any())
             {
-                Logger.LogInformation($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had null or empty active fulfilled trade orders.");
+                this.Logger.LogInformation(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had null or empty active fulfilled trade orders.");
                 return null;
             }
 
-            var realisedRevenue = CalculateRealisedRevenue(activeFulfilledTradeOrders);
-            var totalPurchaseVolume = CalculateTotalPurchaseVolume(activeFulfilledTradeOrders);
-            var totalSaleVolume = CalculateTotalSalesVolume(activeFulfilledTradeOrders);
+            var realisedRevenue = this.CalculateRealisedRevenue(activeFulfilledTradeOrders);
+            var totalPurchaseVolume = this.CalculateTotalPurchaseVolume(activeFulfilledTradeOrders);
+            var totalSaleVolume = this.CalculateTotalSalesVolume(activeFulfilledTradeOrders);
 
             var sizeOfVirtualPosition = totalPurchaseVolume - totalSaleVolume;
             if (sizeOfVirtualPosition <= 0)
             {
-                Logger.LogInformation($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning realised profits only.");
+                this.Logger.LogInformation(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning realised profits only.");
 
                 // fully traded out position; return its value
                 return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
@@ -60,22 +67,23 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             var security = activeFulfilledTradeOrders.FirstOrDefault()?.Instrument;
             if (security == null)
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
+                this.Logger.LogWarning(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
 
                 return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
-            var marketDataRequest = 
-                MarketDataRequest(
-                    activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
-                    security.Identifiers,
-                    universeDateTime,
-                    ctx,
-                    marketCacheStrategy.DataSource);
+            var marketDataRequest = this.MarketDataRequest(
+                activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
+                security.Identifiers,
+                universeDateTime,
+                ctx,
+                marketCacheStrategy.DataSource);
 
             if (marketDataRequest == null)
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
+                this.Logger.LogWarning(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
 
                 return new RevenueMoney(false, null, HighProfitComponents.Realised);
             }
@@ -83,7 +91,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             var marketDataResult = marketCacheStrategy.Query(marketDataRequest);
             if (marketDataResult.HadMissingData())
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
+                this.Logger.LogWarning(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
                 return new RevenueMoney(true, null, HighProfitComponents.Realised);
             }
 
@@ -92,8 +101,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             if (realisedRevenue == null)
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({money.Currency}) {money.Value}.");
-
+                this.Logger.LogWarning(
+                    $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({money.Currency}) {money.Value}.");
                 return new RevenueMoney(false, money, HighProfitComponents.Virtual);
             }
 
@@ -107,61 +116,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             return await Task.FromResult(new RevenueMoney(false, totalMoneys, component));
         }
 
-        private Money? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
-        {
-            if (!activeFulfilledTradeOrders?.Any() ?? true)
-            {
-                return null;
-            }
-
-            var filledOrders =
-                activeFulfilledTradeOrders
-                .Where(afto => afto.OrderDirection == OrderDirections.SELL
-                               || afto.OrderDirection == OrderDirections.SHORT)
-                .Select(afto =>
-                    new Money(
-                        afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
-                        afto.OrderCurrency))
-                .ToList();
-
-            if (!filledOrders.Any())
-            {
-                return null;
-            }
-
-            var summedCurrency = filledOrders.Aggregate((x, y) => new Money(x.Value + y.Value, x.Currency));
-
-            return summedCurrency;
-        }
-
-        private decimal CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
-        {
-            if (!activeFulfilledTradeOrders?.Any() ?? true)
-            {
-                return 0;
-            }
-
-            return activeFulfilledTradeOrders
-                .Where(afto => afto.OrderDirection == OrderDirections.BUY
-                                || afto.OrderDirection == OrderDirections.COVER)
-                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
-                .Sum();
-        }
-
-        private decimal CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
-        {
-            if (!activeFulfilledTradeOrders?.Any() ?? true)
-            {
-                return 0;
-            }
-
-            return activeFulfilledTradeOrders
-                .Where(afto => afto.OrderDirection == OrderDirections.SELL
-                               || afto.OrderDirection == OrderDirections.SHORT)
-                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
-                .Sum();
-        }
-
         protected virtual MarketDataRequest MarketDataRequest(
             string mic,
             InstrumentIdentifiers identifiers,
@@ -169,10 +123,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             ISystemProcessOperationRunRuleContext ctx,
             DataSource dataSource)
         {
-            var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
-                Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                this.Logger.LogError(
+                    $"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
                 return null;
             }
 
@@ -184,6 +139,46 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
                 ctx?.Id(),
                 dataSource);
+        }
+
+        private Money? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
+        {
+            if (!activeFulfilledTradeOrders?.Any() ?? true) return null;
+
+            var filledOrders = activeFulfilledTradeOrders
+                .Where(
+                    afto => afto.OrderDirection == OrderDirections.SELL || afto.OrderDirection == OrderDirections.SHORT)
+                .Select(
+                    afto => new Money(
+                        afto.OrderFilledVolume.GetValueOrDefault(0)
+                        * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
+                        afto.OrderCurrency)).ToList();
+
+            if (!filledOrders.Any()) return null;
+
+            var summedCurrency = filledOrders.Aggregate((x, y) => new Money(x.Value + y.Value, x.Currency));
+
+            return summedCurrency;
+        }
+
+        private decimal CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
+        {
+            if (!activeFulfilledTradeOrders?.Any() ?? true) return 0;
+
+            return activeFulfilledTradeOrders
+                .Where(
+                    afto => afto.OrderDirection == OrderDirections.BUY || afto.OrderDirection == OrderDirections.COVER)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0)).Sum();
+        }
+
+        private decimal CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
+        {
+            if (!activeFulfilledTradeOrders?.Any() ?? true) return 0;
+
+            return activeFulfilledTradeOrders
+                .Where(
+                    afto => afto.OrderDirection == OrderDirections.SELL || afto.OrderDirection == OrderDirections.SHORT)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0)).Sum();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using TestHarness.Commands.Interfaces;
-
-namespace TestHarness.Commands
+﻿namespace TestHarness.Commands
 {
+    using TestHarness.Commands.Interfaces;
+    using TestHarness.Display;
+
     public class UnRecognisedCommand : ICommand
     {
         public bool Handles(string command)
@@ -11,7 +12,7 @@ namespace TestHarness.Commands
 
         public void Run(string command)
         {
-            Display.Console.WriteToLine(1, "Enter 'help' to see available commands");
+            Console.WriteToLine(1, "Enter 'help' to see available commands");
         }
     }
 }

@@ -2,7 +2,8 @@
 {
     public class AggregationDto
     {
-        public string Key { get; set; }
         public int Count { get; set; }
+
+        public string Key { get; set; }
     }
 }

@@ -1,61 +1,67 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator.Tests
+﻿namespace Surveillance.Engine.DataCoordinator.Tests
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
+
     [TestFixture]
     public class MediatorTests
     {
         private IDataCoordinatorScheduler _dataScheduler;
-        private IQueueSubscriber _queueSubscriber;
+
         private ILogger<Mediator> _logger;
 
-        [SetUp]
-        public void Setup()
+        private IQueueSubscriber _queueSubscriber;
+
+        [Test]
+        public void Constructor_Logger_Null_Throws_Exception()
         {
-            _dataScheduler = A.Fake<IDataCoordinatorScheduler>();
-            _queueSubscriber = A.Fake<IQueueSubscriber>();
-            _logger = A.Fake<ILogger<Mediator>>();
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new Mediator(this._dataScheduler, this._queueSubscriber, null));
         }
 
         [Test]
         public void Constructor_QueueSubscriber_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_dataScheduler, null, _logger));
-        }
-
-        [Test]
-        public void Constructor_Logger_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_dataScheduler, _queueSubscriber, null));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(this._dataScheduler, null, this._logger));
         }
 
         [Test]
         public void Initiate()
         {
-            var mediator = new Mediator(_dataScheduler, _queueSubscriber, _logger);
+            var mediator = new Mediator(this._dataScheduler, this._queueSubscriber, this._logger);
 
             mediator.Initiate();
 
-            A.CallTo(() => _queueSubscriber.Initiate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _dataScheduler.Initialise()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._queueSubscriber.Initiate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._dataScheduler.Initialise()).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._dataScheduler = A.Fake<IDataCoordinatorScheduler>();
+            this._queueSubscriber = A.Fake<IQueueSubscriber>();
+            this._logger = A.Fake<ILogger<Mediator>>();
         }
 
         [Test]
         public void Terminate()
         {
-            var mediator = new Mediator(_dataScheduler, _queueSubscriber, _logger);
+            var mediator = new Mediator(this._dataScheduler, this._queueSubscriber, this._logger);
 
             mediator.Terminate();
 
-            A.CallTo(() => _queueSubscriber.Terminate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _dataScheduler.Terminate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._queueSubscriber.Terminate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._dataScheduler.Terminate()).MustHaveHappenedOnceExactly();
         }
     }
 }

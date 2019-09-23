@@ -1,7 +1,7 @@
-﻿using Domain.Surveillance.Judgement.Equity.Interfaces;
-
-namespace Domain.Surveillance.Judgement.Equity
+﻿namespace Domain.Surveillance.Judgement.Equity
 {
+    using Domain.Surveillance.Judgement.Equity.Interfaces;
+
     public class HighProfitJudgement : IHighProfitJudgement
     {
         public HighProfitJudgement(
@@ -16,30 +16,38 @@ namespace Domain.Surveillance.Judgement.Equity
             bool hadMissingMarketData,
             bool noAnalysis)
         {
-            RuleRunId = ruleRunId;
-            RuleRunCorrelationId = ruleRunCorrelationId;
-            OrderId = orderId;
-            ClientOrderId = clientOrderId;
+            this.RuleRunId = ruleRunId;
+            this.RuleRunCorrelationId = ruleRunCorrelationId;
+            this.OrderId = orderId;
+            this.ClientOrderId = clientOrderId;
 
-            AbsoluteHighProfit = absoluteHighProfit;
-            AbsoluteHighProfitCurrency = absoluteHighProfitCurrency;
-            PercentageHighProfit = percentageHighProfit;
+            this.AbsoluteHighProfit = absoluteHighProfit;
+            this.AbsoluteHighProfitCurrency = absoluteHighProfitCurrency;
+            this.PercentageHighProfit = percentageHighProfit;
 
-            Parameters = parameters;
-            HadMissingMarketData = hadMissingMarketData;
-            NoAnalysis = noAnalysis;
+            this.Parameters = parameters;
+            this.HadMissingMarketData = hadMissingMarketData;
+            this.NoAnalysis = noAnalysis;
         }
 
-        public string RuleRunId { get; }
-        public string RuleRunCorrelationId { get; }
-        public string OrderId { get; set; }
+        public decimal? AbsoluteHighProfit { get; }
+
+        public string AbsoluteHighProfitCurrency { get; }
+
         public string ClientOrderId { get; set; }
 
-        public decimal? AbsoluteHighProfit { get; }
-        public string AbsoluteHighProfitCurrency { get; }
-        public decimal? PercentageHighProfit { get; }
-        public string Parameters { get; }
         public bool HadMissingMarketData { get; }
+
         public bool NoAnalysis { get; }
+
+        public string OrderId { get; set; }
+
+        public string Parameters { get; }
+
+        public decimal? PercentageHighProfit { get; }
+
+        public string RuleRunCorrelationId { get; }
+
+        public string RuleRunId { get; }
     }
 }

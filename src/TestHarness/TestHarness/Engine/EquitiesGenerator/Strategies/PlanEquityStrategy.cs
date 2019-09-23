@@ -1,49 +1,41 @@
-﻿using System;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets.Timebars;
-using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
-using TestHarness.Engine.Plans;
-
-namespace TestHarness.Engine.EquitiesGenerator.Strategies
+﻿namespace TestHarness.Engine.EquitiesGenerator.Strategies
 {
+    using System;
+
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets.Timebars;
+
+    using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
+    using TestHarness.Engine.Plans;
+
     public class PlanEquityStrategy : IEquityDataGeneratorStrategy
     {
-        private readonly DataGenerationPlan _plan;
         private readonly IEquityDataGeneratorStrategy _baseStrategy;
 
-        public PlanEquityStrategy(
-            DataGenerationPlan plan,
-            IEquityDataGeneratorStrategy baseStrategy)
+        private readonly DataGenerationPlan _plan;
+
+        public PlanEquityStrategy(DataGenerationPlan plan, IEquityDataGeneratorStrategy baseStrategy)
         {
-            _plan = plan ?? throw new ArgumentNullException(nameof(plan));
-            _baseStrategy = baseStrategy ?? throw new ArgumentNullException(nameof(baseStrategy));
+            this._plan = plan ?? throw new ArgumentNullException(nameof(plan));
+            this._baseStrategy = baseStrategy ?? throw new ArgumentNullException(nameof(baseStrategy));
         }
+
+        public EquityGenerationStrategies Strategy { get; } = EquityGenerationStrategies.Plan;
 
         public EquityInstrumentIntraDayTimeBar AdvanceFrame(
             EquityInstrumentIntraDayTimeBar tick,
             DateTime advanceTick,
             bool walkIntraday)
         {
-            if (!string.Equals(tick.Security.Identifiers.Sedol, _plan.Sedol, StringComparison.InvariantCultureIgnoreCase))
-            {
-               return _baseStrategy.AdvanceFrame(tick, advanceTick, walkIntraday);
-            }
+            if (!string.Equals(
+                    tick.Security.Identifiers.Sedol,
+                    this._plan.Sedol,
+                    StringComparison.InvariantCultureIgnoreCase))
+                return this._baseStrategy.AdvanceFrame(tick, advanceTick, walkIntraday);
 
-            var initialAdvancedFrame = _baseStrategy.AdvanceFrame(tick, advanceTick, walkIntraday);
+            var initialAdvancedFrame = this._baseStrategy.AdvanceFrame(tick, advanceTick, walkIntraday);
 
-            return AdjustToPlan(initialAdvancedFrame, tick);
-        }
-
-        private EquityInstrumentIntraDayTimeBar AdjustToPlan(EquityInstrumentIntraDayTimeBar tick, EquityInstrumentIntraDayTimeBar precedingTick)
-        {
-            var adjustedSpread = AdjustedSpread(tick, precedingTick);
-
-            return new EquityInstrumentIntraDayTimeBar(
-                tick.Security,
-                adjustedSpread,
-                AdjustedDailies(tick),
-                tick.TimeStamp,
-                tick.Market);
+            return this.AdjustToPlan(initialAdvancedFrame, tick);
         }
 
         private DailySummaryTimeBar AdjustedDailies(EquityInstrumentIntraDayTimeBar tick)
@@ -57,43 +49,61 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 tick.TimeStamp);
         }
 
-        private SpreadTimeBar AdjustedSpread(EquityInstrumentIntraDayTimeBar tick, EquityInstrumentIntraDayTimeBar precedingTick)
+        private SpreadTimeBar AdjustedSpread(
+            EquityInstrumentIntraDayTimeBar tick,
+            EquityInstrumentIntraDayTimeBar precedingTick)
         {
-            switch (_plan.EquityInstructions.PriceManipulation)
+            switch (this._plan.EquityInstructions.PriceManipulation)
             {
                 case PriceManipulation.Consistent:
                     return precedingTick.SpreadTimeBar;
                 case PriceManipulation.Random:
                     return tick.SpreadTimeBar;
                 case PriceManipulation.Increase:
-                    return
-                        AdjustSpreadCalculation(
-                            _plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0) + 1,
-                            precedingTick,
-                            tick);
+                    return this.AdjustSpreadCalculation(
+                        this._plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0) + 1,
+                        precedingTick,
+                        tick);
                 case PriceManipulation.Decrease:
-                    return
-                        AdjustSpreadCalculation(
-                            1 - _plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0),
-                            precedingTick,
-                            tick);
+                    return this.AdjustSpreadCalculation(
+                        1 - this._plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0),
+                        precedingTick,
+                        tick);
             }
 
             return tick.SpreadTimeBar;
         }
 
-        private SpreadTimeBar AdjustSpreadCalculation(decimal adjustmentFactor, EquityInstrumentIntraDayTimeBar precedingTick, EquityInstrumentIntraDayTimeBar tick)
+        private SpreadTimeBar AdjustSpreadCalculation(
+            decimal adjustmentFactor,
+            EquityInstrumentIntraDayTimeBar precedingTick,
+            EquityInstrumentIntraDayTimeBar tick)
         {
-            var adjustedBid =
-                new Money(precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Bid.Currency);
-            var adjustedAsk =
-                new Money(precedingTick.SpreadTimeBar.Ask.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Ask.Currency);
-            var adjustedPrice =
-                new Money(precedingTick.SpreadTimeBar.Price.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Price.Currency);
+            var adjustedBid = new Money(
+                precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor,
+                precedingTick.SpreadTimeBar.Bid.Currency);
+            var adjustedAsk = new Money(
+                precedingTick.SpreadTimeBar.Ask.Value * adjustmentFactor,
+                precedingTick.SpreadTimeBar.Ask.Currency);
+            var adjustedPrice = new Money(
+                precedingTick.SpreadTimeBar.Price.Value * adjustmentFactor,
+                precedingTick.SpreadTimeBar.Price.Currency);
 
             return new SpreadTimeBar(adjustedBid, adjustedAsk, adjustedPrice, tick.SpreadTimeBar.Volume);
         }
 
-        public EquityGenerationStrategies Strategy { get; } = EquityGenerationStrategies.Plan;
+        private EquityInstrumentIntraDayTimeBar AdjustToPlan(
+            EquityInstrumentIntraDayTimeBar tick,
+            EquityInstrumentIntraDayTimeBar precedingTick)
+        {
+            var adjustedSpread = this.AdjustedSpread(tick, precedingTick);
+
+            return new EquityInstrumentIntraDayTimeBar(
+                tick.Security,
+                adjustedSpread,
+                this.AdjustedDailies(tick),
+                tick.TimeStamp,
+                tick.Market);
+        }
     }
 }

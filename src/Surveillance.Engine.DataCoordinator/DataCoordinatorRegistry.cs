@@ -1,33 +1,37 @@
-﻿using Domain.Surveillance.Rules;
-using Domain.Surveillance.Rules.Interfaces;
-using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
-using StructureMap;
-using Surveillance.Engine.DataCoordinator.Coordinator;
-using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
-using Surveillance.Engine.DataCoordinator.Interfaces;
-using Surveillance.Engine.DataCoordinator.Queues;
-using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-using Surveillance.Engine.DataCoordinator.Scheduler;
-using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
-
-namespace Surveillance.Engine.DataCoordinator
+﻿namespace Surveillance.Engine.DataCoordinator
 {
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using NLog.Extensions.Logging;
+
+    using StructureMap;
+
+    using Surveillance.Engine.DataCoordinator.Coordinator;
+    using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Queues;
+    using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+    using Surveillance.Engine.DataCoordinator.Scheduler;
+    using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
+
     public class DataCoordinatorRegistry : Registry
     {
         public DataCoordinatorRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
-            For(typeof(ILoggerFactory)).Use(loggerFactory);
-            For(typeof(ILogger<>)).Use(typeof(Logger<>));
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<ICoordinatorMediator>().Use<Mediator>();
-            For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
-            For<IQueueScheduleRulePublisher>().Use<QueueScheduleRulePublisher>();
-            For<IAutoSchedule>().Use<AutoSchedule>();
-            For<IDataVerifier>().Use<DataVerifier>();
-            For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();
-            For<IActiveRulesService>().Use<ActiveRulesService>();
+            this.For<ICoordinatorMediator>().Use<Mediator>();
+            this.For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
+            this.For<IQueueScheduleRulePublisher>().Use<QueueScheduleRulePublisher>();
+            this.For<IAutoSchedule>().Use<AutoSchedule>();
+            this.For<IDataVerifier>().Use<DataVerifier>();
+            this.For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();
+            this.For<IActiveRulesService>().Use<ActiveRulesService>();
         }
     }
 }

@@ -1,24 +1,23 @@
-﻿using Surveillance.Api.App.Configuration.Interfaces;
-using System;
-using System.Linq;
-
-namespace Surveillance.Api.App.Configuration
+﻿namespace Surveillance.Api.App.Configuration
 {
+    using System;
+    using System.Linq;
+
+    using Amazon.Util;
+
+    using Surveillance.Api.App.Configuration.Interfaces;
+
     public class EnvironmentService : IEnvironmentService
     {
-        public bool IsUnitTest()
-        {
-            return AppDomain
-                .CurrentDomain
-                .GetAssemblies()
-                .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
-        }
-
         public bool IsEc2Instance()
         {
-            return 
-                IsUnitTest() == false
-                && Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+            return this.IsUnitTest() == false && EC2InstanceMetadata.InstanceId != null;
+        }
+
+        public bool IsUnitTest()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
         }
     }
 }

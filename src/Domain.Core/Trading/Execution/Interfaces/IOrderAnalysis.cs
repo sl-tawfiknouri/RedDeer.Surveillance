@@ -1,10 +1,11 @@
-﻿using Domain.Core.Trading.Orders;
-
-namespace Domain.Core.Trading.Execution
+﻿namespace Domain.Core.Trading.Execution
 {
+    using Domain.Core.Trading.Orders;
+
     public interface IOrderAnalysis
     {
         Order Order { get; }
+
         PriceSentiment Sentiment { get; }
     }
 }

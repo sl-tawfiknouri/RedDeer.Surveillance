@@ -1,78 +1,61 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Domain.Surveillance.Scheduling.Interfaces;
-using Microsoft.Extensions.Logging;
-
-namespace Domain.Surveillance.Scheduling
+﻿namespace Domain.Surveillance.Scheduling
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Surveillance.Scheduling.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
     public class ScheduleExecutionDtoMapper : IScheduleExecutionDtoMapper
     {
         private readonly ILogger<ScheduleExecutionDtoMapper> _logger;
 
         public ScheduleExecutionDtoMapper(ILogger<ScheduleExecutionDtoMapper> logger)
         {
-            _logger = logger;
+            this._logger = logger;
         }
 
         public ScheduledExecution MapToDomain(RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution dto)
         {
-            if (dto == null)
-            {
-                return new ScheduledExecution();
-            }
+            if (dto == null) return new ScheduledExecution();
 
-            var rules =
-                dto
-                    .Rules
-                    ?.Select(ru =>
-                        new RuleIdentifier
-                        {
-                            Ids = ru.Ids,
-                            Rule = MapRule(ru.Rule)
-                        })
-                    .ToList()
-                ?? new List<RuleIdentifier>();
+            var rules = dto.Rules?.Select(ru => new RuleIdentifier { Ids = ru.Ids, Rule = this.MapRule(ru.Rule) })
+                            .ToList() ?? new List<RuleIdentifier>();
 
             var response = new ScheduledExecution
-            {
-                CorrelationId = dto.CorrelationId,
-                IsBackTest = dto.IsBackTest,
-                TimeSeriesInitiation = dto.TimeSeriesInitiation,
-                TimeSeriesTermination = dto.TimeSeriesTermination,
-                Rules = rules,
-                IsForceRerun = dto.IsForceRerun
-            };
+                               {
+                                   CorrelationId = dto.CorrelationId,
+                                   IsBackTest = dto.IsBackTest,
+                                   TimeSeriesInitiation = dto.TimeSeriesInitiation,
+                                   TimeSeriesTermination = dto.TimeSeriesTermination,
+                                   Rules = rules,
+                                   IsForceRerun = dto.IsForceRerun
+                               };
 
             return response;
         }
 
         public RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution MapToDto(ScheduledExecution dto)
         {
-            if (dto == null)
-            {
-                return new RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution();
-            }
+            if (dto == null) return new RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution();
 
-            var rules =
-                dto
-                    .Rules
-                    ?.Select(ru => 
-                        new RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier
-                        {
-                            Ids = ru.Ids,
-                            Rule = MapRule(ru.Rule)
-                        }).ToList()
-                ?? new List<RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier>();
+            var rules = dto.Rules?.Select(
+                            ru => new RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier
+                                      {
+                                          Ids = ru.Ids, Rule = this.MapRule(ru.Rule)
+                                      }).ToList()
+                        ?? new List<RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier>();
 
             var scheduleExecution = new RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution
-            {
-                CorrelationId = dto.CorrelationId,
-                IsBackTest = dto.IsBackTest,
-                TimeSeriesInitiation = dto.TimeSeriesInitiation,
-                TimeSeriesTermination = dto.TimeSeriesTermination,
-                Rules = rules,
-                IsForceRerun = dto.IsForceRerun
-            };
+                                        {
+                                            CorrelationId = dto.CorrelationId,
+                                            IsBackTest = dto.IsBackTest,
+                                            TimeSeriesInitiation = dto.TimeSeriesInitiation,
+                                            TimeSeriesTermination = dto.TimeSeriesTermination,
+                                            Rules = rules,
+                                            IsForceRerun = dto.IsForceRerun
+                                        };
 
             return scheduleExecution;
         }
@@ -121,7 +104,8 @@ namespace Domain.Surveillance.Scheduling
                     return Rules.PlacingOrderWithNoIntentToExecute;
             }
 
-            _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from contracts library");
+            this._logger?.LogError(
+                $"ScheduleExecutionDtoMapper out of range for rule enum {rule} from contracts library");
 
             return Rules.UniverseFilter;
         }
@@ -170,7 +154,7 @@ namespace Domain.Surveillance.Scheduling
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.PlacingOrdersWithNoIntentToExecute;
             }
 
-            _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from domain library");
+            this._logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from domain library");
 
             return RedDeer.Contracts.SurveillanceService.Rules.Rules.UniverseFilter;
         }

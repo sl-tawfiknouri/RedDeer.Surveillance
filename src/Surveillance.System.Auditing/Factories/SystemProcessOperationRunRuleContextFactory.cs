@@ -1,28 +1,30 @@
-﻿using System;
-using Surveillance.Auditing.Context;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-using Surveillance.Auditing.Factories.Interfaces;
-using Surveillance.Auditing.Logging.Interfaces;
-
-namespace Surveillance.Auditing.Factories
+﻿namespace Surveillance.Auditing.Factories
 {
+    using System;
+
+    using Surveillance.Auditing.Context;
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+    using Surveillance.Auditing.Factories.Interfaces;
+    using Surveillance.Auditing.Logging.Interfaces;
+
     public class SystemProcessOperationRunRuleContextFactory : ISystemProcessOperationRunRuleContextFactory
     {
-        private readonly ISystemProcessOperationRuleRunRepository _repository;
         private readonly IOperationLogging _operationLogging;
+
+        private readonly ISystemProcessOperationRuleRunRepository _repository;
 
         public SystemProcessOperationRunRuleContextFactory(
             ISystemProcessOperationRuleRunRepository repository,
             IOperationLogging operationLogging)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this._operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
         public ISystemProcessOperationRunRuleContext Build(ISystemProcessOperationContext context)
         {
-            return new SystemProcessOperationRunRuleContext(_repository, context, _operationLogging);
+            return new SystemProcessOperationRunRuleContext(this._repository, context, this._operationLogging);
         }
     }
 }

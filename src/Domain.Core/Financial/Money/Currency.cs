@@ -1,30 +1,30 @@
-﻿using System;
-
-namespace Domain.Core.Financial.Money
+﻿namespace Domain.Core.Financial.Money
 {
+    using System;
+
     public struct Currency
     {
         public Currency(string code)
         {
-            Code = code?.ToUpper()?.Trim() ?? string.Empty;
-            ShortName = string.Empty;
-            LongName = string.Empty;
-            SubDivisionCode = string.Empty;
-            Symbol = string.Empty;
+            this.Code = code?.ToUpper()?.Trim() ?? string.Empty;
+            this.ShortName = string.Empty;
+            this.LongName = string.Empty;
+            this.SubDivisionCode = string.Empty;
+            this.Symbol = string.Empty;
         }
 
         public Currency(string code, string shortName, string longName, string subDivisionCode, string symbol)
         {
-            Code = code?.ToUpper()?.Trim() ?? string.Empty;
-            ShortName = shortName?.ToUpper()?.Trim() ?? string.Empty;
-            LongName = longName?.ToUpper()?.Trim() ?? string.Empty;
-            SubDivisionCode = subDivisionCode?.ToUpper()?.Trim() ?? string.Empty;
-            Symbol = symbol?.ToUpper()?.Trim() ?? string.Empty;
+            this.Code = code?.ToUpper()?.Trim() ?? string.Empty;
+            this.ShortName = shortName?.ToUpper()?.Trim() ?? string.Empty;
+            this.LongName = longName?.ToUpper()?.Trim() ?? string.Empty;
+            this.SubDivisionCode = subDivisionCode?.ToUpper()?.Trim() ?? string.Empty;
+            this.Symbol = symbol?.ToUpper()?.Trim() ?? string.Empty;
         }
 
         /// <summary>
-        /// 3 letter code 
-        /// GBP for pound sterling
+        ///     3 letter code
+        ///     GBP for pound sterling
         /// </summary>
         public string Code { get; }
 
@@ -33,37 +33,34 @@ namespace Domain.Core.Financial.Money
         public string LongName { get; }
 
         /// <summary>
-        /// GBX for pence
+        ///     GBX for pence
         /// </summary>
         public string SubDivisionCode { get; }
 
         /// <summary>
-        /// Currency symbol
+        ///     Currency symbol
         /// </summary>
         public string Symbol { get; }
 
         public override int GetHashCode()
         {
-            return Code?.GetHashCode() ?? 0;
+            return this.Code?.GetHashCode() ?? 0;
         }
 
         public override bool Equals(object obj)
         {
             var typeCheck = obj is Currency;
 
-            if (!typeCheck)
-            {
-                return false;
-            }
+            if (!typeCheck) return false;
 
-            var currencyObj = (Currency) obj;
+            var currencyObj = (Currency)obj;
 
-            return string.Equals(currencyObj.Code, Code, StringComparison.InvariantCultureIgnoreCase);
+            return string.Equals(currencyObj.Code, this.Code, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override string ToString()
         {
-            return Code ?? string.Empty;
+            return this.Code ?? string.Empty;
         }
     }
 }

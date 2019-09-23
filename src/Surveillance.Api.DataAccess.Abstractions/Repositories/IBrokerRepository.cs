@@ -1,11 +1,12 @@
-﻿    using System;
+﻿namespace Surveillance.Api.DataAccess.Abstractions.Repositories
+{
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-using System.Threading.Tasks;
-using Surveillance.Api.DataAccess.Abstractions.Entities;
+    using System.Threading.Tasks;
 
-namespace Surveillance.Api.DataAccess.Abstractions.Repositories
-{
+    using Surveillance.Api.DataAccess.Abstractions.Entities;
+
     /// <summary>
     /// The BrokerRepository interface.
     /// </summary>

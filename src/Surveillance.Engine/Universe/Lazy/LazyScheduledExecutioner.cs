@@ -1,20 +1,19 @@
-﻿using System.Collections.Generic;
-using Domain.Surveillance.Scheduling;
-using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Lazy
+﻿namespace Surveillance.Engine.Rules.Universe.Lazy
 {
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
+
     /// <summary>
-    /// Used to divide the scheduled execution into streamable chunks
+    ///     Used to divide the scheduled execution into streamable chunks
     /// </summary>
     public class LazyScheduledExecutioner : ILazyScheduledExecutioner
     {
         public Stack<ScheduledExecution> Execute(ScheduledExecution schedule)
         {
-            if (schedule == null)
-            {
-                return new Stack<ScheduledExecution>();
-            }
+            if (schedule == null) return new Stack<ScheduledExecution>();
 
             var span = schedule.AdjustedTimeSeriesTermination - schedule.AdjustedTimeSeriesInitiation;
             var response = new Stack<ScheduledExecution>();
@@ -22,14 +21,14 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
             if (span.TotalDays < 8)
             {
                 var splitSchedule = new ScheduledExecution
-                {
-                    CorrelationId = schedule.CorrelationId,
-                    IsBackTest = schedule.IsBackTest,
-                    IsForceRerun = schedule.IsForceRerun,
-                    Rules = schedule.Rules,
-                    TimeSeriesInitiation = schedule.AdjustedTimeSeriesInitiation,
-                    TimeSeriesTermination = schedule.AdjustedTimeSeriesTermination,
-                };
+                                        {
+                                            CorrelationId = schedule.CorrelationId,
+                                            IsBackTest = schedule.IsBackTest,
+                                            IsForceRerun = schedule.IsForceRerun,
+                                            Rules = schedule.Rules,
+                                            TimeSeriesInitiation = schedule.AdjustedTimeSeriesInitiation,
+                                            TimeSeriesTermination = schedule.AdjustedTimeSeriesTermination
+                                        };
 
                 response.Push(splitSchedule);
                 return response;
@@ -40,19 +39,17 @@ namespace Surveillance.Engine.Rules.Universe.Lazy
             {
                 var termination = initiation.AddDays(7);
                 if (schedule.AdjustedTimeSeriesTermination < termination)
-                {
                     termination = schedule.AdjustedTimeSeriesTermination;
-                }
 
                 var splitSchedule = new ScheduledExecution
-                {
-                    CorrelationId = schedule.CorrelationId,
-                    IsBackTest = schedule.IsBackTest,
-                    IsForceRerun = schedule.IsForceRerun,
-                    Rules = schedule.Rules,
-                    TimeSeriesInitiation = initiation,
-                    TimeSeriesTermination = termination,
-                };
+                                        {
+                                            CorrelationId = schedule.CorrelationId,
+                                            IsBackTest = schedule.IsBackTest,
+                                            IsForceRerun = schedule.IsForceRerun,
+                                            Rules = schedule.Rules,
+                                            TimeSeriesInitiation = initiation,
+                                            TimeSeriesTermination = termination
+                                        };
 
                 response.Push(splitSchedule);
                 initiation = termination;

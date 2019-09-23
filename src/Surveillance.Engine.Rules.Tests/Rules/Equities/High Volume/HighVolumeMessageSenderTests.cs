@@ -5,6 +5,7 @@
 
     using Domain.Core.Financial.Money;
     using Domain.Core.Markets;
+    using Domain.Core.Tests.Helpers;
     using Domain.Core.Trading.Orders;
 
     using FakeItEasy;
@@ -20,8 +21,6 @@
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
-
-    using TestHelpers;
 
     [TestFixture]
     public class HighVolumeMessageSenderTests

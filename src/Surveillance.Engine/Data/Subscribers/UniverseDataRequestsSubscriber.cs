@@ -1,66 +1,73 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Data.Subscribers
+﻿namespace Surveillance.Engine.Rules.Data.Subscribers
 {
+    using System;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     public class UniverseDataRequestsSubscriber : IUniverseDataRequestsSubscriber
     {
-        private readonly ISystemProcessOperationContext _operationContext;
-        private readonly IQueueDataSynchroniserRequestPublisher _queueDataSynchroniserRequestPublisher;
         private readonly ILogger<UniverseDataRequestsSubscriber> _logger;
 
-        public bool SubmitRequests { get; private set; }
+        private readonly ISystemProcessOperationContext _operationContext;
+
+        private readonly IQueueDataSynchroniserRequestPublisher _queueDataSynchroniserRequestPublisher;
 
         public UniverseDataRequestsSubscriber(
             ISystemProcessOperationContext operationContext,
             IQueueDataSynchroniserRequestPublisher queueDataSynchroniserRequestPublisher,
             ILogger<UniverseDataRequestsSubscriber> logger)
         {
-            _operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
-            _queueDataSynchroniserRequestPublisher = queueDataSynchroniserRequestPublisher ?? throw new ArgumentNullException(nameof(queueDataSynchroniserRequestPublisher));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
+            this._queueDataSynchroniserRequestPublisher = queueDataSynchroniserRequestPublisher
+                                                          ?? throw new ArgumentNullException(
+                                                              nameof(queueDataSynchroniserRequestPublisher));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public bool SubmitRequests { get; private set; }
+
+        public void DispatchIfSubmitRequest()
+        {
+            this._logger?.LogInformation(
+                $"reached eschaton in its OnNext stream subscription and has a submit requests value of {this.SubmitRequests}");
+
+            if (this.SubmitRequests)
+            {
+                var task = this._queueDataSynchroniserRequestPublisher.Send(this._operationContext.Id.ToString());
+                task.Wait();
+            }
+
+            this._logger?.LogInformation("completed eschaton in its OnNext stream subscription");
         }
 
         public void OnCompleted()
         {
-            _logger?.LogInformation($"reached OnCompleted() in its stream");
+            this._logger?.LogInformation("reached OnCompleted() in its stream");
         }
 
         public void OnError(Exception error)
         {
-            _logger?.LogError($"reached OnError in its universe subscription {error.Message}", error);
+            this._logger?.LogError($"reached OnError in its universe subscription {error.Message}", error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
         }
 
-        public void DispatchIfSubmitRequest()
-        {
-            _logger?.LogInformation($"reached eschaton in its OnNext stream subscription and has a submit requests value of {SubmitRequests}");
-
-            if (SubmitRequests)
-            {
-                var task = _queueDataSynchroniserRequestPublisher.Send(_operationContext.Id.ToString());
-                task.Wait();
-            }
-
-            _logger?.LogInformation($"completed eschaton in its OnNext stream subscription");
-        }
-
         /// <summary>
-        /// Ensure that this can only be set to true and not unset 
+        ///     Ensure that this can only be set to true and not unset
         /// </summary>
         public void SubmitRequest()
         {
-            _logger?.LogInformation($"received a submit request indication for operation context {_operationContext.Id}.");
+            this._logger?.LogInformation(
+                $"received a submit request indication for operation context {this._operationContext.Id}.");
 
-            SubmitRequests = true;
+            this.SubmitRequests = true;
         }
     }
 }

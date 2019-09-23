@@ -1,19 +1,24 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+
     public class RevenueMarkingCloseCalculator : RevenueCalculator
     {
         public RevenueMarkingCloseCalculator(
             IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCalculator> logger)
             : base(tradingHoursService, logger)
-        { }
+        {
+        }
 
         protected override MarketDataRequest MarketDataRequest(
             string mic,
@@ -22,10 +27,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             ISystemProcessOperationRunRuleContext ctx,
             DataSource dataSource)
         {
-            var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
-                Logger.LogError($"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                this.Logger.LogError(
+                    $"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
                 return null;
             }
 

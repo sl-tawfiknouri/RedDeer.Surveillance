@@ -1,7 +1,7 @@
-﻿using Surveillance.Auditing.Context.Interfaces;
-
-namespace Surveillance.Engine.Rules.Data.Subscribers.Interfaces
+﻿namespace Surveillance.Engine.Rules.Data.Subscribers.Interfaces
 {
+    using Surveillance.Auditing.Context.Interfaces;
+
     public interface IUniverseDataRequestsSubscriberFactory
     {
         IUniverseDataRequestsSubscriber Build(ISystemProcessOperationContext context);

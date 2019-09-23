@@ -1,9 +1,9 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.Filter;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+
     /// <summary>
-    /// Filter on (%) trading as a proportion of venue trading
+    ///     Filter on (%) trading as a proportion of venue trading
     /// </summary>
     public interface IVenueVolumeFilterable
     {

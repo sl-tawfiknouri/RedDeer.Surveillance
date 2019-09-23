@@ -1,16 +1,18 @@
-﻿using System;
-using Domain.Core.Trading.Orders;
-using TestHarness.Display.Interfaces;
-
-namespace TestHarness.Display.Subscribers
+﻿namespace TestHarness.Display.Subscribers
 {
+    using System;
+
+    using Domain.Core.Trading.Orders;
+
+    using TestHarness.Display.Interfaces;
+
     public class TradeOrderFrameDisplaySubscriber : IObserver<Order>
     {
         private readonly IConsole _display;
 
         public TradeOrderFrameDisplaySubscriber(IConsole display)
         {
-            _display = display ?? throw new ArgumentNullException(nameof(display));
+            this._display = display ?? throw new ArgumentNullException(nameof(display));
         }
 
         public void OnCompleted()
@@ -19,12 +21,12 @@ namespace TestHarness.Display.Subscribers
 
         public void OnError(Exception error)
         {
-            _display.OutputException(error);
+            this._display.OutputException(error);
         }
 
         public void OnNext(Order value)
         {
-            _display.OutputTradeFrame(value);
+            this._display.OutputTradeFrame(value);
         }
     }
 }

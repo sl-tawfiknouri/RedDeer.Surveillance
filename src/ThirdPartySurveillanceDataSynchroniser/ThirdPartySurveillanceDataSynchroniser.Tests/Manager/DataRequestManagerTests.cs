@@ -1,96 +1,109 @@
-﻿using System;
-using System.Threading.Tasks;
-using DataSynchroniser.Api.Bmll.Interfaces;
-using DataSynchroniser.Api.Factset.Interfaces;
-using DataSynchroniser.Api.Markit.Interfaces;
-using DataSynchroniser.Manager;
-using DataSynchroniser.Queues.Interfaces;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-
-namespace DataSynchroniser.Tests.Manager
+﻿namespace DataSynchroniser.Tests.Manager
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using DataSynchroniser.Api.Bmll.Interfaces;
+    using DataSynchroniser.Api.Factset.Interfaces;
+    using DataSynchroniser.Api.Markit.Interfaces;
+    using DataSynchroniser.Manager;
+    using DataSynchroniser.Queues.Interfaces;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+
     [TestFixture]
     public class DataRequestManagerTests
     {
         private IBmllDataSynchroniser _bmllSynchroniser;
-        private IFactsetDataSynchroniser _factsetSynchroniser;
-        private IMarkitDataSynchroniser _markitSynchroniser;
+
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
-        private IScheduleRulePublisher _scheduleRulePublisher;
-        private IRuleRunDataRequestRepository _repository;
+
+        private IFactsetDataSynchroniser _factsetSynchroniser;
+
         private ILogger<DataRequestManager> _logger;
 
-        [SetUp]
-        public void Setup()
+        private IMarkitDataSynchroniser _markitSynchroniser;
+
+        private IRuleRunDataRequestRepository _repository;
+
+        private IScheduleRulePublisher _scheduleRulePublisher;
+
+        [Test]
+        public void Constructor_Null_Logger_Throws_Exception()
         {
-            _bmllSynchroniser = A.Fake<IBmllDataSynchroniser>();
-            _factsetSynchroniser = A.Fake<IFactsetDataSynchroniser>();
-            _markitSynchroniser = A.Fake<IMarkitDataSynchroniser>();
-            _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
-            _scheduleRulePublisher = A.Fake<IScheduleRulePublisher>();
-            _repository = A.Fake<IRuleRunDataRequestRepository>();
-            _logger = A.Fake<ILogger<DataRequestManager>>();
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new DataRequestManager(
+                    this._bmllSynchroniser,
+                    this._factsetSynchroniser,
+                    this._markitSynchroniser,
+                    this._scheduleRulePublisher,
+                    this._repository,
+                    null));
         }
 
         [Test]
         public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => 
-                new DataRequestManager(
-                    _bmllSynchroniser,
-                    _factsetSynchroniser,
-                    _markitSynchroniser,
-                    _scheduleRulePublisher,
-                    null, 
-                    _logger));
-        }
-
-        [Test]
-        public void Constructor_Null_Logger_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => 
-                new DataRequestManager(
-                    _bmllSynchroniser,
-                    _factsetSynchroniser,
-                    _markitSynchroniser,
-                    _scheduleRulePublisher, 
-                    _repository, 
-                    null));
-        }
-
-        [Test]
-        public async Task Handle_NullRuleRunId_SetsContextEventError()
-        {
-            var manager = BuildManager();
-
-            await manager.Handle(null, _dataRequestContext);
-
-            A
-                .CallTo(() => _dataRequestContext.EventError(A<string>.Ignored))
-                .MustHaveHappenedOnceExactly();
+            Assert.Throws<ArgumentNullException>(
+                () => new DataRequestManager(
+                    this._bmllSynchroniser,
+                    this._factsetSynchroniser,
+                    this._markitSynchroniser,
+                    this._scheduleRulePublisher,
+                    null,
+                    this._logger));
         }
 
         [Test]
         public async Task Handle_FetchesDataFromRepo()
         {
-            var manager = BuildManager();
+            var manager = this.BuildManager();
 
-            await manager.Handle("1", _dataRequestContext);
+            await manager.Handle("1", this._dataRequestContext);
 
-            A
-                .CallTo(() => _repository.DataRequestsForSystemOperation("1"))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => this._repository.DataRequestsForSystemOperation("1")).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Handle_NullRuleRunId_SetsContextEventError()
+        {
+            var manager = this.BuildManager();
+
+            await manager.Handle(null, this._dataRequestContext);
+
+            A.CallTo(() => this._dataRequestContext.EventError(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._bmllSynchroniser = A.Fake<IBmllDataSynchroniser>();
+            this._factsetSynchroniser = A.Fake<IFactsetDataSynchroniser>();
+            this._markitSynchroniser = A.Fake<IMarkitDataSynchroniser>();
+            this._dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
+            this._scheduleRulePublisher = A.Fake<IScheduleRulePublisher>();
+            this._repository = A.Fake<IRuleRunDataRequestRepository>();
+            this._logger = A.Fake<ILogger<DataRequestManager>>();
         }
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_bmllSynchroniser, _factsetSynchroniser, _markitSynchroniser, _scheduleRulePublisher, _repository, _logger);
+            return new DataRequestManager(
+                this._bmllSynchroniser,
+                this._factsetSynchroniser,
+                this._markitSynchroniser,
+                this._scheduleRulePublisher,
+                this._repository,
+                this._logger);
         }
     }
 }

@@ -1,178 +1,195 @@
-﻿using System;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Currency.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories.Equities
+﻿namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
+    using System;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+
     [TestFixture]
     public class WashTradeRuleFactoryTests
     {
-        private ICurrencyConverterService _currencyConverterService;
-        private IClusteringService _clustering;
-        private IUniverseEquityOrderFilterService _orderFilterService;
-        private IUniverseMarketCacheFactory _factory;
-        private ILogger<WashTradeRule> _logger;
-        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
-
-        private IWashTradeRuleEquitiesParameters _equitiesParameters;
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        [SetUp]
-        public void Setup()
-        {
-            _currencyConverterService = A.Fake<ICurrencyConverterService>();
-            _clustering = A.Fake<IClusteringService>();
-            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _logger = new NullLogger<WashTradeRule>();
-            _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+        private IClusteringService _clustering;
 
-            _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
-        }
+        private ICurrencyConverterService _currencyConverterService;
 
-        [Test]
-        public void Constructor_CurrencyConverter_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    null,
-                    _clustering,
-                    _orderFilterService,
-                    _factory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+        private IWashTradeRuleEquitiesParameters _equitiesParameters;
 
-        [Test]
-        public void Constructor_Clustering_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    null,
-                    _orderFilterService,
-                    _factory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+        private IUniverseMarketCacheFactory _factory;
 
-        [Test]
-        public void Constructor_OrderFilter_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    _clustering,
-                    null,
-                    _factory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+        private ILogger<WashTradeRule> _logger;
 
-        [Test]
-        public void Constructor_Factory_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    _clustering,
-                    _orderFilterService,
-                    null,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
+        private IUniverseEquityOrderFilterService _orderFilterService;
 
-        [Test]
-        public void Constructor_Logger_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    _clustering,
-                    _orderFilterService,
-                    _factory,
-                    null,
-                    _tradingHistoryLogger));
-        }
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
 
-        [Test]
-        public void Constructor_TradingHistoryLogger_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    _clustering,
-                    _orderFilterService,
-                    _factory,
-                    _logger,
-                    null));
-        }
-
-        [Test]
-        public void Build_RuleCtx_Null_Throws_Exception()
-        {
-            var factory = new EquityRuleWashTradeFactory(
-                _currencyConverterService,
-                _clustering,
-                _orderFilterService,
-                _factory,
-                _logger,
-                _tradingHistoryLogger);
-
-            Assert.Throws<ArgumentNullException>(() => factory.Build(_equitiesParameters, null, _alertStream, RuleRunMode.ForceRun));
-        }
+        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         [Test]
         public void Build_Parameters_Null_Throws_Exception()
         {
             var factory = new EquityRuleWashTradeFactory(
-                _currencyConverterService,
-                _clustering,
-                _orderFilterService,
-                _factory,
-                _logger,
-                _tradingHistoryLogger);
+                this._currencyConverterService,
+                this._clustering,
+                this._orderFilterService,
+                this._factory,
+                this._logger,
+                this._tradingHistoryLogger);
 
-            Assert.Throws<ArgumentNullException>(() => factory.Build(null, _ruleCtx, _alertStream, RuleRunMode.ForceRun));
+            Assert.Throws<ArgumentNullException>(
+                () => factory.Build(null, this._ruleCtx, this._alertStream, RuleRunMode.ForceRun));
         }
 
         [Test]
         public void Build_Returns_A_WashTrade_Rule()
         {
             var factory = new EquityRuleWashTradeFactory(
-                _currencyConverterService,
-                _clustering,
-                _orderFilterService,
-                _factory,
-                _logger,
-                _tradingHistoryLogger);
+                this._currencyConverterService,
+                this._clustering,
+                this._orderFilterService,
+                this._factory,
+                this._logger,
+                this._tradingHistoryLogger);
 
-            var result = factory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+            var result = factory.Build(
+                this._equitiesParameters,
+                this._ruleCtx,
+                this._alertStream,
+                RuleRunMode.ForceRun);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<WashTradeRule>(result);
+        }
+
+        [Test]
+        public void Build_RuleCtx_Null_Throws_Exception()
+        {
+            var factory = new EquityRuleWashTradeFactory(
+                this._currencyConverterService,
+                this._clustering,
+                this._orderFilterService,
+                this._factory,
+                this._logger,
+                this._tradingHistoryLogger);
+
+            Assert.Throws<ArgumentNullException>(
+                () => factory.Build(this._equitiesParameters, null, this._alertStream, RuleRunMode.ForceRun));
+        }
+
+        [Test]
+        public void Constructor_Clustering_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    this._currencyConverterService,
+                    null,
+                    this._orderFilterService,
+                    this._factory,
+                    this._logger,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_CurrencyConverter_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    null,
+                    this._clustering,
+                    this._orderFilterService,
+                    this._factory,
+                    this._logger,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Factory_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    this._currencyConverterService,
+                    this._clustering,
+                    this._orderFilterService,
+                    null,
+                    this._logger,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_Logger_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    this._currencyConverterService,
+                    this._clustering,
+                    this._orderFilterService,
+                    this._factory,
+                    null,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_OrderFilter_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    this._currencyConverterService,
+                    this._clustering,
+                    null,
+                    this._factory,
+                    this._logger,
+                    this._tradingHistoryLogger));
+        }
+
+        [Test]
+        public void Constructor_TradingHistoryLogger_Null_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(
+                () => new EquityRuleWashTradeFactory(
+                    this._currencyConverterService,
+                    this._clustering,
+                    this._orderFilterService,
+                    this._factory,
+                    this._logger,
+                    null));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._currencyConverterService = A.Fake<ICurrencyConverterService>();
+            this._clustering = A.Fake<IClusteringService>();
+            this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._logger = new NullLogger<WashTradeRule>();
+            this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+
+            this._equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
         }
     }
 }

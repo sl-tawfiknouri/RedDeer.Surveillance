@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
-
-namespace DataImport.Services.Interfaces
+﻿namespace DataImport.Services.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface IEnrichmentService
     {
         Task Initialise();
-        Task Terminate();
+
         Task<bool> Scan();
+
+        Task Terminate();
     }
 }

@@ -1,11 +1,10 @@
-﻿using Domain.Core.Financial.Money;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
+    using Domain.Core.Financial.Money;
+
     public class RevenueMoney
     {
-        public RevenueMoney(
-            bool hadMissingMarketData,
+        public RevenueMoney(bool hadMissingMarketData,
             Money? money,
             HighProfitComponents components)
         {
@@ -15,7 +14,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         }
 
         public bool HadMissingMarketData { get; }
+
         public Money? Money { get; }
+
         public HighProfitComponents Components { get; }
     }
 }

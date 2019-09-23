@@ -1,32 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Timers;
-using CsvHelper;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Files.Orders.Interfaces;
-using TestHarness.Display.Interfaces;
-using TestHarness.Engine.OrderStorage.Interfaces;
-// ReSharper disable InconsistentlySynchronizedField
+﻿// ReSharper disable InconsistentlySynchronizedField
 
 namespace TestHarness.Engine.OrderStorage
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Timers;
+
+    using CsvHelper;
+
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Files.Orders.Interfaces;
+
+    using TestHarness.Display.Interfaces;
+    using TestHarness.Engine.OrderStorage.Interfaces;
+
     public class OrderFileStorageProcess : IOrderFileStorageProcess
     {
-        private readonly object _lock = new object();
-        private readonly string _storagePath;
-        private readonly ILogger _logger;
+        private readonly IConsole _console;
 
-        private volatile bool _timerInitiated;
-
-        private readonly List<Order> _frames;
-        private readonly Timer _timer;
         private readonly string _fileStamp;
 
-        private readonly IConsole _console;
+        private readonly List<Order> _frames;
+
+        private readonly object _lock = new object();
+
+        private readonly ILogger _logger;
+
         private readonly IOrderFileToOrderSerialiser _orderSerialiser;
+
+        private readonly string _storagePath;
+
+        private readonly Timer _timer;
+
+        private volatile bool _timerInitiated;
 
         public OrderFileStorageProcess(
             string storagePath,
@@ -34,74 +45,69 @@ namespace TestHarness.Engine.OrderStorage
             IOrderFileToOrderSerialiser orderSerialiser,
             ILogger logger)
         {
-            _storagePath = storagePath ?? "GeneratedOrderFiles";
-            _console = console ?? throw new ArgumentNullException(nameof(console));
-            _orderSerialiser = orderSerialiser ?? throw new ArgumentNullException(nameof(orderSerialiser));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _frames = new List<Order>();
-            _timerInitiated = false;
-            _fileStamp = $"TradeFile-{DateTime.UtcNow.Ticks}-{Guid.NewGuid()}.csv";
+            this._storagePath = storagePath ?? "GeneratedOrderFiles";
+            this._console = console ?? throw new ArgumentNullException(nameof(console));
+            this._orderSerialiser = orderSerialiser ?? throw new ArgumentNullException(nameof(orderSerialiser));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._frames = new List<Order>();
+            this._timerInitiated = false;
+            this._fileStamp = $"TradeFile-{DateTime.UtcNow.Ticks}-{Guid.NewGuid()}.csv";
 
-            _timer = new Timer {AutoReset = false, Interval = 30 * 1000};
-            _timer.Elapsed += OnElapse;
+            this._timer = new Timer { AutoReset = false, Interval = 30 * 1000 };
+            this._timer.Elapsed += this.OnElapse;
 
-            Initialise();
+            this.Initialise();
+        }
+
+        public void OnCompleted()
+        {
+        }
+
+        public void OnError(Exception error)
+        {
+            this._logger.LogError(error.Message);
+        }
+
+        public void OnNext(Order value)
+        {
+            lock (this._lock)
+            {
+                if (!this._timerInitiated)
+                {
+                    this._timer.Start();
+                    this._timerInitiated = true;
+                    this._console.WriteToUserFeedbackLine("Queued up trade file update in 30 seconds...");
+                }
+
+                this._frames.Add(value);
+            }
         }
 
         private void Initialise()
         {
             try
             {
-                if (!Directory.Exists(_storagePath))
-                {
-                    Directory.CreateDirectory(_storagePath);
-                }
+                if (!Directory.Exists(this._storagePath)) Directory.CreateDirectory(this._storagePath);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
-            }
-        }
-
-        public void OnCompleted()
-        { }
-
-        public void OnError(Exception error)
-        {
-            _logger.LogError(error.Message);
-        }
-
-        public void OnNext(Order value)
-        {
-            lock (_lock)
-            {
-                if (!_timerInitiated)
-                {
-                    _timer.Start();
-                    _timerInitiated = true;
-                    _console.WriteToUserFeedbackLine($"Queued up trade file update in 30 seconds...");
-                }
-
-                _frames.Add(value);
+                this._logger.LogError(e.Message);
             }
         }
 
         private void OnElapse(object sender, ElapsedEventArgs e)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _timer.Stop();
+                this._timer.Stop();
 
-                if (!_frames.Any())
-                {
-                    return;
-                }
+                if (!this._frames.Any()) return;
 
                 try
                 {
-                    var filePath = Path.Combine(_storagePath, _fileStamp);
+                    var filePath = Path.Combine(this._storagePath, this._fileStamp);
 
-                    var csvFrames = _frames.Select(_orderSerialiser.Map).ToList().SelectMany(x => x).ToList();
+                    var csvFrames = this._frames.Select(this._orderSerialiser.Map).ToList().SelectMany(x => x).ToList();
 
                     using (var writer = File.CreateText(filePath))
                     {
@@ -110,13 +116,13 @@ namespace TestHarness.Engine.OrderStorage
                         csv.WriteRecords(csvFrames);
                     }
 
-                    _timerInitiated = false;
-                    _console.WriteToUserFeedbackLine($"Trade file updated.");
+                    this._timerInitiated = false;
+                    this._console.WriteToUserFeedbackLine("Trade file updated.");
                 }
                 catch (Exception a)
                 {
-                    _logger.LogError(a.Message);
-                    _timer.Start();
+                    this._logger.LogError(a.Message);
+                    this._timer.Start();
                 }
             }
         }

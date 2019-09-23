@@ -3,6 +3,7 @@
     public interface IDataCoordinatorScheduler
     {
         void Initialise();
+
         void Terminate();
     }
 }

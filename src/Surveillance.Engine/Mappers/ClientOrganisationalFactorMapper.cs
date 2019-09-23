@@ -1,33 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Engine.Rules.Mappers.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-
-namespace Surveillance.Engine.Rules.Mappers
+﻿namespace Surveillance.Engine.Rules.Mappers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
+    using Surveillance.Engine.Rules.Mappers.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+
     public class ClientOrganisationalFactorMapper : IClientOrganisationalFactorMapper
     {
         private readonly ILogger<ClientOrganisationalFactorMapper> _logger;
 
         public ClientOrganisationalFactorMapper(ILogger<ClientOrganisationalFactorMapper> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<ClientOrganisationalFactors> Map(
-            IReadOnlyCollection<OrganisationalFactors> factors)
+        public IReadOnlyCollection<ClientOrganisationalFactors> Map(IReadOnlyCollection<OrganisationalFactors> factors)
         {
-            if (factors == null
-                || !factors.Any())
+            if (factors == null || !factors.Any())
             {
-                _logger.LogInformation($"ClientOrganisationalFactorMapper received 0 factors to map. Returning 0");
+                this._logger.LogInformation("ClientOrganisationalFactorMapper received 0 factors to map. Returning 0");
                 return new ClientOrganisationalFactors[0];
             }
 
-            return factors.Select(Map).ToList();
+            return factors.Select(this.Map).ToList();
         }
 
         public ClientOrganisationalFactors Map(OrganisationalFactors factor)
@@ -47,7 +48,8 @@ namespace Surveillance.Engine.Rules.Mappers
                 case OrganisationalFactors.Strategy:
                     return ClientOrganisationalFactors.Strategy;
                 default:
-                    _logger.LogWarning($"ClientOrganisationalFactorMapper received argument of {factor} and could not map it to an existing entry.");
+                    this._logger.LogWarning(
+                        $"ClientOrganisationalFactorMapper received argument of {factor} and could not map it to an existing entry.");
                     return ClientOrganisationalFactors.Unknown;
             }
         }

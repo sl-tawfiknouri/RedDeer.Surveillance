@@ -1,52 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Surveillance.Scheduling;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Judgements.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
-using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
-using Surveillance.Engine.Rules.Rules.Equity.Ramping;
-using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
-using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
-using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Engine.Rules.Universe
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+    using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
+    using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+    using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
+    using Surveillance.Engine.Rules.Rules.Equity.Ramping;
+    using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
+    using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
+
     public class UniverseRuleSubscriber : IUniverseRuleSubscriber
     {
+        private readonly ICancelledOrderEquitySubscriber _cancelledOrderEquitySubscriber;
+
+        private readonly IHighProfitsEquitySubscriber _highProfitEquitySubscriber;
+
+        private readonly IHighProfitsFixedIncomeSubscriber _highProfitFixedIncomeSubscriber;
+
+        private readonly IHighVolumeEquitySubscriber _highVolumeEquitySubscriber;
+
+        private readonly IHighVolumeFixedIncomeSubscriber _highVolumeFixedIncomeSubscriber;
+
+        private readonly IRuleParameterDtoIdExtractor _idExtractor;
+
+        private readonly ILayeringEquitySubscriber _layeringEquitySubscriber;
+
+        private readonly ILogger<UniverseRuleSubscriber> _logger;
+
+        private readonly IMarkingTheCloseEquitySubscriber _markingTheCloseEquitySubscriber;
+
+        private readonly IPlacingOrdersWithNoIntentToExecuteEquitySubscriber _placingOrdersEquitySubscriber;
+
+        private readonly IRampingEquitySubscriber _rampingEquitySubscriber;
+
         // Equity
         private readonly ISpoofingEquitySubscriber _spoofingEquitySubscriber;
-        private readonly ICancelledOrderEquitySubscriber _cancelledOrderEquitySubscriber;
-        private readonly IHighProfitsEquitySubscriber _highProfitEquitySubscriber;
-        private readonly IHighVolumeEquitySubscriber _highVolumeEquitySubscriber;
-        private readonly IMarkingTheCloseEquitySubscriber _markingTheCloseEquitySubscriber;
-        private readonly ILayeringEquitySubscriber _layeringEquitySubscriber;
+
         private readonly IWashTradeEquitySubscriber _washTradeEquitySubscriber;
-        private readonly IRampingEquitySubscriber _rampingEquitySubscriber;
-        private readonly IPlacingOrdersWithNoIntentToExecuteEquitySubscriber _placingOrdersEquitySubscriber;
 
         // Fixed Income
         private readonly IWashTradeFixedIncomeSubscriber _washTradeFixedIncomeSubscriber;
-        private readonly IHighVolumeFixedIncomeSubscriber _highVolumeFixedIncomeSubscriber;
-        private readonly IHighProfitsFixedIncomeSubscriber _highProfitFixedIncomeSubscriber;
-
-        private readonly IRuleParameterDtoIdExtractor _idExtractor;
-        private readonly ILogger<UniverseRuleSubscriber> _logger;
 
         public UniverseRuleSubscriber(
             ISpoofingEquitySubscriber spoofingEquitySubscriber,
@@ -59,166 +74,233 @@ namespace Surveillance.Engine.Rules.Universe
             IRampingEquitySubscriber rampingEquitySubscriber,
             IPlacingOrdersWithNoIntentToExecuteEquitySubscriber placingOrdersEquitySubscriber,
             IRuleParameterDtoIdExtractor idExtractor,
-            ILogger<UniverseRuleSubscriber> logger, 
+            ILogger<UniverseRuleSubscriber> logger,
             IWashTradeFixedIncomeSubscriber washTradeFixedIncomeSubscriber,
             IHighVolumeFixedIncomeSubscriber highVolumeFixedIncomeSubscriber,
             IHighProfitsFixedIncomeSubscriber highProfitFixedIncomeSubscriber)
         {
-            _spoofingEquitySubscriber = spoofingEquitySubscriber ?? throw new ArgumentNullException(nameof(spoofingEquitySubscriber));
-            _cancelledOrderEquitySubscriber = cancelledOrderEquitySubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderEquitySubscriber));
-            _highProfitEquitySubscriber = highProfitEquitySubscriber ?? throw new ArgumentNullException(nameof(highProfitEquitySubscriber));
-            _highVolumeEquitySubscriber = highVolumeEquitySubscriber ?? throw new ArgumentNullException(nameof(highVolumeEquitySubscriber));
-            _markingTheCloseEquitySubscriber = markingTheCloseEquitySubscriber ?? throw new ArgumentNullException(nameof(markingTheCloseEquitySubscriber));
-            _layeringEquitySubscriber = layeringEquitySubscriber ?? throw new ArgumentNullException(nameof(layeringEquitySubscriber));
-            _washTradeEquitySubscriber = washTradeEquitySubscriber ?? throw new ArgumentNullException(nameof(washTradeEquitySubscriber));
-            _rampingEquitySubscriber = rampingEquitySubscriber ?? throw new ArgumentNullException(nameof(rampingEquitySubscriber));
-            _placingOrdersEquitySubscriber = placingOrdersEquitySubscriber ?? throw new ArgumentNullException(nameof(placingOrdersEquitySubscriber));
+            this._spoofingEquitySubscriber = spoofingEquitySubscriber
+                                             ?? throw new ArgumentNullException(nameof(spoofingEquitySubscriber));
+            this._cancelledOrderEquitySubscriber = cancelledOrderEquitySubscriber
+                                                   ?? throw new ArgumentNullException(
+                                                       nameof(cancelledOrderEquitySubscriber));
+            this._highProfitEquitySubscriber = highProfitEquitySubscriber
+                                               ?? throw new ArgumentNullException(nameof(highProfitEquitySubscriber));
+            this._highVolumeEquitySubscriber = highVolumeEquitySubscriber
+                                               ?? throw new ArgumentNullException(nameof(highVolumeEquitySubscriber));
+            this._markingTheCloseEquitySubscriber = markingTheCloseEquitySubscriber
+                                                    ?? throw new ArgumentNullException(
+                                                        nameof(markingTheCloseEquitySubscriber));
+            this._layeringEquitySubscriber = layeringEquitySubscriber
+                                             ?? throw new ArgumentNullException(nameof(layeringEquitySubscriber));
+            this._washTradeEquitySubscriber = washTradeEquitySubscriber
+                                              ?? throw new ArgumentNullException(nameof(washTradeEquitySubscriber));
+            this._rampingEquitySubscriber = rampingEquitySubscriber
+                                            ?? throw new ArgumentNullException(nameof(rampingEquitySubscriber));
+            this._placingOrdersEquitySubscriber = placingOrdersEquitySubscriber
+                                                  ?? throw new ArgumentNullException(
+                                                      nameof(placingOrdersEquitySubscriber));
 
-            _idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _washTradeFixedIncomeSubscriber = washTradeFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(washTradeFixedIncomeSubscriber));
-            _highVolumeFixedIncomeSubscriber = highVolumeFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highVolumeFixedIncomeSubscriber));
-            _highProfitFixedIncomeSubscriber = highProfitFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highProfitFixedIncomeSubscriber));
+            this._washTradeFixedIncomeSubscriber = washTradeFixedIncomeSubscriber
+                                                   ?? throw new ArgumentNullException(
+                                                       nameof(washTradeFixedIncomeSubscriber));
+            this._highVolumeFixedIncomeSubscriber = highVolumeFixedIncomeSubscriber
+                                                    ?? throw new ArgumentNullException(
+                                                        nameof(highVolumeFixedIncomeSubscriber));
+            this._highProfitFixedIncomeSubscriber = highProfitFixedIncomeSubscriber
+                                                    ?? throw new ArgumentNullException(
+                                                        nameof(highProfitFixedIncomeSubscriber));
         }
 
         public async Task<IReadOnlyCollection<string>> SubscribeRules(
-             ScheduledExecution execution,
-             IUniversePlayer player,
-             IUniverseAlertStream alertStream,
-             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-             IJudgementService judgementService,
-             ISystemProcessOperationContext opCtx,
-             RuleParameterDto ruleParameters)
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
+            ISystemProcessOperationContext opCtx,
+            RuleParameterDto ruleParameters)
         {
-            if (execution == null
-                || player == null)
+            if (execution == null || player == null)
             {
-                _logger.LogInformation($"received null execution or player. Returning");
+                this._logger.LogInformation("received null execution or player. Returning");
                 return new string[0];
             }
 
             // EQUITY
+            var highVolumeSubscriptions = this._highVolumeEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var highVolumeSubscriptions =
-                _highVolumeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var washTradeSubscriptions = this._washTradeEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var washTradeSubscriptions =
-                _washTradeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var highProfitSubscriptions = this._highProfitEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var highProfitSubscriptions =
-                _highProfitEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var cancelledSubscriptions = this._cancelledOrderEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var cancelledSubscriptions =
-                _cancelledOrderEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var markingTheCloseSubscriptions = this._markingTheCloseEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var markingTheCloseSubscriptions =
-                _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var spoofingSubscriptions = this._spoofingEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var spoofingSubscriptions =
-                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var rampingSubscriptions = this._rampingEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var rampingSubscriptions =
-                _rampingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
-                
-            var placingOrdersSubscriptions =
-                _placingOrdersEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var placingOrdersSubscriptions = this._placingOrdersEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
             // FIXED INCOME
+            var washTradeFixedIncomeSubscriptions = this._washTradeFixedIncomeSubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var washTradeFixedIncomeSubscriptions =
-                _washTradeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var highVolumeFixedIncomeSubscriptions = this._highVolumeFixedIncomeSubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
-            var highVolumeFixedIncomeSubscriptions =
-                _highVolumeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
-
-            var highProfitFixedIncomeSubscriptions =
-                _highProfitFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var highProfitFixedIncomeSubscriptions = this._highProfitFixedIncomeSubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
             // EQUITY
-
             foreach (var sub in highVolumeSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in washTradeSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(WashTradeRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(WashTradeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highProfitSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in cancelledSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in markingTheCloseSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in spoofingSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(SpoofingRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(SpoofingRule)}");
                 player.Subscribe(sub);
             }
-            
-            
+
             foreach (var sub in rampingSubscriptions)
             {
-                _logger.LogInformation($"Subscribe rules subscribing a {nameof(RampingRule)}");
+                this._logger.LogInformation($"Subscribe rules subscribing a {nameof(RampingRule)}");
                 player.Subscribe(sub);
             }
-            
+
             foreach (var sub in placingOrdersSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(PlacingOrdersWithNoIntentToExecuteRule)}");
+                this._logger.LogInformation(
+                    $"Subscribe Rules subscribing a {nameof(PlacingOrdersWithNoIntentToExecuteRule)}");
                 player.Subscribe(sub);
             }
-  
 
             // FIXED INCOME
-
             foreach (var sub in washTradeFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
+                this._logger.LogInformation(
+                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highProfitFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
+                this._logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
                 player.Subscribe(sub);
             }
 
-            var ids = _idExtractor.ExtractIds(ruleParameters);
+            var ids = this._idExtractor.ExtractIds(ruleParameters);
 
-            if (ids == null
-                || !ids.Any())
+            if (ids == null || !ids.Any())
             {
-                _logger.LogError($"did not have any ids successfully extracted from the rule parameters");
+                this._logger.LogError("did not have any ids successfully extracted from the rule parameters");
 
                 return ids;
             }
 
             var jointIds = ids.Aggregate((a, b) => $"{a} {b}");
-            _logger.LogInformation($"subscriber processed for the following ids {jointIds}");
+            this._logger.LogInformation($"subscriber processed for the following ids {jointIds}");
 
             return await Task.FromResult(ids);
 
@@ -234,9 +316,13 @@ namespace Surveillance.Engine.Rules.Universe
             IJudgementService judgementService,
             ISystemProcessOperationContext opCtx)
         {
-
-            var layeringSubscriptions =
-                _layeringEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, judgementService, alertStream);
+            var layeringSubscriptions = this._layeringEquitySubscriber.CollateSubscriptions(
+                execution,
+                ruleParameters,
+                opCtx,
+                dataRequestSubscriber,
+                judgementService,
+                alertStream);
 
             foreach (var sub in layeringSubscriptions)
                 player.Subscribe(sub);

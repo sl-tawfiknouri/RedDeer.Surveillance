@@ -1,47 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Surveillance.Rules.Interfaces;
-
-namespace Domain.Surveillance.Rules
+﻿namespace Domain.Surveillance.Rules
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Surveillance.Rules.Interfaces;
+    using Domain.Surveillance.Scheduling;
+
     public class ActiveRulesService : IActiveRulesService
     {
-        private readonly IReadOnlyCollection<Scheduling.Rules> _enabledRules =
-            new List<Scheduling.Rules>
-            {
-                Scheduling.Rules.Spoofing,
-                Scheduling.Rules.CancelledOrders,
-                Scheduling.Rules.HighProfits,
-                Scheduling.Rules.MarkingTheClose,
-                Scheduling.Rules.Layering,
-                Scheduling.Rules.HighVolume,
-                Scheduling.Rules.WashTrade,
-                Scheduling.Rules.PaintingTheTape,
-                Scheduling.Rules.FixedIncomeWashTrades,
-                Scheduling.Rules.FixedIncomeHighProfits,
-                Scheduling.Rules.FixedIncomeHighVolumeIssuance,
-                Scheduling.Rules.Ramping,
-                Scheduling.Rules.PlacingOrderWithNoIntentToExecute
-            };
+        private readonly IReadOnlyCollection<Rules> _enabledRules = new List<Rules>
+                                                                        {
+                                                                            Rules.Spoofing,
+                                                                            Rules.CancelledOrders,
+                                                                            Rules.HighProfits,
+                                                                            Rules.MarkingTheClose,
+                                                                            Rules.Layering,
+                                                                            Rules.HighVolume,
+                                                                            Rules.WashTrade,
+                                                                            Rules.PaintingTheTape,
+                                                                            Rules.FixedIncomeWashTrades,
+                                                                            Rules.FixedIncomeHighProfits,
+                                                                            Rules.FixedIncomeHighVolumeIssuance,
+                                                                            Rules.Ramping,
+                                                                            Rules.PlacingOrderWithNoIntentToExecute
+                                                                        };
 
-        public bool RuleIsEnabled(Scheduling.Rules rule)
+        public IReadOnlyCollection<Rules> DisabledRules()
         {
-            return _enabledRules.Contains(rule);
+            var rules = Enum.GetValues(typeof(Rules));
+            var castRules = rules.Cast<Rules>().ToList();
+            var ruleList = new List<Rules>(castRules);
+
+            return ruleList.Where(i => !this._enabledRules.Contains(i)).ToList();
         }
 
-        public IReadOnlyCollection<Scheduling.Rules> EnabledRules()
+        public IReadOnlyCollection<Rules> EnabledRules()
         {
-            return _enabledRules;
+            return this._enabledRules;
         }
 
-        public IReadOnlyCollection<Scheduling.Rules> DisabledRules()
+        public bool RuleIsEnabled(Rules rule)
         {
-            var rules = Enum.GetValues(typeof(Scheduling.Rules));
-            var castRules = rules.Cast<Scheduling.Rules>().ToList();
-            var ruleList = new List<Scheduling.Rules>(castRules);
-
-            return ruleList.Where(i => !_enabledRules.Contains(i)).ToList();
+            return this._enabledRules.Contains(rule);
         }
     }
 }

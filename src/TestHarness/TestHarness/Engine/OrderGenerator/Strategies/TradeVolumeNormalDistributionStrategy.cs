@@ -1,24 +1,27 @@
-﻿using MathNet.Numerics.Distributions;
-using System;
-using System.Collections.Generic;
-using Domain.Core.Markets.Timebars;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator.Strategies
+﻿namespace TestHarness.Engine.OrderGenerator.Strategies
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Core.Markets.Timebars;
+
+    using MathNet.Numerics.Distributions;
+
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     public class TradeVolumeNormalDistributionStrategy : ITradeVolumeStrategy
     {
         private readonly int _sd;
 
         public TradeVolumeNormalDistributionStrategy(int sd)
         {
-            _sd = sd;
+            this._sd = sd;
         }
 
         public int CalculateSecuritiesToTrade(IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> frames)
         {
-            var tradingMean = TradingMean(frames);
-            var totalSecuritiesToTrade = (int)Normal.Sample(tradingMean, _sd);
+            var tradingMean = this.TradingMean(frames);
+            var totalSecuritiesToTrade = (int)Normal.Sample(tradingMean, this._sd);
             var adjustedSecuritiesToTrade = Math.Max(totalSecuritiesToTrade, 0);
 
             return adjustedSecuritiesToTrade;
@@ -28,17 +31,11 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
         {
             var rawCount = frames.Count;
 
-            if (rawCount <= 0)
-            {
-                return 0;
-            }
+            if (rawCount <= 0) return 0;
 
             var sqrt = Math.Sqrt(rawCount);
 
-            if (sqrt < 10)
-            {
-                return rawCount;
-            }
+            if (sqrt < 10) return rawCount;
 
             return (int)sqrt;
         }

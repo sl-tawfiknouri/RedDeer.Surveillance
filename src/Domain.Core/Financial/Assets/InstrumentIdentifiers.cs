@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Domain.Core.Financial.Assets
+﻿namespace Domain.Core.Financial.Assets
 {
+    using System;
+
     public struct InstrumentIdentifiers
     {
         public InstrumentIdentifiers(
@@ -15,7 +15,8 @@ namespace Domain.Core.Financial.Assets
             string cusip,
             string exchangeSymbol,
             string lei,
-            string bloombergTicker) : this(
+            string bloombergTicker)
+            : this(
                 id,
                 reddeerId,
                 reddeerEnrichmentId,
@@ -35,7 +36,8 @@ namespace Domain.Core.Financial.Assets
                 string.Empty,
                 string.Empty,
                 string.Empty)
-        { }
+        {
+        }
 
         public InstrumentIdentifiers(
             string id,
@@ -58,26 +60,26 @@ namespace Domain.Core.Financial.Assets
             string underlyingBloombergTicker,
             string underlyingClientIdentifier)
         {
-            Id = id ?? string.Empty;
-            ReddeerId = reddeerId ?? string.Empty;
-            ReddeerEnrichmentId = reddeerEnrichmentId ?? string.Empty;
-            ClientIdentifier = clientIdentifier ?? string.Empty;
-            Sedol = sedol ?? string.Empty;
-            Isin = isin ?? string.Empty;
-            Figi = figi ?? string.Empty;
-            Cusip = cusip ?? string.Empty;
-            ExchangeSymbol = exchangeSymbol ?? string.Empty;
-            Lei = lei ?? string.Empty;
-            BloombergTicker = bloombergTicker ?? string.Empty;
+            this.Id = id ?? string.Empty;
+            this.ReddeerId = reddeerId ?? string.Empty;
+            this.ReddeerEnrichmentId = reddeerEnrichmentId ?? string.Empty;
+            this.ClientIdentifier = clientIdentifier ?? string.Empty;
+            this.Sedol = sedol ?? string.Empty;
+            this.Isin = isin ?? string.Empty;
+            this.Figi = figi ?? string.Empty;
+            this.Cusip = cusip ?? string.Empty;
+            this.ExchangeSymbol = exchangeSymbol ?? string.Empty;
+            this.Lei = lei ?? string.Empty;
+            this.BloombergTicker = bloombergTicker ?? string.Empty;
 
-            UnderlyingSedol = underlyingSedol ?? string.Empty;
-            UnderlyingIsin = underlyingIsin ?? string.Empty;
-            UnderlyingFigi = underlyingFigi ?? string.Empty;
-            UnderlyingCusip = underlyingCusip ?? string.Empty;
-            UnderlyingLei = underlyingLei ?? string.Empty;
-            UnderlyingExchangeSymbol = underlyingExchangeSymbol ?? string.Empty;
-            UnderlyingBloombergTicker = underlyingBloombergTicker ?? string.Empty;
-            UnderlyingClientIdentifier = underlyingClientIdentifier ?? string.Empty;
+            this.UnderlyingSedol = underlyingSedol ?? string.Empty;
+            this.UnderlyingIsin = underlyingIsin ?? string.Empty;
+            this.UnderlyingFigi = underlyingFigi ?? string.Empty;
+            this.UnderlyingCusip = underlyingCusip ?? string.Empty;
+            this.UnderlyingLei = underlyingLei ?? string.Empty;
+            this.UnderlyingExchangeSymbol = underlyingExchangeSymbol ?? string.Empty;
+            this.UnderlyingBloombergTicker = underlyingBloombergTicker ?? string.Empty;
+            this.UnderlyingClientIdentifier = underlyingClientIdentifier ?? string.Empty;
         }
 
         public static InstrumentIdentifiers Null()
@@ -97,100 +99,104 @@ namespace Domain.Core.Financial.Assets
         }
 
         /// <summary>
-        /// Primary key id
+        ///     Primary key id
         /// </summary>
         public string Id { get; set; }
+
         public string ReddeerId { get; set; }
+
         public string ReddeerEnrichmentId { get; set; }
+
         public string ClientIdentifier { get; set; }
+
         public string Sedol { get; set; }
+
         public string Isin { get; set; }
+
         public string Figi { get; set; }
+
         public string Cusip { get; set; }
+
         public string ExchangeSymbol { get; set; }
+
         public string Lei { get; set; }
+
         public string BloombergTicker { get; set; }
 
-
         public string UnderlyingSedol { get; set; }
+
         public string UnderlyingIsin { get; set; }
+
         public string UnderlyingFigi { get; set; }
+
         public string UnderlyingCusip { get; set; }
+
         public string UnderlyingLei { get; set; }
+
         public string UnderlyingExchangeSymbol { get; set; }
+
         public string UnderlyingBloombergTicker { get; set; }
+
         public string UnderlyingClientIdentifier { get; set; }
 
         public override int GetHashCode()
         {
-            if (string.IsNullOrWhiteSpace(ReddeerId))
-            {
-                return 0;
-            }
+            if (string.IsNullOrWhiteSpace(this.ReddeerId)) return 0;
 
-            return ReddeerId.GetHashCode();
+            return this.ReddeerId.ToLower().GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is InstrumentIdentifiers))
-            {
-                return false;
-            }
+            if (!(obj is InstrumentIdentifiers)) return false;
 
             var otherId = (InstrumentIdentifiers)obj;
 
-            if (!string.IsNullOrWhiteSpace(ReddeerId)
-                && string.Equals(ReddeerId, otherId.ReddeerId, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.ReddeerId) && string.Equals(
+                    this.ReddeerId,
+                    otherId.ReddeerId,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(ClientIdentifier)
-                && string.Equals(ClientIdentifier, otherId.ClientIdentifier, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.ClientIdentifier) && string.Equals(
+                    this.ClientIdentifier,
+                    otherId.ClientIdentifier,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(Sedol)
-                && string.Equals(Sedol, otherId.Sedol, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.Sedol) && string.Equals(
+                    this.Sedol,
+                    otherId.Sedol,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(Isin)
-                && string.Equals(Isin, otherId.Isin, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.Figi) && string.Equals(
+                    this.Figi,
+                    otherId.Figi,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(Figi)
-                && string.Equals(Figi, otherId.Figi, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.Cusip) && string.Equals(
+                    this.Cusip,
+                    otherId.Cusip,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(Cusip)
-                && string.Equals(Cusip, otherId.Cusip, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.Isin) && string.Equals(
+                    this.Isin,
+                    otherId.Isin,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
-            if (!string.IsNullOrWhiteSpace(BloombergTicker)
-                && string.Equals(BloombergTicker, otherId.BloombergTicker, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(this.BloombergTicker) && string.Equals(
+                    this.BloombergTicker,
+                    otherId.BloombergTicker,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
 
             return false;
         }
 
         /// <summary>
-        /// Don't show reddeer id otherwise it'll be exposed to clients
+        ///     Don't show reddeer id otherwise it'll be exposed to clients
         /// </summary>
         public override string ToString()
         {
-            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol} | Lei {Lei} | Bloomberg Ticker {BloombergTicker}";
+            return
+                $"Client Id: {this.ClientIdentifier} | Sedol {this.Sedol} | Isin {this.Isin} | Figi {this.Figi} | Cusip {this.Cusip} | Exchange Symbol {this.ExchangeSymbol} | Lei {this.Lei} | Bloomberg Ticker {this.BloombergTicker}";
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using Infrastructure.Network.Aws.Interfaces;
-
-namespace Surveillance.DataLayer.Configuration.Interfaces
+﻿namespace Surveillance.DataLayer.Configuration.Interfaces
 {
+    using Infrastructure.Network.Aws.Interfaces;
+
     public interface IDataLayerConfiguration : IAwsConfiguration
     {
-        string SurveillanceUserApiAccessToken { get; set; }
-        string ClientServiceUrl { get; set; }
         string BmllServiceUrl { get; set; }
+
+        string ClientServiceUrl { get; set; }
+
+        string SurveillanceUserApiAccessToken { get; set; }
     }
 }

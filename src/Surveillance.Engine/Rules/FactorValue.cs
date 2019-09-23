@@ -1,21 +1,20 @@
-﻿using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules
+﻿namespace Surveillance.Engine.Rules.Rules
 {
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+
     public class FactorValue : IFactorValue
     {
-        public FactorValue(
-            ClientOrganisationalFactors organisationalFactors,
-            string value)
+        public FactorValue(ClientOrganisationalFactors organisationalFactors, string value)
         {
-            OrganisationalFactors = organisationalFactors;
-            Value = value ?? string.Empty;
+            this.OrganisationalFactors = organisationalFactors;
+            this.Value = value ?? string.Empty;
         }
 
-        public ClientOrganisationalFactors OrganisationalFactors { get; }
-        public string Value { get; }
-
         public static IFactorValue None => new FactorValue(ClientOrganisationalFactors.None, string.Empty);
+
+        public ClientOrganisationalFactors OrganisationalFactors { get; }
+
+        public string Value { get; }
     }
 }

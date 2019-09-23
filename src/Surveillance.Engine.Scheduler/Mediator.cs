@@ -1,35 +1,37 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Scheduler.Interfaces;
-using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
-
-namespace Surveillance.Engine.Scheduler
+﻿namespace Surveillance.Engine.Scheduler
 {
+    using System;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.Scheduler.Interfaces;
+    using Surveillance.Engine.Scheduler.Scheduler.Interfaces;
+
     public class Mediator : IRuleSchedulerMediator
     {
         private readonly IDelayedSchedulerScanner _delayedRuleSchedulerScanner;
+
         private readonly ILogger<Mediator> _logger;
 
-        public Mediator(
-            IDelayedSchedulerScanner delayedRuleSchedulerScanner,
-            ILogger<Mediator> logger)
+        public Mediator(IDelayedSchedulerScanner delayedRuleSchedulerScanner, ILogger<Mediator> logger)
         {
-            _delayedRuleSchedulerScanner = delayedRuleSchedulerScanner ?? throw new ArgumentNullException(nameof(delayedRuleSchedulerScanner));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._delayedRuleSchedulerScanner = delayedRuleSchedulerScanner
+                                                ?? throw new ArgumentNullException(nameof(delayedRuleSchedulerScanner));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
-            _logger.LogInformation($"initiating");
-            _delayedRuleSchedulerScanner.Initiate();
-            _logger.LogInformation($"completed initiation");
+            this._logger.LogInformation("initiating");
+            this._delayedRuleSchedulerScanner.Initiate();
+            this._logger.LogInformation("completed initiation");
         }
 
         public void Terminate()
         {
-            _logger.LogInformation($"terminating");
-            _delayedRuleSchedulerScanner.Terminate();
-            _logger.LogInformation($"completed termination");
+            this._logger.LogInformation("terminating");
+            this._delayedRuleSchedulerScanner.Terminate();
+            this._logger.LogInformation("completed termination");
         }
     }
 }

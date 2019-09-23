@@ -3,7 +3,9 @@
     public interface IMarkingTheCloseJudgement
     {
         decimal? DailyPercentageMarketVolume { get; }
+
         decimal? ThresholdOffTouchPercentage { get; }
+
         decimal? WindowPercentageMarketVolume { get; }
     }
 }

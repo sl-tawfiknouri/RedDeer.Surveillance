@@ -2,8 +2,9 @@
 {
     public class RuleBreachDescription
     {
-        public bool RuleBreached { get; set; }
         public string Description { get; set; }
+
+        public bool RuleBreached { get; set; }
 
         public static RuleBreachDescription False()
         {

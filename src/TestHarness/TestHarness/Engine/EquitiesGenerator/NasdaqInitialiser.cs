@@ -1,25 +1,28 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Domain.Core.Markets;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Markets.Timebars;
-
-namespace TestHarness.Engine.EquitiesGenerator
+﻿namespace TestHarness.Engine.EquitiesGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Timebars;
+
+    using Newtonsoft.Json;
+
+    using TestHarness.Engine.EquitiesGenerator.Interfaces;
+
     public class NasdaqInitialiser : IExchangeSeriesInitialiser
     {
-        private string _nasdaqCurrency = "USD";
+        private readonly string _nasdaqCurrency = "USD";
 
         public EquityIntraDayTimeBarCollection InitialFrame()
         {
             var exchange = new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
-            var securities = ProjectToSecurities(nasdaqRaw);
+            var securities = this.ProjectToSecurities(nasdaqRaw);
 
             var tick = new EquityIntraDayTimeBarCollection(exchange, DateTime.UtcNow, securities);
 
@@ -31,8 +34,8 @@ namespace TestHarness.Engine.EquitiesGenerator
             var rnd = new Random();
             var volume = rnd.Next(5000, 1000000);
 
-            return nasdaqRaw.Select(raw =>
-                new EquityInstrumentIntraDayTimeBar(
+            return nasdaqRaw.Select(
+                raw => new EquityInstrumentIntraDayTimeBar(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(
@@ -50,35 +53,35 @@ namespace TestHarness.Engine.EquitiesGenerator
                         raw.Symbol,
                         "CFI",
                         "USD",
-                        raw.Symbol), 
-                     new SpreadTimeBar(
-                        new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new Money(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                         new Volume(volume)),
-
-                     new DailySummaryTimeBar(
-                         decimal.Parse(raw.Buy) * volume,
+                        raw.Symbol),
+                    new SpreadTimeBar(
+                        new Money(decimal.Parse(raw.Buy), this._nasdaqCurrency),
+                        new Money(decimal.Parse(raw.Sell), this._nasdaqCurrency),
+                        new Money(decimal.Parse(raw.Buy), this._nasdaqCurrency),
+                        new Volume(volume)),
+                    new DailySummaryTimeBar(
+                        decimal.Parse(raw.Buy) * volume,
                          "USD",
-                         new IntradayPrices(
-                             new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                             new Money(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                             new Money(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
-                             new Money(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
-                         volume * 3,
-                         new Volume(volume),
-                         DateTime.UtcNow),
+                        new IntradayPrices(
+                            new Money(decimal.Parse(raw.Buy), this._nasdaqCurrency),
+                            new Money(decimal.Parse(raw.Sell), this._nasdaqCurrency),
+                            new Money(decimal.Parse(raw.Buy) * 1.2m, this._nasdaqCurrency),
+                            new Money(decimal.Parse(raw.Sell) * 0.7m, this._nasdaqCurrency)),
+                        volume * 3,
+                        new Volume(volume),
+                        DateTime.UtcNow),
                     DateTime.UtcNow,
-                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE)))
-                .ToList();
+                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE))).ToList();
         }
 
         // ReSharper Disable All 
         private class NasdaqData
         {
-            public string Symbol { get; set; }
             public string Buy { get; set; }
+
             public string Sell { get; set; }
+
+            public string Symbol { get; set; }
         }
 
         private static readonly string InitialNasdaqDataJson = @"
@@ -15630,6 +15633,7 @@ namespace TestHarness.Engine.EquitiesGenerator
           }
         ]
                 ";
+
         // ReSharper Restore All
     }
 }

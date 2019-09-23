@@ -1,34 +1,30 @@
-﻿using NUnit.Framework;
-using RedDeer.Surveillance.Api.Client.Queries;
-using Surveillance.Api.DataAccess.Entities;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Surveillance.Api.Tests.Tests
+﻿namespace Surveillance.Api.Tests.Tests
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using NUnit.Framework;
+
+    using RedDeer.Surveillance.Api.Client.Queries;
+
+    using Surveillance.Api.DataAccess.Entities;
+
     public class StrategyTests : BaseTest
     {
         [Test]
         public async Task CanRequest_Fund_AllFields()
         {
             // arrange
-            _dbContext.DbOrderAllocations.Add(new OrdersAllocation
-            {
-                Id = 1,
-                Live = true,
-                Strategy = "Strategy 1"
-            });
+            this._dbContext.DbOrderAllocations.Add(
+                new OrdersAllocation { Id = 1, Live = true, Strategy = "Strategy 1" });
 
-            await _dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync();
 
             var query = new StrategyQuery();
-            query
-                .Filter
-                    .Node
-                        .FieldName();
+            query.Filter.Node.FieldName();
 
             // act
-            var strategies = await _apiClient.QueryAsync(query, CancellationToken.None);
+            var strategies = await this._apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
             Assert.That(strategies, Has.Count.EqualTo(1));

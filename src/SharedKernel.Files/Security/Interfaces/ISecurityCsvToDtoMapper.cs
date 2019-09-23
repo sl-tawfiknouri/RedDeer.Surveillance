@@ -1,10 +1,11 @@
-﻿using Domain.Core.Markets.Timebars;
-
-namespace SharedKernel.Files.Security.Interfaces
+﻿namespace SharedKernel.Files.Security.Interfaces
 {
+    using Domain.Core.Markets.Timebars;
+
     public interface ISecurityCsvToDtoMapper
     {
         int FailedParseTotal { get; set; }
+
         EquityInstrumentIntraDayTimeBar Map(FinancialInstrumentTimeBarCsv csv);
     }
 }

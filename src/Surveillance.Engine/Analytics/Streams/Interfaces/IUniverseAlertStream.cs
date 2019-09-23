@@ -1,7 +1,7 @@
-﻿using Domain.Surveillance.Streams;
-
-namespace Surveillance.Engine.Rules.Analytics.Streams.Interfaces
+﻿namespace Surveillance.Engine.Rules.Analytics.Streams.Interfaces
 {
+    using Domain.Surveillance.Streams;
+
     public interface IUniverseAlertStream : IPublishingStream<IUniverseAlertEvent>
     {
     }

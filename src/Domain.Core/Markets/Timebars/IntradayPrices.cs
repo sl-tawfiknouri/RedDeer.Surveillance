@@ -1,42 +1,38 @@
-﻿using Domain.Core.Financial.Money;
-
-namespace Domain.Core.Markets.Timebars
+﻿namespace Domain.Core.Markets.Timebars
 {
+    using Domain.Core.Financial.Money;
+
     /// <summary>
-    /// Daily high/lows open/close
+    ///     Daily high/lows open/close
     /// </summary>
     public class IntradayPrices
     {
-        public IntradayPrices(
-            Money? open,
-            Money? close,
-            Money? high,
-            Money? low)
+        public IntradayPrices(Money? open, Money? close, Money? high, Money? low)
         {
-            Open = open;
-            Close = close;
-            High = high;
-            Low = low;
+            this.Open = open;
+            this.Close = close;
+            this.High = high;
+            this.Low = low;
         }
 
         /// <summary>
-        /// Opening trading price
-        /// </summary>
-        public Money? Open { get; }
-
-        /// <summary>
-        /// Closing trading price
+        ///     Closing trading price
         /// </summary>
         public Money? Close { get; }
 
         /// <summary>
-        /// Intraday high trading price
+        ///     Intraday high trading price
         /// </summary>
         public Money? High { get; }
 
         /// <summary>
-        /// Intraday low trading price
+        ///     Intraday low trading price
         /// </summary>
         public Money? Low { get; }
+
+        /// <summary>
+        ///     Opening trading price
+        /// </summary>
+        public Money? Open { get; }
     }
 }

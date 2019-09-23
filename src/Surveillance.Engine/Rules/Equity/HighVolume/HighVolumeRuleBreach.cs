@@ -1,15 +1,17 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Financial.Money;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+
     using Domain.Core.Markets;
 
     public class HighVolumeRuleBreach : IHighVolumeRuleBreach
@@ -30,48 +32,60 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             string caseTitle,
             DateTime universeDateTime)
         {
-            FactorValue = factorValue;
+            this.FactorValue = factorValue;
 
-            Window = window;
-            Trades = trades;
-            Security = security;
-            EquitiesParameters = equitiesParameters;
+            this.Window = window;
+            this.Trades = trades;
+            this.Security = security;
+            this.EquitiesParameters = equitiesParameters;
 
-            DailyBreach = dailyBreach;
-            WindowBreach = windowBreach;
-            MarketCapBreach = marketCapBreach;
+            this.DailyBreach = dailyBreach;
+            this.WindowBreach = windowBreach;
+            this.MarketCapBreach = marketCapBreach;
 
-            TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
-            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
-            SystemOperationId = operationContext.Id.ToString();
-            CorrelationId = correlationId;
-            RuleParameters = equitiesParameters;
-            Description = description ?? string.Empty;
-            CaseTitle = caseTitle ?? string.Empty;
-            UniverseDateTime = universeDateTime;
+            this.TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
+            this.RuleParameterId = equitiesParameters?.Id ?? string.Empty;
+            this.SystemOperationId = operationContext.Id.ToString();
+            this.CorrelationId = correlationId;
+            this.RuleParameters = equitiesParameters;
+            this.Description = description ?? string.Empty;
+            this.CaseTitle = caseTitle ?? string.Empty;
+            this.UniverseDateTime = universeDateTime;
         }
 
-        public TimeSpan Window { get; }
-        public ITradePosition Trades { get; }
-        public FinancialInstrument Security { get; }
+        public string CaseTitle { get; set; }
+
+        public string CorrelationId { get; set; }
+
+        public BreachDetails DailyBreach { get; }
+
+        public string Description { get; set; }
 
         public IHighVolumeRuleEquitiesParameters EquitiesParameters { get; }
 
-        public BreachDetails DailyBreach { get; }
-        public BreachDetails WindowBreach { get; }
+        public IFactorValue FactorValue { get; set; }
+
+        public bool IsBackTestRun { get; set; }
+
         public BreachDetails MarketCapBreach { get; }
+
+        public string RuleParameterId { get; set; }
+
+        public IRuleParameter RuleParameters { get; set; }
+
+        public FinancialInstrument Security { get; }
+
+        public string SystemOperationId { get; set; }
 
         public decimal TotalOrdersTradedInWindow { get; }
 
-        public bool IsBackTestRun { get; set; }
-        public string RuleParameterId { get; set; }
-        public string SystemOperationId { get; set; }
-        public string CorrelationId { get; set; }
-        public IFactorValue FactorValue { get; set; }
-        public IRuleParameter RuleParameters { get; set; }
+        public ITradePosition Trades { get; }
+
         public DateTime UniverseDateTime { get; set; }
-        public string Description { get; set; }
-        public string CaseTitle { get; set; }
+
+        public TimeSpan Window { get; }
+
+        public BreachDetails WindowBreach { get; }
 
         public class BreachDetails
         {
@@ -81,9 +95,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 decimal breachThresholdAmount,
                 Market venue)
             {
-                HasBreach = hasBreach;
-                BreachPercentage = breachPercentage;
-                BreachThresholdAmount = breachThresholdAmount;
+                this.HasBreach = hasBreach;
+                this.BreachPercentage = breachPercentage;
+                this.BreachThresholdAmount = breachThresholdAmount;
                 Venue = venue;
             }
 
@@ -94,18 +108,22 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 Money breachTradedMoney,
                 Market venue)
             {
-                HasBreach = hasBreach;
-                BreachPercentage = breachPercentage;
-                BreachThresholdMoney = breachThresholdMoney;
-                BreachTradedMoney = breachTradedMoney;
+                this.HasBreach = hasBreach;
+                this.BreachPercentage = breachPercentage;
+                this.BreachThresholdMoney = breachThresholdMoney;
+                this.BreachTradedMoney = breachTradedMoney;
                 Venue = venue;
             }
 
-            public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
+
             public decimal BreachThresholdAmount { get; }
+
             public Money BreachThresholdMoney { get; }
+
             public Money BreachTradedMoney { get; }
+
+            public bool HasBreach { get; }
 
             public Market Venue { get; }
 

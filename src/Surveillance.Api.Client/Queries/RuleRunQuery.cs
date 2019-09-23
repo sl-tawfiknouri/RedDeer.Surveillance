@@ -1,27 +1,26 @@
-﻿using RedDeer.Surveillance.Api.Client.Dtos;
-using RedDeer.Surveillance.Api.Client.Filters;
-using RedDeer.Surveillance.Api.Client.Infrastructure;
-using RedDeer.Surveillance.Api.Client.Nodes;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace RedDeer.Surveillance.Api.Client.Queries
+﻿namespace RedDeer.Surveillance.Api.Client.Queries
 {
-    using Response = List<RuleRunDto>;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using RedDeer.Surveillance.Api.Client.Filters;
+    using RedDeer.Surveillance.Api.Client.Infrastructure;
+    using RedDeer.Surveillance.Api.Client.Nodes;
+
+    using Response = System.Collections.Generic.List<Dtos.RuleRunDto>;
 
     public class RuleRunQuery : Query<Response>
     {
-        public RuleRunFilter<RuleRunNode> Filter { get; }
-
         public RuleRunQuery()
         {
-            Filter = new RuleRunFilter<RuleRunNode>(new RuleRunNode(this));
+            this.Filter = new RuleRunFilter<RuleRunNode>(new RuleRunNode(this));
         }
+
+        public RuleRunFilter<RuleRunNode> Filter { get; }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("ruleRuns", Filter, request, ctx);
+            return await this.BuildAndPost<Response>("ruleRuns", this.Filter, request, ctx);
         }
     }
 }

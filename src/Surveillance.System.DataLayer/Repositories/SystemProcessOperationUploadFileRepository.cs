@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.DataLayer.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-
-namespace Surveillance.Auditing.DataLayer.Repositories
+﻿namespace Surveillance.Auditing.DataLayer.Repositories
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Dapper;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.DataLayer.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+
     public class SystemProcessOperationUploadFileRepository : ISystemProcessOperationUploadFileRepository
     {
-        private readonly object _lock = new object();
-        private readonly IConnectionStringFactory _dbConnectionFactory;
-        private readonly ILogger<SystemProcessOperationUploadFileRepository> _logger;
-
-        private const string CreateSql = @"INSERT INTO SystemProcessOperationUploadFile(SystemProcessOperationId, FilePath, FileType) VALUES (@SystemProcessOperationId, @FilePath, @FileType); SELECT LAST_INSERT_ID();";
-
-        private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperationUploadFile ORDER BY Id desc LIMIT 10;";
+        private const string CreateSql =
+            @"INSERT INTO SystemProcessOperationUploadFile(SystemProcessOperationId, FilePath, FileType) VALUES (@SystemProcessOperationId, @FilePath, @FileType); SELECT LAST_INSERT_ID();";
 
         private const string GetByDate = @"
             SELECT UploadFile.*, SysOp.OperationStart AS FileUploadTime
@@ -29,27 +27,34 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             WHERE SysOp.OperationStart >= @StartDate
             AND SysOp.OperationStart < @EndDate;";
 
+        private const string GetDashboardSql =
+            @"SELECT * FROM SystemProcessOperationUploadFile ORDER BY Id desc LIMIT 10;";
+
+        private readonly IConnectionStringFactory _dbConnectionFactory;
+
+        private readonly object _lock = new object();
+
+        private readonly ILogger<SystemProcessOperationUploadFileRepository> _logger;
+
         public SystemProcessOperationUploadFileRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<SystemProcessOperationUploadFileRepository> logger)
         {
-            _dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._dbConnectionFactory =
+                dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Create(ISystemProcessOperationUploadFile entity)
         {
-            if (entity == null)
-            {
-                return;
-            }
+            if (entity == null) return;
 
-            lock (_lock)
+            lock (this._lock)
             {
                 try
                 {
-                    _logger.LogInformation($"SystemProcessOperationUploadFileRepository SAVING {entity}");
-                    using (var dbConnection = _dbConnectionFactory.BuildConn())
+                    this._logger.LogInformation($"SystemProcessOperationUploadFileRepository SAVING {entity}");
+                    using (var dbConnection = this._dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
                         entity.Id = conn.Result;
@@ -57,7 +62,8 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"System Process Operation Upload File Repository Create Method For {entity.Id} {entity.SystemProcessId}. {e.Message}");
+                    this._logger.LogError(
+                        $"System Process Operation Upload File Repository Create Method For {entity.Id} {entity.SystemProcessId}. {e.Message}");
                 }
             }
         }
@@ -66,7 +72,7 @@ namespace Surveillance.Auditing.DataLayer.Repositories
         {
             try
             {
-                using (var dbConnection = _dbConnectionFactory.BuildConn())
+                using (var dbConnection = this._dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(GetDashboardSql))
                 {
                     var result = await conn;
@@ -75,7 +81,8 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"System Process Operation Upload File Repository Get Dashboard method {e.Message}");
+                this._logger.LogError(
+                    $"System Process Operation Upload File Repository Get Dashboard method {e.Message}");
             }
 
             return new ISystemProcessOperationUploadFile[0];
@@ -88,8 +95,10 @@ namespace Surveillance.Auditing.DataLayer.Repositories
 
             try
             {
-                using (var dbConnection = _dbConnectionFactory.BuildConn())
-                using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(GetByDate, new { StartDate = startDate, EndDate = endDate }))
+                using (var dbConnection = this._dbConnectionFactory.BuildConn())
+                using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(
+                    GetByDate,
+                    new { StartDate = startDate, EndDate = endDate }))
                 {
                     var result = await conn;
                     return result.ToList();
@@ -97,7 +106,8 @@ namespace Surveillance.Auditing.DataLayer.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"System Process Operation Upload File Repository Get On Date method {e.Message}");
+                this._logger.LogError(
+                    $"System Process Operation Upload File Repository Get On Date method {e.Message}");
             }
 
             return new ISystemProcessOperationUploadFile[0];

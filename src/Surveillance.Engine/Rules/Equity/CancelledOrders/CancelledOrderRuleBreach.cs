@@ -1,14 +1,16 @@
-﻿using System;
-using Domain.Core.Financial.Assets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
 {
+    using System;
+
+    using Domain.Core.Financial.Assets;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+
     public class CancelledOrderRuleBreach : ICancelledOrderRuleBreach
     {
         public CancelledOrderRuleBreach(
@@ -28,51 +30,67 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             string caseTitle,
             DateTime universeDateTime)
         {
-            FactorValue = factorValue;
-            Parameters = parameters;
-            Trades = trades;
-            Security = security;
-            ExceededPercentagePositionCancellations = exceededPercentagePositionCancellations;
-            PercentagePositionCancelled = percentagePositionCancelled;
-            AmountOfPositionCancelled = amountOfPositionCancelled;
-            AmountOfPositionInTotal = amountOfPositionInTotal;
-            ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
-            PercentageTradeCountCancelled = percentageTradeCountCancelled;
-            Window = parameters.Windows.BackwardWindowSize;
-            RuleParameterId = Parameters?.Id ?? string.Empty;
-            SystemOperationId = ctx.Id.ToString();
-            CorrelationId = correlationId;
-            RuleParameters = Parameters;
-            Description = description ?? string.Empty;
-            CaseTitle = caseTitle ?? string.Empty;
-            UniverseDateTime = universeDateTime;
+            this.FactorValue = factorValue;
+            this.Parameters = parameters;
+            this.Trades = trades;
+            this.Security = security;
+            this.ExceededPercentagePositionCancellations = exceededPercentagePositionCancellations;
+            this.PercentagePositionCancelled = percentagePositionCancelled;
+            this.AmountOfPositionCancelled = amountOfPositionCancelled;
+            this.AmountOfPositionInTotal = amountOfPositionInTotal;
+            this.ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
+            this.PercentageTradeCountCancelled = percentageTradeCountCancelled;
+            this.Window = parameters.Windows.BackwardWindowSize;
+            this.RuleParameterId = this.Parameters?.Id ?? string.Empty;
+            this.SystemOperationId = ctx.Id.ToString();
+            this.CorrelationId = correlationId;
+            this.RuleParameters = this.Parameters;
+            this.Description = description ?? string.Empty;
+            this.CaseTitle = caseTitle ?? string.Empty;
+            this.UniverseDateTime = universeDateTime;
         }
+
+        public int? AmountOfPositionCancelled { get; }
+
+        public int? AmountOfPositionInTotal { get; }
+
+        public string CaseTitle { get; set; }
+
+        public string CorrelationId { get; set; }
+
+        public string Description { get; set; }
+
+        public bool ExceededPercentagePositionCancellations { get; }
+
+        public bool ExceededPercentageTradeCountCancellations { get; }
+
+        public IFactorValue FactorValue { get; set; }
+
+        public bool IsBackTestRun { get; set; }
+
+        public ICancelledOrderRuleEquitiesParameters Parameters { get; }
+
+        public decimal? PercentagePositionCancelled { get; }
+
+        public decimal? PercentageTradeCountCancelled { get; }
+
+        public string RuleParameterId { get; set; }
+
+        public IRuleParameter RuleParameters { get; set; }
+
+        public FinancialInstrument Security { get; }
+
+        public string SystemOperationId { get; set; }
+
+        public ITradePosition Trades { get; }
+
+        public DateTime UniverseDateTime { get; set; }
+
+        public TimeSpan Window { get; }
 
         public bool HasBreachedRule()
         {
-            return ExceededPercentageTradeCountCancellations
-                || ExceededPercentagePositionCancellations;
+            return this.ExceededPercentageTradeCountCancellations || this.ExceededPercentagePositionCancellations;
         }
-
-        public ICancelledOrderRuleEquitiesParameters Parameters { get; }
-        public TimeSpan Window { get; }
-        public ITradePosition Trades { get; }
-        public FinancialInstrument Security { get; }
-        public bool ExceededPercentagePositionCancellations { get; }
-        public decimal? PercentagePositionCancelled { get; }
-        public int? AmountOfPositionCancelled { get; }
-        public int? AmountOfPositionInTotal { get; }
-        public bool ExceededPercentageTradeCountCancellations { get; }
-        public decimal? PercentageTradeCountCancelled { get; }
-
-        public bool IsBackTestRun { get; set; }
-        public string RuleParameterId { get; set; }
-        public string SystemOperationId { get; set; }
-        public string CorrelationId { get; set; }
-        public IFactorValue FactorValue { get; set; }
-        public IRuleParameter RuleParameters { get; set; }
-        public DateTime UniverseDateTime { get; set; }
-        public string Description { get; set; }
-        public string CaseTitle { get; set; }
     }
 }

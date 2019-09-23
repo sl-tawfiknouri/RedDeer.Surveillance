@@ -3,8 +3,11 @@
     public enum PriceManipulation
     {
         Increase,
+
         Decrease,
+
         Consistent,
+
         Random
     }
 }

@@ -1,30 +1,27 @@
-﻿using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     /// <summary>
-    /// Equity update driven trading process
+    ///     Equity update driven trading process
     /// </summary>
     public class TradingMarketUpdateDrivenProcess : BaseTradingProcess
     {
-        public TradingMarketUpdateDrivenProcess(
-            ILogger logger,
-            ITradeStrategy<Order> orderStrategy) 
+        public TradingMarketUpdateDrivenProcess(ILogger logger, ITradeStrategy<Order> orderStrategy)
             : base(logger, orderStrategy)
         {
         }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
-            if (value == null)
-            {
-                return;
-            }
+            if (value == null) return;
 
-            OrderStrategy.ExecuteTradeStrategy(value, TradeStream);
+            this.OrderStrategy.ExecuteTradeStrategy(value, this.TradeStream);
         }
 
         protected override void _InitiateTrading()

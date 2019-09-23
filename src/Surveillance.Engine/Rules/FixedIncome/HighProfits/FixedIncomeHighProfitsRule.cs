@@ -1,25 +1,32 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
-
-namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Engine.Rules.Universe.MarketEvents;
+
     public class FixedIncomeHighProfitsRule : BaseUniverseRule, IFixedIncomeHighProfitsRule
     {
-        private readonly IHighProfitsRuleFixedIncomeParameters _parameters;
-        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private readonly IUniverseAlertStream _alertStream;
+
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
+
+        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
+
+        private readonly IHighProfitsRuleFixedIncomeParameters _parameters;
 
         public FixedIncomeHighProfitsRule(
             IHighProfitsRuleFixedIncomeParameters parameters,
@@ -34,7 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
                 parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
-                Domain.Surveillance.Scheduling.Rules.FixedIncomeHighProfits,
+                Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",
                 ruleCtx,
@@ -43,52 +50,43 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 logger,
                 tradingStackLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(_parameters));
-            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._parameters = parameters ?? throw new ArgumentNullException(nameof(this._parameters));
+            this._orderFilterService =
+                orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
+            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
 
-        protected override IUniverseEvent Filter(IUniverseEvent value)
+        public object Clone()
         {
-            return _orderFilterService.Filter(value);
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Clone called at {this.UniverseDateTime}");
+
+            var clone = (FixedIncomeHighProfitsRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Clone completed for {this.UniverseDateTime}");
+            return clone;
         }
 
-        protected override void RunPostOrderEvent(ITradingHistoryStack history)
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunRule called at {UniverseDateTime}");
+            var clone = (FixedIncomeHighProfitsRule)this.Clone();
+            clone.OrganisationFactorValue = factor;
 
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunRule completed for {UniverseDateTime}");
-        }
-
-        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
-        {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule called at {UniverseDateTime}");
-
-
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule completed for {UniverseDateTime}");
+            return clone;
         }
 
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent called at {UniverseDateTime}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent called at {this.UniverseDateTime}");
 
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
-        }
-
-        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent completed for {this.UniverseDateTime}");
         }
 
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
@@ -96,60 +94,73 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             // do nothing
         }
 
-        protected override void Genesis()
+        protected override void EndOfUniverse()
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis called at {UniverseDateTime}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Eschaton called at {this.UniverseDateTime}");
 
-
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis completed for {UniverseDateTime}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Eschaton completed for {this.UniverseDateTime}");
         }
 
-        protected override void MarketOpen(MarketOpenClose exchange)
+        protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Market Open called at {UniverseDateTime} for {exchange?.MarketId}");
+            return this._orderFilterService.Filter(value);
+        }
 
+        protected override void Genesis()
+        {
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis called at {this.UniverseDateTime}");
 
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Market Open completed at {UniverseDateTime} for {exchange?.MarketId}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis completed for {this.UniverseDateTime}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Market Close called at {UniverseDateTime} for {exchange?.MarketId}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Market Close called at {this.UniverseDateTime} for {exchange?.MarketId}");
 
-
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Market Close completed at {UniverseDateTime} for {exchange?.MarketId}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Market Close completed at {this.UniverseDateTime} for {exchange?.MarketId}");
         }
 
-        protected override void EndOfUniverse()
+        protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Eschaton called at {UniverseDateTime}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Market Open called at {this.UniverseDateTime} for {exchange?.MarketId}");
 
-
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Eschaton completed for {UniverseDateTime}");
-
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} Market Open completed at {this.UniverseDateTime} for {exchange?.MarketId}");
         }
 
-        public object Clone()
+        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Clone called at {UniverseDateTime}");
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule called at {this.UniverseDateTime}");
 
-            var clone = (FixedIncomeHighProfitsRule)this.MemberwiseClone();
-            clone.BaseClone();
-
-            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Clone completed for {UniverseDateTime}");
-            return clone;
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule completed for {this.UniverseDateTime}");
         }
 
-        public IUniverseCloneableRule Clone(IFactorValue factor)
+        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
-            var clone = (FixedIncomeHighProfitsRule)Clone();
-            clone.OrganisationFactorValue = factor;
+            // do nothing
+        }
 
-            return clone;
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
+        {
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunRule called at {this.UniverseDateTime}");
+
+            this._logger.LogInformation(
+                $"{nameof(FixedIncomeHighProfitsRule)} RunRule completed for {this.UniverseDateTime}");
+        }
+
+        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
+        {
+            // do nothing
         }
     }
 }

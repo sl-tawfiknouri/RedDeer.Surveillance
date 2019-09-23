@@ -1,30 +1,41 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Domain.Surveillance.Scheduling;
-using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.Engine.Rules.Analysis.Interfaces;
-using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Utility.Interfaces;
-
-namespace Surveillance.Engine.Rules.Queues
+﻿namespace Surveillance.Engine.Rules.Queues
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Domain.Surveillance.Scheduling;
+    using Domain.Surveillance.Scheduling.Interfaces;
+
+    using Infrastructure.Network.Aws;
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes;
+    using Surveillance.Engine.Rules.Analysis.Interfaces;
+    using Surveillance.Engine.Rules.Queues.Interfaces;
+    using Surveillance.Engine.Rules.Utility.Interfaces;
+
     public class QueueRuleSubscriber : IQueueRuleSubscriber
     {
         private readonly IAnalysisEngine _analysisEngine;
-        private readonly IAwsQueueClient _awsQueueClient;
-        private readonly IAwsConfiguration _awsConfiguration;
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+
         private readonly IApiHeartbeat _apiHeartbeat;
-        private readonly ISystemProcessContext _systemProcessContext;
+
+        private readonly IAwsConfiguration _awsConfiguration;
+
+        private readonly IAwsQueueClient _awsQueueClient;
 
         private readonly ILogger<QueueRuleSubscriber> _logger;
+
+        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+
+        private readonly ISystemProcessContext _systemProcessContext;
+
         private CancellationTokenSource _messageBusCts;
+
         private AwsResusableCancellationToken _token;
 
         public QueueRuleSubscriber(
@@ -36,136 +47,142 @@ namespace Surveillance.Engine.Rules.Queues
             ISystemProcessContext systemProcessContext,
             ILogger<QueueRuleSubscriber> logger)
         {
-            _analysisEngine = analysisEngine ?? throw new ArgumentNullException(nameof(analysisEngine));
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
-            _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
-            _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public void Initiate()
-        {
-            _messageBusCts?.Cancel();
-
-            _messageBusCts = new CancellationTokenSource();
-            _token = new AwsResusableCancellationToken();
-
-            _awsQueueClient.SubscribeToQueueAsync(
-                _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
-                async (s1, s2) => { await ExecuteDistributedMessage(s1, s2); },
-                _messageBusCts.Token,
-                _token);
-        }
-
-        public void Terminate()
-        {
-            _messageBusCts?.Cancel();
-            _messageBusCts = null;
+            this._analysisEngine = analysisEngine ?? throw new ArgumentNullException(nameof(analysisEngine));
+            this._awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            this._awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+            this._messageBusSerialiser =
+                messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
+            this._apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
+            this._systemProcessContext =
+                systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task ExecuteDistributedMessage(string messageId, string messageBody)
         {
-            var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+            var opCtx = this._systemProcessContext.CreateAndStartOperationContext();
 
             try
             {
-                _logger.LogInformation($"read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+                this._logger.LogInformation(
+                    $"read message {messageId} with body {messageBody} from {this._awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-                await BlockOnApisDown(opCtx);
+                await this.BlockOnApisDown(opCtx);
 
-                var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
+                var execution = this._messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 
                 if (execution == null)
                 {
-                    _logger.LogError($"was unable to deserialise the message {messageId}");
+                    this._logger.LogError($"was unable to deserialise the message {messageId}");
                     opCtx.EndEventWithError($"was unable to deserialise the message {messageId}");
                     return;
                 }
 
-                _logger.LogInformation($"about to execute message {messageBody}");
+                this._logger.LogInformation($"about to execute message {messageBody}");
 
-                var scheduleRuleValid = ValidateScheduleRule(execution);
+                var scheduleRuleValid = this.ValidateScheduleRule(execution);
                 if (!scheduleRuleValid)
                 {
                     opCtx.EndEventWithError("did not like the scheduled execution passed through. Check error logs.");
                     return;
                 }
 
-                await _analysisEngine.Execute(execution, opCtx);
+                await this._analysisEngine.Execute(execution, opCtx);
             }
             catch (Exception e)
             {
-                _logger.LogError($"caught exception in execute distributed message for {messageBody}", e);
+                this._logger.LogError($"caught exception in execute distributed message for {messageBody}", e);
                 opCtx.EndEventWithError(e.Message);
             }
         }
 
-        private async Task BlockOnApisDown(ISystemProcessOperationContext opCtx)
+        public void Initiate()
         {
-            var servicesRunning = await _apiHeartbeat.HeartsBeating();
+            this._messageBusCts?.Cancel();
 
-            if (!servicesRunning)
-            {
-                _logger.LogWarning("asked to executed distributed message but was unable to reach api services");
-                // set status here
-                opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
-                opCtx.EventError($"asked to executed distributed message but was unable to reach api services");
-            }
+            this._messageBusCts = new CancellationTokenSource();
+            this._token = new AwsResusableCancellationToken();
 
-            int servicesDownMinutes = 0;
-            var exitClientServiceBlock = servicesRunning;
-            while (!exitClientServiceBlock)
-            {
-                _logger.LogInformation($"APIs down on heartbeat requests. Sleeping for 30 seconds.");
+            this._awsQueueClient.SubscribeToQueueAsync(
+                this._awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+                async (s1, s2) => { await this.ExecuteDistributedMessage(s1, s2); },
+                this._messageBusCts.Token,
+                this._token);
+        }
 
-                Thread.Sleep(30 * 1000);
-                var apiHeartBeat = _apiHeartbeat.HeartsBeating();
-                exitClientServiceBlock = apiHeartBeat.Result;
-                servicesDownMinutes += 1;
-
-                if (servicesDownMinutes == 15)
-                {
-                    _logger.LogError("has been trying to process a message for 15 minutes but the api services on the client service have been down");
-                    opCtx.EventError($"has been trying to process a message for 15 minutes but the api services on the client service have been down");
-                }
-            }
-
-            if (!servicesRunning)
-            {
-                _logger.LogWarning("was unable to reach api services but is now able to");
-                opCtx.UpdateEventState(OperationState.InProcess);
-            }
+        public void Terminate()
+        {
+            this._messageBusCts?.Cancel();
+            this._messageBusCts = null;
         }
 
         protected bool ValidateScheduleRule(ScheduledExecution execution)
         {
             if (execution == null)
             {
-                _logger?.LogError($"had a null scheduled execution. Returning.");
+                this._logger?.LogError("had a null scheduled execution. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
             {
-                _logger?.LogError($"had a time series initiation before 2015. Returning.");
+                this._logger?.LogError("had a time series initiation before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesTermination.DateTime.Year < 2015)
             {
-                _logger?.LogError($"had a time series termination before 2015. Returning.");
+                this._logger?.LogError("had a time series termination before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
             {
-                _logger?.LogError($"had a time series initiation that exceeded the time series termination.");
+                this._logger?.LogError("had a time series initiation that exceeded the time series termination.");
                 return false;
             }
 
             return true;
+        }
+
+        private async Task BlockOnApisDown(ISystemProcessOperationContext opCtx)
+        {
+            var servicesRunning = await this._apiHeartbeat.HeartsBeating();
+
+            if (!servicesRunning)
+            {
+                this._logger.LogWarning("asked to executed distributed message but was unable to reach api services");
+
+                // set status here
+                opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
+                opCtx.EventError("asked to executed distributed message but was unable to reach api services");
+            }
+
+            var servicesDownMinutes = 0;
+            var exitClientServiceBlock = servicesRunning;
+            while (!exitClientServiceBlock)
+            {
+                this._logger.LogInformation("APIs down on heartbeat requests. Sleeping for 30 seconds.");
+
+                Thread.Sleep(30 * 1000);
+                var apiHeartBeat = this._apiHeartbeat.HeartsBeating();
+                exitClientServiceBlock = apiHeartBeat.Result;
+                servicesDownMinutes += 1;
+
+                if (servicesDownMinutes == 15)
+                {
+                    this._logger.LogError(
+                        "has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                    opCtx.EventError(
+                        "has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                }
+            }
+
+            if (!servicesRunning)
+            {
+                this._logger.LogWarning("was unable to reach api services but is now able to");
+                opCtx.UpdateEventState(OperationState.InProcess);
+            }
         }
     }
 }

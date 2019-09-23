@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.EquitiesGenerator;
-using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using TestHarness.Engine.EquitiesGenerator.Strategies;
-using TestHarness.Engine.Plans;
-using TestHarness.Factory.EquitiesFactory.Interfaces;
-
-namespace TestHarness.Factory.EquitiesFactory
+﻿namespace TestHarness.Factory.EquitiesFactory
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.EquitiesGenerator;
+    using TestHarness.Engine.EquitiesGenerator.Interfaces;
+    using TestHarness.Engine.EquitiesGenerator.Strategies;
+    using TestHarness.Engine.Plans;
+    using TestHarness.Factory.EquitiesFactory.Interfaces;
+
     public class EquitiesDataGenerationProcessFactory : IEquitiesDataGenerationProcessFactory
     {
         private readonly ILogger _logger;
 
         public EquitiesDataGenerationProcessFactory(ILogger logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IEquitiesDataGenerationMarkovProcess Build(IReadOnlyCollection<DataGenerationPlan> plans = null)
@@ -25,7 +27,7 @@ namespace TestHarness.Factory.EquitiesFactory
                 new MarkovEquityStrategy(0.1, 3, 0.001m),
                 plans,
                 TimeSpan.FromMinutes(60),
-                _logger);
+                this._logger);
         }
     }
 }

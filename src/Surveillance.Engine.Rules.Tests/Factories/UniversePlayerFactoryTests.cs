@@ -1,51 +1,58 @@
-﻿using System;
-using System.Threading;
-using Domain.Surveillance.Streams.Interfaces;
-using FakeItEasy;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-
-namespace Surveillance.Engine.Rules.Tests.Factories
+﻿namespace Surveillance.Engine.Rules.Tests.Factories
 {
+    using System;
+    using System.Threading;
+
+    using Domain.Surveillance.Streams.Interfaces;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using NUnit.Framework;
+
+    using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Universe;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     [TestFixture]
     public class UniversePlayerFactoryTests
     {
-        private IUnsubscriberFactory<IUniverseEvent> _universeEventUnsubscriberFactory;
         private ILogger<UniversePlayer> _logger;
 
-        [SetUp]
-        public void Setup()
-        {
-            _universeEventUnsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
-            _logger = new NullLogger<UniversePlayer>();
-        }
+        private IUnsubscriberFactory<IUniverseEvent> _universeEventUnsubscriberFactory;
 
         [Test]
-        public void Constructor_UnsubscriberFactory_Null_Throws_Exception()
+        public void Build_Returns_NonNull_UniversePlayer()
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniversePlayerFactory(null, _logger));
+            var factory = new UniversePlayerFactory(this._universeEventUnsubscriberFactory, this._logger);
+
+            var universePlayer = factory.Build(new CancellationToken());
+
+            Assert.IsInstanceOf<UniversePlayer>(universePlayer);
         }
 
         [Test]
         public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniversePlayerFactory(_universeEventUnsubscriberFactory, null));
+            Assert.Throws<ArgumentNullException>(
+                () => new UniversePlayerFactory(this._universeEventUnsubscriberFactory, null));
         }
 
         [Test]
-        public void Build_Returns_NonNull_UniversePlayer()
+        public void Constructor_UnsubscriberFactory_Null_Throws_Exception()
         {
-            var factory = new UniversePlayerFactory(_universeEventUnsubscriberFactory, _logger);
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new UniversePlayerFactory(null, this._logger));
+        }
 
-            var universePlayer = factory.Build(new CancellationToken());
-
-            Assert.IsInstanceOf<UniversePlayer>(universePlayer);
+        [SetUp]
+        public void Setup()
+        {
+            this._universeEventUnsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
+            this._logger = new NullLogger<UniversePlayer>();
         }
     }
 }

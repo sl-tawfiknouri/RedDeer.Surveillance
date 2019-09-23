@@ -1,69 +1,65 @@
-﻿using System;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-
-namespace TestHarness.Engine.OrderGenerator
+﻿namespace TestHarness.Engine.OrderGenerator
 {
+    using System;
+
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Trading.Orders;
+
+    using Microsoft.Extensions.Logging;
+
+    using TestHarness.Engine.Heartbeat.Interfaces;
+    using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+
     /// <summary>
-    /// Equity update driven trading process
+    ///     Equity update driven trading process
     /// </summary>
     public class TradingHeartBeatDrivenProcess : BaseTradingProcess
     {
-        private EquityIntraDayTimeBarCollection _lastFrame;
         private readonly IHeartbeat _heartbeat;
 
-        private volatile bool _initiated;
         private readonly object _lock = new object();
 
-        public TradingHeartBeatDrivenProcess(
-            ILogger logger,
-            ITradeStrategy<Order> orderStrategy,
-            IHeartbeat heartbeat) 
+        private volatile bool _initiated;
+
+        private EquityIntraDayTimeBarCollection _lastFrame;
+
+        public TradingHeartBeatDrivenProcess(ILogger logger, ITradeStrategy<Order> orderStrategy, IHeartbeat heartbeat)
             : base(logger, orderStrategy)
         {
-            _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
+            this._heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                if (!_initiated)
+                if (!this._initiated)
                 {
-                    _heartbeat.OnBeat(TradeOnHeartbeat);
-                    _initiated = true;
+                    this._heartbeat.OnBeat(this.TradeOnHeartbeat);
+                    this._initiated = true;
                 }
 
-                if (value == null)
-                {
-                    return;
-                }
+                if (value == null) return;
 
-                _lastFrame = value;
+                this._lastFrame = value;
             }
         }
 
         protected override void _InitiateTrading()
         {
-            _heartbeat.Start();
+            this._heartbeat.Start();
         }
 
         protected override void _TerminateTradingStrategy()
         {
-            _heartbeat.Stop();
+            this._heartbeat.Stop();
         }
 
         private void TradeOnHeartbeat(object sender, EventArgs e)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                if (_lastFrame != null)
-                {
-                    OrderStrategy.ExecuteTradeStrategy(_lastFrame, TradeStream);
-                }
+                if (this._lastFrame != null) this.OrderStrategy.ExecuteTradeStrategy(this._lastFrame, this.TradeStream);
             }
         }
     }

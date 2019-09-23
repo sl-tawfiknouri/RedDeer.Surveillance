@@ -1,42 +1,47 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.DataLayer.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes.Interfaces;
-using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
-
-namespace Surveillance.Auditing.DataLayer.Repositories
+﻿namespace Surveillance.Auditing.DataLayer.Repositories
 {
-    public class SystemProcessOperationThirdPartyDataRequestRepository : ISystemProcessOperationThirdPartyDataRequestRepository
-    {
-        private readonly object _lock = new object();
-        private readonly IConnectionStringFactory _dbConnectionFactory;
-        private readonly ILogger<SystemProcessOperationThirdPartyDataRequestRepository> _logger;
+    using System;
+    using System.Threading.Tasks;
 
-        private const string CreateSql = "INSERT INTO SystemProcessOperationDataSynchroniserRequest(SystemProcessOperationId, QueueMessageId, RuleRunId) VALUES(@SystemProcessOperationId, @QueueMessageId, @RuleRunId); SELECT LAST_INSERT_ID();";
+    using Dapper;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.DataLayer.Interfaces;
+    using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+    using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+
+    public class
+        SystemProcessOperationThirdPartyDataRequestRepository : ISystemProcessOperationThirdPartyDataRequestRepository
+    {
+        private const string CreateSql =
+            "INSERT INTO SystemProcessOperationDataSynchroniserRequest(SystemProcessOperationId, QueueMessageId, RuleRunId) VALUES(@SystemProcessOperationId, @QueueMessageId, @RuleRunId); SELECT LAST_INSERT_ID();";
+
+        private readonly IConnectionStringFactory _dbConnectionFactory;
+
+        private readonly object _lock = new object();
+
+        private readonly ILogger<SystemProcessOperationThirdPartyDataRequestRepository> _logger;
 
         public SystemProcessOperationThirdPartyDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<SystemProcessOperationThirdPartyDataRequestRepository> logger)
         {
-            _dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._dbConnectionFactory =
+                dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Create(ISystemProcessOperationThirdPartyDataRequest entity)
         {
-            if (entity == null)
-            {
-                return;
-            }
+            if (entity == null) return;
 
-            lock (_lock)
+            lock (this._lock)
             {
                 try
                 {
-                    _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
-                    using (var dbConnection = _dbConnectionFactory.BuildConn())
+                    this._logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
+                    using (var dbConnection = this._dbConnectionFactory.BuildConn())
                     using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                     {
                         entity.Id = conn.Result;
@@ -44,7 +49,8 @@ namespace Surveillance.Auditing.DataLayer.Repositories
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                    this._logger.LogError(
+                        $"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
                 }
             }
         }

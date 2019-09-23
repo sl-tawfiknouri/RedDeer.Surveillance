@@ -1,174 +1,195 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using DataImport.Disk_IO.Interfaces;
-using Infrastructure.Network.Disk.Interfaces;
-using Microsoft.Extensions.Logging;
-
-namespace DataImport.Disk_IO
+﻿namespace DataImport.Disk_IO
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using DataImport.Disk_IO.Interfaces;
+
+    using Infrastructure.Network.Disk.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
     public abstract class BaseUploadFileMonitor : IBaseUploadFileMonitor
     {
-        protected readonly IReddeerDirectory ReddeerDirectory;
         protected readonly ILogger Logger;
-        private FileSystemWatcher _fileSystemWatcher;
+
+        protected readonly IReddeerDirectory ReddeerDirectory;
+
         private readonly string _uploadFileMonitorName;
+
+        private FileSystemWatcher _fileSystemWatcher;
+
         private int _retryRestart = 3;
 
-        protected BaseUploadFileMonitor(
-            IReddeerDirectory directory,
-            ILogger logger,
-            string uploadFileMonitorName)
+        protected BaseUploadFileMonitor(IReddeerDirectory directory, ILogger logger, string uploadFileMonitorName)
         {
-            ReddeerDirectory = directory ?? throw new ArgumentNullException(nameof(directory));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _uploadFileMonitorName = uploadFileMonitorName ?? throw new ArgumentNullException(nameof(uploadFileMonitorName));
+            this.ReddeerDirectory = directory ?? throw new ArgumentNullException(nameof(directory));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._uploadFileMonitorName =
+                uploadFileMonitorName ?? throw new ArgumentNullException(nameof(uploadFileMonitorName));
+        }
+
+        public void Dispose()
+        {
+            this.Logger.LogInformation("BaseUploadFileMonitor called dispose on file monitor.");
+            this._fileSystemWatcher?.Dispose();
         }
 
         /// <summary>
-        /// Initiate monitoring
+        ///     Initiate monitoring
         /// </summary>
         public void Initiate()
         {
-            if (string.IsNullOrWhiteSpace(UploadDirectoryPath()))
+            if (string.IsNullOrWhiteSpace(this.UploadDirectoryPath()))
             {
-                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} - no path in upload directory. Will not monitor unspecified upload folder path");
+                this.Logger.Log(
+                    LogLevel.Information,
+                    $"{this._uploadFileMonitorName} - no path in upload directory. Will not monitor unspecified upload folder path");
                 return;
             }
 
-            Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Initiating monitoring process.");
+            this.Logger.Log(LogLevel.Information, $"{this._uploadFileMonitorName} Initiating monitoring process.");
 
             try
             {
-                var failedReadsPath = GetFailedReadsPath();
-                var uploadDirectoryPath = UploadDirectoryPath();
+                var failedReadsPath = this.GetFailedReadsPath();
+                var uploadDirectoryPath = this.UploadDirectoryPath();
 
-                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders at {uploadDirectoryPath} - {failedReadsPath}");
-                ReddeerDirectory.Create(uploadDirectoryPath);
-                Logger.LogInformation($"Created {uploadDirectoryPath}");
-                ReddeerDirectory.Create(failedReadsPath);
-                Logger.LogInformation($"Created {failedReadsPath}");
-                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Completed creating reddeer directory folders");
+                this.Logger.Log(
+                    LogLevel.Information,
+                    $"{this._uploadFileMonitorName} Creating reddeer directory folders at {uploadDirectoryPath} - {failedReadsPath}");
+                this.ReddeerDirectory.Create(uploadDirectoryPath);
+                this.Logger.LogInformation($"Created {uploadDirectoryPath}");
+                this.ReddeerDirectory.Create(failedReadsPath);
+                this.Logger.LogInformation($"Created {failedReadsPath}");
+                this.Logger.Log(
+                    LogLevel.Information,
+                    $"{this._uploadFileMonitorName} Completed creating reddeer directory folders");
 
-                var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
+                var files = this.ReddeerDirectory.GetFiles(this.UploadDirectoryPath(), "*.csv");
 
                 if (files.Any())
                 {
-                    Logger.LogInformation($"BaseUploadFileMonitor for {_uploadFileMonitorName} detected existing files on initiation. About to process {files.Count} files.");   
-                    ProcessInitialStartupFiles(files);
+                    this.Logger.LogInformation(
+                        $"BaseUploadFileMonitor for {this._uploadFileMonitorName} detected existing files on initiation. About to process {files.Count} files.");
+                    this.ProcessInitialStartupFiles(files);
                 }
 
-                Logger.LogInformation($"BaseUploadFileMonitor for {_uploadFileMonitorName} setting file system watch");
-                SetFileSystemWatch();
+                this.Logger.LogInformation(
+                    $"BaseUploadFileMonitor for {this._uploadFileMonitorName} setting file system watch");
+                this.SetFileSystemWatch();
             }
             catch (Exception e)
             {
-                Logger.LogError($"Exception in {_uploadFileMonitorName} {UploadDirectoryPath()} {e.Message}");
+                this.Logger.LogError(
+                    $"Exception in {this._uploadFileMonitorName} {this.UploadDirectoryPath()} {e.Message}");
             }
         }
 
-        protected abstract string UploadDirectoryPath();
+        public abstract bool ProcessFile(string path);
 
         protected string GetFailedReadsPath()
         {
-            return Path.Combine(UploadDirectoryPath(), "FailedReads");
+            return Path.Combine(this.UploadDirectoryPath(), "FailedReads");
         }
+
+        protected abstract string UploadDirectoryPath();
 
         private void DetectedFileChange(object source, FileSystemEventArgs e)
         {
             try
             {
-                Logger.LogInformation($"BaseUploadFileMonitor detected a file change at {e.FullPath}.");
-                ProcessFile(e.FullPath);
+                this.Logger.LogInformation($"BaseUploadFileMonitor detected a file change at {e.FullPath}.");
+                this.ProcessFile(e.FullPath);
             }
             catch (Exception a)
             {
-                Logger.LogError("BaseUploadFileMonitor had an error in detected file change", a);
+                this.Logger.LogError("BaseUploadFileMonitor had an error in detected file change", a);
             }
+        }
+
+        private void OnError(object sender, ErrorEventArgs e)
+        {
+            if (this._retryRestart > 0)
+            {
+                this.Logger.LogError(
+                    $"BaseUploadFileMonitor encountered an exception! INVESTIGATE {this._retryRestart} retries left",
+                    e.GetException());
+                this._retryRestart -= 1;
+                this.SetFileSystemWatch();
+                return;
+            }
+
+            this.Logger.LogCritical(
+                "BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE DATA IMPORT SERVICE",
+                e.GetException());
+
+            var exception = e.GetException();
+            if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
+                this.Logger.LogCritical(
+                    $"INNER EXCEPTION FOR DATA IMPORT SERVICE FAILURE {exception.InnerException.Message}");
         }
 
         private void ProcessInitialStartupFiles(IReadOnlyCollection<string> files)
         {
             try
             {
-                Logger.LogInformation($"{_uploadFileMonitorName} found some existing files on start up. Processing now");
+                this.Logger.LogInformation(
+                    $"{this._uploadFileMonitorName} found some existing files on start up. Processing now");
 
                 foreach (var filePath in files)
                 {
-                    Logger.LogInformation($"BaseUploadFileMonitor About to process {filePath}");
-                    ProcessFile(filePath);
-                    Logger.LogInformation($"BaseUploadFileMonitor Completed processing {filePath}");
+                    this.Logger.LogInformation($"BaseUploadFileMonitor About to process {filePath}");
+                    this.ProcessFile(filePath);
+                    this.Logger.LogInformation($"BaseUploadFileMonitor Completed processing {filePath}");
                 }
 
-                Logger.LogInformation($"{_uploadFileMonitorName} has completed processing the initial start up files");
+                this.Logger.LogInformation(
+                    $"{this._uploadFileMonitorName} has completed processing the initial start up files");
             }
             catch (Exception e)
             {
-                Logger.LogError("Base upload file monitor had an error whilst process initial start up files", e);
+                this.Logger.LogError("Base upload file monitor had an error whilst process initial start up files", e);
             }
         }
-
-        public abstract bool ProcessFile(string path);
 
         private void SetFileSystemWatch()
         {
-            Logger.LogInformation("BaseUploadFileMonitor setting file system watch");
+            this.Logger.LogInformation("BaseUploadFileMonitor setting file system watch");
 
-            if (!ReddeerDirectory.DirectoryExists(UploadDirectoryPath()))
+            if (!this.ReddeerDirectory.DirectoryExists(this.UploadDirectoryPath()))
             {
-                Logger.LogInformation($"BaseUploadFileMonitor did not find the {UploadDirectoryPath()} not setting file watch.");
+                this.Logger.LogInformation(
+                    $"BaseUploadFileMonitor did not find the {this.UploadDirectoryPath()} not setting file watch.");
 
                 return;
             }
 
-            if (_fileSystemWatcher != null)
+            if (this._fileSystemWatcher != null)
             {
-                Logger.LogInformation("BaseUploadFileMonitor disposing an old file system watcher.");
+                this.Logger.LogInformation("BaseUploadFileMonitor disposing an old file system watcher.");
 
-                _fileSystemWatcher.Dispose();
-                _fileSystemWatcher = null;
+                this._fileSystemWatcher.Dispose();
+                this._fileSystemWatcher = null;
             }
 
-            _fileSystemWatcher = new FileSystemWatcher(UploadDirectoryPath())
-            {
-                NotifyFilter = NotifyFilters.FileName,
-                Filter = "*.csv",
-                IncludeSubdirectories = false
-            };
+            this._fileSystemWatcher = new FileSystemWatcher(this.UploadDirectoryPath())
+                                          {
+                                              NotifyFilter = NotifyFilters.FileName,
+                                              Filter = "*.csv",
+                                              IncludeSubdirectories = false
+                                          };
 
-            _fileSystemWatcher.Error += OnError;
-            _fileSystemWatcher.Changed += DetectedFileChange;
-            _fileSystemWatcher.Renamed += DetectedFileChange;
-            _fileSystemWatcher.Created += DetectedFileChange;
+            this._fileSystemWatcher.Error += this.OnError;
+            this._fileSystemWatcher.Changed += this.DetectedFileChange;
+            this._fileSystemWatcher.Renamed += this.DetectedFileChange;
+            this._fileSystemWatcher.Created += this.DetectedFileChange;
 
-            _fileSystemWatcher.EnableRaisingEvents = true;
-            Logger.LogInformation("BaseUploadFileMonitor set file system watch events and now enabled raising events.");
-        }
-
-        private void OnError(object sender, ErrorEventArgs e)
-        {
-            if (_retryRestart > 0)
-            {
-                Logger.LogError($"BaseUploadFileMonitor encountered an exception! INVESTIGATE {_retryRestart} retries left", e.GetException());
-                _retryRestart -= 1;
-                SetFileSystemWatch();
-                return;
-            }
-
-            Logger.LogCritical($"BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE DATA IMPORT SERVICE", e.GetException());
-
-            var exception = e.GetException();
-            if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
-            {
-                Logger.LogCritical($"INNER EXCEPTION FOR DATA IMPORT SERVICE FAILURE {exception.InnerException.Message}");
-            }
-        }
-
-        public void Dispose()
-        {
-            Logger.LogInformation("BaseUploadFileMonitor called dispose on file monitor.");
-            _fileSystemWatcher?.Dispose();
+            this._fileSystemWatcher.EnableRaisingEvents = true;
+            this.Logger.LogInformation(
+                "BaseUploadFileMonitor set file system watch events and now enabled raising events.");
         }
     }
 }

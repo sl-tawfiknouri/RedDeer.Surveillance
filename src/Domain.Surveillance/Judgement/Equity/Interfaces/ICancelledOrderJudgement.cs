@@ -3,6 +3,7 @@
     public interface ICancelledOrderJudgement
     {
         decimal? CancelledOrderCountPercentageThreshold { get; }
+
         decimal? CancelledOrderPercentagePositionThreshold { get; }
     }
 }

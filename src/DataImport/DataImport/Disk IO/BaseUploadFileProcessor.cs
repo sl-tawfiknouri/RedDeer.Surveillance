@@ -1,38 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using CsvHelper;
-using DataImport.Disk_IO.Interfaces;
-using Microsoft.Extensions.Logging;
-
-namespace DataImport.Disk_IO
+﻿namespace DataImport.Disk_IO
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
+    using CsvHelper;
+
+    using DataImport.Disk_IO.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
     public abstract class BaseUploadFileProcessor<TCsv, TFrame> : IBaseUploadFileProcessor<TCsv, TFrame>
     {
         protected readonly ILogger Logger;
+
         protected readonly string UploadFileProcessorName;
 
-        protected BaseUploadFileProcessor(
-            ILogger logger,
-            string uploadFileProcessorName)
+        protected BaseUploadFileProcessor(ILogger logger, string uploadFileProcessorName)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            UploadFileProcessorName = uploadFileProcessorName ?? string.Empty;
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.UploadFileProcessorName = uploadFileProcessorName ?? string.Empty;
         }
 
         public UploadFileProcessorResult<TCsv, TFrame> Process(string path)
         {
             if (!File.Exists(path))
             {
-                Logger.LogError($"{UploadFileProcessorName} did not find file {path}");
+                this.Logger.LogError($"{this.UploadFileProcessorName} did not find file {path}");
 
-                return
-                    new UploadFileProcessorResult<TCsv, TFrame>(
-                        new List<TFrame>(),
-                        new List<TCsv>());
+                return new UploadFileProcessorResult<TCsv, TFrame>(new List<TFrame>(), new List<TCsv>());
             }
 
-            Logger.LogInformation($"BaseUploadFileProcessor processing {path}");
+            this.Logger.LogInformation($"BaseUploadFileProcessor processing {path}");
 
             var tradeOrders = new List<TFrame>();
             var failedTradeOrderReads = new List<TCsv>();
@@ -54,20 +53,14 @@ namespace DataImport.Disk_IO
                     while (csv.Read())
                     {
                         row += 1;
-                        var record = MapToCsvDto(csv, row);
+                        var record = this.MapToCsvDto(csv, row);
 
-                        if (record == null)
-                        {
-                            continue;
-                        }
+                        if (record == null) continue;
 
                         csvRecords.Add(record);
                     }
 
-                    foreach (var record in csvRecords)
-                    {
-                        MapRecord(record, tradeOrders, failedTradeOrderReads);
-                    }
+                    foreach (var record in csvRecords) this.MapRecord(record, tradeOrders, failedTradeOrderReads);
 
                     csv.Dispose();
                     reader.Dispose();
@@ -75,14 +68,20 @@ namespace DataImport.Disk_IO
             }
             catch (Exception e)
             {
-                Logger.LogError("BaseUploadFileProcessor: " + e.Message);
+                this.Logger.LogError("BaseUploadFileProcessor: " + e.Message);
             }
 
-            Logger.LogInformation($"BaseUploadFileProcessor processed {path}. Data in memory.");
-            CheckAndLogFailedParsesFromDtoMapper(path);
+            this.Logger.LogInformation($"BaseUploadFileProcessor processed {path}. Data in memory.");
+            this.CheckAndLogFailedParsesFromDtoMapper(path);
 
             return new UploadFileProcessorResult<TCsv, TFrame>(tradeOrders, failedTradeOrderReads);
         }
+
+        protected abstract void CheckAndLogFailedParsesFromDtoMapper(string path);
+
+        protected abstract void MapRecord(TCsv record, List<TFrame> marketUpdates, List<TCsv> failedMarketUpdateReads);
+
+        protected abstract TCsv MapToCsvDto(CsvReader rawRecord, int rowId);
 
         protected string PreProcess(string record)
         {
@@ -97,11 +96,5 @@ namespace DataImport.Disk_IO
 
             return record.Trim();
         }
-
-        protected abstract TCsv MapToCsvDto(CsvReader rawRecord, int rowId);
-
-        protected abstract void MapRecord(TCsv record, List<TFrame> marketUpdates, List<TCsv> failedMarketUpdateReads);
-
-        protected abstract void CheckAndLogFailedParsesFromDtoMapper(string path);
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces
 {
+    using System.Threading.Tasks;
+
     public interface ICancelledOrderMessageSender
     {
         Task Send(ICancelledOrderRuleBreach ruleBreach);

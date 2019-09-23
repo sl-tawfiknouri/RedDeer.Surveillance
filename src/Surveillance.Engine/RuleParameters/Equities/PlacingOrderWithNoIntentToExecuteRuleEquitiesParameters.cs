@@ -1,47 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Surveillance.Rules.Tuning;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Extensions;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.RuleParameters.Tuning;
-
-namespace Surveillance.Engine.Rules.RuleParameters.Equities
+﻿namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Domain.Surveillance.Rules.Tuning;
+
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Extensions;
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+
     [Serializable]
-    public class PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters 
-        : IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters
+    public class
+        PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters :
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters
     {
         public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
-            string id, 
+            string id,
             decimal sigma,
             TimeSpan windowSize,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
+            this.Id = id ?? string.Empty;
 
-            Sigma = sigma;
-            Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Sigma = sigma;
+            this.Windows = new TimeWindows(id, windowSize);
+            this.Factors = factors ?? new ClientOrganisationalFactors[0];
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            MarketCapFilter = DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = DecimalRangeRuleFilter.None();
 
-            Accounts = RuleFilter.None();
-            Traders = RuleFilter.None();
-            Markets = RuleFilter.None();
-            Funds = RuleFilter.None();
-            Strategies = RuleFilter.None();
+            this.Accounts = RuleFilter.None();
+            this.Traders = RuleFilter.None();
+            this.Markets = RuleFilter.None();
+            this.Funds = RuleFilter.None();
+            this.Strategies = RuleFilter.None();
 
-            PerformTuning = performTuning;
-            Sectors = RuleFilter.None();
-            Industries = RuleFilter.None();
-            Regions = RuleFilter.None();
-            Countries = RuleFilter.None();
+            this.PerformTuning = performTuning;
+            this.Sectors = RuleFilter.None();
+            this.Industries = RuleFilter.None();
+            this.Regions = RuleFilter.None();
+            this.Countries = RuleFilter.None();
         }
 
         public PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters(
@@ -63,96 +65,108 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter countries,
             bool performTuning)
         {
-            Id = id ?? string.Empty;
+            this.Id = id ?? string.Empty;
 
-            Sigma = sigma;
-            Windows = new TimeWindows(id, windowSize);
-            Factors = factors ?? new ClientOrganisationalFactors[0];
-            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.Sigma = sigma;
+            this.Windows = new TimeWindows(id, windowSize);
+            this.Factors = factors ?? new ClientOrganisationalFactors[0];
+            this.AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
-            VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
+            this.MarketCapFilter = marketCapFilter ?? DecimalRangeRuleFilter.None();
+            this.VenueVolumeFilter = venueVolumeFilter ?? DecimalRangeRuleFilter.None();
 
-            Accounts = accounts ?? RuleFilter.None();
-            Traders = traders ?? RuleFilter.None();
-            Markets = markets ?? RuleFilter.None();
-            Funds = funds ?? RuleFilter.None();
-            Strategies = strategies ?? RuleFilter.None();
+            this.Accounts = accounts ?? RuleFilter.None();
+            this.Traders = traders ?? RuleFilter.None();
+            this.Markets = markets ?? RuleFilter.None();
+            this.Funds = funds ?? RuleFilter.None();
+            this.Strategies = strategies ?? RuleFilter.None();
 
-            PerformTuning = performTuning;
-            Sectors = sectors ?? RuleFilter.None();
-            Industries = industries ?? RuleFilter.None();
-            Regions = regions ?? RuleFilter.None();
-            Countries = countries ?? RuleFilter.None();
+            this.PerformTuning = performTuning;
+            this.Sectors = sectors ?? RuleFilter.None();
+            this.Industries = industries ?? RuleFilter.None();
+            this.Regions = regions ?? RuleFilter.None();
+            this.Countries = countries ?? RuleFilter.None();
         }
+
+        public RuleFilter Accounts { get; set; }
+
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public RuleFilter Countries { get; set; }
+
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+
+        public RuleFilter Funds { get; set; }
 
         [TuneableIdParameter]
         public string Id { get; set; }
-        [TuneableDecimalParameter]
-        public decimal Sigma { get; set; }
-        [TuneableTimeWindowParameter]
-        public TimeWindows Windows { get; set; }
-        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+        public RuleFilter Industries { get; set; }
 
         public DecimalRangeRuleFilter MarketCapFilter { get; set; }
-        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
-        public RuleFilter Accounts { get; set; }
-        public RuleFilter Traders { get; set; }
+
         public RuleFilter Markets { get; set; }
-        public RuleFilter Funds { get; set; }
-        public RuleFilter Strategies { get; set; }
+
+        public bool PerformTuning { get; set; }
+
+        public RuleFilter Regions { get; set; }
 
         public RuleFilter Sectors { get; set; }
-        public RuleFilter Industries { get; set; }
-        public RuleFilter Regions { get; set; }
-        public RuleFilter Countries { get; set; }
 
-        public bool HasInternalFilters()
-            => IFilterableRuleExtensions.HasInternalFilters(this);
+        [TuneableDecimalParameter]
+        public decimal Sigma { get; set; }
 
-        public bool HasMarketCapFilters()
-            => IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+        public RuleFilter Strategies { get; set; }
 
-        public bool HasReferenceDataFilters()
-            => IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+        public RuleFilter Traders { get; set; }
 
-        public bool HasVenueVolumeFilters()
-            => IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+        [TunedParam]
+        public TunedParameter<string> TunedParam { get; set; }
 
-        public bool Valid()
+        public DecimalRangeRuleFilter VenueVolumeFilter { get; set; }
+
+        [TuneableTimeWindowParameter]
+        public TimeWindows Windows { get; set; }
+
+        public override bool Equals(object obj)
         {
-            return !string.IsNullOrWhiteSpace(Id)
-                   && Sigma >= 0;
+            if (obj == null) return false;
+
+            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
+
+            if (castObj == null) return false;
+
+            return this.Windows == castObj.Windows && this.Sigma == castObj.Sigma;
         }
 
         public override int GetHashCode()
         {
-            return Windows.GetHashCode()
-               * Sigma.GetHashCode();
+            return this.Windows.GetHashCode() * this.Sigma.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public bool HasInternalFilters()
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            var castObj = obj as PlacingOrderWithNoIntentToExecuteRuleEquitiesParameters;
-
-            if (castObj == null)
-            {
-                return false;
-            }
-
-            return Windows == castObj.Windows
-                   && Sigma == castObj.Sigma;
+            return IFilterableRuleExtensions.HasInternalFilters(this);
         }
 
-        public bool PerformTuning { get; set; }
+        public bool HasMarketCapFilters()
+        {
+            return IMarketCapFilterableExtensions.HasMarketCapFilters(this);
+        }
 
-        [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public bool HasReferenceDataFilters()
+        {
+            return IReferenceDataFilterableExtensions.HasReferenceDataFilters(this);
+        }
+
+        public bool HasVenueVolumeFilters()
+        {
+            return IHighVolumeFilterableExtensions.HasVenueVolumeFilters(this);
+        }
+
+        public bool Valid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Id) && this.Sigma >= 0;
+        }
     }
 }

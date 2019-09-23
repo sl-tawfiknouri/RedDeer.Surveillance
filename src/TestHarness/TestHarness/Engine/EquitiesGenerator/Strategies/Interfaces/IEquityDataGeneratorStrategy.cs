@@ -1,11 +1,16 @@
-﻿using System;
-using Domain.Core.Markets.Timebars;
-
-namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
+﻿namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
 {
+    using System;
+
+    using Domain.Core.Markets.Timebars;
+
     public interface IEquityDataGeneratorStrategy
     {
-        EquityInstrumentIntraDayTimeBar AdvanceFrame(EquityInstrumentIntraDayTimeBar tick, DateTime advanceTick, bool walkIntraday);
         EquityGenerationStrategies Strategy { get; }
+
+        EquityInstrumentIntraDayTimeBar AdvanceFrame(
+            EquityInstrumentIntraDayTimeBar tick,
+            DateTime advanceTick,
+            bool walkIntraday);
     }
 }

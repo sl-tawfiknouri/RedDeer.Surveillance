@@ -1,23 +1,31 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
+﻿// ReSharper disable AssignNullToNotNullAttribute
 
-// ReSharper disable AssignNullToNotNullAttribute
 namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 {
+    using System;
+
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Interfaces;
+
     /// <summary>
-    /// Calculate the profits from the trade
+    ///     Calculate the profits from the trade
     /// </summary>
     public class HighProfitsRule : IHighProfitRule
     {
         private readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
-        private readonly IHighProfitStreamRule _streamRule;
-        private readonly IHighProfitMarketClosureRule _marketClosureRule;
+
         private readonly ILogger<HighProfitsRule> _logger;
+
+        private readonly IHighProfitMarketClosureRule _marketClosureRule;
+
+        private readonly IHighProfitStreamRule _streamRule;
 
         public HighProfitsRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
@@ -25,57 +33,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             IHighProfitMarketClosureRule marketClosureRule,
             ILogger<HighProfitsRule> logger)
         {
-            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            _streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
-            _marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._equitiesParameters =
+                equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
+            this._streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
+            this._marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
-        public void OnCompleted()
-        {
-            _logger.LogInformation($"OnCompleted() event received. Passing onto high profit and high profit market close rules.");
-            _streamRule.OnCompleted();
-            _marketClosureRule.OnCompleted();
-        }
+        public Rules Rule { get; } = Rules.HighProfits;
 
-        public void OnError(Exception error)
-        {
-            _logger.LogError($"OnCompleted() event received", error);
-            _streamRule.OnError(error);
-            _marketClosureRule.OnError(error);
-        }
-
-        public void OnNext(IUniverseEvent value)
-        {
-            _logger.LogInformation($"OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
-
-            // if removing the market closure rule
-            // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
-            if (_equitiesParameters.PerformHighProfitWindowAnalysis)
-            {
-                _streamRule.OnNext(value);
-                _marketClosureRule.OnNext(value);
-            }
-
-            if (_equitiesParameters.PerformHighProfitDailyAnalysis
-                && !_equitiesParameters.PerformHighProfitWindowAnalysis)
-            {
-                _marketClosureRule.OnNext(value);
-            }
-        }
-
-        public Domain.Surveillance.Scheduling.Rules Rule { get; } = Domain.Surveillance.Scheduling.Rules.HighProfits;
         public string Version { get; } = EquityRuleHighProfitFactory.Version;
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var cloneRule = new HighProfitsRule(
-                _equitiesParameters,
-                (IHighProfitStreamRule)_streamRule.Clone(factor),
-                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(factor),
-                _logger);
+                this._equitiesParameters,
+                (IHighProfitStreamRule)this._streamRule.Clone(factor),
+                (IHighProfitMarketClosureRule)this._marketClosureRule.Clone(factor),
+                this._logger);
             cloneRule.OrganisationFactorValue = factor;
 
             return cloneRule;
@@ -84,12 +61,44 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public object Clone()
         {
             var cloneRule = new HighProfitsRule(
-                _equitiesParameters,
-                (IHighProfitStreamRule)_streamRule.Clone(),
-                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(),
-                _logger);
+                this._equitiesParameters,
+                (IHighProfitStreamRule)this._streamRule.Clone(),
+                (IHighProfitMarketClosureRule)this._marketClosureRule.Clone(),
+                this._logger);
 
             return cloneRule;
+        }
+
+        public void OnCompleted()
+        {
+            this._logger.LogInformation(
+                "OnCompleted() event received. Passing onto high profit and high profit market close rules.");
+            this._streamRule.OnCompleted();
+            this._marketClosureRule.OnCompleted();
+        }
+
+        public void OnError(Exception error)
+        {
+            this._logger.LogError("OnCompleted() event received", error);
+            this._streamRule.OnError(error);
+            this._marketClosureRule.OnError(error);
+        }
+
+        public void OnNext(IUniverseEvent value)
+        {
+            this._logger.LogInformation(
+                $"OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
+
+            // if removing the market closure rule
+            // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
+            if (this._equitiesParameters.PerformHighProfitWindowAnalysis)
+            {
+                this._streamRule.OnNext(value);
+                this._marketClosureRule.OnNext(value);
+            }
+
+            if (this._equitiesParameters.PerformHighProfitDailyAnalysis
+                && !this._equitiesParameters.PerformHighProfitWindowAnalysis) this._marketClosureRule.OnNext(value);
         }
     }
 }

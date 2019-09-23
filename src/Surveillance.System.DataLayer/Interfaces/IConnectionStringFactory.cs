@@ -1,7 +1,7 @@
-﻿using System.Data;
-
-namespace Surveillance.Auditing.DataLayer.Interfaces
+﻿namespace Surveillance.Auditing.DataLayer.Interfaces
 {
+    using System.Data;
+
     public interface IConnectionStringFactory
     {
         IDbConnection BuildConn();

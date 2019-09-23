@@ -1,10 +1,12 @@
-﻿using System;
-using NUnit.Framework;
-using TestHarness.Commands;
-using TestHarness.State;
-
-namespace TestHarness.Tests.Commands
+﻿namespace TestHarness.Tests.Commands
 {
+    using System;
+
+    using NUnit.Framework;
+
+    using TestHarness.Commands;
+    using TestHarness.State;
+
     [TestFixture]
     public class QuitCommandTests
     {
@@ -13,17 +15,6 @@ namespace TestHarness.Tests.Commands
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QuitCommand(null));
-        }
-
-        [Test]
-        public void Run_SetsProgramStateExecution_ToFalse()
-        {
-            var state = new ProgramState {Executing = true};
-            var command = new QuitCommand(state);
-
-            command.Run(string.Empty);
-
-            Assert.IsFalse(state.Executing);
         }
 
         [Test]
@@ -57,6 +48,17 @@ namespace TestHarness.Tests.Commands
             var result = command.Handles("QUIT");
 
             Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void Run_SetsProgramStateExecution_ToFalse()
+        {
+            var state = new ProgramState { Executing = true };
+            var command = new QuitCommand(state);
+
+            command.Run(string.Empty);
+
+            Assert.IsFalse(state.Executing);
         }
     }
 }

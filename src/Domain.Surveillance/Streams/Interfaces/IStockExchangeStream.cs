@@ -1,7 +1,7 @@
-﻿using Domain.Core.Markets.Collections;
-
-namespace Domain.Surveillance.Streams.Interfaces
+﻿namespace Domain.Surveillance.Streams.Interfaces
 {
+    using Domain.Core.Markets.Collections;
+
     public interface IStockExchangeStream : IPublishingStream<EquityIntraDayTimeBarCollection>
     {
     }

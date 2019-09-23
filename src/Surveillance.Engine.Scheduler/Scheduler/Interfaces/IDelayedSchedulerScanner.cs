@@ -3,6 +3,7 @@
     public interface IDelayedSchedulerScanner
     {
         void Initiate();
+
         void Terminate();
     }
 }

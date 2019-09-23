@@ -4,11 +4,12 @@
     {
         public SuccessOrFailureResult(bool success, T value)
         {
-            Success = success;
-            Value = value;
+            this.Success = success;
+            this.Value = value;
         }
 
         public bool Success { get; }
+
         public T Value { get; }
     }
 }

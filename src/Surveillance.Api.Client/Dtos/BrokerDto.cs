@@ -1,15 +1,15 @@
-﻿using System;
-
-namespace RedDeer.Surveillance.Api.Client.Dtos
+﻿namespace RedDeer.Surveillance.Api.Client.Dtos
 {
+    using System;
+
     public class BrokerDto
     {
-        public int Id { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         public string ExternalId { get; set; }
 
-        public string Name { get; set; }
+        public int Id { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public string Name { get; set; }
     }
 }

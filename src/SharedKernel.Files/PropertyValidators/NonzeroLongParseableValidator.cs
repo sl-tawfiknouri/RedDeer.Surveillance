@@ -1,27 +1,23 @@
-﻿using FluentValidation.Validators;
-
-namespace SharedKernel.Files.PropertyValidators
+﻿namespace SharedKernel.Files.PropertyValidators
 {
+    using FluentValidation.Validators;
+
     public class NonZeroLongParseableValidator : PropertyValidator
     {
-        public NonZeroLongParseableValidator(string longPropertyName) : base($"Property had a value but could not be parsed to long {longPropertyName}")
-        { }
+        public NonZeroLongParseableValidator(string longPropertyName)
+            : base($"Property had a value but could not be parsed to long {longPropertyName}")
+        {
+        }
 
         protected override bool IsValid(PropertyValidatorContext context)
         {
             var prop = context.PropertyValue as string;
 
-            if (string.IsNullOrWhiteSpace(prop))
-            {
-                return true;
-            }
+            if (string.IsNullOrWhiteSpace(prop)) return true;
 
             var parseResult = long.TryParse(prop, out var result);
 
-            if (!parseResult)
-            {
-                return false;
-            }
+            if (!parseResult) return false;
 
             return result != 0;
         }

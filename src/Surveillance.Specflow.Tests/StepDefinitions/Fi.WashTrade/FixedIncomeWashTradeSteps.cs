@@ -1,63 +1,58 @@
-﻿using System;
-using Domain.Surveillance.Scheduling;
-using Domain.Core.Trading.Factories;
-using Domain.Core.Trading.Factories.Interfaces;
-using FakeItEasy;
-using Microsoft.Extensions.Logging.Abstractions;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.Universe;
-using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
 {
+    using System;
+
+    using Domain.Core.Trading.Factories;
+    using Domain.Core.Trading.Factories.Interfaces;
+    using Domain.Surveillance.Scheduling;
+
+    using FakeItEasy;
+
+    using Microsoft.Extensions.Logging.Abstractions;
+
+    using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.DataLayer.Aurora.BMLL;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
+    using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Specflow.Tests.StepDefinitions.Universe;
+
+    using TechTalk.SpecFlow;
+    using TechTalk.SpecFlow.Assist;
+
     [Binding]
     public class FixedIncomeWashTradeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private UniverseSelectionState _universeSelectionState;
-        private WashTradeRuleFixedIncomeParameters _parameters;
 
-        private IUniverseFixedIncomeOrderFilterService _orderFilterService;
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly UniverseSelectionState _universeSelectionState;
+
         private IUniverseAlertStream _alertStream;
+
         private IClusteringService _clusteringService;
-        private IPortfolioFactory _portfolioFactory;
 
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
-        public FixedIncomeWashTradeSteps(
-            ScenarioContext scenarioContext,
-            UniverseSelectionState universeSelectionState)
-        {
-            _scenarioContext = scenarioContext;
-            _universeSelectionState = universeSelectionState;
-        }
+        private IUniverseFixedIncomeOrderFilterService _orderFilterService;
 
-        private void Setup()
-        {
-            _orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
-            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
+        private WashTradeRuleFixedIncomeParameters _parameters;
 
-            _portfolioFactory = new PortfolioFactory();
-            _clusteringService = new ClusteringService();
-            _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
-                new StubRuleRunDataRequestRepository(),
-                new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+        private IPortfolioFactory _portfolioFactory;
+
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
+
+        public FixedIncomeWashTradeSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
+        {
+            this._scenarioContext = scenarioContext;
+            this._universeSelectionState = universeSelectionState;
         }
 
         [Given(@"I have the fixed income wash trade rule parameter values")]
@@ -65,13 +60,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
         {
             if (ruleParameters.RowCount != 1)
             {
-                _scenarioContext.Pending();
+                this._scenarioContext.Pending();
                 return;
             }
 
             var parameters = ruleParameters.CreateInstance<FixedIncomeWashTradeApiParameters>();
 
-            _parameters = new WashTradeRuleFixedIncomeParameters(
+            this._parameters = new WashTradeRuleFixedIncomeParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 parameters.PerformAveragePositionAnalysis,
@@ -92,36 +87,50 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
                 true);
         }
 
+        [Then(@"I will have (.*) fixed income wash trade alerts")]
+        public void ThenIWillHaveAlerts(int alertCount)
+        {
+            A.CallTo(
+                    () => this._alertStream.Add(
+                        A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent)))
+                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+        }
+
         [When(@"I run the fixed income wash trade rule")]
         public void WhenIRunTheFixedIncomeHighProfitRule()
         {
             var scheduledExecution = new ScheduledExecution { IsForceRerun = true };
 
-            Setup();
+            this.Setup();
 
             var rule = new FixedIncomeWashTradeRule(
-                _parameters,
-                _orderFilterService,
-                _ruleCtx,
-                _interdayUniverseMarketCacheFactory,
+                this._parameters,
+                this._orderFilterService,
+                this._ruleCtx,
+                this._interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,
-                _alertStream,
-                _clusteringService,
-                _portfolioFactory,
+                this._alertStream,
+                this._clusteringService,
+                this._portfolioFactory,
                 new NullLogger<FixedIncomeWashTradeRule>(),
                 new NullLogger<TradingHistoryStack>());
 
-            foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
+            foreach (var universeEvent in this._universeSelectionState.SelectedUniverse.UniverseEvents)
                 rule.OnNext(universeEvent);
         }
 
-        [Then(@"I will have (.*) fixed income wash trade alerts")]
-        public void ThenIWillHaveAlerts(int alertCount)
+        private void Setup()
         {
-            A
-                .CallTo(() =>
-                    _alertStream.Add(A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent)))
-                .MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            this._orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
+            this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            this._alertStream = A.Fake<IUniverseAlertStream>();
+
+            this._portfolioFactory = new PortfolioFactory();
+            this._clusteringService = new ClusteringService();
+            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseMarketCacheFactory>());
         }
     }
 }

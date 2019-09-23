@@ -1,48 +1,60 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Loader;
-using System.Text.RegularExpressions;
-using System.Threading;
-using DasMulli.Win32.ServiceUtils;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Configuration;
-using NLog;
-using RedDeer.Surveillance.App.Interfaces;
-using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
-using StructureMap;
-using Surveillance;
-using Surveillance.Auditing;
-using Surveillance.Auditing.Context;
-using Surveillance.Auditing.DataLayer;
-using Surveillance.Auditing.DataLayer.Interfaces;
-using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.DataLayer;
-using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Engine.DataCoordinator;
-using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
-using Surveillance.Engine.RuleDistributor;
-using Surveillance.Engine.Rules;
-using Surveillance.Engine.Scheduler;
-using Surveillance.Reddeer.ApiClient;
-using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
-
-// ReSharper disable UnusedParameter.Local
+﻿// ReSharper disable UnusedParameter.Local
 
 namespace RedDeer.Surveillance.App
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Runtime.Loader;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+
+    using DasMulli.Win32.ServiceUtils;
+
+    using global::Surveillance;
+    using global::Surveillance.Auditing;
+    using global::Surveillance.Auditing.Context;
+    using global::Surveillance.Auditing.DataLayer;
+    using global::Surveillance.Auditing.DataLayer.Interfaces;
+    using global::Surveillance.Auditing.DataLayer.Processes;
+    using global::Surveillance.DataLayer;
+    using global::Surveillance.DataLayer.Configuration.Interfaces;
+    using global::Surveillance.Engine.DataCoordinator;
+    using global::Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+    using global::Surveillance.Engine.RuleDistributor;
+    using global::Surveillance.Engine.Rules;
+    using global::Surveillance.Engine.Scheduler;
+    using global::Surveillance.Reddeer.ApiClient;
+    using global::Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+
+    using Infrastructure.Network.Aws.Interfaces;
+
+    using Microsoft.Extensions.Configuration;
+
+    using NLog;
+
+    using RedDeer.Surveillance.App.Interfaces;
+    using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
+
+    using StructureMap;
+
     public class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        internal const string ServiceName = "RedDeer.SurveillanceService";
+
+        private const string RegisterServiceFlag = "--register-service";
 
         private const string RunAsServiceFlag = "--run-as-service";
+
         private const string RunAsSystemServiceFlag = "--systemd-service";
-        private const string RegisterServiceFlag = "--register-service";
+
+        private const string ServiceDescription = "RedDeer Surveillance Service";
+
+        private const string ServiceDisplayName = "RedDeer Surveillance Service";
+
         private const string UnRegisterServiceFlag = "--unregister-service";
 
-        internal const string ServiceName = "RedDeer.SurveillanceService";
-        private const string ServiceDisplayName = "RedDeer Surveillance Service";
-        private const string ServiceDescription = "RedDeer Surveillance Service";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static Container Container { get; set; }
 
@@ -53,10 +65,8 @@ namespace RedDeer.Surveillance.App
                 SetSystemLoggingOffIfService(args);
 
                 Container = new Container();
-                var configurationBuilder = new ConfigurationBuilder()
-                    .AddEnvironmentVariables()
-                    .AddJsonFile("appsettings.json", true, true)
-                    .Build();
+                var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                    .AddJsonFile("appsettings.json", true, true).Build();
 
                 var configBuilder = new Configuration.Configuration();
                 var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
@@ -66,23 +76,28 @@ namespace RedDeer.Surveillance.App
                 var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
                 Container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
 
-                Container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
-                Container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
+                Container.Inject(
+                    typeof(IRuleConfiguration),
+                    configBuilder.BuildRuleConfiguration(configurationBuilder));
+                Container.Inject(
+                    typeof(ISystemDataLayerConfig),
+                    configBuilder.BuildDataLayerConfig(configurationBuilder));
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
 
-                Container.Configure(config =>
-                {
-                    config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                    config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                    config.IncludeRegistry<DataLayerRegistry>();
-                    config.IncludeRegistry<RuleDistributorRegistry>();
-                    config.IncludeRegistry<RuleRegistry>();
-                    config.IncludeRegistry<DataCoordinatorRegistry>();
-                    config.IncludeRegistry<SurveillanceRegistry>();
-                    config.IncludeRegistry<AppRegistry>();
-                    config.IncludeRegistry<ReddeerApiClientRegistry>();
-                    config.IncludeRegistry<RuleSchedulerRegistry>();
-                });
+                Container.Configure(
+                    config =>
+                        {
+                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                            config.IncludeRegistry<DataLayerRegistry>();
+                            config.IncludeRegistry<RuleDistributorRegistry>();
+                            config.IncludeRegistry<RuleRegistry>();
+                            config.IncludeRegistry<DataCoordinatorRegistry>();
+                            config.IncludeRegistry<SurveillanceRegistry>();
+                            config.IncludeRegistry<AppRegistry>();
+                            config.IncludeRegistry<ReddeerApiClientRegistry>();
+                            config.IncludeRegistry<RuleSchedulerRegistry>();
+                        });
 
                 Container.GetInstance<IScriptRunner>();
 
@@ -96,6 +111,20 @@ namespace RedDeer.Surveillance.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
+        }
+
+        private static void DisableConsoleLog()
+        {
+            LogManager.Configuration.RemoveTarget("console");
+            LogManager.Configuration.Reload();
+        }
+
+        private static string EscapeCommandLineArgument(string arg)
+        {
+            // http://stackoverflow.com/a/6040946/784387
+            arg = Regex.Replace(arg, @"(\\*)" + "\"", @"$1$1\" + "\"");
+            arg = "\"" + Regex.Replace(arg, @"(\\+)$", @"$1$1") + "\"";
+            return arg;
         }
 
         private static void ProcessArguments(string[] args)
@@ -119,7 +148,7 @@ namespace RedDeer.Surveillance.App
             {
                 Logger.Info($"Unregister Service Flag Found ({UnRegisterServiceFlag}).");
                 UnRegisterService();
-            }           
+            }
             else
             {
                 Logger.Info("No Flags Found.");
@@ -127,16 +156,33 @@ namespace RedDeer.Surveillance.App
             }
         }
 
-        private static void SetSystemLoggingOffIfService(string[] args)
+        private static void RegisterService()
         {
-            if (args.Contains(RunAsServiceFlag))
-            {
-                DisableConsoleLog();
-            }
-            else if (args.Contains(RunAsSystemServiceFlag))
-            {
-                DisableConsoleLog();
-            }
+            // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
+            var remainingArgs = Environment.GetCommandLineArgs().Where(arg => arg != RegisterServiceFlag)
+                .Select(EscapeCommandLineArgument).Append(RunAsServiceFlag);
+
+            var host = Process.GetCurrentProcess().MainModule.FileName;
+
+            if (!host.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase)) remainingArgs = remainingArgs.Skip(1);
+
+            var fullServiceCommand = host + " " + string.Join(" ", remainingArgs);
+
+            // Do not use LocalSystem in production.. but this is good for demos as LocalSystem will have access to some random git-clone path
+            // Note that when the service is already registered and running, it will be reconfigured but not restarted
+            var serviceDefinition = new ServiceDefinitionBuilder(ServiceName).WithDisplayName(ServiceDisplayName)
+                .WithDescription(ServiceDescription).WithBinaryPath(fullServiceCommand)
+                .WithCredentials(Win32ServiceCredentials.LocalSystem).WithAutoStart(true).Build();
+
+            Console.WriteLine(ServiceName);
+            Console.WriteLine(ServiceDisplayName);
+            Console.WriteLine(ServiceDescription);
+            Console.WriteLine(fullServiceCommand);
+
+            new Win32ServiceManager().CreateOrUpdateService(serviceDefinition, true);
+
+            Console.WriteLine(
+                $@"Successfully registered and started service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
 
         private static void RunAsService(string[] args)
@@ -150,10 +196,11 @@ namespace RedDeer.Surveillance.App
         {
             // Register sigterm event handler. 
             var sigterm = new ManualResetEventSlim();
-            AssemblyLoadContext.Default.Unloading += x => {
-                Logger.Info("Sigterm triggered.");
-                sigterm.Set();
-            };
+            AssemblyLoadContext.Default.Unloading += x =>
+                {
+                    Logger.Info("Sigterm triggered.");
+                    sigterm.Set();
+                };
 
             var service = Container.GetInstance<Service>();
             service.Start(new string[0], () => { });
@@ -170,64 +217,18 @@ namespace RedDeer.Surveillance.App
             service.Stop();
         }
 
-        private static void RegisterService()
+        private static void SetSystemLoggingOffIfService(string[] args)
         {
-            // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
-            var remainingArgs = Environment.GetCommandLineArgs()
-                .Where(arg => arg != RegisterServiceFlag)
-                .Select(EscapeCommandLineArgument)
-                .Append(RunAsServiceFlag);
-
-            var host = Process.GetCurrentProcess().MainModule.FileName;
-
-            if (!host.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase))
-            {
-                // For self-contained apps, skip the dll path
-                remainingArgs = remainingArgs.Skip(1);
-            }
-
-            var fullServiceCommand = host + " " + string.Join(" ", remainingArgs);
-
-            // Do not use LocalSystem in production.. but this is good for demos as LocalSystem will have access to some random git-clone path
-            // Note that when the service is already registered and running, it will be reconfigured but not restarted
-            var serviceDefinition = new ServiceDefinitionBuilder(ServiceName)
-                .WithDisplayName(ServiceDisplayName)
-                .WithDescription(ServiceDescription)
-                .WithBinaryPath(fullServiceCommand)
-                .WithCredentials(Win32ServiceCredentials.LocalSystem)
-                .WithAutoStart(true)
-                .Build();
-
-            Console.WriteLine(ServiceName);
-            Console.WriteLine(ServiceDisplayName);
-            Console.WriteLine(ServiceDescription);
-            Console.WriteLine(fullServiceCommand);
-
-            new Win32ServiceManager().CreateOrUpdateService(serviceDefinition, startImmediately: true);
-
-            Console.WriteLine($@"Successfully registered and started service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
+            if (args.Contains(RunAsServiceFlag)) DisableConsoleLog();
+            else if (args.Contains(RunAsSystemServiceFlag)) DisableConsoleLog();
         }
 
         private static void UnRegisterService()
         {
-            new Win32ServiceManager()
-                .DeleteService(ServiceName);
+            new Win32ServiceManager().DeleteService(ServiceName);
 
-            Console.WriteLine($@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
-        }
-
-        private static string EscapeCommandLineArgument(string arg)
-        {
-            // http://stackoverflow.com/a/6040946/784387
-            arg = Regex.Replace(arg, @"(\\*)" + "\"", @"$1$1\" + "\"");
-            arg = "\"" + Regex.Replace(arg, @"(\\+)$", @"$1$1") + "\"";
-            return arg;
-        }
-
-        private static void DisableConsoleLog()
-        {
-            LogManager.Configuration.RemoveTarget("console");
-            LogManager.Configuration.Reload();
+            Console.WriteLine(
+                $@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using TestHarness.Engine.OrderGenerator.Interfaces;
-
-namespace TestHarness.Factory.TradingFactory.Interfaces
+﻿namespace TestHarness.Factory.TradingFactory.Interfaces
 {
+    using TestHarness.Engine.OrderGenerator.Interfaces;
+
     public interface ICompleteSelector
     {
         IOrderDataGenerator Finish();

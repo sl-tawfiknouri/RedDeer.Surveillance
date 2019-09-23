@@ -1,11 +1,13 @@
-﻿using System;
-
-namespace Surveillance.Engine.Rules.Universe.Interfaces
+﻿namespace Surveillance.Engine.Rules.Universe.Interfaces
 {
+    using System;
+
     public interface IUniverseEvent
     {
-        UniverseStateEvent StateChange { get; }
         DateTime EventTime { get; }
+
+        UniverseStateEvent StateChange { get; }
+
         object UnderlyingEvent { get; }
     }
 }

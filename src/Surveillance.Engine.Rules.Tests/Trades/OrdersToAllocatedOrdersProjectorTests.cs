@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain.Core.Trading.Orders;
-using FakeItEasy;
-using NUnit.Framework;
-using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-
-namespace Surveillance.Engine.Rules.Tests.Trades
+﻿namespace Surveillance.Engine.Rules.Tests.Trades
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Domain.Core.Trading.Orders;
+
+    using FakeItEasy;
+
+    using NUnit.Framework;
+
+    using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+
     [TestFixture]
     public class OrdersToAllocatedOrdersProjectorTests
     {
         private IOrderAllocationRepository _repository;
-
-        [SetUp]
-        public void Setup()
-        {
-            _repository = A.Fake<IOrderAllocationRepository>();
-        }
 
         [Test]
         public void Constructor_Null_Repository_Throws_Exception()
@@ -29,22 +27,12 @@ namespace Surveillance.Engine.Rules.Tests.Trades
         }
 
         [Test]
-        public async Task DecoratedOrders_Returns_Empty_For_Null()
-        {
-            var projector = Build();
-
-            var result = await projector.DecorateOrders(null);
-
-            Assert.IsEmpty(result);
-        }
-
-        [Test]
         public async Task DecoratedOrders_Returns_100Percent_Allocated_WhenNotIn_Repo()
         {
-            var projector = Build();
+            var projector = this.Build();
             var orders = OrderHelper.Orders(OrderStatus.Filled);
 
-            var result = await projector.DecorateOrders(new[] {orders});
+            var result = await projector.DecorateOrders(new[] { orders });
 
             Assert.AreEqual(result.Count, 1);
             Assert.AreEqual(result.First().OrderFilledVolume, orders.OrderFilledVolume);
@@ -59,33 +47,33 @@ namespace Surveillance.Engine.Rules.Tests.Trades
         [Test]
         public async Task DecoratedOrders_Returns_50Percent_Allocated_WhenIn_Repo()
         {
-            var projector = Build();
+            var projector = this.Build();
             var orders = OrderHelper.Orders(OrderStatus.Filled);
             orders.OrderFilledVolume = 100;
             orders.OrderOrderedVolume = 1000;
-            var fiftyPercentVolume = (decimal)(orders.OrderFilledVolume.GetValueOrDefault(0) * 0.5m);
+            var fiftyPercentVolume = orders.OrderFilledVolume.GetValueOrDefault(0) * 0.5m;
 
             var allocations = new List<OrderAllocation>
-            {
-                new OrderAllocation(
-                    null,
-                    orders.OrderId,
-                    "test-fund-1",
-                    "test-strategy-1",
-                    "test-account-1",
-                    fiftyPercentVolume,
-                    DateTime.UtcNow),
-                new OrderAllocation(
-                    null,
-                    orders.OrderId,
-                    "test-fund-2",
-                    "test-strategy-2",
-                    "test-account-2",
-                    fiftyPercentVolume,
-                    DateTime.UtcNow)
-            };
+                                  {
+                                      new OrderAllocation(
+                                          null,
+                                          orders.OrderId,
+                                          "test-fund-1",
+                                          "test-strategy-1",
+                                          "test-account-1",
+                                          fiftyPercentVolume,
+                                          DateTime.UtcNow),
+                                      new OrderAllocation(
+                                          null,
+                                          orders.OrderId,
+                                          "test-fund-2",
+                                          "test-strategy-2",
+                                          "test-account-2",
+                                          fiftyPercentVolume,
+                                          DateTime.UtcNow)
+                                  };
 
-            A.CallTo(() => _repository.Get(A<IReadOnlyCollection<string>>.Ignored)).Returns(allocations);
+            A.CallTo(() => this._repository.Get(A<IReadOnlyCollection<string>>.Ignored)).Returns(allocations);
 
             var result = await projector.DecorateOrders(new[] { orders });
 
@@ -105,9 +93,25 @@ namespace Surveillance.Engine.Rules.Tests.Trades
             Assert.AreEqual(result.Skip(1).First().OrderId, orders.OrderId);
         }
 
+        [Test]
+        public async Task DecoratedOrders_Returns_Empty_For_Null()
+        {
+            var projector = this.Build();
+
+            var result = await projector.DecorateOrders(null);
+
+            Assert.IsEmpty(result);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            this._repository = A.Fake<IOrderAllocationRepository>();
+        }
+
         private OrdersToAllocatedOrdersProjector Build()
         {
-            return new OrdersToAllocatedOrdersProjector(_repository);
+            return new OrdersToAllocatedOrdersProjector(this._repository);
         }
     }
 }

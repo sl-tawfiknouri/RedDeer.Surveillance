@@ -8,6 +8,8 @@ using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
 {
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
+
     public class RevenueCurrencyConvertingMarkingCloseCalculator : RevenueCurrencyConvertingCalculator
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(

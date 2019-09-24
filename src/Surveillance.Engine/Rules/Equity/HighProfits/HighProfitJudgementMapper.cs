@@ -25,12 +25,24 @@
                 return null;
             }
 
-            var caseTitle = "Automated Equity High Profit Rule Breach Detected";
+            var caseTitle = $"Automated High Profit Rule Breach Detected";
             var description = this.BuildDescription(judgementContext);
 
             var ruleBreach = new RuleBreach(judgementContext.RuleBreachContext, description, caseTitle);
 
             return ruleBreach;
+        }
+
+        private string ComponentName(HighProfitComponents component)
+        {
+            switch (component)
+            {
+                case HighProfitComponents.Hybrid: return "Hybrid ";
+                case HighProfitComponents.Realised: return "Realised ";
+                case HighProfitComponents.Virtual: return "Virtual ";
+                case HighProfitComponents.None: return string.Empty;
+                default: throw new ArgumentOutOfRangeException(nameof(component));
+            }
         }
 
         private string BuildDescription(IHighProfitJudgementContext judgementContext)

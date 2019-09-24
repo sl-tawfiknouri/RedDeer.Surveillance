@@ -24,6 +24,7 @@
     using Surveillance.Engine.Rules.RuleParameters.Equities;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;

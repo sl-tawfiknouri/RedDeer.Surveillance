@@ -9,8 +9,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
     using Domain.Core.Trading.Orders;
 
     using NUnit.Framework;
-    using Surveillance.Engine.Rules.Tests.Helpers;
-    using Surveillance.Engine.Rules.Trades;
+
+    using TestHelpers;
 
     [TestFixture]
     public class ExchangeRateProfitBreakdownTests

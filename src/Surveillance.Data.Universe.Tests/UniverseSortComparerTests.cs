@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Universe
+﻿namespace Surveillance.Data.Universe.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@
 
     using NUnit.Framework;
 
-    using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
 
     [TestFixture]

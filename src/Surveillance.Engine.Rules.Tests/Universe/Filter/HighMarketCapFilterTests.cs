@@ -10,8 +10,6 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.Tests.Helpers;
-using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter;
 using System;
 
@@ -23,6 +21,8 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
     using Surveillance.Data.Universe;
     using Surveillance.Engine.Rules.Currency.Interfaces;
+
+    using TestHelpers;
 
     public class HighMarketCapFilterTests
     {

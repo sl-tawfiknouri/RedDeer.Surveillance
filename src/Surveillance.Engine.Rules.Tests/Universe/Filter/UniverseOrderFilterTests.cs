@@ -11,8 +11,9 @@
     using NUnit.Framework;
 
     using Surveillance.Data.Universe;
-    using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Universe.Filter;
+
+    using TestHelpers;
 
     [TestFixture]
     public class UniverseOrderFilterTests

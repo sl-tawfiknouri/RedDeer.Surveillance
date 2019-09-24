@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
+﻿namespace Surveillance.Data.Universe.Tests.Lazy
 {
     using System;
 

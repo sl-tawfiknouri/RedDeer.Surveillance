@@ -22,17 +22,16 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.Layering;
-using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 {
     using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
+
+    using TestHelpers;
 
     [TestFixture]
     public class LayeringRuleTests

@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Universe.MarketEvents
+﻿namespace Surveillance.Data.Universe.Tests.MarketEvents
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,6 @@
 
     using RedDeer.Contracts.SurveillanceService.Api.Markets;
 
-    using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 

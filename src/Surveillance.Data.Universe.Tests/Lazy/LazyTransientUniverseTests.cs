@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Universe.Lazy
+﻿namespace Surveillance.Data.Universe.Tests.Lazy
 {
     using System;
     using System.Threading.Tasks;
@@ -10,7 +10,6 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy;
     using Surveillance.Data.Universe.Lazy.Interfaces;

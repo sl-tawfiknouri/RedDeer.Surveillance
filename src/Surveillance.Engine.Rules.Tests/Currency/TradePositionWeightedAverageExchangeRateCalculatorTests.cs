@@ -24,10 +24,10 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.Currency;
     using Surveillance.Engine.Rules.Currency.Interfaces;
-    using Surveillance.Engine.Rules.Tests.Helpers;
-    using Surveillance.Engine.Rules.Trades;
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.ExchangeRate;
+
+    using TestHelpers;
 
     [TestFixture]
     public class TradePositionWeightedAverageExchangeRateCalculatorTests

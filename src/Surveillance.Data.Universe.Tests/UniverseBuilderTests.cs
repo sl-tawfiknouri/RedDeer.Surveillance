@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Universe
+﻿namespace Surveillance.Data.Universe.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -18,14 +18,14 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-    using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Trades.Interfaces;
+
+    using TestHelpers;
 
     [TestFixture]
     public class UniverseBuilderTests

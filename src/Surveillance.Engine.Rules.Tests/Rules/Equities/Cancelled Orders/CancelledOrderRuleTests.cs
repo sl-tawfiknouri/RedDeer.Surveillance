@@ -24,11 +24,10 @@
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
-    using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Trades;
-    using Surveillance.Engine.Rules.Universe;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+
+    using TestHelpers;
 
     [TestFixture]
     public class CancelledOrderRuleTests

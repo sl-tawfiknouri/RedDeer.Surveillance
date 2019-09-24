@@ -31,6 +31,9 @@ using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 {
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+
     [TestFixture]
     public class LayeringRuleTests
     {

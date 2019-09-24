@@ -12,13 +12,14 @@ using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 // ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Engine.Rules.Rules
 {
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
+
     public abstract class BaseUniverseRule : IUniverseRule
     {
         private readonly string _name;

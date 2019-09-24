@@ -9,12 +9,10 @@
     using Domain.Core.Trading.Orders;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Engine.Rules.RuleParameters.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Trades;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
     public class MarkingTheCloseBreach : IMarkingTheCloseBreach
     {

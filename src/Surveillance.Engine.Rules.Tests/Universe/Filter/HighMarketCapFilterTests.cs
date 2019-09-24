@@ -21,6 +21,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 
     using Domain.Core.Financial.Money;
 
+    using Surveillance.Data.Universe;
     using Surveillance.Engine.Rules.Currency.Interfaces;
 
     public class HighMarketCapFilterTests

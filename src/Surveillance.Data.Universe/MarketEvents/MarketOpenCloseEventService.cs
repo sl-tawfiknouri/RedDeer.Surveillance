@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe.MarketEvents
+﻿namespace Surveillance.Data.Universe.MarketEvents
 {
     using System;
     using System.Collections.Generic;
@@ -7,8 +7,8 @@
 
     using Microsoft.Extensions.Logging;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
     public class MarketOpenCloseEventService : IMarketOpenCloseEventService

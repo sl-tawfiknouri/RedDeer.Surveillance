@@ -6,8 +6,8 @@
 
     using NUnit.Framework;
 
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
 
     [TestFixture]
     public class UniverseSortComparerTests

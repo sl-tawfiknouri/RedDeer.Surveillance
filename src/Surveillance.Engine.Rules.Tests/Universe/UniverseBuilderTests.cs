@@ -18,14 +18,14 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
     using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Trades.Interfaces;
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
-    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 
     [TestFixture]
     public class UniverseBuilderTests

@@ -6,9 +6,10 @@
 
     using Domain.Surveillance.Scheduling;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     public class HighVolumeVenueDecoratorFilter : IHighVolumeVenueDecoratorFilter
     {

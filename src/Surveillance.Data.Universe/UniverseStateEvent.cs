@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Data.Universe
 {
     using System.ComponentModel;
 

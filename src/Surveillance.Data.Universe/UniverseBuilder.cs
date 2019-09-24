@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Data.Universe
 {
     using System;
     using System.Collections.Generic;
@@ -12,11 +12,11 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
     using Surveillance.Engine.Rules.Trades.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 
     /// <summary>
     ///     Generates a universe from the existing data set

@@ -14,14 +14,15 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Trading.Orders;
 using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {
     using Domain.Core.Trading;
+
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
 
     public class MarkingTheCloseRule : BaseUniverseRule, IMarkingTheCloseRule
     {

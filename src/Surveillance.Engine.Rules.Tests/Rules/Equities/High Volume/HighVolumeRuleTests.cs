@@ -29,6 +29,8 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 {
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
 
     [TestFixture]

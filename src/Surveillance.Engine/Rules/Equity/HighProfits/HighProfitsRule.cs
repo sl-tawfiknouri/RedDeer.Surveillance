@@ -8,6 +8,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;

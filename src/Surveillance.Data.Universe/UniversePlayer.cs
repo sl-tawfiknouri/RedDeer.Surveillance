@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Data.Universe
 {
     using System;
     using System.Collections.Concurrent;
@@ -9,7 +9,7 @@
 
     using Microsoft.Extensions.Logging;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
     /// <summary>
     ///     Play the history of the universe to the observers

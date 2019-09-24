@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe.Lazy.Interfaces
+﻿namespace Surveillance.Data.Universe.Lazy.Interfaces
 {
     using System.Collections.Generic;
 

@@ -11,11 +11,11 @@
 
     using NUnit.Framework;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters;
-    using Surveillance.Engine.Rules.Universe;
     using Surveillance.Engine.Rules.Universe.Filter;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     [TestFixture]
     public class HighVolumeVenueDecoratorFilterTests

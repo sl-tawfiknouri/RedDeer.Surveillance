@@ -6,11 +6,11 @@
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     /// <summary>
     /// The fixed income high profits rule.

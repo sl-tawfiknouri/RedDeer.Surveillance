@@ -12,9 +12,9 @@
 
     using NUnit.Framework;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Factories;
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     [TestFixture]
     public class UniversePlayerFactoryTests

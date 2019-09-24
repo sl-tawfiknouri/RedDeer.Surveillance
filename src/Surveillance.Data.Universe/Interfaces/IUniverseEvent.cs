@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe.Interfaces
+﻿namespace Surveillance.Data.Universe.Interfaces
 {
     using System;
 

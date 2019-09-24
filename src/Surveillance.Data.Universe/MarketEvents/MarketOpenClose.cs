@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Universe.MarketEvents
+﻿namespace Surveillance.Data.Universe.MarketEvents
 {
     using System;
 

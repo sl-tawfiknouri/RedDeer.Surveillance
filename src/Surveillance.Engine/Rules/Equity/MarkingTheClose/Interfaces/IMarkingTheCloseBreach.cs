@@ -1,7 +1,7 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
 {
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
     public interface IMarkingTheCloseBreach : IRuleBreach
     {

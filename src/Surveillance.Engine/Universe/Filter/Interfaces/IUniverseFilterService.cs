@@ -2,8 +2,8 @@
 {
     using System;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     public interface IUniverseFilterService : IObservable<IUniverseEvent>, IUniverseRule
     {

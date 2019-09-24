@@ -13,6 +13,7 @@
     using Newtonsoft.Json;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
     using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
     using Surveillance.Engine.Rules.Analysis.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
@@ -25,7 +26,6 @@
     using Surveillance.Engine.Rules.Rules.Cancellation;
     using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
     /// <summary>

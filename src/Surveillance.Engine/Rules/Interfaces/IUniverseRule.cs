@@ -4,7 +4,7 @@
 
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
     public interface IUniverseRule : IObserver<IUniverseEvent>
     {

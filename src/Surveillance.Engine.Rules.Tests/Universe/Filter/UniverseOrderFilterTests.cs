@@ -10,8 +10,8 @@
 
     using NUnit.Framework;
 
+    using Surveillance.Data.Universe;
     using Surveillance.Engine.Rules.Tests.Helpers;
-    using Surveillance.Engine.Rules.Universe;
     using Surveillance.Engine.Rules.Universe.Filter;
 
     [TestFixture]

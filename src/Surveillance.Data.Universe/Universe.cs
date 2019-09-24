@@ -1,8 +1,8 @@
-﻿namespace Surveillance.Engine.Rules.Universe
+﻿namespace Surveillance.Data.Universe
 {
     using System.Collections.Generic;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
     public class Universe : IUniverse
     {

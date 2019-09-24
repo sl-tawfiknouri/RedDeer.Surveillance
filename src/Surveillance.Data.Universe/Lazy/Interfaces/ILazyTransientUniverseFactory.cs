@@ -1,9 +1,9 @@
-﻿namespace Surveillance.Engine.Rules.Universe.Lazy.Interfaces
+﻿namespace Surveillance.Data.Universe.Lazy.Interfaces
 {
     using Domain.Surveillance.Scheduling;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
     /// <summary>
     /// The LazyTransientUniverseFactory interface.

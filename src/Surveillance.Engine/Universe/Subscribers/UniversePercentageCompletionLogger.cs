@@ -4,7 +4,7 @@
 
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
     public class UniversePercentageCompletionLogger : IUniversePercentageCompletionLogger

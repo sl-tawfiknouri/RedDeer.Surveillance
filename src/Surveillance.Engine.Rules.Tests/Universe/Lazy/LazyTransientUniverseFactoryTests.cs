@@ -9,9 +9,9 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Lazy;
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
 
     [TestFixture]
     public class LazyTransientUniverseFactoryTests

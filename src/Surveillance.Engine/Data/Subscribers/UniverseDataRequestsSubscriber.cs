@@ -5,9 +5,9 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Queues.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     public class UniverseDataRequestsSubscriber : IUniverseDataRequestsSubscriber
     {

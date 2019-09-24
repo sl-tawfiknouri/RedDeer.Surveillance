@@ -13,8 +13,8 @@
 
     using RedDeer.Contracts.SurveillanceService.Api.Markets;
 
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
     [TestFixture]

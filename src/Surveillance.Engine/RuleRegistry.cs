@@ -22,6 +22,12 @@ namespace Surveillance.Engine.Rules
 
     using StructureMap;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.DataLayer.Aurora.Judgements;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Analysis;
@@ -99,10 +105,6 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Universe.Filter;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Lazy;
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
-    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers;
@@ -144,7 +146,7 @@ namespace Surveillance.Engine.Rules
 
             this.For<IFixedIncomeHighProfitJudgementMapper>().Use<FixedIncomeHighProfitJudgementMapper>();
 
-            this.For<IUniverse>().Use<Universe.Universe>();
+            this.For<IUniverse>().Use<Surveillance.Data.Universe.Universe>();
             this.For<IUniverseBuilder>().Use<UniverseBuilder>();
             this.For<IUniverseEvent>().Use<UniverseEvent>();
             this.For<IUniversePlayer>().Use<UniversePlayer>();

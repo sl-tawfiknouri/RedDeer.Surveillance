@@ -11,6 +11,8 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -18,7 +20,6 @@
     using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     public class HighMarketCapFilter: IHighMarketCapFilter
     {

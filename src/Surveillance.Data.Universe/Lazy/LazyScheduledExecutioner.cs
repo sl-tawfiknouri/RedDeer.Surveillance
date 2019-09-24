@@ -1,10 +1,10 @@
-﻿namespace Surveillance.Engine.Rules.Universe.Lazy
+﻿namespace Surveillance.Data.Universe.Lazy
 {
     using System.Collections.Generic;
 
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
 
     /// <summary>
     ///     Used to divide the scheduled execution into streamable chunks

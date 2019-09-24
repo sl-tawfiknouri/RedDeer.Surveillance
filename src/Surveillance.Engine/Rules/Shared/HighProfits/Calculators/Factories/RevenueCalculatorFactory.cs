@@ -7,6 +7,8 @@ using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories
 {
+    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
+
     public class RevenueCalculatorFactory : IRevenueCalculatorFactory
     {
         private readonly ICurrencyConverterService _currencyConverterService;

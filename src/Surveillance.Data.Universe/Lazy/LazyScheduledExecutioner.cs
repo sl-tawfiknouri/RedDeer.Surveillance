@@ -11,9 +11,21 @@
     /// </summary>
     public class LazyScheduledExecutioner : ILazyScheduledExecutioner
     {
+        /// <summary>
+        /// The execute.
+        /// </summary>
+        /// <param name="schedule">
+        /// The schedule.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stack"/>.
+        /// </returns>
         public Stack<ScheduledExecution> Execute(ScheduledExecution schedule)
         {
-            if (schedule == null) return new Stack<ScheduledExecution>();
+            if (schedule == null)
+            {
+                return new Stack<ScheduledExecution>();
+            }
 
             var span = schedule.AdjustedTimeSeriesTermination - schedule.AdjustedTimeSeriesInitiation;
             var response = new Stack<ScheduledExecution>();
@@ -39,7 +51,9 @@
             {
                 var termination = initiation.AddDays(7);
                 if (schedule.AdjustedTimeSeriesTermination < termination)
+                {
                     termination = schedule.AdjustedTimeSeriesTermination;
+                }
 
                 var splitSchedule = new ScheduledExecution
                                         {

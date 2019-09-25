@@ -22,145 +22,256 @@
     /// </summary>
     public class LazyTransientUniverse : IEnumerable<IUniverseEvent>
     {
-        private readonly Queue<IUniverseEvent> _buffer = new Queue<IUniverseEvent>();
+        /// <summary>
+        /// The buffer.
+        /// </summary>
+        private readonly Queue<IUniverseEvent> buffer = new Queue<IUniverseEvent>();
 
-        private readonly ISystemProcessOperationContext _opCtx;
+        /// <summary>
+        /// The operation context.
+        /// </summary>
+        private readonly ISystemProcessOperationContext operationContext;
 
-        private readonly ScheduledExecution _scheduledExecution;
+        /// <summary>
+        /// The scheduled execution.
+        /// </summary>
+        private readonly ScheduledExecution scheduledExecution;
 
-        private readonly ILazyScheduledExecutioner _scheduledExecutioner;
+        /// <summary>
+        /// The scheduled executioner.
+        /// </summary>
+        private readonly ILazyScheduledExecutioner scheduledExecutioner;
 
-        private readonly IUniverseBuilder _universeBuilder;
+        /// <summary>
+        /// The universe builder.
+        /// </summary>
+        private readonly IUniverseBuilder universeBuilder;
 
-        private bool _eschatonInBuffer;
+        /// <summary>
+        /// The eschaton in buffer.
+        /// </summary>
+        private bool eschatonInBuffer;
 
-        private Stack<ScheduledExecution> _executions = new Stack<ScheduledExecution>();
+        /// <summary>
+        /// The executions.
+        /// </summary>
+        private Stack<ScheduledExecution> executions = new Stack<ScheduledExecution>();
 
-        private bool _hasEschatonOccurred;
+        /// <summary>
+        /// The has eschaton occurred.
+        /// </summary>
+        private bool hasEschatonOccurred;
 
-        private bool _hasFetchedExecutions;
+        /// <summary>
+        /// The has fetched executions.
+        /// </summary>
+        private bool hasFetchedExecutions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LazyTransientUniverse"/> class.
+        /// </summary>
+        /// <param name="scheduledExecutioner">
+        /// The scheduled executioner.
+        /// </param>
+        /// <param name="universeBuilder">
+        /// The universe builder.
+        /// </param>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
         public LazyTransientUniverse(
             ILazyScheduledExecutioner scheduledExecutioner,
             IUniverseBuilder universeBuilder,
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext operationContext)
         {
-            this._scheduledExecutioner =
-                scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
-            this._universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
-            this._scheduledExecution = execution ?? throw new ArgumentNullException(nameof(execution));
-            this._opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            this.scheduledExecutioner = scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
+            this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
+            this.scheduledExecution = execution ?? throw new ArgumentNullException(nameof(execution));
+            this.operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
         }
 
+        /// <summary>
+        /// The get enumerator.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerator"/>.
+        /// </returns>
         public IEnumerator<IUniverseEvent> GetEnumerator()
         {
             return new LazyEnumerator(this);
         }
 
+        /// <summary>
+        /// The get enumerator.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerator"/>.
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
 
+        /// <summary>
+        /// The reload buffer.
+        /// </summary>
         private void ReloadBuffer()
         {
             GC.Collect();
 
-            if (this._eschatonInBuffer)
+            if (this.eschatonInBuffer)
             {
-                this._hasEschatonOccurred = true;
+                this.hasEschatonOccurred = true;
                 return;
             }
 
-            var fetchGenesis = !this._hasFetchedExecutions;
-            if (!this._hasFetchedExecutions)
+            var fetchGenesis = !this.hasFetchedExecutions;
+            if (!this.hasFetchedExecutions)
             {
-                this._executions = this._scheduledExecutioner.Execute(this._scheduledExecution);
-                this._hasFetchedExecutions = true;
+                this.executions = this.scheduledExecutioner.Execute(this.scheduledExecution);
+                this.hasFetchedExecutions = true;
             }
 
-            while (this._executions.Any())
+            while (this.executions.Any())
             {
-                var exe = this._executions.Pop();
+                var exe = this.executions.Pop();
 
                 // the stack has simpler executions which already account for the leading/trailing edge of the universe
-                var fetchEschaton = exe.TimeSeriesTermination >= this._scheduledExecution.AdjustedTimeSeriesTermination;
-                var universe = this._universeBuilder.Summon(
+                var fetchEschaton = exe.TimeSeriesTermination >= this.scheduledExecution.AdjustedTimeSeriesTermination;
+                var universe = this.universeBuilder.Summon(
                     exe,
-                    this._opCtx,
+                    this.operationContext,
                     fetchGenesis,
                     fetchEschaton,
-                    this._scheduledExecution.TimeSeriesInitiation,
-                    this._scheduledExecution.TimeSeriesTermination).Result;
+                    this.scheduledExecution.TimeSeriesInitiation,
+                    this.scheduledExecution.TimeSeriesTermination).Result;
 
-                foreach (var bufferedItem in universe.UniverseEvents) this._buffer.Enqueue(bufferedItem);
+                foreach (var bufferedItem in universe.UniverseEvents)
+                {
+                    this.buffer.Enqueue(bufferedItem);
+                }
 
-                this._eschatonInBuffer = this._eschatonInBuffer || fetchEschaton;
+                this.eschatonInBuffer = this.eschatonInBuffer || fetchEschaton;
 
                 if (universe.UniverseEvents.Any())
+                {
                     break;
+                }
             }
         }
 
+        /// <summary>
+        /// The lazy enumerator.
+        /// </summary>
         private class LazyEnumerator : IEnumerator<IUniverseEvent>
         {
-            private readonly LazyTransientUniverse _universe;
+            /// <summary>
+            /// The universe.
+            /// </summary>
+            private readonly LazyTransientUniverse universe;
 
-            private int _index = -1;
+            /// <summary>
+            /// The index.
+            /// </summary>
+            private int index = -1;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="LazyEnumerator"/> class.
+            /// </summary>
+            /// <param name="universe">
+            /// The universe.
+            /// </param>
             public LazyEnumerator(LazyTransientUniverse universe)
             {
-                this._universe = universe ?? throw new ArgumentNullException(nameof(universe));
+                this.universe = universe ?? throw new ArgumentNullException(nameof(universe));
             }
 
+            /// <summary>
+            /// Gets the current.
+            /// </summary>
             public IUniverseEvent Current
             {
                 get
                 {
-                    if (this._universe._buffer.Any()) return this._universe._buffer.Peek();
+                    if (this.universe.buffer.Any())
+                    {
+                        return this.universe.buffer.Peek();
+                    }
 
-                    if (this._universe._hasEschatonOccurred) return null;
+                    if (this.universe.hasEschatonOccurred)
+                    {
+                        return null;
+                    }
 
-                    this._universe.ReloadBuffer();
+                    this.universe.ReloadBuffer();
 
-                    if (this._universe._buffer.Any()) return this._universe._buffer.Peek();
+                    if (this.universe.buffer.Any())
+                    {
+                        return this.universe.buffer.Peek();
+                    }
 
                     return null;
                 }
             }
 
+            /// <summary>
+            /// The current.
+            /// </summary>
             object IEnumerator.Current => this.Current;
 
+            /// <summary>
+            /// The dispose.
+            /// </summary>
             public void Dispose()
             {
             }
 
+            /// <summary>
+            /// The move next.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="bool"/>.
+            /// </returns>
             public bool MoveNext()
             {
-                this._index++;
+                this.index++;
 
-                if (this._index > 0)
+                if (this.index > 0)
                 {
-                    if (this._universe._buffer.Any()) this._universe._buffer.Dequeue();
+                    if (this.universe.buffer.Any())
+                    {
+                        this.universe.buffer.Dequeue();
+                    }
                 }
                 else
                 {
                     // initial load
-                    this._universe.ReloadBuffer();
-                    if (!this._universe._buffer.Any())
+                    this.universe.ReloadBuffer();
+                    if (!this.universe.buffer.Any())
+                    {
                         return false;
+                    }
                 }
 
-                if (this._universe._eschatonInBuffer && !this._universe._buffer.Any())
-                    this._universe._hasEschatonOccurred = true;
+                if (this.universe.eschatonInBuffer 
+                    && !this.universe.buffer.Any())
+                {
+                    this.universe.hasEschatonOccurred = true;
+                }
 
-                return !this._universe._hasEschatonOccurred;
+                return !this.universe.hasEschatonOccurred;
             }
 
+            /// <summary>
+            /// The reset.
+            /// </summary>
             public void Reset()
             {
-                this._index = -1;
+                this.index = -1;
             }
         }
     }

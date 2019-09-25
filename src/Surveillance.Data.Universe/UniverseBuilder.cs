@@ -14,27 +14,66 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
 
     /// <summary>
     ///     Generates a universe from the existing data set
     /// </summary>
     public class UniverseBuilder : IUniverseBuilder
     {
-        private readonly IOrdersToAllocatedOrdersProjector _allocateOrdersProjector;
+        /// <summary>
+        /// The allocate orders projector.
+        /// </summary>
+        private readonly IOrdersToAllocatedOrdersProjector allocateOrdersProjector;
 
-        private readonly IReddeerMarketRepository _auroraMarketRepository;
+        /// <summary>
+        /// The aurora market repository.
+        /// </summary>
+        private readonly IReddeerMarketRepository auroraMarketRepository;
 
-        private readonly IOrdersRepository _auroraOrdersRepository;
+        /// <summary>
+        /// The aurora orders repository.
+        /// </summary>
+        private readonly IOrdersRepository auroraOrdersRepository;
 
-        private readonly ILogger<UniverseBuilder> _logger;
+        /// <summary>
+        /// The market service.
+        /// </summary>
+        private readonly IMarketOpenCloseEventService marketService;
 
-        private readonly IMarketOpenCloseEventService _marketService;
+        /// <summary>
+        /// The universe sorter.
+        /// </summary>
+        private readonly IUniverseSortComparer universeSorter;
 
-        private readonly IUniverseSortComparer _universeSorter;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<UniverseBuilder> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniverseBuilder"/> class.
+        /// </summary>
+        /// <param name="auroraOrdersRepository">
+        /// The aurora orders repository.
+        /// </param>
+        /// <param name="allocateOrdersProjector">
+        /// The allocate orders projector.
+        /// </param>
+        /// <param name="auroraMarketRepository">
+        /// The aurora market repository.
+        /// </param>
+        /// <param name="marketService">
+        /// The market service.
+        /// </param>
+        /// <param name="universeSorter">
+        /// The universe sorter.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public UniverseBuilder(
             IOrdersRepository auroraOrdersRepository,
             IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
@@ -43,34 +82,67 @@
             IUniverseSortComparer universeSorter,
             ILogger<UniverseBuilder> logger)
         {
-            this._auroraOrdersRepository =
+            this.auroraOrdersRepository =
                 auroraOrdersRepository ?? throw new ArgumentNullException(nameof(auroraOrdersRepository));
-            this._allocateOrdersProjector = allocateOrdersProjector
+            this.allocateOrdersProjector = allocateOrdersProjector
                                             ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
-            this._auroraMarketRepository =
+            this.auroraMarketRepository =
                 auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
-            this._marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
-            this._universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
+            this.universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        ///     Crack the cosmic egg and unscramble your reality
+        /// Crack the cosmic egg and unscramble your reality
         /// </summary>
-        public async Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation Context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
             return await this.Summon(
                        execution,
-                       opCtx,
+                       operationContext,
                        true,
                        true,
                        execution.TimeSeriesInitiation,
                        execution.TimeSeriesTermination);
         }
 
+        /// <summary>
+        /// The summon.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="includeGenesis">
+        /// The include genesis.
+        /// </param>
+        /// <param name="includeEschaton">
+        /// The include eschaton.
+        /// </param>
+        /// <param name="realUniverseEpoch">
+        /// The real universe epoch.
+        /// </param>
+        /// <param name="futureUniverseEpoch">
+        /// The future universe epoch.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task<IUniverse> Summon(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             bool includeGenesis,
             bool includeEschaton,
             DateTimeOffset? realUniverseEpoch,
@@ -78,28 +150,28 @@
         {
             if (execution == null)
             {
-                this._logger.LogError(
-                    $"had a null execution or rule parameters and therefore null data sets for {opCtx.Id} operation context");
+                this.logger.LogError(
+                    $"had a null execution or rule parameters and therefore null data sets for {operationContext.Id} operation context");
                 return new Universe(null);
             }
 
-            this._logger.LogInformation("fetching aurora trade data");
-            var projectedTrades = await this.TradeDataFetchAurora(execution, opCtx);
-            this._logger.LogInformation("completed fetching aurora trade data");
+            this.logger.LogInformation("fetching aurora trade data");
+            var projectedTrades = await this.TradeDataFetchAurora(execution, operationContext);
+            this.logger.LogInformation("completed fetching aurora trade data");
 
-            this._logger.LogInformation("fetching aurora trade allocation data");
-            var projectedTradesAllocations = await this._allocateOrdersProjector.DecorateOrders(projectedTrades);
-            this._logger.LogInformation("completed fetching aurora trade allocation data");
+            this.logger.LogInformation("fetching aurora trade allocation data");
+            var projectedTradesAllocations = await this.allocateOrdersProjector.DecorateOrders(projectedTrades);
+            this.logger.LogInformation("completed fetching aurora trade allocation data");
 
-            this._logger.LogInformation("fetching intraday for equities");
-            var intradayEquityBars = await this.MarketEquityIntraDayDataFetchAurora(execution, opCtx);
-            this._logger.LogInformation("completed fetching intraday for equities");
+            this.logger.LogInformation("fetching intraday for equities");
+            var intradayEquityBars = await this.MarketEquityIntraDayDataFetchAurora(execution, operationContext);
+            this.logger.LogInformation("completed fetching intraday for equities");
 
-            this._logger.LogInformation("fetching inter day for equities");
-            var interDayEquityBars = await this.MarketEquityInterDayDataFetchAurora(execution, opCtx);
-            this._logger.LogInformation("completed fetching inter day for equities");
+            this.logger.LogInformation("fetching inter day for equities");
+            var interDayEquityBars = await this.MarketEquityInterDayDataFetchAurora(execution, operationContext);
+            this.logger.LogInformation("completed fetching inter day for equities");
 
-            this._logger.LogInformation("fetching universe event data");
+            this.logger.LogInformation("fetching universe event data");
             var universe = await this.UniverseEvents(
                                execution,
                                projectedTradesAllocations,
@@ -110,62 +182,152 @@
                                realUniverseEpoch,
                                futureUniverseEpoch);
 
-            this._logger.LogInformation("completed fetching universe event data");
+            this.logger.LogInformation("completed fetching universe event data");
 
-            this._logger.LogInformation("returning a new universe");
+            this.logger.LogInformation("returning a new universe");
             return new Universe(universe);
         }
 
+        /// <summary>
+        /// The filter out trades in future epoch.
+        /// </summary>
+        /// <param name="events">
+        /// The events.
+        /// </param>
+        /// <param name="futureUniverseEpoch">
+        /// The future universe epoch.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         private List<IUniverseEvent> FilterOutTradesInFutureEpoch(
             List<IUniverseEvent> events,
             DateTimeOffset? futureUniverseEpoch)
         {
-            if (events == null || !events.Any()) return events;
+            if (events == null || !events.Any())
+            {
+                return events;
+            }
 
-            if (futureUniverseEpoch == null) return events;
+            if (futureUniverseEpoch == null)
+            {
+                return events;
+            }
 
-            var filteredEvents = events.Where(_ => !_.StateChange.IsOrderType() || _.EventTime <= futureUniverseEpoch)
+            var filteredEvents = 
+                events.Where(_ => !_.StateChange.IsOrderType() || _.EventTime <= futureUniverseEpoch)
                 .ToList();
 
             return filteredEvents;
         }
 
+        /// <summary>
+        /// The market equity inter day data fetch aurora.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         private async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> MarketEquityInterDayDataFetchAurora(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext operationContext)
         {
-            var equities = await this._auroraMarketRepository.GetEquityInterDay(
-                               execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date,
+            var startDate = execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date;
+
+            var equities = await this.auroraMarketRepository.GetEquityInterDay(
+                               startDate,
                                execution.TimeSeriesTermination.Date,
-                               opCtx);
+                               operationContext);
 
             return equities ?? new List<EquityInterDayTimeBarCollection>();
         }
 
+        /// <summary>
+        /// The market equity intra day data fetch aurora.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> MarketEquityIntraDayDataFetchAurora(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext operationContext)
         {
-            var equities = await this._auroraMarketRepository.GetEquityIntraday(
-                               execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date,
-                               execution.TimeSeriesTermination.Date,
-                               opCtx);
+            var startDate = execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date;
+
+            var equities = 
+                await this.auroraMarketRepository.GetEquityIntraday(
+                    startDate,
+                    execution.TimeSeriesTermination.Date,
+                    operationContext);
 
             return equities ?? new List<EquityIntraDayTimeBarCollection>();
         }
 
+        /// <summary>
+        /// The trade data fetch aurora.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         private async Task<IReadOnlyCollection<Order>> TradeDataFetchAurora(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext operationContext)
         {
-            var trades = await this._auroraOrdersRepository.Get(
+            var trades = await this.auroraOrdersRepository.Get(
                              execution.TimeSeriesInitiation.Date,
                              execution.TimeSeriesTermination.Date,
-                             opCtx);
+                             operationContext);
 
             return trades ?? new List<Order>();
         }
 
+        /// <summary>
+        /// The universe events.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="trades">
+        /// The trades.
+        /// </param>
+        /// <param name="equityIntradayUpdates">
+        /// The equity intraday updates.
+        /// </param>
+        /// <param name="equityInterDayUpdates">
+        /// The equity inter day updates.
+        /// </param>
+        /// <param name="includeGenesis">
+        /// The include genesis.
+        /// </param>
+        /// <param name="includeEschaton">
+        /// The include eschaton.
+        /// </param>
+        /// <param name="realUniverseEpoch">
+        /// The real universe epoch.
+        /// </param>
+        /// <param name="futureUniverseEpoch">
+        /// The future universe epoch.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
@@ -194,7 +356,7 @@
             var interDayEquityEvents = equityInterDayUpdates
                 .Select(exch => new UniverseEvent(UniverseStateEvent.EquityInterDayTick, exch.Epoch, exch)).ToArray();
 
-            var marketEvents = await this._marketService.AllOpenCloseEvents(
+            var marketEvents = await this.marketService.AllOpenCloseEvents(
                                    execution.TimeSeriesInitiation.DateTime,
                                    execution.TimeSeriesTermination.DateTime);
 
@@ -209,7 +371,7 @@
                 intraUniversalHistoryEvents,
                 futureUniverseEpoch);
             var orderedIntraUniversalHistory =
-                intraUniversalHistoryEvents.OrderBy(ihe => ihe, this._universeSorter).ToList();
+                intraUniversalHistoryEvents.OrderBy(ihe => ihe, this.universeSorter).ToList();
 
             var universeEvents = new List<IUniverseEvent>();
 
@@ -262,7 +424,7 @@
                 universeEvents.Add(eschaton);
             }
 
-            universeEvents = universeEvents.OrderBy(ue => ue, this._universeSorter).ToList();
+            universeEvents = universeEvents.OrderBy(ue => ue, this.universeSorter).ToList();
 
             return universeEvents;
         }

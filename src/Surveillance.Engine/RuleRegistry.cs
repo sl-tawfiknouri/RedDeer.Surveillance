@@ -28,6 +28,8 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Data.Universe.Lazy.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Trades;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Judgements;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Analysis;

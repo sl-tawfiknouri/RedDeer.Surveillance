@@ -11,6 +11,7 @@
 
     using NUnit.Framework;
 
+    using Surveillance.Data.Universe.Trades;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
     using Surveillance.Engine.Rules.Trades;
 

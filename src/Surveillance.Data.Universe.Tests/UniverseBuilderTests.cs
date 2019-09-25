@@ -21,9 +21,9 @@
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
 
     using TestHelpers;
 

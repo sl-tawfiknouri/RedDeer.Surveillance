@@ -8,26 +8,56 @@
 
     using TimeZoneConverter;
 
+    /// <summary>
+    /// The exchange market.
+    /// </summary>
     public class ExchangeMarket
     {
-        private readonly ExchangeDto _dto;
+        /// <summary>
+        /// The dto.
+        /// </summary>
+        private readonly ExchangeDto dto;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExchangeMarket"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The dto.
+        /// </param>
         public ExchangeMarket(ExchangeDto dto)
         {
-            this._dto = dto;
+            this.dto = dto;
         }
 
-        public string Code => this._dto.Code;
+        /// <summary>
+        /// The code.
+        /// </summary>
+        public string Code => this.dto.Code;
 
-        public TimeSpan MarketCloseTime => this._dto.MarketCloseTime;
+        /// <summary>
+        /// The market close time.
+        /// </summary>
+        public TimeSpan MarketCloseTime => this.dto.MarketCloseTime;
 
-        public TimeSpan MarketOpenTime => this._dto.MarketOpenTime;
+        /// <summary>
+        /// The market open time.
+        /// </summary>
+        public TimeSpan MarketOpenTime => this.dto.MarketOpenTime;
 
+        /// <summary>
+        /// The time zone.
+        /// </summary>
         public TimeZoneInfo TimeZone => this.TryGetTimeZone();
 
         /// <summary>
-        ///     Get the offset for the exchange on a given utc date calibrated to 00:00 hours
+        /// Get the offset for the exchange on a given universal central time date calibrated to 00:00 hours
         /// </summary>
+        /// <param name="offsetRelativeTo">
+        /// The offset Relative To.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTimeOffset"/>.
+        /// </returns>
         public DateTimeOffset DateTime(DateTime offsetRelativeTo)
         {
             var timeZoneInfo = this.TryGetTimeZone();
@@ -38,51 +68,70 @@
             return offsetTime;
         }
 
+        /// <summary>
+        /// The is open on day.
+        /// </summary>
+        /// <param name="dateTime">
+        /// The date time.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool IsOpenOnDay(DateTime dateTime)
         {
-            if (this._dto == null) return false;
-
-            if (this._dto.Holidays != null && this._dto.Holidays.Any() && this._dto.Holidays.Contains(dateTime))
+            if (this.dto == null)
+            {
                 return false;
+            }
+
+            if (this.dto.Holidays != null 
+                && this.dto.Holidays.Any()
+                && this.dto.Holidays.Contains(dateTime))
+            {
+                return false;
+            }
 
             switch (dateTime.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return this._dto.IsOpenOnMonday;
+                    return this.dto.IsOpenOnMonday;
                 case DayOfWeek.Tuesday:
-                    return this._dto.IsOpenOnTuesday;
+                    return this.dto.IsOpenOnTuesday;
                 case DayOfWeek.Wednesday:
-                    return this._dto.IsOpenOnWednesday;
+                    return this.dto.IsOpenOnWednesday;
                 case DayOfWeek.Thursday:
-                    return this._dto.IsOpenOnThursday;
+                    return this.dto.IsOpenOnThursday;
                 case DayOfWeek.Friday:
-                    return this._dto.IsOpenOnFriday;
+                    return this.dto.IsOpenOnFriday;
                 case DayOfWeek.Saturday:
-                    return this._dto.IsOpenOnSaturday;
+                    return this.dto.IsOpenOnSaturday;
                 case DayOfWeek.Sunday:
-                    return this._dto.IsOpenOnSunday;
+                    return this.dto.IsOpenOnSunday;
             }
 
             return false;
         }
 
         /// <summary>
-        ///     Added because linux and windows do not share a common language for describing time zones
+        /// Added because linux and windows do not share a common language for describing time zones
         /// </summary>
+        /// <returns>
+        /// The <see cref="TimeZoneInfo"/>.
+        /// </returns>
         private TimeZoneInfo TryGetTimeZone()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var windowsTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(this._dto.TimeZone);
+                var windowsTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(this.dto.TimeZone);
 
                 return windowsTimeZoneInfo;
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                var countryCode = string.IsNullOrWhiteSpace(this._dto.CountryCode) ? null : this._dto.CountryCode;
+                var countryCode = string.IsNullOrWhiteSpace(this.dto.CountryCode) ? null : this.dto.CountryCode;
 
-                var ianaTimeZone = TZConvert.WindowsToIana(this._dto.TimeZone, countryCode);
+                var ianaTimeZone = TZConvert.WindowsToIana(this.dto.TimeZone, countryCode);
                 var linuxTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ianaTimeZone);
 
                 return linuxTimeZoneInfo;

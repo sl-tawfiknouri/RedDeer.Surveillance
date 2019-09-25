@@ -16,31 +16,61 @@
     /// </summary>
     public class UniversePlayer : IUniversePlayer
     {
-        private readonly CancellationToken _ct;
+        /// <summary>
+        /// The cancellation token.
+        /// </summary>
+        private readonly CancellationToken cancellationToken;
 
-        private readonly ILogger<UniversePlayer> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<UniversePlayer> logger;
 
-        private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
+        /// <summary>
+        /// The universe observers.
+        /// </summary>
+        private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> universeObservers;
 
-        private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
+        /// <summary>
+        /// The universe unsubscriber factory.
+        /// </summary>
+        private readonly IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniversePlayer"/> class.
+        /// </summary>
+        /// <param name="cancellationToken">
+        /// The cancellation token.
+        /// </param>
+        /// <param name="universeUnsubscriberFactory">
+        /// The universe unsubscriber factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public UniversePlayer(
-            CancellationToken ct,
+            CancellationToken cancellationToken,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
             ILogger<UniversePlayer> logger)
         {
-            this._ct = ct;
-            this._universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
-            this._universeUnsubscriberFactory = universeUnsubscriberFactory
-                                                ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.cancellationToken = cancellationToken;
+            this.universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
+            this.universeUnsubscriberFactory = 
+                universeUnsubscriberFactory ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The play.
+        /// </summary>
+        /// <param name="universe">
+        /// The universe.
+        /// </param>
         public void Play(IUniverse universe)
         {
             if (universe == null)
             {
-                this._logger.LogError("added to play null universe. Returning.");
+                this.logger.LogError("added to play null universe. Returning.");
                 return;
             }
 
@@ -48,35 +78,50 @@
         }
 
         /// <summary>
-        ///     Subscribe to the universe
+        /// Subscribe to the universe
         /// </summary>
+        /// <param name="observer">
+        /// The observer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IDisposable"/>.
+        /// </returns>
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
-            if (!this._universeObservers.ContainsKey(observer))
+            if (!this.universeObservers.ContainsKey(observer))
             {
-                this._logger.LogInformation("subscribing a new observer");
-                this._universeObservers.TryAdd(observer, observer);
+                this.logger.LogInformation("subscribing a new observer");
+                this.universeObservers.TryAdd(observer, observer);
             }
 
-            return this._universeUnsubscriberFactory.Create(this._universeObservers, observer);
+            return this.universeUnsubscriberFactory.Create(this.universeObservers, observer);
         }
 
+        /// <summary>
+        /// The play universe.
+        /// </summary>
+        /// <param name="universe">
+        /// The universe.
+        /// </param>
         private void PlayUniverse(IUniverse universe)
         {
-            if (this._universeObservers == null || !this._universeObservers.Any())
+            if (this.universeObservers == null || !this.universeObservers.Any())
             {
-                this._logger.LogError("play universe to null or empty observers. Returning");
+                this.logger.LogError("play universe to null or empty observers. Returning");
                 return;
             }
 
-            this._logger.LogInformation("play universe about to distribute all universe events to all observers");
+            this.logger.LogInformation("play universe about to distribute all universe events to all observers");
             foreach (var item in universe.UniverseEvents)
             {
-                foreach (var obs in this._universeObservers) obs.Value?.OnNext(item);
-
-                if (this._ct.IsCancellationRequested)
+                foreach (var obs in this.universeObservers)
                 {
-                    this._logger.LogInformation(
+                    obs.Value?.OnNext(item);
+                }
+
+                if (this.cancellationToken.IsCancellationRequested)
+                {
+                    this.logger.LogInformation(
                         $"play universe cancelled - breaking at event {item.EventTime} {item.StateChange}");
                     break;
                 }

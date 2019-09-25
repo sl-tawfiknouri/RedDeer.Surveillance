@@ -11,26 +11,56 @@
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
+    /// <summary>
+    /// The market open close event service.
+    /// </summary>
     public class MarketOpenCloseEventService : IMarketOpenCloseEventService
     {
-        private readonly ILogger<MarketOpenCloseEventService> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<MarketOpenCloseEventService> logger;
 
-        private readonly IMarketOpenCloseApiCachingDecorator _marketOpenCloseRepository;
+        /// <summary>
+        /// The market open close repository.
+        /// </summary>
+        private readonly IMarketOpenCloseApiCachingDecorator marketOpenCloseRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarketOpenCloseEventService"/> class.
+        /// </summary>
+        /// <param name="marketOpenCloseRepository">
+        /// The market open close repository.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public MarketOpenCloseEventService(
             IMarketOpenCloseApiCachingDecorator marketOpenCloseRepository,
             ILogger<MarketOpenCloseEventService> logger)
         {
-            this._marketOpenCloseRepository = marketOpenCloseRepository
+            this.marketOpenCloseRepository = marketOpenCloseRepository
                                               ?? throw new ArgumentNullException(nameof(marketOpenCloseRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The all open close events.
+        /// </summary>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task<IReadOnlyCollection<IUniverseEvent>> AllOpenCloseEvents(DateTime start, DateTime end)
         {
-            this._logger.LogInformation($"fetching market events from {start} to {end}");
+            this.logger.LogInformation($"fetching market events from {start} to {end}");
 
-            var markets = await this._marketOpenCloseRepository.GetAsync();
+            var markets = await this.marketOpenCloseRepository.GetAsync();
             var exchangeMarkets = markets.Select(m => new ExchangeMarket(m)).ToList();
 
             var extendedStart = start.AddDays(-1);
@@ -38,12 +68,27 @@
 
             var response = this.OpenCloseEvents(exchangeMarkets, extendedStart, extendedEnd);
 
-            this._logger.LogInformation(
+            this.logger.LogInformation(
                 $"completed fetching market events from {start} to {end} and found {response?.Count} market open/close events");
 
             return response;
         }
 
+        /// <summary>
+        /// The open close events.
+        /// </summary>
+        /// <param name="markets">
+        /// The markets.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         private IReadOnlyCollection<IUniverseEvent> OpenCloseEvents(
             IReadOnlyCollection<ExchangeMarket> markets,
             DateTime start,
@@ -61,7 +106,22 @@
             return universeEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
-        private List<IUniverseEvent> SetOpenCloseEventsForMarket(ExchangeMarket market, DateTime start, DateTime end)
+        /// <summary>
+        /// The set open close events for market.
+        /// </summary>
+        /// <param name="market">
+        /// The market.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IList"/>.
+        /// </returns>
+        private IList<IUniverseEvent> SetOpenCloseEventsForMarket(ExchangeMarket market, DateTime start, DateTime end)
         {
             var localStart = TimeZoneInfo.ConvertTime(start, market.TimeZone);
             var localEnd = TimeZoneInfo.ConvertTime(end, market.TimeZone);
@@ -79,29 +139,55 @@
                     closeInLocal.ToUniversalTime());
 
                 if (startInLocal >= localStart && startInLocal <= localEnd)
+                {
                     events.Add(
                         new UniverseEvent(
                             UniverseStateEvent.ExchangeOpen,
                             startInLocal.ToUniversalTime(),
                             marketOpenClose));
+                }
 
                 if (closeInLocal >= localStart && closeInLocal <= localEnd)
+                {
                     events.Add(
                         new UniverseEvent(
                             UniverseStateEvent.ExchangeClose,
                             closeInLocal.ToUniversalTime(),
                             marketOpenClose));
+                }
             }
 
             return events;
         }
 
+        /// <summary>
+        /// The trim timeline.
+        /// </summary>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <param name="universeEvents">
+        /// The universe events.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private List<IUniverseEvent> TrimTimeline(DateTime start, DateTime end, List<IUniverseEvent> universeEvents)
         {
-            if (universeEvents == null) return new List<IUniverseEvent>();
+            if (universeEvents == null)
+            {
+                return new List<IUniverseEvent>();
+            }
 
-            universeEvents = universeEvents.Where(ue => ue != null).Where(ue => ue.EventTime.Date >= start.Date)
-                .Where(ue => ue.EventTime.Date <= end.Date).ToList();
+            universeEvents = 
+                universeEvents
+                    .Where(ue => ue != null)
+                    .Where(ue => ue.EventTime.Date >= start.Date)
+                    .Where(ue => ue.EventTime.Date <= end.Date)
+                    .ToList();
 
             return universeEvents;
         }

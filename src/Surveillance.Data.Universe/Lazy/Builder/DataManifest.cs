@@ -5,10 +5,12 @@
 
     using Domain.Surveillance.Scheduling;
 
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
+
     /// <summary>
     /// The data manifest.
     /// </summary>
-    public class DataManifest
+    public class DataManifest : IDataManifest
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DataManifest"/> class.

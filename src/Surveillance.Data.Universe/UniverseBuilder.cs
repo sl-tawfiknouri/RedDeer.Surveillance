@@ -171,12 +171,17 @@
             var interDayEquityBars = await this.MarketEquityInterDayDataFetchAurora(execution, operationContext);
             this.logger.LogInformation("completed fetching inter day for equities");
 
+            var marketOpenClose = await this.marketService.AllOpenCloseEvents(
+                execution.TimeSeriesInitiation.DateTime,
+                execution.TimeSeriesTermination.DateTime);
+
             this.logger.LogInformation("fetching universe event data");
-            var universe = await this.UniverseEvents(
+            var universe = this.PackageUniverse(
                                execution,
                                projectedTradesAllocations,
                                intradayEquityBars,
                                interDayEquityBars,
+                               marketOpenClose,
                                includeGenesis,
                                includeEschaton,
                                realUniverseEpoch,
@@ -185,7 +190,139 @@
             this.logger.LogInformation("completed fetching universe event data");
 
             this.logger.LogInformation("returning a new universe");
-            return new Universe(universe);
+
+            return universe;
+        }
+
+        /// <summary>
+        /// The universe events.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="trades">
+        /// The trades.
+        /// </param>
+        /// <param name="equityIntradayUpdates">
+        /// The equity intraday updates.
+        /// </param>
+        /// <param name="equityInterDayUpdates">
+        /// The equity inter day updates.
+        /// </param>
+        /// <param name="marketEvents">
+        /// The market events
+        /// </param>
+        /// <param name="includeGenesis">
+        /// The include genesis.
+        /// </param>
+        /// <param name="includeEschaton">
+        /// The include eschaton.
+        /// </param>
+        /// <param name="realUniverseEpoch">
+        /// The real universe epoch.
+        /// </param>
+        /// <param name="futureUniverseEpoch">
+        /// The future universe epoch.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public IUniverse PackageUniverse(
+            ScheduledExecution execution,
+            IReadOnlyCollection<Order> trades,
+            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
+            IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
+            IReadOnlyCollection<IUniverseEvent> marketEvents,
+            bool includeGenesis,
+            bool includeEschaton,
+            DateTimeOffset? realUniverseEpoch,
+            DateTimeOffset? futureUniverseEpoch)
+        {
+            var tradeSubmittedEvents = trades.Where(tr => tr != null).Select(
+                    tr => new UniverseEvent(UniverseStateEvent.OrderPlaced, tr.PlacedDate.GetValueOrDefault(), tr))
+                .ToArray();
+
+            var tradeStatusChangedOnEvents = trades.Where(tr => tr != null)
+                .Where(tr => !(tr.OrderStatus() == OrderStatus.Booked && tr.PlacedDate == tr.MostRecentDateEvent()))
+                .Select(tr => new UniverseEvent(UniverseStateEvent.Order, tr.MostRecentDateEvent(), tr)).ToArray();
+
+            var tradeFilledEvents = trades.Where(tr => tr != null).Where(tr => tr.OrderStatus() == OrderStatus.Filled)
+                .Where(tr => tr.FilledDate != null).Select(
+                    tr => new UniverseEvent(UniverseStateEvent.OrderFilled, tr.FilledDate.Value, tr)).ToArray();
+
+            var intradayEquityEvents = equityIntradayUpdates
+                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch)).ToArray();
+
+            var interDayEquityEvents = equityInterDayUpdates
+                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityInterDayTick, exch.Epoch, exch)).ToArray();
+
+            var intraUniversalHistoryEvents = new List<IUniverseEvent>();
+            intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
+            intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
+            intraUniversalHistoryEvents.AddRange(tradeFilledEvents);
+            intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(marketEvents);
+            intraUniversalHistoryEvents = this.FilterOutTradesInFutureEpoch(
+                intraUniversalHistoryEvents,
+                futureUniverseEpoch);
+            var orderedIntraUniversalHistory =
+                intraUniversalHistoryEvents.OrderBy(ihe => ihe, this.universeSorter).ToList();
+
+            var universeEvents = new List<IUniverseEvent>();
+
+            if (includeGenesis)
+            {
+                var genesis = new UniverseEvent(
+                    UniverseStateEvent.Genesis,
+                    execution.TimeSeriesInitiation.DateTime,
+                    execution);
+                var primordialEpoch = new UniverseEvent(
+                    UniverseStateEvent.EpochPrimordialUniverse,
+                    execution.TimeSeriesInitiation.DateTime,
+                    execution);
+                universeEvents.Add(genesis);
+                universeEvents.Add(primordialEpoch);
+            }
+
+            if (realUniverseEpoch != null && realUniverseEpoch >= execution.TimeSeriesInitiation
+                                          && realUniverseEpoch <= execution.TimeSeriesTermination)
+            {
+                var realUniverseEpochEvent = new UniverseEvent(
+                    UniverseStateEvent.EpochRealUniverse,
+                    realUniverseEpoch.GetValueOrDefault().DateTime,
+                    execution);
+                universeEvents.Add(realUniverseEpochEvent);
+            }
+
+            if (futureUniverseEpoch != null && futureUniverseEpoch >= execution.TimeSeriesInitiation
+                                            && futureUniverseEpoch <= execution.TimeSeriesTermination)
+            {
+                var futureUniverseEpochEvent = new UniverseEvent(
+                    UniverseStateEvent.EpochFutureUniverse,
+                    futureUniverseEpoch.GetValueOrDefault().DateTime,
+                    execution);
+                universeEvents.Add(futureUniverseEpochEvent);
+            }
+
+            universeEvents.AddRange(orderedIntraUniversalHistory);
+
+            var youngestEventInUniverse = orderedIntraUniversalHistory.Any()
+                                              ? orderedIntraUniversalHistory.Max(i => i.EventTime)
+                                              : execution.TimeSeriesTermination.DateTime;
+            var eschatonDate = youngestEventInUniverse > execution.TimeSeriesTermination.DateTime
+                                   ? youngestEventInUniverse
+                                   : execution.TimeSeriesTermination.DateTime;
+
+            if (includeEschaton)
+            {
+                var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, eschatonDate, execution);
+                universeEvents.Add(eschaton);
+            }
+
+            universeEvents = universeEvents.OrderBy(ue => ue, this.universeSorter).ToList();
+
+            return new Universe(universeEvents);
         }
 
         /// <summary>
@@ -296,137 +433,6 @@
                              operationContext);
 
             return trades ?? new List<Order>();
-        }
-
-        /// <summary>
-        /// The universe events.
-        /// </summary>
-        /// <param name="execution">
-        /// The execution.
-        /// </param>
-        /// <param name="trades">
-        /// The trades.
-        /// </param>
-        /// <param name="equityIntradayUpdates">
-        /// The equity intraday updates.
-        /// </param>
-        /// <param name="equityInterDayUpdates">
-        /// The equity inter day updates.
-        /// </param>
-        /// <param name="includeGenesis">
-        /// The include genesis.
-        /// </param>
-        /// <param name="includeEschaton">
-        /// The include eschaton.
-        /// </param>
-        /// <param name="realUniverseEpoch">
-        /// The real universe epoch.
-        /// </param>
-        /// <param name="futureUniverseEpoch">
-        /// The future universe epoch.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
-        private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
-            ScheduledExecution execution,
-            IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
-            IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
-            bool includeGenesis,
-            bool includeEschaton,
-            DateTimeOffset? realUniverseEpoch,
-            DateTimeOffset? futureUniverseEpoch)
-        {
-            var tradeSubmittedEvents = trades.Where(tr => tr != null).Select(
-                    tr => new UniverseEvent(UniverseStateEvent.OrderPlaced, tr.PlacedDate.GetValueOrDefault(), tr))
-                .ToArray();
-
-            var tradeStatusChangedOnEvents = trades.Where(tr => tr != null)
-                .Where(tr => !(tr.OrderStatus() == OrderStatus.Booked && tr.PlacedDate == tr.MostRecentDateEvent()))
-                .Select(tr => new UniverseEvent(UniverseStateEvent.Order, tr.MostRecentDateEvent(), tr)).ToArray();
-
-            var tradeFilledEvents = trades.Where(tr => tr != null).Where(tr => tr.OrderStatus() == OrderStatus.Filled)
-                .Where(tr => tr.FilledDate != null).Select(
-                    tr => new UniverseEvent(UniverseStateEvent.OrderFilled, tr.FilledDate.Value, tr)).ToArray();
-
-            var intradayEquityEvents = equityIntradayUpdates
-                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch)).ToArray();
-
-            var interDayEquityEvents = equityInterDayUpdates
-                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityInterDayTick, exch.Epoch, exch)).ToArray();
-
-            var marketEvents = await this.marketService.AllOpenCloseEvents(
-                                   execution.TimeSeriesInitiation.DateTime,
-                                   execution.TimeSeriesTermination.DateTime);
-
-            var intraUniversalHistoryEvents = new List<IUniverseEvent>();
-            intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
-            intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
-            intraUniversalHistoryEvents.AddRange(tradeFilledEvents);
-            intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
-            intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
-            intraUniversalHistoryEvents.AddRange(marketEvents);
-            intraUniversalHistoryEvents = this.FilterOutTradesInFutureEpoch(
-                intraUniversalHistoryEvents,
-                futureUniverseEpoch);
-            var orderedIntraUniversalHistory =
-                intraUniversalHistoryEvents.OrderBy(ihe => ihe, this.universeSorter).ToList();
-
-            var universeEvents = new List<IUniverseEvent>();
-
-            if (includeGenesis)
-            {
-                var genesis = new UniverseEvent(
-                    UniverseStateEvent.Genesis,
-                    execution.TimeSeriesInitiation.DateTime,
-                    execution);
-                var primordialEpoch = new UniverseEvent(
-                    UniverseStateEvent.EpochPrimordialUniverse,
-                    execution.TimeSeriesInitiation.DateTime,
-                    execution);
-                universeEvents.Add(genesis);
-                universeEvents.Add(primordialEpoch);
-            }
-
-            if (realUniverseEpoch != null && realUniverseEpoch >= execution.TimeSeriesInitiation
-                                          && realUniverseEpoch <= execution.TimeSeriesTermination)
-            {
-                var realUniverseEpochEvent = new UniverseEvent(
-                    UniverseStateEvent.EpochRealUniverse,
-                    realUniverseEpoch.GetValueOrDefault().DateTime,
-                    execution);
-                universeEvents.Add(realUniverseEpochEvent);
-            }
-
-            if (futureUniverseEpoch != null && futureUniverseEpoch >= execution.TimeSeriesInitiation
-                                            && futureUniverseEpoch <= execution.TimeSeriesTermination)
-            {
-                var futureUniverseEpochEvent = new UniverseEvent(
-                    UniverseStateEvent.EpochFutureUniverse,
-                    futureUniverseEpoch.GetValueOrDefault().DateTime,
-                    execution);
-                universeEvents.Add(futureUniverseEpochEvent);
-            }
-
-            universeEvents.AddRange(orderedIntraUniversalHistory);
-
-            var youngestEventInUniverse = orderedIntraUniversalHistory.Any()
-                                              ? orderedIntraUniversalHistory.Max(i => i.EventTime)
-                                              : execution.TimeSeriesTermination.DateTime;
-            var eschatonDate = youngestEventInUniverse > execution.TimeSeriesTermination.DateTime
-                                   ? youngestEventInUniverse
-                                   : execution.TimeSeriesTermination.DateTime;
-
-            if (includeEschaton)
-            {
-                var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, eschatonDate, execution);
-                universeEvents.Add(eschaton);
-            }
-
-            universeEvents = universeEvents.OrderBy(ue => ue, this.universeSorter).ToList();
-
-            return universeEvents;
         }
     }
 }

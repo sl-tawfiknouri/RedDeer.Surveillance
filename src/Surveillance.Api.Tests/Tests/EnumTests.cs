@@ -11,6 +11,7 @@
 
     using OrderStatus = RedDeer.Surveillance.Api.Client.Enums.OrderStatus;
 
+    [TestFixture]
     public class EnumTests
     {
         [Test]

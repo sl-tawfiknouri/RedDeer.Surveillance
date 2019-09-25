@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         public FixedIncomeWashTradeRule(
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
@@ -59,7 +59,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
-                ruleCtx,
+                ruleContext,
                 factory,
                 runMode,
                 logger,

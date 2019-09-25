@@ -48,7 +48,7 @@
                 ruleBreach.SystemOperationId,
                 (int?)ruleBreach?.FactorValue?.OrganisationalFactors ?? 0,
                 ruleBreach?.FactorValue?.Value ?? string.Empty,
-                ruleBreach.RuleParameters.TunedParam != null,
+                ruleBreach.RuleParameters.TunedParameters != null,
                 trades);
 
             return ruleBreachObj;

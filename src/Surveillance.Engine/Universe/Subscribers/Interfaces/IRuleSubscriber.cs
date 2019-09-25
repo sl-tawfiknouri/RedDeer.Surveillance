@@ -18,7 +18,7 @@
         IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IUniverseAlertStream alertStream);

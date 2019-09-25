@@ -6,15 +6,16 @@
 
     using Surveillance.Engine.Rules.Judgements.Equities.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
+
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
 
     public class HighProfitJudgementContext : IHighProfitJudgementContext
     {
         public HighProfitJudgementContext(HighProfitJudgement judgement, bool projectToAlert)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
         }
 
         public HighProfitJudgementContext(
@@ -30,7 +31,7 @@
             IExchangeRateProfitBreakdown profitBreakdown)
         {
             this.Judgement = judgement;
-            this.ProjectToAlert = projectToAlert;
+            this.RaiseRuleViolation = projectToAlert;
             this.RuleBreachContext = ruleBreachContext;
             this.EquitiesParameters = equitiesParameters;
             this.AbsoluteProfits = absoluteProfits;
@@ -55,7 +56,7 @@
 
         public IHighProfitJudgement Judgement { get; set; }
 
-        public bool ProjectToAlert { get; set; }
+        public bool RaiseRuleViolation { get; set; }
 
         public decimal? RelativeProfits { get; set; }
 

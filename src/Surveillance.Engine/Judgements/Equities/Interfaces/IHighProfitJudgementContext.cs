@@ -4,8 +4,8 @@
     using Domain.Surveillance.Judgement.Equity.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
 
     public interface IHighProfitJudgementContext
     {
@@ -23,7 +23,7 @@
 
         IHighProfitJudgement Judgement { get; set; }
 
-        bool ProjectToAlert { get; set; }
+        bool RaiseRuleViolation { get; set; }
 
         decimal? RelativeProfits { get; set; }
 

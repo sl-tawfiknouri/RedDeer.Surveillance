@@ -8,28 +8,58 @@
     using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
 
+    /// <summary>
+    /// The lazy transient universe factory.
+    /// </summary>
     public class LazyTransientUniverseFactory : ILazyTransientUniverseFactory
     {
-        private readonly ILazyScheduledExecutioner _scheduledExecutioner;
+        /// <summary>
+        /// The scheduled executioner.
+        /// </summary>
+        private readonly ILazyScheduledExecutioner scheduledExecutioner;
 
-        private readonly IUniverseBuilder _universeBuilder;
+        /// <summary>
+        /// The universe builder.
+        /// </summary>
+        private readonly IUniverseBuilder universeBuilder;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LazyTransientUniverseFactory"/> class.
+        /// </summary>
+        /// <param name="universeBuilder">
+        /// The universe builder.
+        /// </param>
+        /// <param name="scheduledExecutioner">
+        /// The scheduled executioner.
+        /// </param>
         public LazyTransientUniverseFactory(
             IUniverseBuilder universeBuilder,
             ILazyScheduledExecutioner scheduledExecutioner)
         {
-            this._universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
-            this._scheduledExecutioner =
+            this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
+            this.scheduledExecutioner =
                 scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
         }
 
-        public IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
+        /// <summary>
+        /// The build transient lazy universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverse"/>.
+        /// </returns>
+        public IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
             var universeEvents = new LazyTransientUniverse(
-                this._scheduledExecutioner,
-                this._universeBuilder,
+                this.scheduledExecutioner,
+                this.universeBuilder,
                 execution,
-                opCtx);
+                operationContext);
 
             return new Universe(universeEvents);
         }

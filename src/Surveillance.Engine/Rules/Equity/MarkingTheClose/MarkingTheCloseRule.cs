@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         public MarkingTheCloseRule(
             IMarkingTheCloseEquitiesParameters equitiesParameters,
             IUniverseAlertStream alertStream,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         {
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));

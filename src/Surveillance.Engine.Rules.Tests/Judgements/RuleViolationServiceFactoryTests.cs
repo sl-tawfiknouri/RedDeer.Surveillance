@@ -13,131 +13,176 @@
     using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
     using Surveillance.Engine.Rules.Queues.Interfaces;
 
+    /// <summary>
+    /// The rule violation service factory tests.
+    /// </summary>
     [TestFixture]
     public class RuleViolationServiceFactoryTests
     {
-        private ILogger<RuleViolationService> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<RuleViolationService> logger;
 
-        private IQueueCasePublisher _queueCasePublisher;
+        /// <summary>
+        /// The queue case publisher.
+        /// </summary>
+        private IQueueCasePublisher queueCasePublisher;
 
-        private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
+        /// <summary>
+        /// The rule breach orders repository.
+        /// </summary>
+        private IRuleBreachOrdersRepository ruleBreachOrdersRepository;
 
-        private IRuleBreachRepository _ruleBreachRepository;
+        /// <summary>
+        /// The rule breach repository.
+        /// </summary>
+        private IRuleBreachRepository ruleBreachRepository;
 
-        private IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
+        /// <summary>
+        /// The rule breach to rule breach mapper.
+        /// </summary>
+        private IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper;
 
-        private IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
+        /// <summary>
+        /// The rule breach to rule breach orders mapper.
+        /// </summary>
+        private IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper;
 
+        /// <summary>
+        /// The build rule violation service returns non null.
+        /// </summary>
         [Test]
-        public void Build_RuleViolationService_ReturnsNonNull()
+        public void BuildRuleViolationServiceReturnsNonNull()
         {
             // ReSharper disable once ObjectCreationAsStatement
             var factory = new RuleViolationServiceFactory(
-                this._queueCasePublisher,
-                this._ruleBreachRepository,
-                this._ruleBreachOrdersRepository,
-                this._ruleBreachToRuleBreachOrdersMapper,
-                this._ruleBreachToRuleBreachMapper,
-                this._logger);
+                this.queueCasePublisher,
+                this.ruleBreachRepository,
+                this.ruleBreachOrdersRepository,
+                this.ruleBreachToRuleBreachOrdersMapper,
+                this.ruleBreachToRuleBreachMapper,
+                this.logger);
 
             var ruleViolationService = factory.Build();
 
             Assert.IsNotNull(ruleViolationService);
         }
 
+        /// <summary>
+        /// The constructor null logger is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullLogger_IsExceptional()
+        public void ConstructorNullLoggerIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
                     null));
         }
 
+        /// <summary>
+        /// The constructor null queue case publisher is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullQueueCasePublisher_IsExceptional()
+        public void ConstructorNullQueueCasePublisherIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
                     null,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach orders repository is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachOrdersRepository_IsExceptional()
+        public void ConstructorNullRuleBreachOrdersRepositoryIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
                     null,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach repository is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachRepository_IsExceptional()
+        public void ConstructorNullRuleBreachRepositoryIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
-                    this._queueCasePublisher,
+                    this.queueCasePublisher,
                     null,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach to rule breach mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachToRuleBreachMapper_IsExceptional()
+        public void ConstructorNullRuleBreachToRuleBreachMapperIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
-                    this._ruleBreachToRuleBreachOrdersMapper,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
+                    this.ruleBreachToRuleBreachOrdersMapper,
                     null,
-                    this._logger));
+                    this.logger));
         }
 
+        /// <summary>
+        /// The constructor null rule breach to rule breach orders mapper is exceptional.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleBreachToRuleBreachOrdersMapper_IsExceptional()
+        public void ConstructorNullRuleBreachToRuleBreachOrdersMapperIsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new RuleViolationServiceFactory(
-                    this._queueCasePublisher,
-                    this._ruleBreachRepository,
-                    this._ruleBreachOrdersRepository,
+                    this.queueCasePublisher,
+                    this.ruleBreachRepository,
+                    this.ruleBreachOrdersRepository,
                     null,
-                    this._ruleBreachToRuleBreachMapper,
-                    this._logger));
+                    this.ruleBreachToRuleBreachMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._queueCasePublisher = A.Fake<IQueueCasePublisher>();
-            this._ruleBreachRepository = A.Fake<IRuleBreachRepository>();
-            this._ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
-            this._ruleBreachToRuleBreachOrdersMapper = A.Fake<IRuleBreachToRuleBreachOrdersMapper>();
-            this._ruleBreachToRuleBreachMapper = A.Fake<IRuleBreachToRuleBreachMapper>();
-            this._logger = A.Fake<ILogger<RuleViolationService>>();
+            this.queueCasePublisher = A.Fake<IQueueCasePublisher>();
+            this.ruleBreachRepository = A.Fake<IRuleBreachRepository>();
+            this.ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
+            this.ruleBreachToRuleBreachOrdersMapper = A.Fake<IRuleBreachToRuleBreachOrdersMapper>();
+            this.ruleBreachToRuleBreachMapper = A.Fake<IRuleBreachToRuleBreachMapper>();
+            this.logger = A.Fake<ILogger<RuleViolationService>>();
         }
     }
 }

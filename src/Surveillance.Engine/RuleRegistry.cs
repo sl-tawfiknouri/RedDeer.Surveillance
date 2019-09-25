@@ -1,4 +1,9 @@
-﻿namespace Surveillance.Engine.Rules
+﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
+
+namespace Surveillance.Engine.Rules
 {
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Execution.Interfaces;
@@ -61,10 +66,6 @@
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
     using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
@@ -141,6 +142,8 @@
             this.For<IUniverseEquityOrderFilterService>().Use<UniverseEquityOrderFilterService>();
             this.For<IUniverseFixedIncomeOrderFilterService>().Use<UniverseFixedIncomeOrderFilterService>();
 
+            this.For<IFixedIncomeHighProfitJudgementMapper>().Use<FixedIncomeHighProfitJudgementMapper>();
+
             this.For<IUniverse>().Use<Universe.Universe>();
             this.For<IUniverseBuilder>().Use<UniverseBuilder>();
             this.For<IUniverseEvent>().Use<UniverseEvent>();
@@ -209,6 +212,7 @@
             this.For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
             this.For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
             this.For<IFixedIncomeHighProfitFactory>().Use<FixedIncomeHighProfitFactory>();
+            this.For<IFixedIncomeHighProfitsStreamRule>().Use<FixedIncomeHighProfitsStreamRule>();
 
             this.For<IWashTradeFixedIncomeSubscriber>().Use<WashTradeFixedIncomeSubscriber>();
             this.For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
@@ -229,7 +233,7 @@
                 .Use<TradePositionWeightedAverageExchangeRateService>();
 
             this.For<IApiHeartbeat>().Use<ApiHeartbeat>();
-            this.For<IRuleProjector>().Use<RuleProjector>();
+            this.For<IRuleFilterProjector>().Use<RuleFilterProjector>();
             this.For<IDecimalRangeRuleFilterProjector>().Use<DecimalRangeRuleFilterProjector>();
 
             this.For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
@@ -306,6 +310,7 @@
             this.For<IPlacingOrdersJudgementService>().Use<JudgementService>();
             this.For<IRampingJudgementService>().Use<JudgementService>();
             this.For<ISpoofingJudgementService>().Use<JudgementService>();
+            this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
         }
     }
 }

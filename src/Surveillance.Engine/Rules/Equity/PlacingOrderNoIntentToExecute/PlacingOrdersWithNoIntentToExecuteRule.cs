@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
         public PlacingOrdersWithNoIntentToExecuteRule(
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             IUniverseOrderFilter orderFilter,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory marketCacheFactory,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
@@ -54,14 +54,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute,
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",
-                ruleCtx,
+                ruleContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingStackLogger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));

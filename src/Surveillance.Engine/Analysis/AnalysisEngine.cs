@@ -33,40 +33,145 @@
     /// </summary>
     public class AnalysisEngine : IAnalysisEngine
     {
-        private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
+        /// <summary>
+        /// The alerts repository - in process of being discontinued with judgements.
+        /// </summary>
+        private readonly IRuleAnalyticsAlertsRepository alertsRepository;
 
-        private readonly IUniverseAlertStreamFactory _alertStreamFactory;
+        /// <summary>
+        /// The alert stream factory - should be discontinued once judgements complete.
+        /// </summary>
+        private readonly IUniverseAlertStreamFactory alertStreamFactory;
 
-        private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        /// <summary>
+        /// The alert stream subscriber factory.
+        /// </summary>
+        private readonly IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory;
 
-        private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
+        /// <summary>
+        /// The analytics subscriber for recording salient rule run data.
+        /// </summary>
+        private readonly IUniverseAnalyticsSubscriberFactory analyticsSubscriber;
 
-        private readonly IUniverseDataRequestsSubscriberFactory _dataRequestSubscriberFactory;
+        /// <summary>
+        /// The data request subscriber factory.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory;
 
-        private readonly IJudgementServiceFactory _judgementServiceFactory;
+        /// <summary>
+        /// The judgement service factory.
+        /// </summary>
+        private readonly IJudgementServiceFactory judgementServiceFactory;
 
-        private readonly ILogger<AnalysisEngine> _logger;
+        /// <summary>
+        /// The logger for the analysis engine.
+        /// </summary>
+        private readonly ILogger<AnalysisEngine> logger;
 
-        private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
+        /// <summary>
+        /// The queue rule update publisher.
+        /// </summary>
+        private readonly IQueueRuleUpdatePublisher queueRuleUpdatePublisher;
 
-        private readonly ITaskReSchedulerService _reschedulerService;
+        /// <summary>
+        /// The rescheduler service.
+        /// </summary>
+        private readonly ITaskReSchedulerService reschedulerService;
 
-        private readonly IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
+        /// <summary>
+        /// The rule analytics repository.
+        /// </summary>
+        private readonly IRuleAnalyticsUniverseRepository ruleAnalyticsRepository;
 
-        private readonly IRuleCancellation _ruleCancellation;
+        /// <summary>
+        /// The rule cancellation singleton (per rule run).
+        /// </summary>
+        private readonly IRuleCancellation ruleCancellation;
 
-        private readonly IRuleParameterService _ruleParameterService;
+        /// <summary>
+        /// The rule parameter service.
+        /// </summary>
+        private readonly IRuleParameterService ruleParameterService;
 
-        private readonly IUniverseRuleSubscriber _ruleSubscriber;
+        /// <summary>
+        /// The rule subscriber.
+        /// </summary>
+        private readonly IUniverseRuleSubscriber ruleSubscriber;
 
-        private readonly IRuleParameterAdjustedTimespanService _timespanService;
+        /// <summary>
+        /// The _timespan service.
+        /// </summary>
+        private readonly IRuleParameterAdjustedTimespanService timespanService;
 
-        private readonly IUniversePercentageCompletionLogger _universeCompletionLogger;
+        /// <summary>
+        /// The _universe completion logger.
+        /// </summary>
+        private readonly IUniversePercentageCompletionLogger universeCompletionLogger;
 
-        private readonly ILazyTransientUniverseFactory _universeFactory;
+        /// <summary>
+        /// The _universe factory.
+        /// </summary>
+        private readonly ILazyTransientUniverseFactory universeFactory;
 
-        private readonly IUniversePlayerFactory _universePlayerFactory;
+        /// <summary>
+        /// The _universe player factory.
+        /// </summary>
+        private readonly IUniversePlayerFactory universePlayerFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnalysisEngine"/> class.
+        /// </summary>
+        /// <param name="universePlayerFactory">
+        /// The universe player factory.
+        /// </param>
+        /// <param name="ruleSubscriber">
+        /// The rule subscriber.
+        /// </param>
+        /// <param name="analyticsSubscriber">
+        /// The analytics subscriber.
+        /// </param>
+        /// <param name="alertStreamFactory">
+        /// The alert stream factory.
+        /// </param>
+        /// <param name="judgementServiceFactory">
+        /// The judgement service factory.
+        /// </param>
+        /// <param name="alertStreamSubscriberFactory">
+        /// The alert stream subscriber factory.
+        /// </param>
+        /// <param name="dataRequestSubscriberFactory">
+        /// The data request subscriber factory.
+        /// </param>
+        /// <param name="universeCompletionLogger">
+        /// The universe completion logger.
+        /// </param>
+        /// <param name="ruleAnalyticsRepository">
+        /// The rule analytics repository.
+        /// </param>
+        /// <param name="alertsRepository">
+        /// The alerts repository.
+        /// </param>
+        /// <param name="queueRuleUpdatePublisher">
+        /// The queue rule update publisher.
+        /// </param>
+        /// <param name="ruleParameterService">
+        /// The rule parameter service.
+        /// </param>
+        /// <param name="adjustedTimespanService">
+        /// The adjusted timespan service.
+        /// </param>
+        /// <param name="universeFactory">
+        /// The universe factory.
+        /// </param>
+        /// <param name="ruleCancellation">
+        /// The rule cancellation.
+        /// </param>
+        /// <param name="reschedulerService">
+        /// The reschedule service.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public AnalysisEngine(
             IUniversePlayerFactory universePlayerFactory,
             IUniverseRuleSubscriber ruleSubscriber,
@@ -86,223 +191,309 @@
             ITaskReSchedulerService reschedulerService,
             ILogger<AnalysisEngine> logger)
         {
-            this._universePlayerFactory =
+            this.universePlayerFactory =
                 universePlayerFactory ?? throw new ArgumentNullException(nameof(universePlayerFactory));
-
-            this._ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
-            this._analyticsSubscriber =
+            this.ruleSubscriber = 
+                ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
+            this.analyticsSubscriber =
                 analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
-            this._ruleAnalyticsRepository = ruleAnalyticsRepository
-                                            ?? throw new ArgumentNullException(nameof(ruleAnalyticsRepository));
-            this._alertStreamFactory =
+            this.ruleAnalyticsRepository =
+                ruleAnalyticsRepository ?? throw new ArgumentNullException(nameof(ruleAnalyticsRepository));
+            this.alertStreamFactory =
                 alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
-            this._judgementServiceFactory = judgementServiceFactory
-                                            ?? throw new ArgumentNullException(nameof(judgementServiceFactory));
-            this._alertStreamSubscriberFactory = alertStreamSubscriberFactory
-                                                 ?? throw new ArgumentNullException(
-                                                     nameof(alertStreamSubscriberFactory));
-            this._alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
-            this._queueRuleUpdatePublisher = queueRuleUpdatePublisher
-                                             ?? throw new ArgumentNullException(nameof(queueRuleUpdatePublisher));
-            this._dataRequestSubscriberFactory = dataRequestSubscriberFactory
-                                                 ?? throw new ArgumentNullException(
-                                                     nameof(dataRequestSubscriberFactory));
-            this._universeCompletionLogger = universeCompletionLogger
-                                             ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
-
-            this._ruleParameterService =
+            this.judgementServiceFactory = 
+                judgementServiceFactory ?? throw new ArgumentNullException(nameof(judgementServiceFactory));
+            this.alertStreamSubscriberFactory =
+                alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
+            this.alertsRepository =
+                alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
+            this.queueRuleUpdatePublisher =
+                queueRuleUpdatePublisher ?? throw new ArgumentNullException(nameof(queueRuleUpdatePublisher));
+            this.dataRequestSubscriberFactory =
+                dataRequestSubscriberFactory ?? throw new ArgumentNullException(nameof(dataRequestSubscriberFactory));
+            this.universeCompletionLogger =
+                universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
+            this.ruleParameterService =
                 ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
-            this._timespanService = adjustedTimespanService
-                                    ?? throw new ArgumentNullException(nameof(adjustedTimespanService));
-            this._universeFactory = universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
-            this._ruleCancellation = ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
-            this._reschedulerService =
+            this.timespanService =
+                adjustedTimespanService ?? throw new ArgumentNullException(nameof(adjustedTimespanService));
+            this.universeFactory =
+                universeFactory ?? throw new ArgumentNullException(nameof(universeFactory));
+            this.ruleCancellation =
+                ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
+            this.reschedulerService =
                 reschedulerService ?? throw new ArgumentNullException(nameof(reschedulerService));
-
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger =
+                logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
+        /// <summary>
+        /// The execute analysis engine
+        /// This is the top level function for trade analysis
+        /// within the surveillance engine
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task Execute(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
             if (execution?.Rules == null || !execution.Rules.Any())
             {
-                this._logger.LogError("was executing a schedule that did not specify any rules to run");
-                opCtx.EndEventWithError("was executing a schedule that did not specify any rules to run");
+                this.logger.LogError("was executing a schedule that did not specify any rules to run");
+                operationContext.EndEventWithError("was executing a schedule that did not specify any rules to run");
+
                 return;
             }
 
-            this._logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
-            this.LogExecutionParameters(execution, opCtx);
+            this.logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            this.LogExecutionParameters(execution, operationContext);
 
             var cts = new CancellationTokenSource();
-            var ruleCancellation = new CancellableRule(execution, cts);
-            this._ruleCancellation.Subscribe(ruleCancellation);
+            var cancellableRule = new CancellableRule(execution, cts);
+            this.ruleCancellation.Subscribe(cancellableRule);
 
-            var ruleParameters = await this._ruleParameterService.RuleParameters(execution);
-            execution.LeadingTimespan = this._timespanService.LeadingTimespan(ruleParameters);
-            execution.TrailingTimespan = this._timespanService.TrailingTimeSpan(ruleParameters);
+            var ruleParameters = await this.ruleParameterService.RuleParameters(execution);
+            execution.LeadingTimespan = this.timespanService.LeadingTimespan(ruleParameters);
+            execution.TrailingTimespan = this.timespanService.TrailingTimeSpan(ruleParameters);
 
-            var player = this._universePlayerFactory.Build(cts.Token);
+            var player = this.universePlayerFactory.Build(cts.Token);
 
-            this._universeCompletionLogger.InitiateTimeLogger(execution);
-            player.Subscribe(this._universeCompletionLogger);
+            this.universeCompletionLogger.InitiateTimeLogger(execution);
+            player.Subscribe(this.universeCompletionLogger);
 
-            var dataRequestSubscriber = this._dataRequestSubscriberFactory.Build(opCtx);
-            var universeAlertSubscriber = this._alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
-            var judgementService = this._judgementServiceFactory.Build();
-            var alertStream = this._alertStreamFactory.Build();
+            var dataRequestSubscriber = this.dataRequestSubscriberFactory.Build(operationContext);
+            var universeAlertSubscriber = this.alertStreamSubscriberFactory.Build(operationContext.Id, execution.IsBackTest);
+            var judgementService = this.judgementServiceFactory.Build();
+            var alertStream = this.alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            var ids = await this._ruleSubscriber.SubscribeRules(
+            var ids = await this.ruleSubscriber.SubscribeRules(
                           execution,
                           player,
                           alertStream,
                           dataRequestSubscriber,
                           judgementService,
-                          opCtx,
+                          operationContext,
                           ruleParameters);
-            player.Subscribe(
-                dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
+
+            player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
             this.RuleRunUpdateMessageSend(execution, ids);
 
             if (this.GuardForBackTestIntoFutureExecution(execution))
             {
-                this.SetFailedBackTestDueToFutureExecution(opCtx, execution, ruleCancellation, ids);
+                this.SetFailedBackTestDueToFutureExecution(operationContext, execution, cancellableRule, ids);
                 return;
             }
 
             if (execution.AdjustedTimeSeriesTermination.Date >= DateTime.UtcNow.Date)
-                await this._reschedulerService.RescheduleFutureExecution(execution);
+            {
+                await this.reschedulerService.RescheduleFutureExecution(execution);
+            }
 
-            var universeAnalyticsSubscriber = this._analyticsSubscriber.Build(opCtx.Id);
+            var universeAnalyticsSubscriber = this.analyticsSubscriber.Build(operationContext.Id);
             player.Subscribe(universeAnalyticsSubscriber);
 
-            this._logger.LogInformation("START PLAYING UNIVERSE TO SUBSCRIBERS");
-            var lazyUniverse = this._universeFactory.Build(execution, opCtx);
+            this.logger.LogInformation("START PLAYING UNIVERSE TO SUBSCRIBERS");
+            var lazyUniverse = this.universeFactory.Build(execution, operationContext);
             player.Play(lazyUniverse);
-            this._logger.LogInformation("STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
+            this.logger.LogInformation("STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             if (cts.IsCancellationRequested)
             {
-                this.SetRuleCancelledState(opCtx, execution, ruleCancellation, ids);
+                this.SetRuleCancelledState(operationContext, execution, cancellableRule, ids);
                 return;
             }
 
+            // post rule execution analysis
             universeAlertSubscriber.Flush();
-            await this._ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
-            await this._alertsRepository.Create(universeAlertSubscriber.Analytics);
+            await this.ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
+            await this.alertsRepository.Create(universeAlertSubscriber.Analytics);
             dataRequestSubscriber.DispatchIfSubmitRequest();
             judgementService.PassJudgement();
 
-            this.SetOperationContextEndState(dataRequestSubscriber, opCtx);
+            this.SetOperationContextEndState(dataRequestSubscriber, operationContext);
 
-            this._logger.LogInformation("calling rule run update message send");
+            this.logger.LogInformation("calling rule run update message send");
             this.RuleRunUpdateMessageSend(execution, ids);
-            this._logger.LogInformation("completed rule run update message send");
+            this.logger.LogInformation("completed rule run update message send");
 
-            this._ruleCancellation.Unsubscribe(ruleCancellation);
-            this._logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            this.ruleCancellation.Unsubscribe(cancellableRule);
+            this.logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
         }
 
+        /// <summary>
+        /// The guard for back test into future execution.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool GuardForBackTestIntoFutureExecution(ScheduledExecution execution)
         {
             if (execution == null)
+            {
                 return false;
+            }
 
             if (!execution.IsBackTest)
+            {
                 return false;
+            }
 
             return execution.AdjustedTimeSeriesTermination.Date > DateTime.UtcNow.Date;
         }
 
-        private void LogExecutionParameters(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
+        /// <summary>
+        /// The log execution parameters to info log.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        private void LogExecutionParameters(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
             var executionJson = JsonConvert.SerializeObject(execution);
-            var opCtxJson = JsonConvert.SerializeObject(opCtx);
-            this._logger.LogInformation($"analysis execute received json {executionJson} for opCtx {opCtxJson}");
+            var operationContextJson = JsonConvert.SerializeObject(operationContext);
+
+            this.logger.LogInformation($"analysis execute received json {executionJson} for opCtx {operationContextJson}");
         }
 
+        /// <summary>
+        /// The rule run update message send
+        /// This is for relaying updates to the client service.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
         private void RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
         {
             if (execution == null)
             {
-                this._logger.LogInformation("execution was null not sending rule run update message");
+                this.logger.LogInformation("execution was null not sending rule run update message");
                 return;
             }
 
             if (!execution.IsBackTest)
             {
-                this._logger.LogInformation(
-                    $"execution with correlation id {execution.CorrelationId} was not a back test not sending rule run update message");
+                this.logger.LogInformation($"execution with correlation id {execution.CorrelationId} was not a back test not sending rule run update message");
                 return;
             }
 
             if (ids == null)
             {
-                this._logger.LogInformation(
-                    $"no ids for rule run with correlation id {execution.CorrelationId} not submitting update message");
+                this.logger.LogInformation($"no ids for rule run with correlation id {execution.CorrelationId} not submitting update message");
                 return;
             }
 
             foreach (var id in ids)
             {
-                this._logger.LogInformation(
-                    $"submitting rule update message for correlation id {execution.CorrelationId} and test parameter id {id}");
-                this._queueRuleUpdatePublisher.Send(id).Wait();
+                this.logger.LogInformation($"submitting rule update message for correlation id {execution.CorrelationId} and test parameter id {id}");
+                this.queueRuleUpdatePublisher.Send(id).Wait();
             }
 
             if (!ids.Any())
-                this._logger.LogError(
-                    $"could not submit rule update message for correlation id {execution.CorrelationId} as there were no ids");
+            {
+                this.logger.LogError($"could not submit rule update message for correlation id {execution.CorrelationId} as there were no ids");
+            }
         }
 
+        /// <summary>
+        /// The set failed back test due to future execution.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="cancellableRule">
+        /// The cancellable rule.
+        /// </param>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
         private void SetFailedBackTestDueToFutureExecution(
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             ScheduledExecution execution,
-            CancellableRule ruleCancellation,
+            CancellableRule cancellableRule,
             IReadOnlyCollection<string> ids)
         {
-            opCtx.EndEventWithError("Set back test to end some time in the future");
-            this._logger.LogInformation(
-                $"End of universe execution for {execution.CorrelationId} - back test had illegal future dates");
+            operationContext.EndEventWithError("Set back test to end some time in the future");
+            this.logger.LogInformation($"End of universe execution for {execution.CorrelationId} - back test had illegal future dates");
 
-            this._ruleCancellation.Unsubscribe(ruleCancellation);
+            this.ruleCancellation.Unsubscribe(cancellableRule);
 
-            this._logger.LogInformation("calling rule run update message send");
+            this.logger.LogInformation("calling rule run update message send");
             this.RuleRunUpdateMessageSend(execution, ids);
-            this._logger.LogInformation("completed rule run update message send");
+            this.logger.LogInformation("completed rule run update message send");
         }
 
+        /// <summary>
+        /// The set operation context end state.
+        /// </summary>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
         private void SetOperationContextEndState(
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext operationContext)
         {
             if (!dataRequestSubscriber?.SubmitRequests ?? true)
             {
-                this._logger.LogInformation("ending operation context event");
-                opCtx.EndEvent();
+                this.logger.LogInformation("ending operation context event");
+                operationContext.EndEvent();
                 return;
             }
 
-            this._logger.LogInformation("ending operating context event with missing data error");
-            opCtx.EndEventWithMissingDataError();
+            this.logger.LogInformation("ending operating context event with missing data error");
+            operationContext.EndEventWithMissingDataError();
         }
 
+        /// <summary>
+        /// The set rule cancelled state.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="cancellableRule">
+        /// The cancellable rule.
+        /// </param>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
         private void SetRuleCancelledState(
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             ScheduledExecution execution,
-            CancellableRule ruleCancellation,
+            CancellableRule cancellableRule,
             IReadOnlyCollection<string> ids)
         {
-            opCtx.EndEventWithError("USER CANCELLED RUN");
-            this._logger.LogInformation(
-                $"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
+            operationContext.EndEventWithError("USER CANCELLED RUN");
+            this.logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId} - USER CANCELLED RUN");
 
-            this._ruleCancellation.Unsubscribe(ruleCancellation);
+            this.ruleCancellation.Unsubscribe(cancellableRule);
 
-            this._logger.LogInformation("calling rule run update message send");
+            this.logger.LogInformation("calling rule run update message send");
             this.RuleRunUpdateMessageSend(execution, ids);
-            this._logger.LogInformation("completed rule run update message send");
+            this.logger.LogInformation("completed rule run update message send");
         }
     }
 }

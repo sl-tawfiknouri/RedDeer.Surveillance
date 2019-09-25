@@ -6,161 +6,168 @@
 
     using Microsoft.Extensions.Logging;
 
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Trades;
-    using Surveillance.Engine.Rules.Trades.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
-    public class FixedIncomeHighProfitsRule : BaseUniverseRule, IFixedIncomeHighProfitsRule
+    /// <summary>
+    /// The fixed income high profits rule.
+    /// </summary>
+    public class FixedIncomeHighProfitsRule : IFixedIncomeHighProfitsRule
     {
-        private readonly IUniverseAlertStream _alertStream;
+        /// <summary>
+        /// The fixed income parameters.
+        /// </summary>
+        private readonly IHighProfitsRuleFixedIncomeParameters fixedIncomeParameters;
 
-        private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
+        /// <summary>
+        /// The fixed income market closure rule.
+        /// </summary>
+        private readonly IFixedIncomeHighProfitsMarketClosureRule marketClosureRule;
 
-        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
+        /// <summary>
+        /// The fixed income high profit stream rule.
+        /// </summary>
+        private readonly IFixedIncomeHighProfitsStreamRule streamRule;
 
-        private readonly IHighProfitsRuleFixedIncomeParameters _parameters;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<FixedIncomeHighProfitsRule> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FixedIncomeHighProfitsRule"/> class.
+        /// </summary>
+        /// <param name="fixedIncomeParameters">
+        /// The fixed income parameters.
+        /// </param>
+        /// <param name="streamRule">
+        /// The stream rule.
+        /// </param>
+        /// <param name="marketClosureRule">
+        /// The market closure rule.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public FixedIncomeHighProfitsRule(
-            IHighProfitsRuleFixedIncomeParameters parameters,
-            IUniverseFixedIncomeOrderFilterService orderFilterService,
-            ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory factory,
-            RuleRunMode runMode,
-            IUniverseAlertStream alertStream,
-            ILogger<FixedIncomeHighProfitsRule> logger,
-            ILogger<TradingHistoryStack> tradingStackLogger)
-            : base(
-                parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
-                parameters?.Windows.BackwardWindowSize ?? TimeSpan.FromDays(1),
-                parameters?.Windows?.FutureWindowSize ?? TimeSpan.Zero,
-                Rules.FixedIncomeHighProfits,
-                Versioner.Version(1, 0),
-                "Fixed Income High Profits Rule",
-                ruleCtx,
-                factory,
-                runMode,
-                logger,
-                tradingStackLogger)
+            IHighProfitsRuleFixedIncomeParameters fixedIncomeParameters,
+            IFixedIncomeHighProfitsStreamRule streamRule,
+            IFixedIncomeHighProfitsMarketClosureRule marketClosureRule,
+            ILogger<FixedIncomeHighProfitsRule> logger)
         {
-            this._parameters = parameters ?? throw new ArgumentNullException(nameof(this._parameters));
-            this._orderFilterService =
-                orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.fixedIncomeParameters =
+                fixedIncomeParameters ?? throw new ArgumentNullException(nameof(fixedIncomeParameters));
+            this.streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
+            this.marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        /// <summary>
+        /// Gets or sets the organization factor value.
+        /// </summary>
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
-        public object Clone()
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Clone called at {this.UniverseDateTime}");
+        /// <summary>
+        /// Gets the rule definition.
+        /// </summary>
+        public Rules Rule { get; } = Rules.FixedIncomeHighProfits;
 
-            var clone = (FixedIncomeHighProfitsRule)this.MemberwiseClone();
-            clone.BaseClone();
+        /// <summary>
+        /// Gets the version.
+        /// </summary>
+        public string Version { get; } = FixedIncomeHighProfitFactory.Version;
 
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Clone completed for {this.UniverseDateTime}");
-            return clone;
-        }
-
+        /// <summary>
+        /// The cloning support for factor values.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            var clone = (FixedIncomeHighProfitsRule)this.Clone();
-            clone.OrganisationFactorValue = factor;
+            var cloneRule = new FixedIncomeHighProfitsRule(
+                this.fixedIncomeParameters,
+                this.streamRule.Clone(factor) as IFixedIncomeHighProfitsStreamRule, 
+                this.marketClosureRule.Clone(factor) as IFixedIncomeHighProfitsMarketClosureRule,
+                this.logger);
 
-            return clone;
+            cloneRule.OrganisationFactorValue = factor;
+
+            return cloneRule;
         }
 
-        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        /// <summary>
+        /// The clone with object typing returns shallow clones but with deep cloned child rules for
+        /// stream and market closure.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public object Clone()
         {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent called at {this.UniverseDateTime}");
+            var cloneRule = new FixedIncomeHighProfitsRule(
+                this.fixedIncomeParameters,
+                (IFixedIncomeHighProfitsStreamRule)this.streamRule.Clone(),
+                (IFixedIncomeHighProfitsMarketClosureRule)this.marketClosureRule.Clone(),
+                this.logger);
 
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent completed for {this.UniverseDateTime}");
+            return cloneRule;
         }
 
-        public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
+        /// <summary>
+        /// The on completed event trigger.
+        /// </summary>
+        public void OnCompleted()
         {
-            // do nothing
+            this.logger.LogInformation(
+                "OnCompleted() event received. Passing onto high profit and high profit market close rules.");
+            this.streamRule.OnCompleted();
+            this.marketClosureRule.OnCompleted();
         }
 
-        protected override void EndOfUniverse()
+        /// <summary>
+        /// The on error event trigger
+        /// </summary>
+        /// <param name="error">
+        /// exception that occurred
+        /// </param>
+        public void OnError(Exception error)
         {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Eschaton called at {this.UniverseDateTime}");
-
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Eschaton completed for {this.UniverseDateTime}");
+            this.logger.LogError("OnError() event received", error);
+            this.streamRule.OnError(error);
+            this.marketClosureRule.OnError(error);
         }
 
-        protected override IUniverseEvent Filter(IUniverseEvent value)
+        /// <summary>
+        /// The on next event trigger
+        /// </summary>
+        /// <param name="value">
+        /// universe event to progress
+        /// </param>
+        public void OnNext(IUniverseEvent value)
         {
-            return this._orderFilterService.Filter(value);
-        }
+            this.logger.LogInformation(
+                $"OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
 
-        protected override void Genesis()
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis called at {this.UniverseDateTime}");
+            // if removing the market closure rule
+            // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
+            if (this.fixedIncomeParameters.PerformHighProfitWindowAnalysis)
+            {
+                this.streamRule.OnNext(value);
+                this.marketClosureRule.OnNext(value);
+            }
 
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis completed for {this.UniverseDateTime}");
-        }
-
-        protected override void MarketClose(MarketOpenClose exchange)
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Market Close called at {this.UniverseDateTime} for {exchange?.MarketId}");
-
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Market Close completed at {this.UniverseDateTime} for {exchange?.MarketId}");
-        }
-
-        protected override void MarketOpen(MarketOpenClose exchange)
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Market Open called at {this.UniverseDateTime} for {exchange?.MarketId}");
-
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} Market Open completed at {this.UniverseDateTime} for {exchange?.MarketId}");
-        }
-
-        protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule called at {this.UniverseDateTime}");
-
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule completed for {this.UniverseDateTime}");
-        }
-
-        protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
-
-        protected override void RunPostOrderEvent(ITradingHistoryStack history)
-        {
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunRule called at {this.UniverseDateTime}");
-
-            this._logger.LogInformation(
-                $"{nameof(FixedIncomeHighProfitsRule)} RunRule completed for {this.UniverseDateTime}");
-        }
-
-        protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
-        {
-            // do nothing
-        }
+            if (this.fixedIncomeParameters.PerformHighProfitDailyAnalysis
+                && !this.fixedIncomeParameters.PerformHighProfitWindowAnalysis)
+            {
+                this.marketClosureRule.OnNext(value);
+            }
+        } 
     }
 }

@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             ILogger logger,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
-            ISystemProcessOperationRunRuleContext opCtx,
+            ISystemProcessOperationRunRuleContext opContext,
             RuleRunMode runMode,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 Domain.Surveillance.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
-                opCtx,
+                opContext,
                 marketCacheFactory,
                 runMode,
                 logger,
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
-            _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            _ruleCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }

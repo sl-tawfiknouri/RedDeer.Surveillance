@@ -6,6 +6,8 @@
 
         MARKET,
 
-        LIMIT
+        LIMIT,
+
+        OTC
     }
 }

@@ -13,20 +13,53 @@
     using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
     /// <summary>
-    ///     Checks that our apis on the client service are accessible
+    /// The application programming interface heartbeat.
     /// </summary>
     public class ApiHeartbeat : IApiHeartbeat
     {
-        private readonly IEnrichmentApi _enrichmentApi;
+        /// <summary>
+        /// The enrichment.
+        /// </summary>
+        private readonly IEnrichmentApi enrichmentApi;
 
-        private readonly IExchangeRateApiCachingDecorator _exchangeRateApi;
+        /// <summary>
+        /// The exchange rate.
+        /// </summary>
+        private readonly IExchangeRateApiCachingDecorator exchangeRateApi;
 
-        private readonly ILogger<ApiHeartbeat> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<ApiHeartbeat> logger;
 
-        private readonly IMarketOpenCloseApiCachingDecorator _marketRateApi;
+        /// <summary>
+        /// The market rate.
+        /// </summary>
+        private readonly IMarketOpenCloseApiCachingDecorator marketRateApi;
 
-        private readonly IRuleParameterApi _rulesApi;
+        /// <summary>
+        /// The rules.
+        /// </summary>
+        private readonly IRuleParameterApi rulesApi;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApiHeartbeat"/> class.
+        /// </summary>
+        /// <param name="exchangeRateApi">
+        /// The exchange rate.
+        /// </param>
+        /// <param name="marketRateApi">
+        /// The market rate.
+        /// </param>
+        /// <param name="rulesApi">
+        /// The rules.
+        /// </param>
+        /// <param name="enrichmentApi">
+        /// The enrichment.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public ApiHeartbeat(
             IExchangeRateApiCachingDecorator exchangeRateApi,
             IMarketOpenCloseApiCachingDecorator marketRateApi,
@@ -34,29 +67,36 @@
             IEnrichmentApi enrichmentApi,
             ILogger<ApiHeartbeat> logger)
         {
-            this._exchangeRateApi = exchangeRateApi ?? throw new ArgumentNullException(nameof(exchangeRateApi));
-            this._marketRateApi = marketRateApi ?? throw new ArgumentNullException(nameof(marketRateApi));
-            this._rulesApi = rulesApi ?? throw new ArgumentNullException(nameof(rulesApi));
-            this._enrichmentApi = enrichmentApi ?? throw new ArgumentNullException(nameof(enrichmentApi));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.exchangeRateApi = exchangeRateApi ?? throw new ArgumentNullException(nameof(exchangeRateApi));
+            this.marketRateApi = marketRateApi ?? throw new ArgumentNullException(nameof(marketRateApi));
+            this.rulesApi = rulesApi ?? throw new ArgumentNullException(nameof(rulesApi));
+            this.enrichmentApi = enrichmentApi ?? throw new ArgumentNullException(nameof(enrichmentApi));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The hearts beating.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task<bool> HeartsBeating()
         {
             var token = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
             try
             {
-                var exchangeBeating = await this._exchangeRateApi.HeartBeating(token.Token);
-                var marketBeating = await this._marketRateApi.HeartBeating(token.Token);
-                var rulesBeating = await this._rulesApi.HeartBeating(token.Token);
-                var enrichmentBeating = await this._enrichmentApi.HeartBeating(token.Token);
+                var exchangeBeating = await this.exchangeRateApi.HeartBeating(token.Token);
+                var marketBeating = await this.marketRateApi.HeartBeating(token.Token);
+                var rulesBeating = await this.rulesApi.HeartBeating(token.Token);
+                var enrichmentBeating = await this.enrichmentApi.HeartBeating(token.Token);
 
                 return exchangeBeating && marketBeating && rulesBeating && enrichmentBeating;
             }
             catch (Exception e)
             {
-                this._logger.LogError($"{e.Message} - {e?.InnerException?.Message}");
+                this.logger.LogError($"{e.Message} - {e?.InnerException?.Message}");
+
                 return false;
             }
         }

@@ -31,7 +31,7 @@
         public FixedIncomeHighVolumeIssuanceRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+            ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
@@ -44,7 +44,7 @@
                 Rules.FixedIncomeHighVolumeIssuance,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",
-                ruleCtx,
+                ruleContext,
                 factory,
                 runMode,
                 logger,

@@ -64,7 +64,7 @@
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IUniverseAlertStream alertStream)
@@ -78,7 +78,7 @@
 
             var rampingParameters = this._ruleParameterMapper.Map(execution, dtos);
 
-            return this.SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters, dataRequestSubscriber);
+            return this.SubscribeToUniverse(execution, operationContext, alertStream, rampingParameters, dataRequestSubscriber);
         }
 
         private IUniverseRule DecorateWithFilters(

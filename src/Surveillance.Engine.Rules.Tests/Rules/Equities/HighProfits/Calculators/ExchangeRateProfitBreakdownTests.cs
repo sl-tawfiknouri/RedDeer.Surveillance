@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
+﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
 {
     using System.Collections.Generic;
 
@@ -6,8 +8,6 @@
     using Domain.Core.Trading.Orders;
 
     using NUnit.Framework;
-
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
     using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Trades;
 

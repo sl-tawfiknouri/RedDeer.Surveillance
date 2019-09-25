@@ -65,7 +65,7 @@
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IUniverseAlertStream alertStream)
@@ -81,7 +81,7 @@
             var spoofingParameters = this._ruleParameterMapper.Map(execution, dtos);
             var subscriptionRequests = this.SubscribeToUniverse(
                 execution,
-                opCtx,
+                operationContext,
                 alertStream,
                 dataRequestSubscriber,
                 spoofingParameters);

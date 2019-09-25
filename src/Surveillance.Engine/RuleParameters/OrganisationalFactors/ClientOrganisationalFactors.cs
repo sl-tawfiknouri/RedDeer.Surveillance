@@ -1,17 +1,38 @@
 ﻿namespace Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors
 {
+    /// <summary>
+    /// The client organizational factors.
+    /// </summary>
     public enum ClientOrganisationalFactors
     {
-        Unknown,
+        /// <summary>
+        /// The unknown.
+        /// </summary>
+        Unknown = 0,
 
-        None,
+        /// <summary>
+        /// The none.
+        /// </summary>
+        None = 1,
 
-        Trader,
+        /// <summary>
+        /// The trader.
+        /// </summary>
+        Trader = 2,
 
-        PortfolioManager,
+        /// <summary>
+        /// The portfolio manager.
+        /// </summary>
+        PortfolioManager = 3,
 
-        Fund,
+        /// <summary>
+        /// The fund.
+        /// </summary>
+        Fund = 4,
 
-        Strategy
+        /// <summary>
+        /// The strategy.
+        /// </summary>
+        Strategy = 5
     }
 }

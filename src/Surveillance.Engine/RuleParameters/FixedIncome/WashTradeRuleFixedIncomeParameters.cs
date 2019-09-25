@@ -110,7 +110,7 @@
         public RuleFilter Traders { get; set; }
 
         [TunedParam]
-        public TunedParameter<string> TunedParam { get; set; }
+        public TunedParameter<string> TunedParameters { get; set; }
 
         [TuneableTimeWindowParameter]
         public TimeWindows Windows { get; set; }

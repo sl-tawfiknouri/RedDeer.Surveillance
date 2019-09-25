@@ -13,86 +13,147 @@
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 
+    /// <summary>
+    /// The judgement service factory tests.
+    /// </summary>
     [TestFixture]
     public class JudgementServiceFactoryTests
     {
-        private IHighProfitJudgementMapper _highProfitJudgementMapper;
+        /// <summary>
+        /// The high profit judgement mapper.
+        /// </summary>
+        private IHighProfitJudgementMapper highProfitJudgementMapper;
 
-        private IJudgementRepository _judgementRepository;
+        /// <summary>
+        /// The fixed income judgement mapper.
+        /// </summary>
+        private IFixedIncomeHighProfitJudgementMapper fixedIncomeJudgementMapper;
 
-        private ILogger<JudgementService> _logger;
+        /// <summary>
+        /// The judgement repository.
+        /// </summary>
+        private IJudgementRepository judgementRepository;
 
-        private IRuleViolationServiceFactory _ruleViolationServiceFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<JudgementService> logger;
 
+        /// <summary>
+        /// The rule violation service factory.
+        /// </summary>
+        private IRuleViolationServiceFactory ruleViolationServiceFactory;
+
+        /// <summary>
+        /// The build returns valid service calls factory build.
+        /// </summary>
         [Test]
-        public void Build_ReturnsValidService_CallsFactoryBuild()
+        public void BuildReturnsValidServiceCallsFactoryBuild()
         {
             var serviceFactory = new JudgementServiceFactory(
-                this._ruleViolationServiceFactory,
-                this._judgementRepository,
-                this._highProfitJudgementMapper,
-                this._logger);
+                this.ruleViolationServiceFactory,
+                this.judgementRepository,
+                this.highProfitJudgementMapper,
+                this.fixedIncomeJudgementMapper,
+                this.logger);
             var result = serviceFactory.Build();
 
-            A.CallTo(() => this._ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
             Assert.IsNotNull(result);
         }
 
+        /// <summary>
+        /// The ctor null high profit judgement mapper throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullHighProfitJudgementMapper_ThrowsException()
+        public void CtorNullHighProfitJudgementMapperThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
-                    this._judgementRepository,
+                    this.ruleViolationServiceFactory,
+                    this.judgementRepository,
                     null,
-                    this._logger));
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The ctor null judgement repository throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullJudgementRepository_ThrowsException()
+        public void CtorNullJudgementRepositoryThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
+                    this.ruleViolationServiceFactory,
                     null,
-                    this._highProfitJudgementMapper,
-                    this._logger));
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The ctor null logger throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullLogger_ThrowsException()
+        public void CtorNullLoggerThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
-                    this._ruleViolationServiceFactory,
-                    this._judgementRepository,
-                    this._highProfitJudgementMapper,
+                    this.ruleViolationServiceFactory,
+                    this.judgementRepository,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
                     null));
         }
 
+        /// <summary>
+        /// The ctor null rule violation service factory throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullRuleViolationServiceFactory_ThrowsException()
+        public void CtorNullRuleViolationServiceFactoryThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
                 () => new JudgementServiceFactory(
                     null,
-                    this._judgementRepository,
-                    this._highProfitJudgementMapper,
-                    this._logger));
+                    this.judgementRepository,
+                    this.highProfitJudgementMapper,
+                    this.fixedIncomeJudgementMapper,
+                    this.logger));
         }
 
+        /// <summary>
+        /// The build returns judgement service test.
+        /// </summary>
+        [Test]
+        public void BuildReturnsJudgementService()
+        {
+            var factory = new JudgementServiceFactory(
+                this.ruleViolationServiceFactory,
+                this.judgementRepository,
+                this.highProfitJudgementMapper,
+                this.fixedIncomeJudgementMapper,
+                this.logger);
+
+            Assert.DoesNotThrow(() => factory.Build());
+            A.CallTo(() => this.ruleViolationServiceFactory.Build()).MustHaveHappenedOnceExactly();
+        }
+
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._ruleViolationServiceFactory = A.Fake<IRuleViolationServiceFactory>();
-            this._judgementRepository = A.Fake<IJudgementRepository>();
-            this._highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
-            this._logger = A.Fake<ILogger<JudgementService>>();
+            this.ruleViolationServiceFactory = A.Fake<IRuleViolationServiceFactory>();
+            this.fixedIncomeJudgementMapper = A.Fake<IFixedIncomeHighProfitJudgementMapper>();
+            this.judgementRepository = A.Fake<IJudgementRepository>();
+            this.highProfitJudgementMapper = A.Fake<IHighProfitJudgementMapper>();
+            this.logger = A.Fake<ILogger<JudgementService>>();
         }
     }
 }

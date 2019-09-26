@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
@@ -28,19 +29,61 @@
     /// </summary>
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
-        private readonly IUniverseAlertStream _alertStream;
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private readonly IUniverseAlertStream alertStream;
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The operation context.
+        /// </summary>
+        private readonly ISystemProcessOperationRunRuleContext operationContext;
 
-        private readonly ISystemProcessOperationRunRuleContext _opCtx;
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter orderFilter;
 
-        private readonly IUniverseOrderFilter _orderFilter;
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        private readonly ICancelledOrderRuleEquitiesParameters parameters;
 
-        private readonly ICancelledOrderRuleEquitiesParameters _parameters;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CancelledOrderRule"/> class.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingHistoryLogger">
+        /// The trading history logger.
+        /// </param>
         public CancelledOrderRule(
             ICancelledOrderRuleEquitiesParameters parameters,
-            ISystemProcessOperationRunRuleContext opContext,
+            ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -54,21 +97,33 @@
                 Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
-                opContext,
+                operationContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
         {
-            this._parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            this._opCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
-            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            this.operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
+            this.alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this.orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Gets or sets the organization factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (CancelledOrderRule)this.Clone();
@@ -77,6 +132,12 @@
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
             var clone = (CancelledOrderRule)this.MemberwiseClone();
@@ -85,88 +146,183 @@
             return clone;
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// Not done it yet
+        /// </exception>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            this._logger.LogInformation("Universe Eschaton occurred");
-            this._opCtx?.EndEvent();
+            this.logger.LogInformation("Universe Eschaton occurred");
+            this.operationContext?.EndEvent();
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return this._orderFilter.Filter(value);
+            return this.orderFilter.Filter(value);
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            this._logger.LogInformation("Universe Genesis occurred");
+            this.logger.LogInformation("Universe Genesis occurred");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            this._logger.LogInformation($"Trading closed for exchange {exchange.MarketId}");
+            this.logger.LogInformation($"Trading closed for exchange {exchange.MarketId}");
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            this._logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
+            this.logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
-            if (tradeWindow == null || !tradeWindow.Any()) return;
+            if (tradeWindow == null || !tradeWindow.Any())
+            {
+                return;
+            }
 
             var mostRecentTrade = tradeWindow.Pop();
 
             var tradingPosition = new TradePositionCancellations(
                 new List<Order>(),
-                this._parameters.CancelledOrderPercentagePositionThreshold,
-                this._parameters.CancelledOrderCountPercentageThreshold,
-                this._logger);
+                this.parameters.CancelledOrderPercentagePositionThreshold,
+                this.parameters.CancelledOrderCountPercentageThreshold,
+                this.logger);
 
             tradingPosition.Add(mostRecentTrade);
             var ruleBreach = this.CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
 
             if (ruleBreach.HasBreachedRule())
             {
-                this._logger.LogInformation(
+                this.logger.LogInformation(
                     $"RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
-                var message = new UniverseAlertEvent(Rules.CancelledOrders, ruleBreach, this._opCtx);
-                this._alertStream.Add(message);
+                var message = new UniverseAlertEvent(Rules.CancelledOrders, ruleBreach, this.operationContext);
+                this.alertStream.Add(message);
             }
             else
             {
-                this._logger.LogInformation(
+                this.logger.LogInformation(
                     $"RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
             }
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The check position for cancellations.
+        /// </summary>
+        /// <param name="tradeWindow">
+        /// The trade window.
+        /// </param>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradingPosition">
+        /// The trading position.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ICancelledOrderRuleBreach"/>.
+        /// </returns>
         private ICancelledOrderRuleBreach CheckPositionForCancellations(
             Stack<Order> tradeWindow,
             Order mostRecentTrade,
@@ -193,19 +349,19 @@
 
                 tradingPosition.Add(nextTrade);
 
-                if (this._parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
-                    || this._parameters.MaximumNumberOfTradesToApplyRuleTo.HasValue
-                    && this._parameters.MaximumNumberOfTradesToApplyRuleTo.Value
+                if (this.parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
+                    || this.parameters.MaximumNumberOfTradesToApplyRuleTo.HasValue
+                    && this.parameters.MaximumNumberOfTradesToApplyRuleTo.Value
                     < tradingPosition.Get().Count) continue;
 
-                if (this._parameters.CancelledOrderCountPercentageThreshold != null
+                if (this.parameters.CancelledOrderCountPercentageThreshold != null
                     && tradingPosition.HighCancellationRatioByTradeCount())
                 {
                     hasBreachedRuleByOrderCount = true;
                     cancellationRatioByOrderCount = tradingPosition.CancellationRatioByTradeCount();
                 }
 
-                if (this._parameters.CancelledOrderPercentagePositionThreshold != null
+                if (this.parameters.CancelledOrderPercentagePositionThreshold != null
                     && tradingPosition.HighCancellationRatioByPositionSize())
                 {
                     hasBreachedRuleByPositionSize = true;
@@ -219,9 +375,9 @@
             // wrong should use a judgement
             return new CancelledOrderRuleBreach(
                 this.OrganisationFactorValue,
-                this._opCtx.SystemProcessOperationContext(),
+                this.operationContext.SystemProcessOperationContext(),
                 this.RuleCtx.CorrelationId(),
-                this._parameters,
+                this.parameters,
                 tradingPosition,
                 tradingPosition?.Get()?.FirstOrDefault()?.Instrument,
                 hasBreachedRuleByPositionSize,

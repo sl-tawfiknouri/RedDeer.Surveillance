@@ -1,34 +1,60 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using Domain.Core.Financial.Assets;
-using Domain.Core.Markets.Collections;
-using Domain.Core.Trading.Orders;
-using Domain.Surveillance.Scheduling;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-
-// ReSharper disable InconsistentlySynchronizedField
-namespace Surveillance.Engine.Rules.Rules
+﻿namespace Surveillance.Engine.Rules.Rules
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Linq;
+
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Markets.Collections;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules.Interfaces;
+    using Domain.Surveillance.Scheduling;
+
+    using Microsoft.Extensions.Logging;
+
+    using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
 
-    public abstract class BaseUniverseRule : IUniverseRule
+    /// <summary>
+    /// The base universe rule.
+    /// </summary>
+    internal abstract class BaseUniverseRule : IUniverseRule
     {
-        private readonly string _name;
+        /// <summary>
+        /// The name.
+        /// </summary>
+        private readonly string name;
+
+        /// <summary>
+        /// The trade backward window size.
+        /// </summary>
         protected readonly TimeSpan TradeBackwardWindowSize;
+
+        /// <summary>
+        /// The forward window size.
+        /// </summary>
         protected readonly TimeSpan ForwardWindowSize;
 
+        /// <summary>
+        /// The universe equity intraday cache.
+        /// </summary>
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
+
+        /// <summary>
+        /// The universe equity interday cache.
+        /// </summary>
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
 
+        /// <summary>
+        /// The universe event.
+        /// </summary>
         protected IUniverseEvent UniverseEvent;
 
         /// <summary>
@@ -37,29 +63,122 @@ namespace Surveillance.Engine.Rules.Rules
         /// </summary>
         protected IUniverseEquityIntradayCache FutureUniverseEquityIntradayCache;
 
+        /// <summary>
+        /// The trading history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+
+        /// <summary>
+        /// The trading fills history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingFillsHistory;
+
+        /// <summary>
+        /// The trading initial history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+
+        /// <summary>
+        /// The delayed trading history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingHistory;
+
+        /// <summary>
+        /// The delayed trading fills history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingFillsHistory;
+
+        /// <summary>
+        /// The delayed trading initial history.
+        /// </summary>
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> DelayedTradingInitialHistory;
 
+        /// <summary>
+        /// The schedule.
+        /// </summary>
         protected ScheduledExecution Schedule;
+
+        /// <summary>
+        /// The universe date time.
+        /// </summary>
         protected DateTime UniverseDateTime;
+
+        /// <summary>
+        /// The has reached end of universe.
+        /// </summary>
         protected bool HasReachedEndOfUniverse;
+
+        /// <summary>
+        /// The has reached future universe epoch.
+        /// </summary>
         protected bool HasReachedFutureUniverseEpoch;
+
+        /// <summary>
+        /// The rule ctx.
+        /// </summary>
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
+
+        /// <summary>
+        /// The run mode.
+        /// </summary>
         protected readonly RuleRunMode RunMode;
 
-        private readonly ILogger _logger;
-        private readonly ILogger<TradingHistoryStack> _tradingStackLogger;
-        private readonly object _lock = new object();
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// The trading stack logger.
+        /// </summary>
+        private readonly ILogger<TradingHistoryStack> tradingStackLogger;
+
+        /// <summary>
+        /// The lock.
+        /// </summary>
+        private readonly object @lock = new object();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseUniverseRule"/> class.
+        /// </summary>
+        /// <param name="tradeBackwardWindowSize">
+        /// The trade backward window size.
+        /// </param>
+        /// <param name="marketBackwardWindowSize">
+        /// The market backward window size.
+        /// </param>
+        /// <param name="forwardWindowSize">
+        /// The forward window size.
+        /// </param>
+        /// <param name="rules">
+        /// The rules.
+        /// </param>
+        /// <param name="version">
+        /// The version.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="ruleContext">
+        /// The rule context.
+        /// </param>
+        /// <param name="factory">
+        /// The factory.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingStackLogger">
+        /// The trading stack logger.
+        /// </param>
         protected BaseUniverseRule(
             TimeSpan tradeBackwardWindowSize,
             TimeSpan marketBackwardWindowSize,
             TimeSpan forwardWindowSize,
-            Domain.Surveillance.Scheduling.Rules rules,
+            Rules rules,
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleContext,
@@ -69,50 +188,73 @@ namespace Surveillance.Engine.Rules.Rules
             ILogger<TradingHistoryStack> tradingStackLogger)
         {
             this.TradeBackwardWindowSize = tradeBackwardWindowSize;
-            ForwardWindowSize = forwardWindowSize;
+            this.ForwardWindowSize = forwardWindowSize;
 
-            Rule = rules;
-            Version = version ?? string.Empty;
+            this.Rule = rules;
+            this.Version = version ?? string.Empty;
 
-            UniverseEquityIntradayCache =
+            this.UniverseEquityIntradayCache =
                 factory?.BuildIntraday(marketBackwardWindowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
-            FutureUniverseEquityIntradayCache =
+            this.FutureUniverseEquityIntradayCache =
                 factory?.BuildIntraday(forwardWindowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
-            UniverseEquityInterdayCache =
+            this.UniverseEquityInterdayCache =
                 factory?.BuildInterday(runMode)
                 ?? throw new ArgumentNullException(nameof(factory));
 
-            TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
-            TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
-            TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
 
-            DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
-            DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
-            DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            this.DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
 
-            RuleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
-            _name = name ?? "Unnamed rule";
-            RunMode = runMode;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tradingStackLogger = tradingStackLogger ?? throw new ArgumentNullException(nameof(tradingStackLogger));
+            this.RuleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
+            this.name = name ?? "Unnamed rule";
+            this.RunMode = runMode;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.tradingStackLogger = tradingStackLogger ?? throw new ArgumentNullException(nameof(tradingStackLogger));
         }
 
+        /// <summary>
+        /// Gets the rule.
+        /// </summary>
+        public Rules Rule { get; }
+
+        /// <summary>
+        /// Gets the version.
+        /// </summary>
+        public string Version { get; }
+
+        /// <summary>
+        /// The on completed.
+        /// </summary>
         public void OnCompleted()
         {
-            _logger?.LogInformation($"Universe Rule {_name} completed its universe stream");
+            this.logger?.LogInformation($"Universe Rule {this.name} completed its universe stream");
         }
 
+        /// <summary>
+        /// The on error.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         public void OnError(Exception error)
         {
-            _logger?.LogError($"{_name} {Version} {error}");
+            this.logger?.LogError($"{this.name} {Version} {error}");
         }
 
-        protected abstract IUniverseEvent Filter(IUniverseEvent value);
-
+        /// <summary>
+        /// The on next.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
             if (value == null)
@@ -120,62 +262,102 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            var filteredValue = Filter(value);
+            var filteredValue = this.Filter(value);
             if (filteredValue == null)
             {
-                _logger?.LogInformation($"base universe event at {value.EventTime} filtered out. Skipping event.");
+                this.logger?.LogInformation($"base universe event at {value.EventTime} filtered out. Skipping event.");
                 return;
             }
 
-            UniverseEvent = value;
-            _logger?.LogTrace($"{value} universe event passed to {_name} at universe time {value.EventTime}.");
+            this.UniverseEvent = value;
+            this.logger?.LogTrace($"{value} universe event passed to {this.name} at universe time {value.EventTime}.");
 
-            lock (_lock)
+            lock (this.@lock)
             {
                 switch (value.StateChange)
                 {
                     case UniverseStateEvent.Genesis:
-                        Genesis(value);
+                        this.Genesis(value);
                         break;
                     case UniverseStateEvent.EquityIntradayTick:
-                        EquityIntraDay(value);
-                        FutureEquityIntraDay(value);
+                        this.EquityIntraDay(value);
+                        this.FutureEquityIntraDay(value);
                         break;
                     case UniverseStateEvent.EquityInterDayTick:
-                        EquityInterDay(value);
+                        this.EquityInterDay(value);
                         break;
                     case UniverseStateEvent.OrderPlaced:
-                        TradeSubmitted(value);
-                        TradeSubmittedDelay(value);
+                        this.TradeSubmitted(value);
+                        this.TradeSubmittedDelay(value);
                         break;
                     case UniverseStateEvent.Order:
-                        Trade(value);
-                        TradeDelay(value);
+                        this.Trade(value);
+                        this.TradeDelay(value);
                         break;
                     case UniverseStateEvent.OrderFilled:
-                        TradeFilled(value);
-                        TradeFilledDelay(value);
+                        this.TradeFilled(value);
+                        this.TradeFilledDelay(value);
                         break;
                     case UniverseStateEvent.ExchangeOpen:
-                        MarketOpened(value);
+                        this.MarketOpened(value);
                         break;
                     case UniverseStateEvent.ExchangeClose:
-                        MarketClosed(value);
+                        this.MarketClosed(value);
                         break;
                     case UniverseStateEvent.Eschaton:
-                        Eschaton(value);
+                        this.Eschaton(value);
                         break;
                     case UniverseStateEvent.Unknown:
-                        _logger?.LogWarning($"Universe rule {_name} received an unknown event");
-                        RuleCtx.EventException($"Universe rule {_name} received an unknown event");
+                        this.logger?.LogWarning($"Universe rule {this.name} received an unknown event");
+                        this.RuleCtx.EventException($"Universe rule {this.name} received an unknown event");
                         break;
                     case UniverseStateEvent.EpochFutureUniverse:
-                        HasReachedFutureUniverseEpoch = true;
+                        this.HasReachedFutureUniverseEpoch = true;
                         break;
                 }
             }
         }
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public abstract IRuleDataConstraint DataConstraints();
+
+        /// <summary>
+        /// The base clone.
+        /// </summary>
+        public void BaseClone()
+        {
+            this.UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)this.UniverseEquityIntradayCache.Clone();
+            this.UniverseEquityInterdayCache = (IUniverseEquityInterDayCache)this.UniverseEquityInterdayCache.Clone();
+            this.TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingHistory);
+            this.TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingFillsHistory);
+            this.TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingInitialHistory);
+            this.DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.DelayedTradingHistory);
+            this.DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.DelayedTradingFillsHistory);
+            this.DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.DelayedTradingInitialHistory);
+        }
+
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        protected abstract IUniverseEvent Filter(IUniverseEvent value);
+
+        /// <summary>
+        /// The genesis.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void Genesis(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is ScheduledExecution value))
@@ -183,13 +365,19 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Genesis event in base universe rule occuring for rule {_name} | event/universe time {universeEvent.EventTime} | correlation id {value.CorrelationId} | time series initiation  {value.TimeSeriesInitiation} | time series termination {value.TimeSeriesTermination}");
+            this.logger?.LogInformation($"Genesis event in base universe rule occuring for rule {this.name} | event/universe time {universeEvent.EventTime} | correlation id {value.CorrelationId} | time series initiation  {value.TimeSeriesInitiation} | time series termination {value.TimeSeriesTermination}");
 
-            Schedule = value;
-            UniverseDateTime = universeEvent.EventTime;
-            Genesis();
+            this.Schedule = value;
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.Genesis();
         }
 
+        /// <summary>
+        /// The equity intra day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void EquityIntraDay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is EquityIntraDayTimeBarCollection value))
@@ -197,12 +385,18 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Equity intra day event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+            this.logger?.LogInformation($"Equity intra day event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            UniverseEquityIntradayCache.Add(value);
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.UniverseEquityIntradayCache.Add(value);
         }
 
+        /// <summary>
+        /// The future equity intra day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void FutureEquityIntraDay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is EquityIntraDayTimeBarCollection value))
@@ -210,12 +404,18 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Equity intra day event (future) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+            this.logger?.LogInformation($"Equity intra day event (future) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            FutureUniverseEquityIntradayCache.Add(value);
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.FutureUniverseEquityIntradayCache.Add(value);
         }
 
+        /// <summary>
+        /// The equity inter day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void EquityInterDay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is EquityInterDayTimeBarCollection value))
@@ -223,13 +423,18 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Equity inter day event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+            this.logger?.LogInformation($"Equity inter day event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            UniverseEquityInterdayCache.Add(value);
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.UniverseEquityInterdayCache.Add(value);
         }
 
-
+        /// <summary>
+        /// The trade submitted.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void TradeSubmitted(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -237,22 +442,30 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            if (HasReachedFutureUniverseEpoch)
+            if (this.HasReachedFutureUniverseEpoch)
+            {
                 return;
+            }
 
-            _logger?.LogTrace($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
+            this.logger?.LogTrace($"Trade placed event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
 
-            UniverseDateTime = universeEvent.EventTime;
+            this.UniverseDateTime = universeEvent.EventTime;
             var updatedHistory =
-                UpdateTradeSubmittedTradingHistories(
+                this.UpdateTradeSubmittedTradingHistories(
                     value,
-                    TradingInitialHistory,
+                    this.TradingInitialHistory,
                     this.TradeBackwardWindowSize,
                     null);
 
-            RunInitialSubmissionEvent(updatedHistory);
+            this.RunInitialSubmissionEvent(updatedHistory);
         }
 
+        /// <summary>
+        /// The trade submitted delay.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void TradeSubmittedDelay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -260,19 +473,37 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogTrace($"Trade placed event (delay) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
+            this.logger?.LogTrace($"Trade placed event (delay) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
 
-            UniverseDateTime = universeEvent.EventTime;
+            this.UniverseDateTime = universeEvent.EventTime;
             var updatedHistory =
-                UpdateTradeSubmittedTradingHistories(
+                this.UpdateTradeSubmittedTradingHistories(
                     value,
-                    DelayedTradingInitialHistory,
+                    this.DelayedTradingInitialHistory,
                     this.TradeBackwardWindowSize,
-                    ForwardWindowSize);
+                    this.ForwardWindowSize);
 
-            RunInitialSubmissionEventDelayed(updatedHistory);
+            this.RunInitialSubmissionEventDelayed(updatedHistory);
         }
 
+        /// <summary>
+        /// The update trade submitted trading histories.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradingHistory">
+        /// The trading history.
+        /// </param>
+        /// <param name="backwardWindowSize">
+        /// The backward window size.
+        /// </param>
+        /// <param name="forwardWindowSize">
+        /// The forward window size.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITradingHistoryStack"/>.
+        /// </returns>
         private ITradingHistoryStack UpdateTradeSubmittedTradingHistories(
             Order order,
             ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> tradingHistory,
@@ -285,7 +516,7 @@ namespace Surveillance.Engine.Rules.Rules
                     new TradingHistoryStack(
                         backwardWindowSize, 
                         i => i.PlacedDate.GetValueOrDefault(), 
-                        _tradingStackLogger);
+                        this.tradingStackLogger);
 
                 ITradingHistoryStack historyDecorator = 
                     forwardWindowSize != null 
@@ -309,6 +540,12 @@ namespace Surveillance.Engine.Rules.Rules
             return updatedHistory;
         }
 
+        /// <summary>
+        /// The trade.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void Trade(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -316,17 +553,30 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            if (HasReachedFutureUniverseEpoch)
+            if (this.HasReachedFutureUniverseEpoch)
+            {
                 return;
+            }
 
-            _logger?.LogTrace($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+            this.logger?.LogTrace($"Trade event (status changed) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeLatestTradingHistories(value, TradingHistory, this.TradeBackwardWindowSize, null);
+            this.UniverseDateTime = universeEvent.EventTime;
+            var updatedHistory = 
+                this.UpdateTradeLatestTradingHistories(
+                    value, 
+                    this.TradingHistory, 
+                    this.TradeBackwardWindowSize, 
+                    null);
 
-            RunPostOrderEvent(updatedHistory);
+            this.RunPostOrderEvent(updatedHistory);
         }
 
+        /// <summary>
+        /// The trade delay.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void TradeDelay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -334,14 +584,37 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogTrace($"Trade event (status changed delayed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+            this.logger?.LogTrace($"Trade event (status changed delayed) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeLatestTradingHistories(value, DelayedTradingHistory, this.TradeBackwardWindowSize, ForwardWindowSize);
+            this.UniverseDateTime = universeEvent.EventTime;
+            var updatedHistory = 
+                this.UpdateTradeLatestTradingHistories(
+                    value, 
+                    this.DelayedTradingHistory,
+                    this.TradeBackwardWindowSize, 
+                    this.ForwardWindowSize);
 
-            RunPostOrderEventDelayed(updatedHistory);
+            this.RunPostOrderEventDelayed(updatedHistory);
         }
 
+        /// <summary>
+        /// The update trade latest trading histories.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradingHistory">
+        /// The trading history.
+        /// </param>
+        /// <param name="backwardWindowSize">
+        /// The backward window size.
+        /// </param>
+        /// <param name="forwardWindowSize">
+        /// The forward window size.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITradingHistoryStack"/>.
+        /// </returns>
         private ITradingHistoryStack UpdateTradeLatestTradingHistories(
             Order order,
             ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> tradingHistory,
@@ -350,7 +623,7 @@ namespace Surveillance.Engine.Rules.Rules
         {
             if (!tradingHistory.ContainsKey(order.Instrument.Identifiers))
             {
-                ITradingHistoryStack history = new TradingHistoryStack(backwardWindowSize, i => i.MostRecentDateEvent(), _tradingStackLogger);
+                ITradingHistoryStack history = new TradingHistoryStack(backwardWindowSize, i => i.MostRecentDateEvent(), this.tradingStackLogger);
                 ITradingHistoryStack historyDecorator = new TradingHistoryDelayedDecorator(history, forwardWindowSize.GetValueOrDefault());
                 var stack =
                     forwardWindowSize != null
@@ -371,7 +644,13 @@ namespace Surveillance.Engine.Rules.Rules
 
             return updatedHistory;
         }
-        
+
+        /// <summary>
+        /// The trade filled.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void TradeFilled(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -379,23 +658,36 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            if (HasReachedFutureUniverseEpoch)
-                return;
-
-            if (value.FilledDate == null)
+            if (this.HasReachedFutureUniverseEpoch)
             {
-                _logger?.LogError($"Trade filled with null fill date {value.Instrument.Identifiers}");
                 return;
             }
 
-            _logger?.LogTrace($"Trade Filled event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+            if (value.FilledDate == null)
+            {
+                this.logger?.LogError($"Trade filled with null fill date {value.Instrument.Identifiers}");
+                return;
+            }
 
-            UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeFilledTradingHistories(value, TradingFillsHistory, this.TradeBackwardWindowSize, null);
+            this.logger?.LogTrace($"Trade Filled event (status changed) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
-            RunOrderFilledEvent(updatedHistory);
+            this.UniverseDateTime = universeEvent.EventTime;
+            var updatedHistory =
+                this.UpdateTradeFilledTradingHistories(
+                    value, 
+                    this.TradingFillsHistory,
+                    this.TradeBackwardWindowSize,
+                    null);
+
+            this.RunOrderFilledEvent(updatedHistory);
         }
 
+        /// <summary>
+        /// The trade filled delay.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void TradeFilledDelay(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is Order value))
@@ -405,18 +697,41 @@ namespace Surveillance.Engine.Rules.Rules
 
             if (value.FilledDate == null)
             {
-                _logger?.LogError($"Trade filled with null fill date {value.Instrument.Identifiers}");
+                this.logger?.LogError($"Trade filled with null fill date {value.Instrument.Identifiers}");
                 return;
             }
 
-            _logger?.LogTrace($"Trade Filled event (status changed - delayed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+            this.logger?.LogTrace($"Trade Filled event (status changed - delayed) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            var updatedHistory = UpdateTradeFilledTradingHistories(value, DelayedTradingFillsHistory, this.TradeBackwardWindowSize, ForwardWindowSize);
+            this.UniverseDateTime = universeEvent.EventTime;
+            var updatedHistory =
+                this.UpdateTradeFilledTradingHistories(
+                    value,
+                    this.DelayedTradingFillsHistory,
+                    this.TradeBackwardWindowSize,
+                    this.ForwardWindowSize);
 
-            RunOrderFilledEventDelayed(updatedHistory);
+            this.RunOrderFilledEventDelayed(updatedHistory);
         }
 
+        /// <summary>
+        /// The update trade filled trading histories.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="tradingFillsHistory">
+        /// The trading fills history.
+        /// </param>
+        /// <param name="backwardWindow">
+        /// The backward window.
+        /// </param>
+        /// <param name="forwardWindow">
+        /// The forward window.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITradingHistoryStack"/>.
+        /// </returns>
         private ITradingHistoryStack UpdateTradeFilledTradingHistories(
             Order order,
             ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> tradingFillsHistory,
@@ -426,7 +741,7 @@ namespace Surveillance.Engine.Rules.Rules
             if (!tradingFillsHistory.ContainsKey(order.Instrument.Identifiers))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                ITradingHistoryStack history = new TradingHistoryStack(backwardWindow, i => i.FilledDate.Value, _tradingStackLogger);
+                ITradingHistoryStack history = new TradingHistoryStack(backwardWindow, i => i.FilledDate.Value, this.tradingStackLogger);
                 ITradingHistoryStack historyDecorator = new TradingHistoryDelayedDecorator(history, forwardWindow.GetValueOrDefault());
                 var stack =
                     forwardWindow != null
@@ -450,6 +765,12 @@ namespace Surveillance.Engine.Rules.Rules
             return updatedHistory;
         }
 
+        /// <summary>
+        /// The market opened.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void MarketOpened(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is MarketOpenClose value))
@@ -457,12 +778,18 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogTrace($"Market opened event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
+            this.logger?.LogTrace($"Market opened event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            MarketOpen(value);
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.MarketOpen(value);
         }
 
+        /// <summary>
+        /// The market closed.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void MarketClosed(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is MarketOpenClose value))
@@ -470,50 +797,72 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Market closed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
+            this.logger?.LogInformation($"Market closed event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            MarketClose(value);
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.MarketClose(value);
         }
 
+        /// <summary>
+        /// The eschaton.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
         private void Eschaton(IUniverseEvent universeEvent)
         {
-            _logger?.LogInformation($"Eschaton in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime}");
+            this.logger?.LogInformation($"Eschaton in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime}");
 
-            UniverseDateTime = universeEvent.EventTime;
-            HasReachedEndOfUniverse = true;
-            EndOfUniverse();
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.HasReachedEndOfUniverse = true;
+            this.EndOfUniverse();
         }
 
+        /// <summary>
+        /// The run rule for all trading histories.
+        /// </summary>
+        /// <param name="currentTimeInUniverse">
+        /// The current time in universe.
+        /// </param>
         protected void RunRuleForAllTradingHistories(DateTime? currentTimeInUniverse = null)
         {
-            lock (_lock)
+            lock (this.@lock)
             {
-                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all trading histories {currentTimeInUniverse}");
-                foreach (var history in TradingHistory)
+                this.logger?.LogInformation($"Base universe rule for {this.name} - Run rule for all trading histories {currentTimeInUniverse}");
+                foreach (var history in this.TradingHistory)
                 {
                     if (currentTimeInUniverse != null)
                     {
                         history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
                     }
-                    RunPostOrderEvent(history.Value);
+
+                    this.RunPostOrderEvent(history.Value);
                 }
             }
         }
 
+        /// <summary>
+        /// The run rule for all trading histories in market.
+        /// </summary>
+        /// <param name="closeOpen">
+        /// The close open.
+        /// </param>
+        /// <param name="currentTimeInUniverse">
+        /// The current time in universe.
+        /// </param>
         protected void RunRuleForAllTradingHistoriesInMarket(MarketOpenClose closeOpen, DateTime? currentTimeInUniverse = null)
         {
-            lock (_lock)
+            lock (this.@lock)
             {
                 if (closeOpen == null)
                 {
                     return;
                 }
 
-                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
+                this.logger?.LogInformation($"Base universe rule for {this.name} - Run rule for all trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
 
                 var filteredTradingHistories =
-                    TradingHistory
+                    this.TradingHistory
                         .Where(th =>
                             string.Equals(
                                 th.Value?.Exchange()?.MarketIdentifierCode,
@@ -527,24 +876,34 @@ namespace Surveillance.Engine.Rules.Rules
                     {
                         history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
                     }
-                    RunPostOrderEvent(history.Value);
+
+                    this.RunPostOrderEvent(history.Value);
                 }
             }
         }
 
+        /// <summary>
+        /// The run rule for all delayed trading histories in market.
+        /// </summary>
+        /// <param name="closeOpen">
+        /// The close open.
+        /// </param>
+        /// <param name="currentTimeInUniverse">
+        /// The current time in universe.
+        /// </param>
         protected void RunRuleForAllDelayedTradingHistoriesInMarket(MarketOpenClose closeOpen, DateTime? currentTimeInUniverse = null)
         {
-            lock (_lock)
+            lock (this.@lock)
             {
                 if (closeOpen == null)
                 {
                     return;
                 }
 
-                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all delayed trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
+                this.logger?.LogInformation($"Base universe rule for {this.name} - Run rule for all delayed trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
 
                 var filteredTradingHistories =
-                    DelayedTradingHistory
+                    this.DelayedTradingHistory
                         .Where(th =>
                             string.Equals(
                                 th.Value?.Exchange()?.MarketIdentifierCode,
@@ -559,7 +918,7 @@ namespace Surveillance.Engine.Rules.Rules
                         history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
                     }
 
-                    RunPostOrderEventDelayed(history.Value);
+                    this.RunPostOrderEventDelayed(history.Value);
                 }
             }
         }
@@ -605,24 +964,30 @@ namespace Surveillance.Engine.Rules.Rules
         /// </summary>
         public abstract void RunOrderFilledEventDelayed(ITradingHistoryStack history);
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected abstract void Genesis();
+
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected abstract void MarketOpen(MarketOpenClose exchange);
+
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected abstract void MarketClose(MarketOpenClose exchange);
+
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected abstract void EndOfUniverse();
-
-        public Domain.Surveillance.Scheduling.Rules Rule { get; }
-        public string Version { get; }
-
-        public void BaseClone()
-        {
-            UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)UniverseEquityIntradayCache.Clone();
-            UniverseEquityInterdayCache = (IUniverseEquityInterDayCache) UniverseEquityInterdayCache.Clone();
-            TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
-            TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingFillsHistory);
-            TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
-            DelayedTradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingHistory);
-            DelayedTradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingFillsHistory);
-            DelayedTradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(DelayedTradingInitialHistory);
-        }
     }
 }

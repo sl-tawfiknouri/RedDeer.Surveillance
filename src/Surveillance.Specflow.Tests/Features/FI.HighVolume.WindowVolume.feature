@@ -24,8 +24,8 @@ Scenario: One order at window volume yields one alert
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 100          | 100         |
 	And With the intraday market data :
 	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
-	| UKGovtBondSecondaryMarket     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
 	| UKGovtBondSecondaryMarket     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| UKGovtBondSecondaryMarket     | 01/01/2018  09:28:00| 1	  | 20  | 10    | GBX      | 5000  |
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 
@@ -72,7 +72,7 @@ Scenario: Two order one inside and one outside trading hours at window volume yi
 	| UKGovtBondSecondaryMarket     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
 	| UKGovtBondSecondaryMarket     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
 	When I run the fixed income high volume rule
-	Then I will have 0 fixed income high volume alerts
+	Then I will have 1 fixed income high volume alerts
 
 @fixedincomehighvolumewindowvolume
 Scenario: One order at window volume partially filled yields one alert

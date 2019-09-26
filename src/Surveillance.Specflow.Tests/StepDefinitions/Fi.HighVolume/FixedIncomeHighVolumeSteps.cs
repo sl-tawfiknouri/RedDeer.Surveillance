@@ -8,6 +8,8 @@
 
     using Microsoft.Extensions.Logging.Abstractions;
 
+    using RedDeer.Contracts.SurveillanceService.Api.Markets;
+
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
@@ -26,6 +28,7 @@
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+    using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 
     using TechTalk.SpecFlow;
@@ -210,33 +213,57 @@
                 new FixedIncomeHighVolumeJudgementMapper(new NullLogger<FixedIncomeHighVolumeJudgementMapper>()),
                 new NullLogger<JudgementService>());
 
-            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("XLON")).Returns(
-                new TradingHours
-                    {
-                        CloseOffsetInUtc = TimeSpan.FromHours(16),
-                        IsValid = true,
-                        Mic = "XLON",
-                        OpenOffsetInUtc = TimeSpan.FromHours(8)
-                    });
+            var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
-            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("NASDAQ")).Returns(
-                new TradingHours
-                    {
-                        CloseOffsetInUtc = TimeSpan.FromHours(23),
-                        IsValid = true,
-                        Mic = "NASDAQ",
-                        OpenOffsetInUtc = TimeSpan.FromHours(15)
-                    });
+            A
+                .CallTo(() => repository.GetAsync()).
+                Returns(new ExchangeDto[]
+                            {
+                                new ExchangeDto
+                                    {
+                                        Code = "XLON",
+                                        MarketOpenTime = TimeSpan.FromHours(8),
+                                        MarketCloseTime = TimeSpan.FromHours(16),
+                                        IsOpenOnMonday = true,
+                                        IsOpenOnTuesday = true,
+                                        IsOpenOnWednesday = true,
+                                        IsOpenOnThursday = true,
+                                        IsOpenOnFriday = true,
+                                        IsOpenOnSaturday = true,
+                                        IsOpenOnSunday = true,
+                                    },
 
-            A.CallTo(() => this.marketTradingHoursService.GetTradingHoursForMic("Diversity")).Returns(
-                new TradingHours
-                    {
-                        CloseOffsetInUtc = TimeSpan.FromHours(16),
-                        IsValid = true,
-                        Mic = "Diversity",
-                        OpenOffsetInUtc = TimeSpan.FromHours(8)
-                    });
+                                new ExchangeDto
+                                    {
+                                        Code = "Diversity",
+                                        MarketOpenTime = TimeSpan.FromHours(8),
+                                        MarketCloseTime = TimeSpan.FromHours(16),
+                                        IsOpenOnMonday = true,
+                                        IsOpenOnTuesday = true,
+                                        IsOpenOnWednesday = true,
+                                        IsOpenOnThursday = true,
+                                        IsOpenOnFriday = true,
+                                        IsOpenOnSaturday = true,
+                                        IsOpenOnSunday = true,
+                                    },
 
+                                new ExchangeDto
+                                    {
+                                        Code = "NASDAQ",
+                                        MarketOpenTime = TimeSpan.FromHours(15),
+                                        MarketCloseTime = TimeSpan.FromHours(23),
+                                        IsOpenOnMonday = true,
+                                        IsOpenOnTuesday = true,
+                                        IsOpenOnWednesday = true,
+                                        IsOpenOnThursday = true,
+                                        IsOpenOnFriday = true,
+                                        IsOpenOnSaturday = true,
+                                        IsOpenOnSunday = true,
+                                    }
+                            });
+
+            this.marketTradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());
+            
             this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),

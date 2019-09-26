@@ -5,10 +5,13 @@
     using System.Linq;
 
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
     using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
@@ -174,12 +177,18 @@
         /// <returns>
         /// The <see cref="IRuleDataConstraint"/>.
         /// </returns>
-        /// <exception cref="NotImplementedException">
-        /// Not done it yet
-        /// </exception>
         public override IRuleDataConstraint DataConstraints()
         {
-            throw new NotImplementedException();
+            var constraint = new RuleDataSubConstraint(
+                this.ForwardWindowSize,
+                this.TradeBackwardWindowSize,
+                DataSource.None,
+                _ => true);
+
+            return new RuleDataConstraint(
+                this.Rule, 
+                this.parameters.Id, 
+                new[] { constraint });
         }
 
         /// <summary>

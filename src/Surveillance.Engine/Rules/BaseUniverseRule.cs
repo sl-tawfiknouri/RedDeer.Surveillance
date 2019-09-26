@@ -25,7 +25,7 @@
     /// <summary>
     /// The base universe rule.
     /// </summary>
-    internal abstract class BaseUniverseRule : IUniverseRule
+    public abstract class BaseUniverseRule : IUniverseRule
     {
         /// <summary>
         /// The name.

@@ -9,6 +9,7 @@
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.Lazy.Interfaces;
 
     /// <summary>
@@ -48,14 +49,19 @@
         private readonly IUniverseBuilder universeBuilder;
 
         /// <summary>
+        /// The data manifest interpreter.
+        /// </summary>
+        private readonly IDataManifestInterpreter _dataDataManifestInterpreter;
+
+        /// <summary>
+        /// The data manifest.
+        /// </summary>
+        private readonly IDataManifest dataManifest;
+
+        /// <summary>
         /// The eschaton in buffer.
         /// </summary>
         private bool eschatonInBuffer;
-
-        /// <summary>
-        /// The executions.
-        /// </summary>
-        private Stack<ScheduledExecution> executions = new Stack<ScheduledExecution>();
 
         /// <summary>
         /// The has eschaton occurred.
@@ -82,16 +88,19 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
+        /// <param name="dataDataManifestInterpreter">
+        /// The data manifest interpreter.
+        /// </param>
         public LazyTransientUniverse(
-            ILazyScheduledExecutioner scheduledExecutioner,
             IUniverseBuilder universeBuilder,
             ScheduledExecution execution,
-            ISystemProcessOperationContext operationContext)
+            ISystemProcessOperationContext operationContext,
+            IDataManifestInterpreter dataDataManifestInterpreter)
         {
-            this.scheduledExecutioner = scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
             this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
             this.scheduledExecution = execution ?? throw new ArgumentNullException(nameof(execution));
             this.operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
+            this._dataDataManifestInterpreter = dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
         }
 
         /// <summary>
@@ -121,6 +130,7 @@
         /// </summary>
         private void ReloadBuffer()
         {
+            // trade off CPU for memory
             GC.Collect();
 
             if (this.eschatonInBuffer)
@@ -129,38 +139,17 @@
                 return;
             }
 
-            var fetchGenesis = !this.hasFetchedExecutions;
-            if (!this.hasFetchedExecutions)
+            var universeTask = this._dataDataManifestInterpreter.PlayForward(TimeSpan.FromDays(7));
+            var universe = universeTask.Result;
+
+            foreach (var bufferedItem in universe.UniverseEvents)
             {
-                this.executions = this.scheduledExecutioner.Execute(this.scheduledExecution);
-                this.hasFetchedExecutions = true;
-            }
-
-            while (this.executions.Any())
-            {
-                var exe = this.executions.Pop();
-
-                // the stack has simpler executions which already account for the leading/trailing edge of the universe
-                var fetchEschaton = exe.TimeSeriesTermination >= this.scheduledExecution.AdjustedTimeSeriesTermination;
-                var universe = this.universeBuilder.Summon(
-                    exe,
-                    this.operationContext,
-                    fetchGenesis,
-                    fetchEschaton,
-                    this.scheduledExecution.TimeSeriesInitiation,
-                    this.scheduledExecution.TimeSeriesTermination).Result;
-
-                foreach (var bufferedItem in universe.UniverseEvents)
+                if (bufferedItem.StateChange == UniverseStateEvent.Eschaton)
                 {
-                    this.buffer.Enqueue(bufferedItem);
+                    this.eschatonInBuffer = true;
                 }
 
-                this.eschatonInBuffer = this.eschatonInBuffer || fetchEschaton;
-
-                if (universe.UniverseEvents.Any())
-                {
-                    break;
-                }
+                this.buffer.Enqueue(bufferedItem);
             }
         }
 

@@ -25,6 +25,8 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Data.Universe;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy;
+    using Surveillance.Data.Universe.Lazy.Builder;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.Lazy.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
@@ -317,6 +319,7 @@ namespace Surveillance.Engine.Rules
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementMapper>().Use<FixedIncomeHighVolumeJudgementMapper>();
+            this.For<IDataManifestInterpreter>().Use<DataManifestInterpreter>();
         }
     }
 }

@@ -6,6 +6,7 @@
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.Lazy.Interfaces;
 
     /// <summary>
@@ -14,14 +15,14 @@
     public class LazyTransientUniverseFactory : ILazyTransientUniverseFactory
     {
         /// <summary>
-        /// The scheduled executioner.
-        /// </summary>
-        private readonly ILazyScheduledExecutioner scheduledExecutioner;
-
-        /// <summary>
         /// The universe builder.
         /// </summary>
         private readonly IUniverseBuilder universeBuilder;
+
+        /// <summary>
+        /// The manifest interpreter.
+        /// </summary>
+        private readonly IDataManifestInterpreter _dataDataManifestInterpreter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LazyTransientUniverseFactory"/> class.
@@ -29,16 +30,15 @@
         /// <param name="universeBuilder">
         /// The universe builder.
         /// </param>
-        /// <param name="scheduledExecutioner">
-        /// The scheduled executioner.
+        /// <param name="dataDataManifestInterpreter">
+        /// The data manifest interpreter
         /// </param>
         public LazyTransientUniverseFactory(
             IUniverseBuilder universeBuilder,
-            ILazyScheduledExecutioner scheduledExecutioner)
+            IDataManifestInterpreter dataDataManifestInterpreter)
         {
             this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
-            this.scheduledExecutioner =
-                scheduledExecutioner ?? throw new ArgumentNullException(nameof(scheduledExecutioner));
+            this._dataDataManifestInterpreter = dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
         }
 
         /// <summary>
@@ -56,10 +56,10 @@
         public IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
             var universeEvents = new LazyTransientUniverse(
-                this.scheduledExecutioner,
                 this.universeBuilder,
                 execution,
-                operationContext);
+                operationContext,
+                this._dataDataManifestInterpreter);
 
             return new Universe(universeEvents);
         }

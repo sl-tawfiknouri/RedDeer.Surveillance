@@ -102,7 +102,7 @@
                     ? $" at the venue ({judgementContext.Venue?.MarketIdentifierCode}) {judgementContext.Venue?.Name}"
                     : string.Empty;
 
-            var dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {judgementContext.Judgement.DailyAnalysisAnalysis.VolumeTradedAmount.GetValueOrDefault(0).ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.Judgement.DailyAnalysisAnalysis.VolumeThresholdAmount.GetValueOrDefault(0).ToString("0.##")}.";
+            var dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {judgementContext?.Judgement?.DailyAnalysisAnalysis?.VolumeTradedAmount?.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext?.Judgement?.DailyAnalysisAnalysis?.VolumeThresholdAmount?.ToString("0.##")}.";
 
             return dailyDescription;
         }
@@ -131,10 +131,9 @@
                 ? $" at the venue ({judgementContext.Venue?.MarketIdentifierCode}) {judgementContext.Venue?.Name}"
                 : string.Empty;
 
-            var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext.FixedIncomeParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext.Judgement.WindowAnalysisAnalysis.VolumeTradedAmount.GetValueOrDefault(0).ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdAmount.GetValueOrDefault(0).ToString("0.##")}.";
+            var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {judgementContext?.FixedIncomeParameters?.Windows?.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {judgementContext?.Judgement?.WindowAnalysisAnalysis?.VolumeTradedAmount?.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {judgementContext?.Judgement?.WindowAnalysisAnalysis?.VolumeThresholdAmount?.ToString("0.##")}.";
 
             return windowDescription;
         }
-
     }
 }

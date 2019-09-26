@@ -11,49 +11,73 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy;
-    using Surveillance.Data.Universe.Lazy.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
 
+    /// <summary>
+    /// The lazy transient universe factory tests.
+    /// </summary>
     [TestFixture]
     public class LazyTransientUniverseFactoryTests
     {
-        private ISystemProcessOperationContext _opCtx;
+        /// <summary>
+        /// The operation context.
+        /// </summary>
+        private ISystemProcessOperationContext operationContext;
 
-        private ILazyScheduledExecutioner _scheduledExecutioner;
+        /// <summary>
+        /// The data manifest interpreter.
+        /// </summary>
+        private IDataManifestInterpreter dataManifestInterpreter;
 
-        private IUniverseBuilder _universeBuilder;
+        /// <summary>
+        /// The universe builder.
+        /// </summary>
+        private IUniverseBuilder universeBuilder;
 
+        /// <summary>
+        /// The build returns universe.
+        /// </summary>
         [Test]
-        public void Build_Returns_Universe()
+        public void BuildReturnsUniverse()
         {
-            var factory = new LazyTransientUniverseFactory(this._universeBuilder, this._scheduledExecutioner);
+            var factory = new LazyTransientUniverseFactory(this.universeBuilder, this.dataManifestInterpreter);
             var execution = new ScheduledExecution();
 
-            var universe = factory.Build(execution, this._opCtx);
+            var universe = factory.Build(execution, this.operationContext);
 
             Assert.IsNotNull(universe);
         }
 
+        /// <summary>
+        /// The constructor null scheduled executioner throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullScheduledExecutioner_ThrowsException()
+        public void ConstructorNullScheduledExecutionerThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LazyTransientUniverseFactory(this._universeBuilder, null));
+            Assert.Throws<ArgumentNullException>(() => new LazyTransientUniverseFactory(this.universeBuilder, null));
         }
 
+        /// <summary>
+        /// The constructor null universe builder throws exception.
+        /// </summary>
         [Test]
-        public void Ctor_NullUniverseBuilder_ThrowsException()
+        public void ConstructorNullUniverseBuilderThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new LazyTransientUniverseFactory(null, this._scheduledExecutioner));
+                () => new LazyTransientUniverseFactory(null, this.dataManifestInterpreter));
         }
 
+        /// <summary>
+        /// The setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._universeBuilder = A.Fake<IUniverseBuilder>();
-            this._opCtx = A.Fake<ISystemProcessOperationContext>();
-            this._scheduledExecutioner = A.Fake<ILazyScheduledExecutioner>();
+            this.universeBuilder = A.Fake<IUniverseBuilder>();
+            this.operationContext = A.Fake<ISystemProcessOperationContext>();
+            this.dataManifestInterpreter = A.Fake<IDataManifestInterpreter>();
         }
     }
 }

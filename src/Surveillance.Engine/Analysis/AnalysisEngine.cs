@@ -300,8 +300,18 @@
             player.Subscribe(universeAnalyticsSubscriber);
 
             this.logger.LogInformation("START PLAYING UNIVERSE TO SUBSCRIBERS");
+
+            // pass through rule subscriptions here :)
+            // no
+            // pass in a data manifest here, and build it before
+
+            // execution + rule subs to make a data manifest
+
+
             var lazyUniverse = this.universeFactory.Build(execution, operationContext);
             player.Play(lazyUniverse);
+
+
             this.logger.LogInformation("STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             if (cts.IsCancellationRequested)

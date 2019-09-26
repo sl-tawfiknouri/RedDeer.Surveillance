@@ -51,7 +51,7 @@
         /// <summary>
         /// The data manifest interpreter.
         /// </summary>
-        private readonly IDataManifestInterpreter _dataDataManifestInterpreter;
+        private readonly IDataManifestInterpreter dataDataManifestInterpreter;
 
         /// <summary>
         /// The data manifest.
@@ -100,7 +100,7 @@
             this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
             this.scheduledExecution = execution ?? throw new ArgumentNullException(nameof(execution));
             this.operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
-            this._dataDataManifestInterpreter = dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
+            this.dataDataManifestInterpreter = dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
         }
 
         /// <summary>
@@ -139,7 +139,7 @@
                 return;
             }
 
-            var universeTask = this._dataDataManifestInterpreter.PlayForward(TimeSpan.FromDays(7));
+            var universeTask = this.dataDataManifestInterpreter.PlayForward(TimeSpan.FromDays(7));
             var universe = universeTask.Result;
 
             foreach (var bufferedItem in universe.UniverseEvents)

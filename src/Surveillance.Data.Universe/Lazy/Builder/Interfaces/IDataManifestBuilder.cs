@@ -1,16 +1,14 @@
-﻿namespace Surveillance.Data.Universe.Lazy.Builder
+﻿namespace Surveillance.Data.Universe.Lazy.Builder.Interfaces
 {
     using System.Collections.Generic;
 
     using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
-
     /// <summary>
-    /// The data manifest builder.
+    /// The DataManifestBuilder interface.
     /// </summary>
-    public class DataManifestBuilder : IDataManifestBuilder
+    public interface IDataManifestBuilder
     {
         /// <summary>
         /// The build.
@@ -24,11 +22,6 @@
         /// <returns>
         /// The <see cref="IDataManifest"/>.
         /// </returns>
-        public IDataManifest Build(
-            ScheduledExecution execution,
-            IReadOnlyCollection<IRuleDataConstraint> ruleDataConstraints)
-        {
-            return null;
-        }
+        IDataManifest Build(ScheduledExecution execution, IReadOnlyCollection<IRuleDataConstraint> ruleDataConstraints);
     }
 }

@@ -196,6 +196,33 @@
                 highProfitFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highProfitFixedIncomeSubscriber));
         }
 
+        /// <summary>
+        /// The subscribe rules.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="player">
+        /// The player.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task<IReadOnlyCollection<string>> SubscribeRules(
             ScheduledExecution execution,
             IUniversePlayer player,
@@ -384,29 +411,6 @@
             this.logger.LogInformation($"subscriber processed for the following ids {jointIds}");
 
             return await Task.FromResult(ids);
-
-            // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
-        }
-
-        private void _RegisterNotSupportedSubscriptions(
-            RuleParameterDto ruleParameters,
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IJudgementService judgementService,
-            ISystemProcessOperationContext opCtx)
-        {
-            var layeringSubscriptions = this.layeringEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                opCtx,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            foreach (var sub in layeringSubscriptions)
-                player.Subscribe(sub);
         }
     }
 }

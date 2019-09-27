@@ -9,7 +9,6 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy;
     using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
 
@@ -30,17 +29,12 @@
         private IDataManifestInterpreter dataManifestInterpreter;
 
         /// <summary>
-        /// The universe builder.
-        /// </summary>
-        private IUniverseBuilder universeBuilder;
-
-        /// <summary>
         /// The build returns universe.
         /// </summary>
         [Test]
         public void BuildReturnsUniverse()
         {
-            var factory = new LazyTransientUniverseFactory(this.universeBuilder, this.dataManifestInterpreter);
+            var factory = new LazyTransientUniverseFactory(this.dataManifestInterpreter);
             var execution = new ScheduledExecution();
 
             var universe = factory.Build(execution, this.operationContext);
@@ -49,24 +43,13 @@
         }
 
         /// <summary>
-        /// The constructor null scheduled executioner throws exception.
+        /// The constructor null manifest interpreter throws exception.
         /// </summary>
         [Test]
-        public void ConstructorNullScheduledExecutionerThrowsException()
+        public void ConstructorNullManifestInterpreterThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LazyTransientUniverseFactory(this.universeBuilder, null));
-        }
-
-        /// <summary>
-        /// The constructor null universe builder throws exception.
-        /// </summary>
-        [Test]
-        public void ConstructorNullUniverseBuilderThrowsException()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(
-                () => new LazyTransientUniverseFactory(null, this.dataManifestInterpreter));
+            Assert.Throws<ArgumentNullException>(() => new LazyTransientUniverseFactory(null));
         }
 
         /// <summary>
@@ -75,7 +58,6 @@
         [SetUp]
         public void Setup()
         {
-            this.universeBuilder = A.Fake<IUniverseBuilder>();
             this.operationContext = A.Fake<ISystemProcessOperationContext>();
             this.dataManifestInterpreter = A.Fake<IDataManifestInterpreter>();
         }

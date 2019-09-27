@@ -15,30 +15,21 @@
     public class LazyTransientUniverseFactory : ILazyTransientUniverseFactory
     {
         /// <summary>
-        /// The universe builder.
-        /// </summary>
-        private readonly IUniverseBuilder universeBuilder;
-
-        /// <summary>
         /// The manifest interpreter.
         /// </summary>
-        private readonly IDataManifestInterpreter _dataDataManifestInterpreter;
+        private readonly IDataManifestInterpreter dataDataManifestInterpreter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LazyTransientUniverseFactory"/> class.
         /// </summary>
-        /// <param name="universeBuilder">
-        /// The universe builder.
-        /// </param>
         /// <param name="dataDataManifestInterpreter">
         /// The data manifest interpreter
         /// </param>
         public LazyTransientUniverseFactory(
-            IUniverseBuilder universeBuilder,
             IDataManifestInterpreter dataDataManifestInterpreter)
         {
-            this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
-            this._dataDataManifestInterpreter = dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
+            this.dataDataManifestInterpreter =
+                dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
         }
 
         /// <summary>
@@ -55,11 +46,7 @@
         /// </returns>
         public IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
         {
-            var universeEvents = new LazyTransientUniverse(
-                this.universeBuilder,
-                execution,
-                operationContext,
-                this._dataDataManifestInterpreter);
+            var universeEvents = new LazyTransientUniverse(this.dataDataManifestInterpreter);
 
             return new Universe(universeEvents);
         }

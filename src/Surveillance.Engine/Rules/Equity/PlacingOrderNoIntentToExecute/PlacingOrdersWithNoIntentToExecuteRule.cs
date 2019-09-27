@@ -172,7 +172,7 @@
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
                 DataSource.AllIntraday,
-                _ => true);
+                _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(
                 this.Rule,

@@ -183,7 +183,7 @@
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
                 DataSource.None,
-                _ => true);
+                _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(
                 this.Rule, 

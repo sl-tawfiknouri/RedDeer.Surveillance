@@ -165,8 +165,6 @@
         /// <returns>
         /// The <see cref="IRuleDataConstraint"/>.
         /// </returns>
-        /// <exception cref="NotImplementedException">
-        /// </exception>
         public override IRuleDataConstraint DataConstraints()
         {
             if (this.rampingParameters == null)
@@ -178,8 +176,7 @@
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
                 DataSource.AllIntraday,
-                _ => true);
-
+                _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(
                 this.Rule,

@@ -35,6 +35,9 @@
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The high profit stream rule.
+    /// </summary>
     public class HighProfitStreamRule : BaseUniverseRule, IHighProfitStreamRule
     {
         /// <summary>
@@ -264,7 +267,7 @@
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
                     DataSource.AllInterday,
-                    _ => true);
+                    _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
             }
@@ -275,7 +278,7 @@
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
                     DataSource.AllIntraday,
-                    _ => true);
+                    _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
             }

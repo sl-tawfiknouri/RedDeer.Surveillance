@@ -183,7 +183,7 @@
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
                     DataSource.AllInterday,
-                    _ => true);
+                    _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
             }
@@ -194,7 +194,7 @@
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
                     DataSource.AllIntraday,
-                    _ => true);
+                    _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
             }

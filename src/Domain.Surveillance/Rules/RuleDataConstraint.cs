@@ -55,6 +55,17 @@
         public IRuleDataConstraint Case => this;
 
         /// <summary>
+        /// The empty.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IMonoid"/>.
+        /// </returns>
+        public static IMonoid<IRuleDataConstraint> Empty()
+        {
+            return new RuleDataConstraintEmpty();
+        }
+
+        /// <summary>
         /// The m empty.
         /// I think this should be returning a derived class from
         /// Rule Data Constraint with an empty type implementation of the monoid

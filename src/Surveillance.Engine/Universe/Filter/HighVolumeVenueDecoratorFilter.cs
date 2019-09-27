@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Surveillance.Data.Universe;
@@ -11,100 +12,183 @@
     using Surveillance.Engine.Rules.RuleParameters;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The high volume venue decorator filter.
+    /// </summary>
     public class HighVolumeVenueDecoratorFilter : IHighVolumeVenueDecoratorFilter
     {
-        private readonly IUniverseFilterService _baseService;
+        /// <summary>
+        /// The base service.
+        /// </summary>
+        private readonly IUniverseFilterService baseService;
 
-        private readonly IHighVolumeVenueFilter _highVolumeVenueFilter;
+        /// <summary>
+        /// The high volume venue filter.
+        /// </summary>
+        private readonly IHighVolumeVenueFilter highVolumeVenueFilter;
 
-        private readonly object _lock = new object();
+        /// <summary>
+        /// The lock.
+        /// </summary>
+        private readonly object @lock = new object();
 
-        private readonly TimeWindows _ruleTimeWindows;
+        /// <summary>
+        /// The rule time windows.
+        /// </summary>
+        private readonly TimeWindows ruleTimeWindows;
 
-        private readonly Queue<IUniverseEvent> _universeCache;
+        /// <summary>
+        /// The universe cache.
+        /// </summary>
+        private readonly Queue<IUniverseEvent> universeCache;
 
-        private bool _eschaton;
+        /// <summary>
+        /// The eschaton.
+        /// </summary>
+        private bool eschaton;
 
-        private DateTime _windowTime;
+        /// <summary>
+        /// The window time.
+        /// </summary>
+        private DateTime windowTime;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighVolumeVenueDecoratorFilter"/> class.
+        /// </summary>
+        /// <param name="timeWindows">
+        /// The time windows.
+        /// </param>
+        /// <param name="baseService">
+        /// The base service.
+        /// </param>
+        /// <param name="highVolumeVenueFilter">
+        /// The high volume venue filter.
+        /// </param>
         public HighVolumeVenueDecoratorFilter(
             TimeWindows timeWindows,
             IUniverseFilterService baseService,
             IHighVolumeVenueFilter highVolumeVenueFilter)
         {
-            this._ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
-            this._baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
-            this._universeCache = new Queue<IUniverseEvent>();
-            this._highVolumeVenueFilter = highVolumeVenueFilter;
+            this.ruleTimeWindows = timeWindows ?? throw new ArgumentNullException(nameof(timeWindows));
+            this.baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
+            this.universeCache = new Queue<IUniverseEvent>();
+            this.highVolumeVenueFilter = highVolumeVenueFilter;
         }
 
-        public Rules Rule => this._baseService.Rule;
+        /// <summary>
+        /// The rule.
+        /// </summary>
+        public Rules Rule => this.baseService.Rule;
 
-        public string Version => this._baseService.Version;
+        /// <summary>
+        /// The version.
+        /// </summary>
+        public string Version => this.baseService.Version;
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public IRuleDataConstraint DataConstraints()
+        {
+            return this.baseService.DataConstraints();
+        }
+
+        /// <summary>
+        /// The on completed.
+        /// </summary>
         public void OnCompleted()
         {
-            this._baseService.OnCompleted();
+            this.baseService.OnCompleted();
         }
 
+        /// <summary>
+        /// The on error.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         public void OnError(Exception error)
         {
-            this._baseService.OnError(error);
+            this.baseService.OnError(error);
         }
 
+        /// <summary>
+        /// The on next.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
             if (value == null) return;
 
-            lock (this._lock)
+            lock (this.@lock)
             {
-                this._highVolumeVenueFilter.OnNext(value);
+                this.highVolumeVenueFilter.OnNext(value);
 
-                this._universeCache.Enqueue(value);
-                this._windowTime = value.EventTime;
+                this.universeCache.Enqueue(value);
+                this.windowTime = value.EventTime;
 
-                if (value.StateChange == UniverseStateEvent.Eschaton) this._eschaton = true;
+                if (value.StateChange == UniverseStateEvent.Eschaton) this.eschaton = true;
 
                 this.ProcessCache();
             }
         }
 
+        /// <summary>
+        /// The subscribe.
+        /// </summary>
+        /// <param name="observer">
+        /// The observer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IDisposable"/>.
+        /// </returns>
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (observer == null) return null;
 
-            return this._baseService.Subscribe(observer);
+            return this.baseService.Subscribe(observer);
         }
 
         /// <summary>
-        ///     Alice: “How long is forever?"
+        /// Alice: “How long is forever?"
         ///     White Rabbit: “Sometimes, just one second."
         /// </summary>
+        /// <returns>
+        /// The <see cref="DateTime"/>.
+        /// </returns>
         private DateTime FilterTime()
         {
-            if (this._ruleTimeWindows == null) return this._windowTime;
+            if (this.ruleTimeWindows == null) return this.windowTime;
 
-            return this._windowTime - this._ruleTimeWindows.BackwardWindowSize;
+            return this.windowTime - this.ruleTimeWindows.BackwardWindowSize;
         }
 
+        /// <summary>
+        /// The process cache.
+        /// </summary>
         private void ProcessCache()
         {
-            if (!this._universeCache.Any()) return;
+            if (!this.universeCache.Any()) return;
 
-            while (this._universeCache.Any()
-                   && (this._universeCache.Peek().EventTime <= this.FilterTime() || this._eschaton))
+            while (this.universeCache.Any()
+                   && (this.universeCache.Peek().EventTime <= this.FilterTime() || this.eschaton))
             {
-                var value = this._universeCache.Dequeue();
+                var value = this.universeCache.Dequeue();
 
                 if (value.StateChange.IsOrderType()
-                    && !this._highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
+                    && !this.highVolumeVenueFilter.UniverseEventsPassedFilter.Contains(value.UnderlyingEvent))
                     continue;
 
-                this._baseService.OnNext(value);
+                this.baseService.OnNext(value);
             }
 
-            if (this._eschaton) this._highVolumeVenueFilter?.UniverseEventsPassedFilter.Clear();
+            if (this.eschaton) this.highVolumeVenueFilter?.UniverseEventsPassedFilter.Clear();
         }
     }
 }

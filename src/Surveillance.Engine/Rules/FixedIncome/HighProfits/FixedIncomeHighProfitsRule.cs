@@ -2,6 +2,7 @@
 {
     using System;
 
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
@@ -79,6 +80,17 @@
         /// Gets the version.
         /// </summary>
         public string Version { get; } = FixedIncomeHighProfitFactory.Version;
+
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public IRuleDataConstraint DataConstraints()
+        {
+            return this.streamRule.DataConstraints().MAppend(this.marketClosureRule.DataConstraints()).Case;
+        }
 
         /// <summary>
         /// The cloning support for factor values.

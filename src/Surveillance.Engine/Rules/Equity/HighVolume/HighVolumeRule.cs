@@ -7,6 +7,8 @@
     using Domain.Core.Financial.Money;
     using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
 
     using Microsoft.Extensions.Logging;
 
@@ -17,10 +19,10 @@
     using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Engine.Rules.Analytics.Streams;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
@@ -29,22 +31,90 @@
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The high volume rule.
+    /// </summary>
     public class HighVolumeRule : BaseUniverseRule, IHighVolumeRule
     {
-        private readonly IHighVolumeRuleEquitiesParameters _equitiesParameters;
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IUniverseAlertStream _alertStream;
-        private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IMarketTradingHoursService _tradingHoursService;
-        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private readonly ICurrencyConverterService currencyConverterService;
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The equities parameters.
+        /// </summary>
+        private readonly IHighVolumeRuleEquitiesParameters EquitiesParameters;
 
-        private bool _hadMissingData = false;
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private readonly IUniverseAlertStream AlertStream;
 
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter OrderFilter;
+
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private readonly IMarketTradingHoursService TradingHoursService;
+
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriber DataRequestSubscriber;
+
+        /// <summary>
+        /// The currency converter service.
+        /// </summary>
+        private readonly ICurrencyConverterService CurrencyConverterService;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger Logger;
+
+        /// <summary>
+        /// The had missing data.
+        /// </summary>
+        private bool HadMissingData = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighVolumeRule"/> class.
+        /// </summary>
+        /// <param name="equitiesParameters">
+        /// The equities parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="tradingHoursService">
+        /// The trading hours service.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="currencyConverterService">
+        /// The currency converter service.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingHistoryLogger">
+        /// The trading history logger.
+        /// </param>
         public HighVolumeRule(
             IHighVolumeRuleEquitiesParameters equitiesParameters,
-            ISystemProcessOperationRunRuleContext opContext,
+            ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -61,29 +131,100 @@
                 Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
-                opContext,
+                operationContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
         {
-            this._equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            this._ruleCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
-            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            this._tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
-            this._dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
-            this.currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.EquitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
+            this.AlertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this.OrderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this.TradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.DataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+            this.CurrencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Gets or sets the organisation factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
-        protected override IUniverseEvent Filter(IUniverseEvent value)
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
         {
-            return this._orderFilter.Filter(value);
+            if (this.EquitiesParameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.EquitiesParameters.HighVolumePercentageDaily != null)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            if (this.EquitiesParameters.HighVolumePercentageMarketCap != null)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            if (this.EquitiesParameters.HighVolumePercentageWindow != null)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllIntraday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.EquitiesParameters.Id,
+                constraints);
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return this.OrderFilter.Filter(value);
+        }
+
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
@@ -118,12 +259,12 @@
             var breach =
                 new HighVolumeRuleBreach(
                     this.OrganisationFactorValue,
-                    this._ruleCtx.SystemProcessOperationContext(),
-                    this._ruleCtx.CorrelationId(),
-                    this._equitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
+                    this.RuleCtx.SystemProcessOperationContext(),
+                    this.RuleCtx.CorrelationId(),
+                    this.EquitiesParameters?.Windows?.BackwardWindowSize ?? TimeSpan.FromDays(1),
                     tradePosition,
                     mostRecentTrade?.Instrument,
-                    this._equitiesParameters,
+                    this.EquitiesParameters,
                     dailyBreach,
                     windowBreach,
                     marketCapBreach,
@@ -132,37 +273,73 @@
                     null,
                     this.UniverseDateTime);
 
-            this._logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
-            var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, breach, this._ruleCtx);
-            this._alertStream.Add(message);
+            this.Logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
+            var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, breach, this.RuleCtx);
+            this.AlertStream.Add(message);
         }
 
+        /// <summary>
+        /// The check daily volume.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails CheckDailyVolume(Order mostRecentTrade, decimal tradedVolume)
         {
             var dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_equitiesParameters.HighVolumePercentageDaily.HasValue)
+            if (this.EquitiesParameters.HighVolumePercentageDaily.HasValue)
             {
-                dailyBreach = DailyVolumeCheck(mostRecentTrade, tradedVolume);
+                dailyBreach = this.DailyVolumeCheck(mostRecentTrade, tradedVolume);
             }
 
             return dailyBreach;
         }
 
+        /// <summary>
+        /// The check window volume.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails CheckWindowVolume(Order mostRecentTrade, decimal tradedVolume)
         {
             var windowBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_equitiesParameters.HighVolumePercentageWindow.HasValue)
+            if (this.EquitiesParameters.HighVolumePercentageWindow.HasValue)
             {
-                windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
+                windowBreach = this.WindowVolumeCheck(mostRecentTrade, tradedVolume);
             }
 
             return windowBreach;
         }
 
+        /// <summary>
+        /// The check market cap.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradedSecurities">
+        /// The traded securities.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails CheckMarketCap(Order mostRecentTrade, List<Order> tradedSecurities)
         {
             var marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (this._equitiesParameters.HighVolumePercentageMarketCap.HasValue)
+            if (this.EquitiesParameters.HighVolumePercentageMarketCap.HasValue)
             {
                 marketCapBreach = this.MarketCapCheck(mostRecentTrade, tradedSecurities);
             }
@@ -170,6 +347,21 @@
             return marketCapBreach;
         }
 
+        /// <summary>
+        /// The has no breach.
+        /// </summary>
+        /// <param name="dailyBreach">
+        /// The daily breach.
+        /// </param>
+        /// <param name="windowBreach">
+        /// The window breach.
+        /// </param>
+        /// <param name="marketCapBreach">
+        /// The market cap breach.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool HasNoBreach(
             HighVolumeRuleBreach.BreachDetails dailyBreach,
             HighVolumeRuleBreach.BreachDetails windowBreach,
@@ -180,6 +372,18 @@
                    && (!marketCapBreach?.HasBreach ?? true);
         }
 
+        /// <summary>
+        /// The daily volume check.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, decimal tradedVolume)
         {
             if (mostRecentTrade == null)
@@ -187,10 +391,10 @@
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                this.Logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
             var marketDataRequest = new MarketDataRequest(
@@ -199,26 +403,26 @@
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                _ruleCtx?.Id(),
+                this.RuleCtx?.Id(),
                 DataSource.AllInterday);
 
             var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
-                _hadMissingData = true;
-                _logger.LogWarning($"Missing data for {marketDataRequest}.");
+                this.HadMissingData = true;
+                this.Logger.LogWarning($"Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             var security = securityResult.Response;
             var threshold = (long)Math.Ceiling(
-                _equitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailySummaryTimeBar.DailyVolume.Traded);
+                this.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailySummaryTimeBar.DailyVolume.Traded);
 
             if (threshold <= 0)
             {
-                _hadMissingData = true;
-                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+                this.HadMissingData = true;
+                this.Logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -235,15 +439,27 @@
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
+        /// <summary>
+        /// The window volume check.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradedVolume">
+        /// The traded volume.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, decimal tradedVolume)
         {
-            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                this.Logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
-            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+            var tradingDates = this.TradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
@@ -255,22 +471,22 @@
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                    _ruleCtx?.Id(),
+                    this.RuleCtx?.Id(),
                     DataSource.AllIntraday);
 
-            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
+            var marketResult = this.UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogTrace($"Unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.Logger.LogTrace($"Unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.HadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             var securityDataTicks = marketResult.Response;           
             var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
-            var threshold = (long)Math.Ceiling(_equitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+            var threshold = (long)Math.Ceiling(this.EquitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
 
             var breachPercentage =
                 windowVolume != 0 && tradedVolume != 0
@@ -279,8 +495,8 @@
 
             if (threshold <= 0)
             {
-                _hadMissingData = true;
-                _logger.LogInformation($"Window volume threshold of {threshold} was recorded.");
+                this.HadMissingData = true;
+                this.Logger.LogInformation($"Window volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -292,6 +508,18 @@
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
+        /// <summary>
+        /// The market cap check.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="trades">
+        /// The trades.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BreachDetails"/>.
+        /// </returns>
         private HighVolumeRuleBreach.BreachDetails MarketCapCheck(Order mostRecentTrade, List<Order> trades)
         {
             if (trades == null
@@ -300,10 +528,10 @@
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = this._tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = this.TradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                this._logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                this.Logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
             var marketDataRequest = new MarketDataRequest(
@@ -312,15 +540,15 @@
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(this.UniverseDateTime),
-                this._ruleCtx?.Id(),
+                this.RuleCtx?.Id(),
                 DataSource.AllInterday);
 
             var securityResult = this.UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
-                this._hadMissingData = true;
-                this._logger.LogInformation($"Missing data for {marketDataRequest}.");
+                this.HadMissingData = true;
+                this.Logger.LogInformation($"Missing data for {marketDataRequest}.");
 
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
@@ -330,34 +558,34 @@
 
             if (marketCapMoney == null)
             {
-                this._logger.LogInformation($"Missing data for {marketDataRequest}.");
+                this.Logger.LogInformation($"Missing data for {marketDataRequest}.");
 
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             var convertedMarketCap =
-                this.currencyConverterService.Convert(
+                this.CurrencyConverterService.Convert(
                     new[] { marketCapMoney.Value },
                     mostRecentTrade.OrderCurrency,
                     this.UniverseDateTime,
-                    this._ruleCtx).Result;
+                    this.RuleCtx).Result;
 
             if (convertedMarketCap == null)
             {
-                this._hadMissingData = true;
-                this._logger.LogInformation($"Missing data for exchange rates between USD and {mostRecentTrade.OrderCurrency} on {this.UniverseDateTime}");
+                this.HadMissingData = true;
+                this.Logger.LogInformation($"Missing data for exchange rates between USD and {mostRecentTrade.OrderCurrency} on {this.UniverseDateTime}");
 
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             double thresholdValue =
-                (double)Math.Ceiling(this._equitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
+                (double)Math.Ceiling(this.EquitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
                 * convertedMarketCap.Value.Value);
 
             if (thresholdValue <= 0)
             {
-                this._hadMissingData = true;
-                this._logger.LogInformation($"Market cap threshold of {thresholdValue} was recorded.");
+                this.HadMissingData = true;
+                this.Logger.LogInformation($"Market cap threshold of {thresholdValue} was recorded.");
 
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
@@ -383,61 +611,118 @@
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         { }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         { }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred");
+            this.Logger.LogInformation("Genesis occurred");
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
+            this.Logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
+            this.Logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
         }
 
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured");
+            this.Logger.LogInformation("Eschaton occured");
 
-            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            if (this.HadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
-                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
-                _alertStream.Add(alert);
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, null, this.RuleCtx, false, true);
+                this.AlertStream.Add(alert);
 
-                _dataRequestSubscriber.SubmitRequest();
-                _ruleCtx.EndEvent();
+                this.DataRequestSubscriber.SubmitRequest();
+                this.RuleCtx.EndEvent();
             }
             else
             {
-                _ruleCtx?.EndEvent();
+                this.RuleCtx?.EndEvent();
             }
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (HighVolumeRule)Clone();
@@ -446,6 +731,12 @@
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
             var clone = (HighVolumeRule)this.MemberwiseClone();

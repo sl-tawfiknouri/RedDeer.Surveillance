@@ -1,6 +1,4 @@
-﻿using static Surveillance.Engine.Rules.Rules.Shared.WashTrade.WashTradeRuleBreach;
-
-namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 {
     using System;
     using System.Collections.Generic;
@@ -9,6 +7,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
     using Domain.Core.Trading;
     using Domain.Core.Trading.Factories.Interfaces;
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
@@ -28,20 +28,74 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The fixed income wash trade rule.
+    /// </summary>
     public class FixedIncomeWashTradeRule : BaseUniverseRule, IFixedIncomeWashTradeRule
     {
-        private readonly IUniverseAlertStream _alertStream;
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private readonly IUniverseAlertStream alertStream;
 
-        private readonly IClusteringService _clusteringService;
+        /// <summary>
+        /// The clustering service.
+        /// </summary>
+        private readonly IClusteringService clusteringService;
 
-        private readonly ILogger<FixedIncomeWashTradeRule> _logger;
+        /// <summary>
+        /// The order filter service.
+        /// </summary>
+        private readonly IUniverseFixedIncomeOrderFilterService orderFilterService;
 
-        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        private readonly IWashTradeRuleFixedIncomeParameters parameters;
 
-        private readonly IWashTradeRuleFixedIncomeParameters _parameters;
+        /// <summary>
+        /// The portfolio factory.
+        /// </summary>
+        private readonly IPortfolioFactory portfolioFactory;
 
-        private readonly IPortfolioFactory _portfolioFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<FixedIncomeWashTradeRule> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FixedIncomeWashTradeRule"/> class.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="orderFilterService">
+        /// The order filter service.
+        /// </param>
+        /// <param name="ruleContext">
+        /// The rule context.
+        /// </param>
+        /// <param name="factory">
+        /// The factory.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="clusteringService">
+        /// The clustering service.
+        /// </param>
+        /// <param name="portfolioFactory">
+        /// The portfolio factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingStackLogger">
+        /// The trading stack logger.
+        /// </param>
         public FixedIncomeWashTradeRule(
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
@@ -66,17 +120,28 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 logger,
                 tradingStackLogger)
         {
-            this._parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            this._orderFilterService =
-                orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            this._clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
-            this._portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            this.orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
+            this.alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this.clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
+            this.portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Gets or sets the organisation factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (FixedIncomeWashTradeRule)this.Clone();
@@ -85,31 +150,43 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
-            this._logger.LogInformation($"Clone called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"Clone called at {this.UniverseDateTime}");
 
             var clone = (FixedIncomeWashTradeRule)this.MemberwiseClone();
             clone.BaseClone();
 
-            this._logger.LogInformation($"Clone completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"Clone completed for {this.UniverseDateTime}");
 
             return clone;
         }
 
         /// <summary>
-        ///     See if trades net out to near zero i.e. large amount of churn
+        /// See if trades net out to near zero i.e. large amount of churn
         /// </summary>
-        public WashTradeAveragePositionBreach NettingTrades(IReadOnlyCollection<Order> tradingHistory)
+        /// <param name="tradingHistory">
+        /// The trading History.
+        /// </param>
+        /// <returns>
+        /// The <see cref="WashTradeAveragePositionBreach"/>.
+        /// </returns>
+        public WashTradeRuleBreach.WashTradeAveragePositionBreach NettingTrades(IReadOnlyCollection<Order> tradingHistory)
         {
-            if (!this._parameters.PerformAveragePositionAnalysis) return WashTradeAveragePositionBreach.None();
+            if (!this.parameters.PerformAveragePositionAnalysis) return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
 
-            if (tradingHistory == null || !tradingHistory.Any()) return WashTradeAveragePositionBreach.None();
+            if (tradingHistory == null || !tradingHistory.Any()) return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
 
-            if (tradingHistory.Count < this._parameters.AveragePositionMinimumNumberOfTrades)
-                return WashTradeAveragePositionBreach.None();
+            if (tradingHistory.Count < this.parameters.AveragePositionMinimumNumberOfTrades)
+                return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
 
-            var portfolio = this._portfolioFactory.Build();
+            var portfolio = this.portfolioFactory.Build();
             portfolio.Add(tradingHistory);
 
             foreach (var profitAndLoss in portfolio.ProfitAndLossTotal())
@@ -117,81 +194,149 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 if (profitAndLoss.PercentageProfits() == null) continue;
 
                 if (Math.Abs(profitAndLoss.PercentageProfits().GetValueOrDefault(0))
-                    > this._parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
-                    return WashTradeAveragePositionBreach.None();
+                    > this.parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
+                    return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
 
-                return new WashTradeAveragePositionBreach(
+                return new WashTradeRuleBreach.WashTradeAveragePositionBreach(
                     true,
                     tradingHistory.Count,
                     profitAndLoss.PercentageProfits(),
                     null);
             }
 
-            return WashTradeAveragePositionBreach.None();
+            return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
-            this._logger.LogInformation($"RunOrderFilledEvent called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunOrderFilledEvent called at {this.UniverseDateTime}");
 
-            this._logger.LogInformation($"RunOrderFilledEvent completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunOrderFilledEvent completed for {this.UniverseDateTime}");
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            return RuleDataConstraint.Empty().Case;
+        }
+
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            this._logger.LogInformation($"EndOfUniverse called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"EndOfUniverse called at {this.UniverseDateTime}");
 
             this.RuleCtx?.EndEvent();
 
-            this._logger.LogInformation($"EndOfUniverse completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"EndOfUniverse completed for {this.UniverseDateTime}");
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return this._orderFilterService.Filter(value);
+            return this.orderFilterService.Filter(value);
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            this._logger.LogInformation($"Genesis called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"Genesis called at {this.UniverseDateTime}");
 
-            this._logger.LogInformation($"Genesis completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"Genesis completed for {this.UniverseDateTime}");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            this._logger.LogInformation($"MarketClose called at {this.UniverseDateTime} for {exchange.MarketId}");
+            this.logger.LogInformation($"MarketClose called at {this.UniverseDateTime} for {exchange.MarketId}");
 
-            this._logger.LogInformation($"MarketClose completed for {this.UniverseDateTime} for {exchange.MarketId}");
+            this.logger.LogInformation($"MarketClose completed for {this.UniverseDateTime} for {exchange.MarketId}");
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            this._logger.LogInformation($"MarketOpen called at {this.UniverseDateTime} for {exchange.MarketId}");
+            this.logger.LogInformation($"MarketOpen called at {this.UniverseDateTime} for {exchange.MarketId}");
 
-            this._logger.LogInformation($"MarketOpen completed for {this.UniverseDateTime} for {exchange.MarketId}");
+            this.logger.LogInformation($"MarketOpen completed for {this.UniverseDateTime} for {exchange.MarketId}");
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
-            this._logger.LogInformation($"RunInitialSubmissionRule called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunInitialSubmissionRule called at {this.UniverseDateTime}");
 
-            this._logger.LogInformation($"RunInitialSubmissionRule completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunInitialSubmissionRule completed for {this.UniverseDateTime}");
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            this._logger.LogInformation($"RunPostOrderEvent called at {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunPostOrderEvent called at {this.UniverseDateTime}");
 
             var filteredOrders = this.FilterByClientAccount(
                 history.ActiveTradeHistory().Any() ? history.ActiveTradeHistory().Peek() : null,
@@ -207,11 +352,11 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             // wrong but should be a judgement anyway
             var breach = new WashTradeRuleBreach(
-                this._parameters.Windows.BackwardWindowSize,
+                this.parameters.Windows.BackwardWindowSize,
                 this.OrganisationFactorValue,
                 this.RuleCtx.SystemProcessOperationContext(),
                 this.RuleCtx.CorrelationId(),
-                this._parameters,
+                this.parameters,
                 new TradePosition(filteredOrders),
                 security,
                 averageNettingAnalysis,
@@ -221,26 +366,41 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 this.UniverseDateTime);
 
             var universeAlert = new UniverseAlertEvent(Rules.FixedIncomeWashTrades, breach, this.RuleCtx);
-            this._alertStream.Add(universeAlert);
+            this.alertStream.Add(universeAlert);
 
-            this._logger.LogInformation($"RunPostOrderEvent completed for {this.UniverseDateTime}");
+            this.logger.LogInformation($"RunPostOrderEvent completed for {this.UniverseDateTime}");
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The analyze cluster.
+        /// </summary>
+        /// <param name="centroid">
+        /// The centroid.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool AnalyseCluster(PositionClusterCentroid centroid)
         {
             if (centroid == null) return false;
 
-            var clusterPorfolio = this._portfolioFactory.Build();
+            var clusterPorfolio = this.portfolioFactory.Build();
             clusterPorfolio.Add(centroid.Buys.Get().ToList());
             clusterPorfolio.Add(centroid.Sells.Get().ToList());
 
             if (clusterPorfolio.Ledger.FullLedger().Count
-                < this._parameters.ClusteringPositionMinimumNumberOfTrades) return false;
+                < this.parameters.ClusteringPositionMinimumNumberOfTrades) return false;
 
             foreach (var profitAndLoss in clusterPorfolio.ProfitAndLossTotal())
             {
@@ -250,7 +410,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 var smallerValue = Math.Min(profitAndLoss.Costs.Value, profitAndLoss.Revenue.Value);
 
                 var offset =
-                    largerValue * this._parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
+                    largerValue * this.parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
                 var lowerBoundary = largerValue - offset;
                 var upperBoundary = largerValue + offset;
 
@@ -260,26 +420,47 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             return false;
         }
 
-        private WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
+        /// <summary>
+        /// The clustering analysis.
+        /// </summary>
+        /// <param name="tradingHistory">
+        /// The trading history.
+        /// </param>
+        /// <returns>
+        /// The <see cref="WashTradeClusteringPositionBreach"/>.
+        /// </returns>
+        private WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
         {
-            if (!this._parameters.PerformClusteringPositionAnalysis) return WashTradeClusteringPositionBreach.None();
+            if (!this.parameters.PerformClusteringPositionAnalysis) return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
 
-            if (tradingHistory == null || !tradingHistory.Any()) return WashTradeClusteringPositionBreach.None();
+            if (tradingHistory == null || !tradingHistory.Any()) return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
 
-            var portfolio = this._portfolioFactory.Build();
+            var portfolio = this.portfolioFactory.Build();
             portfolio.Add(tradingHistory);
 
-            var clusters = this._clusteringService.Cluster(portfolio.Ledger.FullLedger());
+            var clusters = this.clusteringService.Cluster(portfolio.Ledger.FullLedger());
 
-            if (clusters == null || !clusters.Any()) return WashTradeClusteringPositionBreach.None();
+            if (clusters == null || !clusters.Any()) return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
 
             var washTradingClusters = clusters.Where(this.AnalyseCluster).Select(i => i.CentroidPrice).ToList();
 
-            if (!washTradingClusters.Any()) return WashTradeClusteringPositionBreach.None();
+            if (!washTradingClusters.Any()) return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
 
-            return new WashTradeClusteringPositionBreach(true, washTradingClusters.Count, washTradingClusters);
+            return new WashTradeRuleBreach.WashTradeClusteringPositionBreach(true, washTradingClusters.Count, washTradingClusters);
         }
 
+        /// <summary>
+        /// The filter by client account.
+        /// </summary>
+        /// <param name="mostRecentFrame">
+        /// The most recent frame.
+        /// </param>
+        /// <param name="frames">
+        /// The frames.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private List<Order> FilterByClientAccount(Order mostRecentFrame, List<Order> frames)
         {
             if (frames == null) return new List<Order>();

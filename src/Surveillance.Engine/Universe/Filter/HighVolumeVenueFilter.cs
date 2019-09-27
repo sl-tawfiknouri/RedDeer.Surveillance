@@ -1,40 +1,112 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
-using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Universe.Filter
+﻿namespace Surveillance.Engine.Rules.Universe.Filter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Markets.Timebars;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters;
+    using Surveillance.Engine.Rules.RuleParameters.Filter;
+    using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The high volume venue filter.
+    /// </summary>
     public class HighVolumeVenueFilter : BaseUniverseRule, IHighVolumeVenueFilter
     {
-        public HashSet<Order> UniverseEventsPassedFilter { get; set; }
+        /// <summary>
+        /// The decimal range rule filter.
+        /// </summary>
+        private readonly DecimalRangeRuleFilter decimalRangeRuleFilter;
 
-        private readonly DecimalRangeRuleFilter _decimalRangeRuleFilter;
-        private readonly DataSource _source;
-        private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IMarketTradingHoursService _tradingHoursService;
-        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private readonly ILogger<HighVolumeVenueFilter> _logger;
-        private readonly TimeSpan _eventExpiration;
+        /// <summary>
+        /// The source.
+        /// </summary>
+        private readonly DataSource source;
 
-        private bool _hadMissingData;
+        /// <summary>
+        /// The event expiration.
+        /// </summary>
+        private readonly TimeSpan eventExpiration;
 
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter orderFilter;
+
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private readonly IMarketTradingHoursService tradingHoursService;
+
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriber dataRequestSubscriber;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<HighVolumeVenueFilter> logger;
+
+        /// <summary>
+        /// The had missing data.
+        /// </summary>
+        private bool hadMissingData;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighVolumeVenueFilter"/> class.
+        /// </summary>
+        /// <param name="timeWindows">
+        /// The time windows.
+        /// </param>
+        /// <param name="decimalRangeRuleFilter">
+        /// The decimal range rule filter.
+        /// </param>
+        /// <param name="universeOrderFilter">
+        /// The universe order filter.
+        /// </param>
+        /// <param name="runRuleContext">
+        /// The run rule context.
+        /// </param>
+        /// <param name="universeMarketCacheFactory">
+        /// The universe market cache factory.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <param name="marketTradingHoursService">
+        /// The market trading hours service.
+        /// </param>
+        /// <param name="dataRequestsSubscriber">
+        /// The data requests subscriber.
+        /// </param>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="stackLogger">
+        /// The stack logger.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public HighVolumeVenueFilter(
             TimeWindows timeWindows,
             DecimalRangeRuleFilter decimalRangeRuleFilter,
@@ -60,28 +132,86 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 logger,
                 stackLogger)
         {
-            _eventExpiration = this.TradeBackwardWindowSize + this.TradeBackwardWindowSize + TimeSpan.FromDays(3);
-            _tradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
-            _decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
-            _orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
-            _dataRequestSubscriber = dataRequestsSubscriber ?? throw new ArgumentNullException(nameof(dataRequestsSubscriber));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            UniverseEventsPassedFilter = new HashSet<Order>();
-            _source = source;
+            this.eventExpiration = this.TradeBackwardWindowSize + this.TradeBackwardWindowSize + TimeSpan.FromDays(3);
+            this.tradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
+            this.decimalRangeRuleFilter = decimalRangeRuleFilter ?? DecimalRangeRuleFilter.None();
+            this.orderFilter = universeOrderFilter ?? throw new ArgumentNullException(nameof(universeOrderFilter));
+            this.dataRequestSubscriber = dataRequestsSubscriber ?? throw new ArgumentNullException(nameof(dataRequestsSubscriber));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.UniverseEventsPassedFilter = new HashSet<Order>();
+            this.source = source;
         }
 
+        /// <summary>
+        /// Gets or sets the universe events passed filter.
+        /// </summary>
+        public HashSet<Order> UniverseEventsPassedFilter { get; set; }
+
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.source == DataSource.AllInterday)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            if (this.source == DataSource.AllIntraday)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllIntraday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                string.Empty,
+                constraints);
+        }
+
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return this.orderFilter.Filter(value);
         }
 
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            FlushFilterEvents();
+            this.FlushFilterEvents();
 
             if (history == null)
             {
-                _logger.LogInformation($"null history received by run post order event");
+                this.logger.LogInformation($"null history received by run post order event");
                 return;
             }
 
@@ -93,24 +223,24 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            if (_decimalRangeRuleFilter.Type == RuleFilterType.None)
+            if (this.decimalRangeRuleFilter.Type == RuleFilterType.None)
             {
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
 
             var mostRecentTrade = activeHistory.Peek();
 
-            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = this.tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                this.logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
 
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
 
-            var marketTradedVolume = RetrieveMarketTradedVolume(mostRecentTrade, tradingHours, activeHistory);
+            var marketTradedVolume = this.RetrieveMarketTradedVolume(mostRecentTrade, tradingHours, activeHistory);
 
             if (marketTradedVolume == null)
             {
@@ -121,17 +251,17 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (marketTradedVolume <= 0)
             {
-                _logger.LogInformation($"market traded volume was {marketTradedVolume} for {mostRecentTrade.Instrument.Identifiers}");
+                this.logger.LogInformation($"market traded volume was {marketTradedVolume} for {mostRecentTrade.Instrument.Identifiers}");
 
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
 
             if (volumeTraded <= 0)
             {
-                _logger.LogInformation($"market traded volume was {volumeTraded} for {mostRecentTrade.Instrument.Identifiers}");
+                this.logger.LogInformation($"market traded volume was {volumeTraded} for {mostRecentTrade.Instrument.Identifiers}");
 
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
                 return;
             }
 
@@ -139,29 +269,44 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             var passedFilter = false;
 
-            if (_decimalRangeRuleFilter.Type == RuleFilterType.Include)
+            if (this.decimalRangeRuleFilter.Type == RuleFilterType.Include)
             {
                 passedFilter =
-                   (_decimalRangeRuleFilter.Max == null || _decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume <= _decimalRangeRuleFilter.Max)
-                    && (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume >= _decimalRangeRuleFilter.Min);
+                   (this.decimalRangeRuleFilter.Max == null || this.decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume <= this.decimalRangeRuleFilter.Max)
+                    && (this.decimalRangeRuleFilter.Min == null || proportionOfTradedVolume >= this.decimalRangeRuleFilter.Min);
             }
-            else if (_decimalRangeRuleFilter.Type == RuleFilterType.Exclude)
+            else if (this.decimalRangeRuleFilter.Type == RuleFilterType.Exclude)
             {
                 passedFilter =
-                    (_decimalRangeRuleFilter.Max == null || _decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume > _decimalRangeRuleFilter.Max)
-                    || (_decimalRangeRuleFilter.Min == null || proportionOfTradedVolume < _decimalRangeRuleFilter.Min);
+                    (this.decimalRangeRuleFilter.Max == null || this.decimalRangeRuleFilter.Max == 1 || proportionOfTradedVolume > this.decimalRangeRuleFilter.Max)
+                    || (this.decimalRangeRuleFilter.Min == null || proportionOfTradedVolume < this.decimalRangeRuleFilter.Min);
             }
 
             if (passedFilter)
             {
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
             }
         }
 
+        /// <summary>
+        /// The retrieve market traded volume.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="tradingHours">
+        /// The trading hours.
+        /// </param>
+        /// <param name="activeHistory">
+        /// The active history.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long?"/>.
+        /// </returns>
         private long? RetrieveMarketTradedVolume(Order mostRecentTrade, ITradingHours tradingHours, Stack<Order> activeHistory)
         {
             var closeTime =
-                _source == DataSource.AllIntraday
+                this.source == DataSource.AllIntraday
                     ? UniverseDateTime
                     : tradingHours.ClosingInUtcForDay(UniverseDateTime);
 
@@ -173,19 +318,19 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     closeTime,
                     RuleCtx.Id(),
-                    _source);
+                    this.source);
             
             var hadMissingData = false;
             long? marketTradedVolume = null;
 
-            switch (_source)
+            switch (this.source)
             {
                 case DataSource.AllInterday:
                     var securityResultInterday = UniverseEquityInterdayCache.GetMarkets(marketDataRequest);
                     hadMissingData = securityResultInterday.HadMissingData;
 
                     if (!hadMissingData)
-                        marketTradedVolume = InterdayMarketTradedVolume(securityResultInterday);
+                        marketTradedVolume = this.InterdayMarketTradedVolume(securityResultInterday);
 
                     break;
                 case DataSource.AllIntraday:
@@ -193,27 +338,36 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                     hadMissingData = securityResultIntraday.HadMissingData;
 
                     if (!hadMissingData)
-                        marketTradedVolume = IntradayMarketTradedVolume(securityResultIntraday);
+                        marketTradedVolume = this.IntradayMarketTradedVolume(securityResultIntraday);
 
                     break;
             }
 
             if (hadMissingData && RunMode == RuleRunMode.ForceRun)
             {
-                UpdatePassedFilterWithOrders(activeHistory);
+                this.UpdatePassedFilterWithOrders(activeHistory);
                 return null;
             }
 
             if (hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
-                _logger.LogInformation($"market traded volume was not calculable for {mostRecentTrade.Instrument.Identifiers} due to missing data");
-                _hadMissingData = true;
+                this.logger.LogInformation($"market traded volume was not calculable for {mostRecentTrade.Instrument.Identifiers} due to missing data");
+                this.hadMissingData = true;
                 return null;
             }
 
             return marketTradedVolume;
         }
 
+        /// <summary>
+        /// The intraday market traded volume.
+        /// </summary>
+        /// <param name="securityResult">
+        /// The security result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
         private long IntradayMarketTradedVolume(MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> securityResult)
         {
             var marketTradedVolume = securityResult.Response.Sum(_ => _.SpreadTimeBar.Volume.Traded);
@@ -221,6 +375,15 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             return marketTradedVolume;
         }
 
+        /// <summary>
+        /// The interday market traded volume.
+        /// </summary>
+        /// <param name="securityResult">
+        /// The security result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
         private long InterdayMarketTradedVolume(MarketDataResponse<List<EquityInstrumentInterDayTimeBar>> securityResult)
         {
             var marketTradedVolume = securityResult.Response.Sum(_ => _.DailySummaryTimeBar.DailyVolume.Traded);
@@ -228,58 +391,112 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             return marketTradedVolume;
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
+            this.logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation("Market Close occurred");
+            this.logger.LogInformation("Market Close occurred");
 
-            RunRuleForAllTradingHistoriesInMarket(exchange);
+            this.RunRuleForAllTradingHistoriesInMarket(exchange);
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred");
+            this.logger.LogInformation("Genesis occurred");
         }
 
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            if (this.hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
-                _dataRequestSubscriber.SubmitRequest();
+                this.dataRequestSubscriber.SubmitRequest();
             }
 
-            _logger.LogInformation("Eschaton occurred");
+            this.logger.LogInformation("Eschaton occurred");
         }
 
+        /// <summary>
+        /// The update passed filter with orders.
+        /// </summary>
+        /// <param name="orders">
+        /// The orders.
+        /// </param>
         private void UpdatePassedFilterWithOrders(Stack<Order> orders)
         {
             if (orders == null
@@ -293,21 +510,24 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             while (tempStack.Any())
             {
                 var order = tempStack.Pop();
-                if (UniverseEventsPassedFilter.Contains(order))
+                if (this.UniverseEventsPassedFilter.Contains(order))
                 {
                     continue;
                 }
 
-                UniverseEventsPassedFilter.Add(order);
+                this.UniverseEventsPassedFilter.Add(order);
             }
         }
 
+        /// <summary>
+        /// The flush filter events.
+        /// </summary>
         private void FlushFilterEvents()
         {
-            UniverseEventsPassedFilter
+            this.UniverseEventsPassedFilter
                 .RemoveWhere(_ =>
                     _ == null
-                    || _.MostRecentDateEvent() < (UniverseDateTime - _eventExpiration));
+                    || _.MostRecentDateEvent() < (this.UniverseDateTime - this.eventExpiration));
         }
     }
 }

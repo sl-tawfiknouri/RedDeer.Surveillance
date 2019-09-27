@@ -1,41 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Domain.Core.Markets.Timebars;
-using Domain.Core.Trading.Orders;
-using SharedKernel.Contracts.Markets;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.Layering
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Domain.Core.Markets.Timebars;
     using Domain.Core.Trading;
     using Domain.Core.Trading.Interfaces;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
 
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Analytics.Streams;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The layering rule.
+    /// </summary>
     public class LayeringRule : BaseUniverseRule, ILayeringRule
     {
-        private readonly ILogger _logger;
-        private readonly IMarketTradingHoursService _tradingHoursService;
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IUniverseAlertStream _alertStream;
-        private readonly IUniverseOrderFilter _orderFilter;
-        private readonly ILayeringRuleEquitiesParameters _equitiesParameters;
-        private bool _hadMissingData = false;
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private readonly IMarketTradingHoursService tradingHoursService;
 
+        /// <summary>
+        /// The rule context.
+        /// </summary>
+        private readonly ISystemProcessOperationRunRuleContext ruleContext;
+
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private readonly IUniverseAlertStream alertStream;
+
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter orderFilter;
+
+        /// <summary>
+        /// The equities parameters.
+        /// </summary>
+        private readonly ILayeringRuleEquitiesParameters equitiesParameters;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// The had missing data.
+        /// </summary>
+        private bool hadMissingData = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayeringRule"/> class.
+        /// </summary>
+        /// <param name="equitiesParameters">
+        /// The equities parameters.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="tradingHoursService">
+        /// The trading hours service.
+        /// </param>
+        /// <param name="operationContext">
+        /// The op context.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="tradingHistoryLogger">
+        /// The trading history logger.
+        /// </param>
         public LayeringRule(
             ILayeringRuleEquitiesParameters equitiesParameters,
             IUniverseAlertStream alertStream,
@@ -43,7 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             ILogger logger,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
-            ISystemProcessOperationRunRuleContext opContext,
+            ISystemProcessOperationRunRuleContext operationContext,
             RuleRunMode runMode,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -53,27 +117,88 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 Domain.Surveillance.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
-                opContext,
+                operationContext,
                 marketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
         {
-            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
-            _ruleCtx = opContext ?? throw new ArgumentNullException(nameof(opContext));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this.equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.ruleContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
+            this.alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this.orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
 
+        /// <summary>
+        /// Gets or sets the organization factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
-        protected override IUniverseEvent Filter(IUniverseEvent value)
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
         {
-            return _orderFilter.Filter(value);
+            if (this.equitiesParameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.equitiesParameters.PercentageOfMarketDailyVolume != null)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            if (this.equitiesParameters.PercentageOfMarketWindowVolume != null)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.equitiesParameters.Id,
+                constraints);
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return this.orderFilter.Filter(value);
+        }
+
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
@@ -99,7 +224,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var buyPosition = new TradePosition(new List<Order>());
             var sellPosition = new TradePosition(new List<Order>());
 
-            AddToPositions(buyPosition, sellPosition, mostRecentTrade);
+            this.AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
                 (mostRecentTrade.OrderDirection == OrderDirections.BUY 
@@ -114,7 +239,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     : sellPosition;
 
             var layeringRuleBreach =
-                CheckPositionForLayering(
+                this.CheckPositionForLayering(
                     tradeWindow,
                     buyPosition,
                     sellPosition,
@@ -124,12 +249,24 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (layeringRuleBreach != null)
             {
-                _logger.LogInformation($"RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
-                var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
-                _alertStream.Add(universeAlert);
+                this.logger.LogInformation($"RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
+                var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, layeringRuleBreach, this.ruleContext);
+                this.alertStream.Add(universeAlert);
             }
         }
 
+        /// <summary>
+        /// The add to positions.
+        /// </summary>
+        /// <param name="buyPosition">
+        /// The buy position.
+        /// </param>
+        /// <param name="sellPosition">
+        /// The sell position.
+        /// </param>
+        /// <param name="nextTrade">
+        /// The next trade.
+        /// </param>
         private void AddToPositions(ITradePosition buyPosition, ITradePosition sellPosition, Order nextTrade)
         {
             switch (nextTrade.OrderDirection)
@@ -143,12 +280,36 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     sellPosition.Add(nextTrade);
                     break;
                 default:
-                    _logger.LogError("not considering an out of range order direction");
-                    _ruleCtx.EventException("not considering an out of range order direction");
+                    this.logger.LogError("not considering an out of range order direction");
+                    this.ruleContext.EventException("not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
 
+        /// <summary>
+        /// The check position for layering.
+        /// </summary>
+        /// <param name="tradeWindow">
+        /// The trade window.
+        /// </param>
+        /// <param name="buyPosition">
+        /// The buy position.
+        /// </param>
+        /// <param name="sellPosition">
+        /// The sell position.
+        /// </param>
+        /// <param name="tradingPosition">
+        /// The trading position.
+        /// </param>
+        /// <param name="opposingPosition">
+        /// The opposing position.
+        /// </param>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILayeringRuleBreach"/>.
+        /// </returns>
         private ILayeringRuleBreach CheckPositionForLayering(
             Stack<Order> tradeWindow,
             ITradePosition buyPosition,
@@ -174,7 +335,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 }
 
                 var nextTrade = tradeWindow.Pop();
-                AddToPositions(buyPosition, sellPosition, nextTrade);
+                this.AddToPositions(buyPosition, sellPosition, nextTrade);
 
                 if (!tradingPosition.Get().Any()
                     || !opposingPosition.Get().Any())
@@ -183,9 +344,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 }
 
                 // IF ALL PARAMETERS ARE NULL JUST DO THE BIDIRECTIONAL TRADE CHECK
-                if (_equitiesParameters.PercentageOfMarketDailyVolume == null
-                    && _equitiesParameters.PercentageOfMarketWindowVolume == null
-                    && _equitiesParameters.CheckForCorrespondingPriceMovement == null)
+                if (this.equitiesParameters.PercentageOfMarketDailyVolume == null
+                    && this.equitiesParameters.PercentageOfMarketWindowVolume == null
+                    && this.equitiesParameters.CheckForCorrespondingPriceMovement == null)
                 {
                     hasBidirectionalBreach = new RuleBreachDescription
                     {
@@ -194,47 +355,71 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     };
                 }
 
-                if (_equitiesParameters.PercentageOfMarketDailyVolume != null)
+                if (this.equitiesParameters.PercentageOfMarketDailyVolume != null)
                 {
-                    hasDailyVolumeBreach = CheckDailyVolumeBreach(opposingPosition, mostRecentTrade);
+                    hasDailyVolumeBreach = this.CheckDailyVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
-                if (_equitiesParameters.PercentageOfMarketWindowVolume != null)
+                if (this.equitiesParameters.PercentageOfMarketWindowVolume != null)
                 {
-                    hasWindowVolumeBreach = CheckWindowVolumeBreach(opposingPosition, mostRecentTrade);
+                    hasWindowVolumeBreach = this.CheckWindowVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
-                if (_equitiesParameters.CheckForCorrespondingPriceMovement != null
-                    && _equitiesParameters.CheckForCorrespondingPriceMovement.Value)
+                if (this.equitiesParameters.CheckForCorrespondingPriceMovement != null
+                    && this.equitiesParameters.CheckForCorrespondingPriceMovement.Value)
                 {
-                    priceMovementBreach = CheckForPriceMovement(opposingPosition, mostRecentTrade);
+                    priceMovementBreach = this.CheckForPriceMovement(opposingPosition, mostRecentTrade);
                 }
             }
 
             var allTradesInPositions = opposingPosition.Get().Concat(tradingPosition.Get()).ToList();
             var allTrades = new TradePosition(allTradesInPositions);
 
-            // wrong should use a judgement
-            return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
-                ? new LayeringRuleBreach(
-                    OrganisationFactorValue,
-                    _ruleCtx.SystemProcessOperationContext(),
-                    _ruleCtx.CorrelationId(),
-                    _equitiesParameters,
-                    _equitiesParameters.Windows?.BackwardWindowSize ?? TimeSpan.Zero,
-                    allTrades,
-                    mostRecentTrade.Instrument,
+            if (!this.HasRuleBreach(
                     hasBidirectionalBreach,
                     hasDailyVolumeBreach,
                     hasWindowVolumeBreach,
-                    priceMovementBreach,
-                    null,
-                    null,
-                    UniverseDateTime)
-                : null;
+                    priceMovementBreach))
+            {
+                return null;
+            }
+
+            return new LayeringRuleBreach(
+                this.OrganisationFactorValue,
+                this.ruleContext.SystemProcessOperationContext(),
+                this.ruleContext.CorrelationId(),
+                this.equitiesParameters,
+                this.equitiesParameters.Windows?.BackwardWindowSize ?? TimeSpan.Zero,
+                allTrades,
+                mostRecentTrade.Instrument,
+                hasBidirectionalBreach,
+                hasDailyVolumeBreach,
+                hasWindowVolumeBreach,
+                priceMovementBreach,
+                null,
+                null,
+                UniverseDateTime);
         }
 
-        private static bool HasRuleBreach(
+        /// <summary>
+        /// The has rule breach.
+        /// </summary>
+        /// <param name="hasBidirectionalBreach">
+        /// The has bidirectional breach.
+        /// </param>
+        /// <param name="hasDailyVolumeBreach">
+        /// The has daily volume breach.
+        /// </param>
+        /// <param name="hasWindowVolumeBreach">
+        /// The has window volume breach.
+        /// </param>
+        /// <param name="priceMovementBreach">
+        /// The price movement breach.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool HasRuleBreach(
             RuleBreachDescription hasBidirectionalBreach,
             RuleBreachDescription hasDailyVolumeBreach,
             RuleBreachDescription hasWindowVolumeBreach,
@@ -246,17 +431,29 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 || (priceMovementBreach?.RuleBreached ?? false);
         }
 
+        /// <summary>
+        /// The check daily volume breach.
+        /// </summary>
+        /// <param name="opposingPosition">
+        /// The opposing position.
+        /// </param>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RuleBreachDescription"/>.
+        /// </returns>
         private RuleBreachDescription CheckDailyVolumeBreach(
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var tradingHoursManager = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
+            var tradingHoursManager = this.tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
 
             if (!tradingHoursManager.IsValid)
             {
-                _logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
+                this.logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
@@ -267,15 +464,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
-                    _ruleCtx?.Id(),
+                    this.ruleContext?.Id(),
                     DataSource.AllInterday);
             
             var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
+                this.logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
@@ -283,25 +480,37 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             if (marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded <= 0
                 || opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
-                _logger.LogInformation($"unable to evaluate for {mostRecentTrade?.Instrument?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolumeOrderedOrFilled()}");
+                this.logger.LogInformation($"unable to evaluate for {mostRecentTrade?.Instrument?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolumeOrderedOrFilled()}");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
             var percentageDailyVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded;
-            if (percentageDailyVolume >= _equitiesParameters.PercentageOfMarketDailyVolume)
+            if (percentageDailyVolume >= this.equitiesParameters.PercentageOfMarketDailyVolume)
             {
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market daily volume traded within a {_equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketDailyVolume * 100}%."
+                    Description = $" Percentage of market daily volume traded within a {this.equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {this.equitiesParameters.PercentageOfMarketDailyVolume * 100}%."
                 };
             }
 
             return RuleBreachDescription.False();
         }
 
+        /// <summary>
+        /// The check window volume breach.
+        /// </summary>
+        /// <param name="opposingPosition">
+        /// The opposing position.
+        /// </param>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RuleBreachDescription"/>.
+        /// </returns>
         private RuleBreachDescription CheckWindowVolumeBreach(
             ITradePosition opposingPosition,
             Order mostRecentTrade)
@@ -313,11 +522,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
-                    _ruleCtx?.Id(),
+                    this.ruleContext?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
-                _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                     UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
@@ -325,42 +534,54 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var securityResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDays, RunMode);
             if (securityResult.HadMissingData)
             {
-                _logger.LogWarning($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogWarning($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
             var windowVolume = securityResult.Response.Sum(sdt => sdt?.SpreadTimeBar.Volume.Traded);
             if (windowVolume <= 0)
             {
-                _logger.LogInformation($"unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogInformation($"unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
             if (opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
-                _logger.LogInformation($"unable to calculate opposing position volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogInformation($"unable to calculate opposing position volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
             var percentageWindowVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)windowVolume;
-            if (percentageWindowVolume >= _equitiesParameters.PercentageOfMarketWindowVolume)
+            if (percentageWindowVolume >= this.equitiesParameters.PercentageOfMarketWindowVolume)
             {
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market volume traded within a {_equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketWindowVolume * 100}%."
+                    Description = $" Percentage of market volume traded within a {this.equitiesParameters.Windows.BackwardWindowSize.TotalSeconds} second window exceeded the layering window threshold of {this.equitiesParameters.PercentageOfMarketWindowVolume * 100}%."
                 };
             }
 
             return RuleBreachDescription.False();
         }
 
+        /// <summary>
+        /// The check for price movement.
+        /// </summary>
+        /// <param name="opposingPosition">
+        /// The opposing position.
+        /// </param>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RuleBreachDescription"/>.
+        /// </returns>
         private RuleBreachDescription CheckForPriceMovement(
             ITradePosition opposingPosition,
             Order mostRecentTrade)
@@ -380,11 +601,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     mostRecentTrade.Instrument.Identifiers,
                     startDate.Subtract(this.TradeBackwardWindowSize),
                     endDate,
-                    _ruleCtx?.Id(),
+                    this.ruleContext?.Id(),
                     DataSource.AllIntraday);
 
             var tradingDays =
-                _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+                this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                     UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
@@ -393,9 +614,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogInformation($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
             
@@ -405,29 +626,47 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             }
 
             var securityDataTicks = marketResult.Response;
-            var startTick = StartTick(securityDataTicks, startDate);
+            var startTick = this.StartTick(securityDataTicks, startDate);
             if (startTick == null)
             {
-                _logger.LogInformation($"unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogInformation($"unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
-            var endTick = EndTick(securityDataTicks, endDate);
+            var endTick = this.EndTick(securityDataTicks, endDate);
             if (endTick == null)
             {
-                _logger.LogInformation($"unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                this.logger.LogInformation($"unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
-                _hadMissingData = true;
+                this.hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
             var priceMovement = endTick.SpreadTimeBar.Price.Value - startTick.SpreadTimeBar.Price.Value;
 
-            return BuildDescription(mostRecentTrade, priceMovement, startTick, endTick);
+            return this.BuildDescription(mostRecentTrade, priceMovement, startTick, endTick);
         }
 
+        /// <summary>
+        /// The build description.
+        /// </summary>
+        /// <param name="mostRecentTrade">
+        /// The most recent trade.
+        /// </param>
+        /// <param name="priceMovement">
+        /// The price movement.
+        /// </param>
+        /// <param name="startTick">
+        /// The start tick.
+        /// </param>
+        /// <param name="endTick">
+        /// The end tick.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RuleBreachDescription"/>.
+        /// </returns>
         private RuleBreachDescription BuildDescription(
             Order mostRecentTrade,
             decimal priceMovement,
@@ -446,12 +685,24 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     return priceMovement > 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:
-                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
-                    _ruleCtx.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
+                    this.logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
+                    this.ruleContext.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
                     return RuleBreachDescription.False();
             }
         }
 
+        /// <summary>
+        /// The start tick.
+        /// </summary>
+        /// <param name="securityDataTicks">
+        /// The security data ticks.
+        /// </param>
+        /// <param name="startDate">
+        /// The start date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="EquityInstrumentIntraDayTimeBar"/>.
+        /// </returns>
         private EquityInstrumentIntraDayTimeBar StartTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime startDate)
         {
             if (securityDataTicks == null
@@ -480,6 +731,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return startTick;
         }
 
+        /// <summary>
+        /// The end tick.
+        /// </summary>
+        /// <param name="securityDataTicks">
+        /// The security data ticks.
+        /// </param>
+        /// <param name="endDate">
+        /// The end date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="EquityInstrumentIntraDayTimeBar"/>.
+        /// </returns>
         private EquityInstrumentIntraDayTimeBar EndTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime endDate)
         {
             if (securityDataTicks == null
@@ -509,64 +772,121 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return endTick;
         }
 
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on when their status last changed in the layering rule
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on fills in the layering rule
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred");
+            this.logger.LogInformation("Genesis occurred");
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
+            this.logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
+            this.logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
         }
 
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured");
+            this.logger.LogInformation("Eschaton occured");
 
-            var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, null, _ruleCtx, true);
-            _alertStream.Add(universeAlert);
+            var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, null, this.ruleContext, true);
+            this.alertStream.Add(universeAlert);
 
-            if (_hadMissingData)
+            if (this.hadMissingData)
             {
-                _logger.LogInformation($"had missing data. Updating rule context with state.");
-                _ruleCtx.EndEvent();
+                this.logger.LogInformation($"had missing data. Updating rule context with state.");
+                this.ruleContext.EndEvent();
             }
             else
             {
-                _ruleCtx?.EndEvent();
+                this.ruleContext?.EndEvent();
             }
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (LayeringRule)Clone();
@@ -575,6 +895,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
             var clone = (LayeringRule)this.MemberwiseClone();

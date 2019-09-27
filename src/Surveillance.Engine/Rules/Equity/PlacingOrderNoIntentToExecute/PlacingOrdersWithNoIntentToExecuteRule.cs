@@ -1,44 +1,122 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Trading.Orders;
-using Microsoft.Extensions.Logging;
-using SharedKernel.Contracts.Markets;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Analytics.Streams;
-using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories.Equities;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
-    using Domain.Core.Trading;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
+    using Domain.Core.Trading;
+    using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
+
+    using Microsoft.Extensions.Logging;
+
+    using SharedKernel.Contracts.Markets;
+
+    using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Analytics.Streams;
+    using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+    using Surveillance.Engine.Rules.Factories.Equities;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
+    using Surveillance.Engine.Rules.Trades;
+    using Surveillance.Engine.Rules.Trades.Interfaces;
+    using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
+    /// <summary>
+    /// The placing orders with no intent to execute rule.
+    /// </summary>
     public class PlacingOrdersWithNoIntentToExecuteRule : BaseUniverseRule, IPlacingOrdersWithNoIntentToExecuteRule
     {
-        private bool _hadMissingData;
-        private bool _processingMarketClose;
-        private MarketOpenClose _latestMarketClosure;
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter orderFilter;
 
-        private readonly ILogger _logger;
-        private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IUniverseAlertStream _alertStream;
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IMarketTradingHoursService _tradingHoursService;
-        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private readonly IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters _parameters;
+        /// <summary>
+        /// The alert stream.
+        /// </summary>
+        private readonly IUniverseAlertStream alertStream;
 
+        /// <summary>
+        /// The rule context.
+        /// </summary>
+        private readonly ISystemProcessOperationRunRuleContext ruleContext;
+
+        /// <summary>
+        /// The trading hours service.
+        /// </summary>
+        private readonly IMarketTradingHoursService tradingHoursService;
+
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriber dataRequestSubscriber;
+
+        /// <summary>
+        /// The rule parameters.
+        /// </summary>
+        private readonly IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// The had missing data.
+        /// </summary>
+        private bool hadMissingData;
+
+        /// <summary>
+        /// The processing market close.
+        /// </summary>
+        private bool processingMarketClose;
+
+        /// <summary>
+        /// The latest market closure.
+        /// </summary>
+        private MarketOpenClose latestMarketClosure;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlacingOrdersWithNoIntentToExecuteRule"/> class.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="ruleContext">
+        /// The rule context.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="tradingHoursService">
+        /// The trading hours service.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingStackLogger">
+        /// The trading stack logger.
+        /// </param>
         public PlacingOrdersWithNoIntentToExecuteRule(
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             IUniverseOrderFilter orderFilter,
@@ -63,26 +141,69 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 logger,
                 tradingStackLogger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
-            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
-            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.ruleContext = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
+            this.alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            this.dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+            this.orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this.parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            this.tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
         }
 
+        /// <summary>
+        /// Gets or sets the organization factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
-        protected override IUniverseEvent Filter(IUniverseEvent value)
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
         {
-            return _orderFilter.Filter(value);
+            if (this.parameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraint = new RuleDataSubConstraint(
+                this.ForwardWindowSize,
+                this.TradeBackwardWindowSize,
+                DataSource.AllIntraday,
+                _ => true);
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.parameters.Id,
+                new[] { constraint });
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return this.orderFilter.Filter(value);
+        }
+
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            if (!_processingMarketClose
-                || _latestMarketClosure == null)
+            if (!this.processingMarketClose
+                || this.latestMarketClosure == null)
             {
                 return;
             }
@@ -103,20 +224,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
             if (!ordersToCheck.Any())
             {
-                _logger.LogInformation("RunPostOrderEvent did not have any orders to check after filtering for invalid order status values");
+                this.logger.LogInformation("RunPostOrderEvent did not have any orders to check after filtering for invalid order status values");
                 return;
             }
 
-            var openingHours = _latestMarketClosure.MarketClose - _latestMarketClosure.MarketOpen;
+            var openingHours = this.latestMarketClosure.MarketClose - this.latestMarketClosure.MarketOpen;
             var benchmarkOrder = ordersToCheck.First();
 
-            var tradingHours = _tradingHoursService.GetTradingHoursForMic(benchmarkOrder.Market?.MarketIdentifierCode);
+            var tradingHours = this.tradingHoursService.GetTradingHoursForMic(benchmarkOrder.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"Request for trading hours was invalid. MIC - {benchmarkOrder.Market?.MarketIdentifierCode}");
+                this.logger.LogError($"Request for trading hours was invalid. MIC - {benchmarkOrder.Market?.MarketIdentifierCode}");
             }
 
-            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
+            var tradingDates = this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 benchmarkOrder.Market?.MarketIdentifierCode);
@@ -127,7 +248,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 benchmarkOrder.Instrument.Identifiers,
                 UniverseDateTime.Subtract(openingHours), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
-                _ruleCtx?.Id(),
+                this.ruleContext?.Id(),
                 DataSource.AllIntraday);
 
             var dataResponse = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
@@ -136,8 +257,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
                 || dataResponse.Response == null
                 || !dataResponse.Response.Any())
             {
-                _logger.LogInformation($"RunPostOrderEvent could not find relevant market data for {benchmarkOrder.Instrument?.Identifiers} on {_latestMarketClosure?.MarketId}");
-                _hadMissingData = true;
+                this.logger.LogInformation($"RunPostOrderEvent could not find relevant market data for {benchmarkOrder.Instrument?.Identifiers} on {this.latestMarketClosure?.MarketId}");
+                this.hadMissingData = true;
                 return;
             }
 
@@ -148,9 +269,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 
             var ruleBreaches = 
                 ordersToCheck
-                    .Select(_ => ReferenceOrderSigma(_, sd, mean))
-                    .Where(_ => _.Item1 > 0 && _.Item1 > _parameters.Sigma)
-                    .Where(_ => CheckIfOrderWouldNotOfExecuted(_, dataResponse.Response))
+                    .Select(_ => this.ReferenceOrderSigma(_, sd, mean))
+                    .Where(_ => _.Item1 > 0 && _.Item1 > this.parameters.Sigma)
+                    .Where(_ => this.CheckIfOrderWouldNotOfExecuted(_, dataResponse.Response))
                     .ToList();
 
             if (!ruleBreaches.Any())
@@ -159,31 +280,46 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             }
 
             var position = new TradePosition(ruleBreaches.Select(_ => _.Item2).ToList());
-            var poe = ruleBreaches.Select(_ => ExecutionUnderNormalDistribution(_.Item2, mean, sd, _.Item1)).ToList();
+            var poe = ruleBreaches.Select(_ => this.ExecutionUnderNormalDistribution(_.Item2, mean, sd, _.Item1)).ToList();
 
             // wrong but should be a judgement
             var breach =
                 new PlacingOrderWithNoIntentToExecuteRuleRuleBreach(
-                    _parameters.Windows.BackwardWindowSize,
+                    this.parameters.Windows.BackwardWindowSize,
                     position,
                     benchmarkOrder.Instrument,
-                    OrganisationFactorValue,
+                    this.OrganisationFactorValue,
                     mean, 
                     sd,
                     poe,
-                    _parameters,
-                    _ruleCtx,
+                    this.parameters,
+                    this.ruleContext,
                     null,
                     null,
-                    UniverseDateTime);
+                    this.UniverseDateTime);
 
-            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, _ruleCtx);
-            _alertStream.Add(alertEvent);
+            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, breach, this.ruleContext);
+            this.alertStream.Add(alertEvent);
         }
 
+        /// <summary>
+        /// The check if order would not of executed.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="timeBars">
+        /// The time bars.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Ensure that the order directions are expansive to all scenarios
+        /// </exception>
         private bool CheckIfOrderWouldNotOfExecuted(
             Tuple<decimal, Order> order,
-            List<Domain.Core.Markets.Timebars.EquityInstrumentIntraDayTimeBar> timeBars)
+            IList<Domain.Core.Markets.Timebars.EquityInstrumentIntraDayTimeBar> timeBars)
         {
             if (order?.Item2 == null)
             {
@@ -231,6 +367,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             throw new ArgumentOutOfRangeException(nameof(order.Item2.OrderDirection));
         }
 
+        /// <summary>
+        /// The reference order sigma.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="sd">
+        /// The standard deviation.
+        /// </param>
+        /// <param name="mean">
+        /// The mean.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Tuple"/>.
+        /// </returns>
         private Tuple<decimal, Order> ReferenceOrderSigma(Order order, decimal sd, decimal mean)
         {
             // guard clauses are order sensitive
@@ -271,6 +422,27 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             return new Tuple<decimal, Order>(sigma, order);
         }
 
+        /// <summary>
+        /// The execution under normal distribution.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <param name="mean">
+        /// The mean.
+        /// </param>
+        /// <param name="sd">
+        /// The standard deviant.
+        /// </param>
+        /// <param name="sigma">
+        /// The sigma.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ProbabilityOfExecution"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Ensure order direction enumeration coverage is completed
+        /// </exception>
         private PlacingOrderWithNoIntentToExecuteRuleRuleBreach.ProbabilityOfExecution ExecutionUnderNormalDistribution(Order order, decimal mean, decimal sd, decimal sigma)
         {
             if (order?.OrderLimitPrice == null)
@@ -293,81 +465,138 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             else
             {
                 var exception = new ArgumentOutOfRangeException(nameof(order.OrderDirection));
-                _logger?.LogError($"{exception.Message}");
+                this.logger?.LogError($"{exception.Message}");
                 throw exception;
             }
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // placing order with no intent to execute will not use this
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // placing order with no intent to execute will not use this
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred");
+            this.logger.LogInformation("Genesis occurred");
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred at {exchange?.MarketOpen}");
+            this.logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred at {exchange?.MarketOpen}");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred at {exchange?.MarketClose}");
+            this.logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred at {exchange?.MarketClose}");
 
-            _processingMarketClose = true;
-            _latestMarketClosure = exchange;
-            RunRuleForAllTradingHistoriesInMarket(exchange, exchange?.MarketClose);
-            _processingMarketClose = false;
+            this.processingMarketClose = true;
+            this.latestMarketClosure = exchange;
+            this.RunRuleForAllTradingHistoriesInMarket(exchange, exchange?.MarketClose);
+            this.processingMarketClose = false;
         }
 
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occurred");
+            this.logger.LogInformation("Eschaton occurred");
 
-            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            if (this.hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
                 var alert = new UniverseAlertEvent(
                     Domain.Surveillance.Scheduling.Rules.PlacingOrderWithNoIntentToExecute, 
                     null,
-                    _ruleCtx,
+                    this.ruleContext,
                     false,
                     true);
 
-                _alertStream.Add(alert);
+                this.alertStream.Add(alert);
 
-                _dataRequestSubscriber.SubmitRequest();
-                _ruleCtx.EndEvent();
+                this.dataRequestSubscriber.SubmitRequest();
+                this.ruleContext.EndEvent();
             }
             else
             {
-                _ruleCtx?.EndEvent();
+                this.ruleContext?.EndEvent();
             }
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (PlacingOrdersWithNoIntentToExecuteRule)Clone();
@@ -376,6 +605,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
             var clone = (PlacingOrdersWithNoIntentToExecuteRule)this.MemberwiseClone();

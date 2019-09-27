@@ -9,10 +9,14 @@
     using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
 
     using Microsoft.Extensions.Logging;
 
     using Newtonsoft.Json;
+
+    using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
@@ -248,6 +252,49 @@
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
+        }
+
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            if (this.FixedIncomeParameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.FixedIncomeParameters.PerformHighProfitDailyAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllInterday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            if (this.FixedIncomeParameters.PerformHighProfitWindowAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AllIntraday,
+                    _ => true);
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.FixedIncomeParameters.Id,
+                constraints);
         }
 
         /// <summary>

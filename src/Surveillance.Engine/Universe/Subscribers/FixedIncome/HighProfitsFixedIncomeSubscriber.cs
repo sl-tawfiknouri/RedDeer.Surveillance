@@ -12,7 +12,6 @@
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
@@ -116,9 +115,9 @@
         /// The alert stream.
         /// </param>
         /// <returns>
-        /// The <see cref="IReadOnlyCollection"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -128,7 +127,7 @@
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.FixedIncomeHighProfits) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters =
@@ -176,23 +175,23 @@
         /// The judgement service.
         /// </param>
         /// <returns>
-        /// The <see cref="IReadOnlyCollection"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> highProfitParameters,
             IJudgementService judgementService)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (highProfitParameters != null && highProfitParameters.Any())
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var paramSubscriptions = this.SubscribeToParams(
+                    var paramSubscriptions = this.SubscribeToParameters(
                         execution,
                         operationContext,
                         dataRequestSubscriber,
@@ -213,7 +212,7 @@
         }
 
         /// <summary>
-        /// The subscribe to params.
+        /// The subscribe to parameters.
         /// </summary>
         /// <param name="execution">
         /// The execution.
@@ -233,7 +232,7 @@
         /// <returns>
         /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IUniverseRule SubscribeToParams(
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,

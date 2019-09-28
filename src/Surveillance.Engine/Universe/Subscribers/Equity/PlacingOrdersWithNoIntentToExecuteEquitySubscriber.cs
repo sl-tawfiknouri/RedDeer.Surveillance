@@ -127,9 +127,9 @@
         /// The alert stream.
         /// </param>
         /// <returns>
-        /// The <see cref="IUniverseEvent"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -139,7 +139,7 @@
         {
             if (!execution.Rules?.Select(_ => _.Rule)?.Contains(Rules.PlacingOrderWithNoIntentToExecute) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(_ => _.Ids).Where(_ => _ != null).ToList();
@@ -190,7 +190,9 @@
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (parameter.HasInternalFilters() || parameter.HasReferenceDataFilters() || parameter.HasMarketCapFilters()
+            if (parameter.HasInternalFilters() 
+                || parameter.HasReferenceDataFilters() 
+                || parameter.HasMarketCapFilters()
                 || parameter.HasVenueVolumeFilters())
             {
                 this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
@@ -313,16 +315,16 @@
         /// The data request subscriber.
         /// </param>
         /// <returns>
-        /// The <see cref="IUniverseEvent"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> placingOrdersParameters,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (placingOrdersParameters != null && placingOrdersParameters.Any())

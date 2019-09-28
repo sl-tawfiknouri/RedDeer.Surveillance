@@ -24,7 +24,6 @@
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 
@@ -118,7 +117,7 @@
         /// <returns>
         /// The <see cref="IUniverseEvent"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -128,7 +127,7 @@
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.FixedIncomeHighVolumeIssuance) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -289,14 +288,14 @@
         /// <returns>
         /// The <see cref="IHighVolumeIssuanceRuleFixedIncomeParameters"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IJudgementService judgementService,
             IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> highVolumeParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (highVolumeParameters != null && highVolumeParameters.Any())

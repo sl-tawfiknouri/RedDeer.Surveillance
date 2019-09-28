@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Domain.Core.Extensions;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
@@ -17,17 +18,7 @@
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-    using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
-    using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
-    using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
-    using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
-    using Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute;
-    using Surveillance.Engine.Rules.Rules.Equity.Ramping;
-    using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
-    using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
@@ -195,7 +186,7 @@
             this.highProfitFixedIncomeSubscriber = 
                 highProfitFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highProfitFixedIncomeSubscriber));
         }
-
+       
         /// <summary>
         /// The subscribe rules.
         /// </summary>
@@ -223,7 +214,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        public async Task<IReadOnlyCollection<string>> SubscribeRules(
+        public async Task<IUniverseRuleSubscriptionSummary> SubscribeRules(
             ScheduledExecution execution,
             IUniversePlayer player,
             IUniverseAlertStream alertStream,
@@ -235,182 +226,118 @@
             if (execution == null || player == null)
             {
                 this.logger.LogInformation("received null execution or player. Returning");
-                return new string[0];
+
+                return new UniverseRuleSubscriptionSummary(null, null);
             }
 
-            // EQUITY
-            var highVolumeSubscriptions = this.highVolumeEquitySubscriber.CollateSubscriptions(
+            var subscriptions = this.BuildSubscriptions(
                 execution,
-                ruleParameters,
-                operationContext,
+                player,
+                alertStream,
                 dataRequestSubscriber,
                 judgementService,
-                alertStream);
-
-            var washTradeSubscriptions = this.washTradeEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
                 operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var highProfitSubscriptions = this.highProfitEquitySubscriber.CollateSubscriptions(
-                execution,
                 ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
+                this.highVolumeEquitySubscriber.CollateSubscriptions,
+                this.washTradeEquitySubscriber.CollateSubscriptions,
+                this.highProfitEquitySubscriber.CollateSubscriptions,
+                this.cancelledOrderEquitySubscriber.CollateSubscriptions,
+                this.markingTheCloseEquitySubscriber.CollateSubscriptions,
+                this.spoofingEquitySubscriber.CollateSubscriptions,
+                this.rampingEquitySubscriber.CollateSubscriptions,
+                this.placingOrdersEquitySubscriber.CollateSubscriptions,
+                this.washTradeFixedIncomeSubscriber.CollateSubscriptions,
+                this.highVolumeFixedIncomeSubscriber.CollateSubscriptions,
+                this.highProfitFixedIncomeSubscriber.CollateSubscriptions);
 
-            var cancelledSubscriptions = this.cancelledOrderEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var markingTheCloseSubscriptions = this.markingTheCloseEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var spoofingSubscriptions = this.spoofingEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var rampingSubscriptions = this.rampingEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var placingOrdersSubscriptions = this.placingOrdersEquitySubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            // FIXED INCOME
-            var washTradeFixedIncomeSubscriptions = this.washTradeFixedIncomeSubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var highVolumeFixedIncomeSubscriptions = this.highVolumeFixedIncomeSubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            var highProfitFixedIncomeSubscriptions = this.highProfitFixedIncomeSubscriber.CollateSubscriptions(
-                execution,
-                ruleParameters,
-                operationContext,
-                dataRequestSubscriber,
-                judgementService,
-                alertStream);
-
-            // EQUITY
-            foreach (var sub in highVolumeSubscriptions)
+            foreach (var subscription in subscriptions)
             {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
-                player.Subscribe(sub);
-            }
+                if (subscription == null)
+                {
+                    continue;
+                }
 
-            foreach (var sub in washTradeSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(WashTradeRule)}");
-                player.Subscribe(sub);
+                this.logger.LogInformation($"Subscribe Rules subscribing a {subscription.Rule.GetDescription()}");
+                player.Subscribe(subscription);
             }
-
-            foreach (var sub in highProfitSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in cancelledSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in markingTheCloseSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in spoofingSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(SpoofingRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in rampingSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe rules subscribing a {nameof(RampingRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in placingOrdersSubscriptions)
-            {
-                this.logger.LogInformation(
-                    $"Subscribe Rules subscribing a {nameof(PlacingOrdersWithNoIntentToExecuteRule)}");
-                player.Subscribe(sub);
-            }
-
-            // FIXED INCOME
-            foreach (var sub in washTradeFixedIncomeSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in highVolumeFixedIncomeSubscriptions)
-            {
-                this.logger.LogInformation(
-                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeRule)}");
-                player.Subscribe(sub);
-            }
-
-            foreach (var sub in highProfitFixedIncomeSubscriptions)
-            {
-                this.logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
-                player.Subscribe(sub);
-            }
-
+            
             var ids = this.idExtractor.ExtractIds(ruleParameters);
 
             if (ids == null || !ids.Any())
             {
                 this.logger.LogError("did not have any ids successfully extracted from the rule parameters");
 
-                return ids;
+                return new UniverseRuleSubscriptionSummary(null, null);
             }
 
             var jointIds = ids.Aggregate((a, b) => $"{a} {b}");
             this.logger.LogInformation($"subscriber processed for the following ids {jointIds}");
 
-            return await Task.FromResult(ids);
+            return await Task.FromResult(new UniverseRuleSubscriptionSummary(ids, subscriptions));
+        }
+
+        /// <summary>
+        /// The build subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="player">
+        /// The player.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IReadOnlyCollection<IUniverseRule> BuildSubscriptions(
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IJudgementService judgementService,
+            ISystemProcessOperationContext operationContext,
+            RuleParameterDto ruleParameters,
+            params Func<ScheduledExecution,
+                    RuleParameterDto,
+                    ISystemProcessOperationContext,
+                    IUniverseDataRequestsSubscriber,
+                    IJudgementService,
+                    IUniverseAlertStream,
+                    IReadOnlyCollection<IUniverseRule>>[] args)
+        {
+            var universeRules = new List<IUniverseRule>();
+
+            foreach (var func in args)
+            {
+                var result = func.Invoke(
+                    execution,
+                    ruleParameters,
+                    operationContext,
+                    dataRequestSubscriber,
+                    judgementService,
+                    alertStream);
+
+                universeRules.AddRange(result);
+            }
+
+            return universeRules;
         }
     }
 }

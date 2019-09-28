@@ -273,7 +273,8 @@
             var alertStream = this.alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            var ids = await this.ruleSubscriber.SubscribeRules(
+            // internally subscribes rules to the player
+            var subscribedRules = await this.ruleSubscriber.SubscribeRules(
                           execution,
                           player,
                           alertStream,
@@ -283,11 +284,11 @@
                           ruleParameters);
 
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
-            this.RuleRunUpdateMessageSend(execution, ids);
+            this.RuleRunUpdateMessageSend(execution, subscribedRules.RuleIds);
 
             if (this.GuardForBackTestIntoFutureExecution(execution))
             {
-                this.SetFailedBackTestDueToFutureExecution(operationContext, execution, cancellableRule, ids);
+                this.SetFailedBackTestDueToFutureExecution(operationContext, execution, cancellableRule, subscribedRules.RuleIds);
                 return;
             }
 
@@ -311,7 +312,7 @@
 
             if (cts.IsCancellationRequested)
             {
-                this.SetRuleCancelledState(operationContext, execution, cancellableRule, ids);
+                this.SetRuleCancelledState(operationContext, execution, cancellableRule, subscribedRules.RuleIds);
                 return;
             }
 
@@ -325,7 +326,7 @@
             this.SetOperationContextEndState(dataRequestSubscriber, operationContext);
 
             this.logger.LogInformation("calling rule run update message send");
-            this.RuleRunUpdateMessageSend(execution, ids);
+            this.RuleRunUpdateMessageSend(execution, subscribedRules.RuleIds);
             this.logger.LogInformation("completed rule run update message send");
 
             this.ruleCancellation.Unsubscribe(cancellableRule);

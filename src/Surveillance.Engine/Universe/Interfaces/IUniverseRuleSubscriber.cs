@@ -1,6 +1,5 @@
 ﻿namespace Surveillance.Engine.Rules.Universe.Interfaces
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Domain.Surveillance.Scheduling;
@@ -45,7 +44,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        Task<IReadOnlyCollection<string>> SubscribeRules(
+        Task<IUniverseRuleSubscriptionSummary> SubscribeRules(
             ScheduledExecution execution,
             IUniversePlayer player,
             IUniverseAlertStream alertStream,

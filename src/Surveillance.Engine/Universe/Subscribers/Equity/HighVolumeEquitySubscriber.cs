@@ -15,7 +15,6 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -128,9 +127,9 @@
         /// The alert stream.
         /// </param>
         /// <returns>
-        /// The <see cref="IUniverseEvent"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -140,7 +139,7 @@
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.HighVolume) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -191,7 +190,9 @@
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (parameter.HasInternalFilters() || parameter.HasReferenceDataFilters() || parameter.HasMarketCapFilters()
+            if (parameter.HasInternalFilters() 
+                || parameter.HasReferenceDataFilters() 
+                || parameter.HasMarketCapFilters()
                 || parameter.HasVenueVolumeFilters())
             {
                 this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
@@ -350,16 +351,16 @@
         /// The high volume parameters.
         /// </param>
         /// <returns>
-        /// The <see cref="IReadOnlyCollection"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> highVolumeParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (highVolumeParameters != null && highVolumeParameters.Any())

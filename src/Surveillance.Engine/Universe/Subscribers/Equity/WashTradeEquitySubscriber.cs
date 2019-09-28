@@ -128,7 +128,7 @@
         /// <returns>
         /// The <see cref="IUniverseEvent"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -138,7 +138,7 @@
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(Rules.WashTrade) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -307,16 +307,16 @@
         /// The wash trade parameters.
         /// </param>
         /// <returns>
-        /// The <see cref="IUniverseEvent"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<IWashTradeRuleEquitiesParameters> washTradeParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             if (washTradeParameters != null && washTradeParameters.Any())
             {

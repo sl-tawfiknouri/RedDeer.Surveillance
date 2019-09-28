@@ -13,7 +13,6 @@
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -126,9 +125,9 @@
         /// The alert stream.
         /// </param>
         /// <returns>
-        /// The <see cref="IReadOnlyCollection"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -138,7 +137,7 @@
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Rules.Spoofing) ?? true)
             {
-                return new IObserver<IUniverseEvent>[0];
+                return new IUniverseRule[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -308,16 +307,16 @@
         /// The spoofing parameters.
         /// </param>
         /// <returns>
-        /// The <see cref="IUniverseEvent"/>.
+        /// The <see cref="IUniverseRule"/>.
         /// </returns>
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<ISpoofingRuleEquitiesParameters> spoofingParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             if (spoofingParameters != null && spoofingParameters.Any())
             {

@@ -1,6 +1,5 @@
 ﻿namespace Surveillance.Engine.Rules.Universe.Subscribers.Interfaces
 {
-    using System;
     using System.Collections.Generic;
 
     using Domain.Surveillance.Scheduling;
@@ -12,6 +11,7 @@
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
 
     /// <summary>
     /// The RuleSubscriber interface.
@@ -42,7 +42,7 @@
         /// <returns>
         /// The <see cref="IUniverseEvent"/>.
         /// </returns>
-        IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,

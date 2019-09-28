@@ -15,25 +15,46 @@
     /// </summary>
     public class UniversePercentageOfEventCompletionLogger : IUniversePercentageOfEventCompletionLogger
     {
-        private readonly IList<PercentageLandMark> _list;
+        /// <summary>
+        /// The list.
+        /// </summary>
+        private readonly IList<PercentageLandMark> list;
 
-        private readonly ILogger<UniversePercentageOfEventCompletionLogger> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<UniversePercentageOfEventCompletionLogger> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniversePercentageOfEventCompletionLogger"/> class.
+        /// </summary>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public UniversePercentageOfEventCompletionLogger(ILogger<UniversePercentageOfEventCompletionLogger> logger)
         {
-            this._list = new List<PercentageLandMark>();
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.list = new List<PercentageLandMark>();
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The initiate event logger.
+        /// </summary>
+        /// <param name="universe">
+        /// The universe.
+        /// </param>
         public void InitiateEventLogger(IUniverse universe)
         {
-            if (universe == null) return;
+            if (universe == null)
+            {
+                return;
+            }
 
             var events = (decimal)universe.UniverseEvents.Count();
 
             if (events < 10m)
             {
-                this._logger.LogInformation("Less than 10 events in the universe. Not logging (%) completion.");
+                this.logger.LogInformation("Less than 10 events in the universe. Not logging (%) completion.");
                 return;
             }
 
@@ -45,44 +66,86 @@
                 var landMark = new PercentageLandMark(
                     universeEvent,
                     $"Universe event processing {fraction * 100}% towards completion. {universeEvent.EventTime}");
-                this._list.Add(landMark);
+                this.list.Add(landMark);
             }
         }
 
+        /// <summary>
+        /// The on completed.
+        /// </summary>
         public void OnCompleted()
         {
         }
 
+        /// <summary>
+        /// The on error.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         public void OnError(Exception error)
         {
-            this._logger.LogError(
+            this.logger.LogError(
                 $"Exception passed to Universe Percentage Of Event Completion Logger {error.Message} - {error.InnerException?.Message}");
         }
 
+        /// <summary>
+        /// The on next.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
-            if (value == null) return;
-
-            if (!this._list.Any()) return;
-
-            var match = this._list.FirstOrDefault(m => ReferenceEquals(m.Events, value));
-            if (match != null)
+            if (value == null)
             {
-                this._logger.LogInformation(match?.LogMessage);
-                this._list.Remove(match);
+                return;
             }
+
+            if (!this.list.Any())
+            {
+                return;
+            }
+
+            var match = this.list.FirstOrDefault(m => ReferenceEquals(m.Events, value));
+
+            if (match == null)
+            {
+                return;
+            }
+
+            this.logger.LogInformation(match?.LogMessage);
+            this.list.Remove(match);
         }
 
+        /// <summary>
+        /// The percentage land mark.
+        /// </summary>
         public class PercentageLandMark
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PercentageLandMark"/> class.
+            /// </summary>
+            /// <param name="events">
+            /// The events.
+            /// </param>
+            /// <param name="logMessage">
+            /// The log message.
+            /// </param>
             public PercentageLandMark(IUniverseEvent events, string logMessage)
             {
                 this.Events = events;
                 this.LogMessage = logMessage ?? string.Empty;
             }
 
+            /// <summary>
+            /// Gets the events.
+            /// </summary>
             public IUniverseEvent Events { get; }
 
+            /// <summary>
+            /// Gets the log message.
+            /// </summary>
             public string LogMessage { get; }
         }
     }

@@ -13,8 +13,35 @@
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
 
+    /// <summary>
+    /// The RuleSubscriber interface.
+    /// </summary>
     public interface IRuleSubscriber
     {
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,

@@ -23,24 +23,65 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
+    /// <summary>
+    /// The ramping equity subscriber.
+    /// </summary>
     public class RampingEquitySubscriber : BaseSubscriber, IRampingEquitySubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+        /// <summary>
+        /// The decorator filter factory.
+        /// </summary>
+        private readonly IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory;
 
-        private readonly IEquityRuleRampingFactory _equityRuleRampingFactory;
+        /// <summary>
+        /// The equity rule ramping factory.
+        /// </summary>
+        private readonly IEquityRuleRampingFactory equityRuleRampingFactory;
 
-        private readonly ILogger<RampingEquitySubscriber> _logger;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<RampingEquitySubscriber> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RampingEquitySubscriber"/> class.
+        /// </summary>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="equityRuleRampingFactory">
+        /// The equity rule ramping factory.
+        /// </param>
+        /// <param name="decoratorFilterFactory">
+        /// The decorator filter factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public RampingEquitySubscriber(
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
@@ -49,19 +90,43 @@
             IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<RampingEquitySubscriber> logger)
         {
-            this._ruleParameterMapper =
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._equityRuleRampingFactory = equityRuleRampingFactory
+            this.equityRuleRampingFactory = equityRuleRampingFactory
                                              ?? throw new ArgumentNullException(nameof(equityRuleRampingFactory));
-            this._decoratorFilterFactory =
+            this.decoratorFilterFactory =
                 decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
@@ -71,40 +136,66 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(_ => _.Rule)?.Contains(Rules.Ramping) ?? true)
+            {
                 return new IObserver<IUniverseEvent>[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(_ => _.Ids).Where(_ => _ != null).ToList();
             var dtos = ruleParameters.Rampings
                 .Where(_ => filteredParameters.Contains(_.Id, StringComparer.OrdinalIgnoreCase)).ToList();
 
-            var rampingParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var rampingParameters = this.ruleParameterMapper.Map(execution, dtos);
 
             return this.SubscribeToUniverse(execution, operationContext, alertStream, rampingParameters, dataRequestSubscriber);
         }
 
+        /// <summary>
+        /// The decorate with filters.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="rampingRule">
+        /// The ramping rule.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilters(
-            ISystemProcessOperationContext opCtx,
-            IRampingRuleEquitiesParameters param,
+            ISystemProcessOperationContext operationContext,
+            IRampingRuleEquitiesParameters parameter,
             IUniverseRule rampingRule,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
-                || param.HasVenueVolumeFilters())
+            if (parameter.HasInternalFilters() || parameter.HasReferenceDataFilters() || parameter.HasMarketCapFilters()
+                || parameter.HasVenueVolumeFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
-                    param.Sectors,
-                    param.Industries,
-                    param.Regions,
-                    param.Countries,
-                    param.MarketCapFilter,
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameter.Accounts,
+                    parameter.Traders,
+                    parameter.Markets,
+                    parameter.Funds,
+                    parameter.Strategies,
+                    parameter.Sectors,
+                    parameter.Industries,
+                    parameter.Regions,
+                    parameter.Countries,
+                    parameter.MarketCapFilter,
                     ruleRunMode,
                     "Ramping Equity",
                     universeDataRequestsSubscriber,
@@ -112,15 +203,17 @@
 
                 var decoratedFilter = filteredUniverse;
 
-                if (param.HasVenueVolumeFilters())
-                    decoratedFilter = this._decoratorFilterFactory.Build(
-                        param.Windows,
+                if (parameter.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = this.decoratorFilterFactory.Build(
+                        parameter.Windows,
                         filteredUniverse,
-                        param.VenueVolumeFilter,
+                        parameter.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        this.DataSourceForWindow(param.Windows),
+                        this.DataSourceForWindow(parameter.Windows),
                         ruleRunMode);
+                }
 
                 decoratedFilter.Subscribe(rampingRule);
 
@@ -130,17 +223,38 @@
             return rampingRule;
         }
 
-        private IUniverseRule SubscribeParamToUniverse(
+        /// <summary>
+        /// The subscribe parameter to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IUniverseRule SubscribeParameterToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
-            IRampingRuleEquitiesParameters param,
+            IRampingRuleEquitiesParameters parameter,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
                 Rules.Ramping.GetDescription(),
                 EquityRuleRampingFactory.Version,
-                param.Id,
+                parameter.Id,
                 (int)Rules.Ramping,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -149,19 +263,19 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var rampingRule = this._equityRuleRampingFactory.Build(
-                param,
+            var rampingRule = this.equityRuleRampingFactory.Build(
+                parameter,
                 ruleCtx,
                 alertStream,
                 runMode,
                 dataRequestSubscriber);
-            var rampingRuleOrgFactors = this._brokerServiceFactory.Build(
+            var rampingRuleOrgFactors = this.brokerServiceFactory.Build(
                 rampingRule,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameter.Factors,
+                parameter.AggregateNonFactorableIntoOwnCategory);
             var rampingRuleFiltered = this.DecorateWithFilters(
-                opCtx,
-                param,
+                operationContext,
+                parameter,
                 rampingRuleOrgFactors,
                 dataRequestSubscriber,
                 ruleCtx,
@@ -170,9 +284,30 @@
             return rampingRuleFiltered;
         }
 
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="rampingParameters">
+        /// The ramping parameters.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IReadOnlyCollection<IRampingRuleEquitiesParameters> rampingParameters,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
@@ -183,9 +318,9 @@
             {
                 foreach (var param in rampingParameters)
                 {
-                    var baseSubscriber = this.SubscribeParamToUniverse(
+                    var baseSubscriber = this.SubscribeParameterToUniverse(
                         execution,
-                        opCtx,
+                        operationContext,
                         alertStream,
                         param,
                         dataRequestSubscriber);
@@ -194,9 +329,9 @@
             }
             else
             {
-                const string errorMessage = "tried to schedule a cancelled order rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                const string ErrorMessage = "tried to schedule a cancelled order rule execution with no parameters set";
+                this.logger.LogError(ErrorMessage);
+                operationContext.EventError(ErrorMessage);
             }
 
             return subscriptions;

@@ -24,7 +24,6 @@
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 

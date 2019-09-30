@@ -10,12 +10,12 @@
     public interface IUniverseRuleSubscriptionSummary
     {
         /// <summary>
-        /// Gets or sets the rule ids.
+        /// Gets the rule ids.
         /// </summary>
         IReadOnlyCollection<string> RuleIds { get; }
 
         /// <summary>
-        /// Gets or sets the rules.
+        /// Gets the rules.
         /// </summary>
         IReadOnlyCollection<IUniverseRule> Rules { get; }
     }

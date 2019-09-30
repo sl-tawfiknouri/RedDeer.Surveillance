@@ -319,7 +319,9 @@ namespace Surveillance.Engine.Rules
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementMapper>().Use<FixedIncomeHighVolumeJudgementMapper>();
+
             this.For<IDataManifestInterpreter>().Use<DataManifestInterpreter>();
+            this.For<IDataManifestBuilder>().Use<DataManifestBuilder>();
         }
     }
 }

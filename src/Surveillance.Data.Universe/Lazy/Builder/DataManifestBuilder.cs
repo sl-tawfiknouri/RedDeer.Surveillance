@@ -22,9 +22,9 @@
         /// The rule data constraints.
         /// </param>
         /// <returns>
-        /// The <see cref="IDataManifest"/>.
+        /// The <see cref="IDataManifestInterpreter"/>.
         /// </returns>
-        public IDataManifest Build(
+        public IDataManifestInterpreter Build(
             ScheduledExecution execution,
             IReadOnlyCollection<IRuleDataConstraint> ruleDataConstraints)
         {

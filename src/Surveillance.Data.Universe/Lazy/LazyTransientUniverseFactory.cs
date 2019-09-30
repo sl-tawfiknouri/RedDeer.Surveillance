@@ -1,7 +1,5 @@
 ﻿namespace Surveillance.Data.Universe.Lazy
 {
-    using System;
-
     using Domain.Surveillance.Scheduling;
 
     using Surveillance.Auditing.Context.Interfaces;
@@ -15,21 +13,10 @@
     public class LazyTransientUniverseFactory : ILazyTransientUniverseFactory
     {
         /// <summary>
-        /// The manifest interpreter.
-        /// </summary>
-        private readonly IDataManifestInterpreter dataDataManifestInterpreter;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="LazyTransientUniverseFactory"/> class.
         /// </summary>
-        /// <param name="dataDataManifestInterpreter">
-        /// The data manifest interpreter
-        /// </param>
-        public LazyTransientUniverseFactory(
-            IDataManifestInterpreter dataDataManifestInterpreter)
+        public LazyTransientUniverseFactory()
         {
-            this.dataDataManifestInterpreter =
-                dataDataManifestInterpreter ?? throw new ArgumentNullException(nameof(dataDataManifestInterpreter));
         }
 
         /// <summary>
@@ -41,12 +28,18 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
+        /// <param name="dataManifestInterpreter">
+        /// The data Manifest Interpreter.
+        /// </param>
         /// <returns>
         /// The <see cref="IUniverse"/>.
         /// </returns>
-        public IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext operationContext)
+        public IUniverse Build(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext operationContext,
+            IDataManifestInterpreter dataManifestInterpreter)
         {
-            var universeEvents = new LazyTransientUniverse(this.dataDataManifestInterpreter);
+            var universeEvents = new LazyTransientUniverse(dataManifestInterpreter);
 
             return new Universe(universeEvents);
         }

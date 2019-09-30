@@ -4,6 +4,7 @@
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
 
     /// <summary>
     /// The LazyTransientUniverseFactory interface.
@@ -22,9 +23,15 @@
         /// <param name="operationContext">
         /// The operation context.
         /// </param>
+        /// <param name="dataManifestInterpreter">
+        /// The data Manifest Interpreter.
+        /// </param>
         /// <returns>
         /// The <see cref="IUniverse"/>.
         /// </returns>
-        IUniverse Build(ScheduledExecution execution, ISystemProcessOperationContext operationContext);
+        IUniverse Build(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext operationContext, 
+            IDataManifestInterpreter dataManifestInterpreter);
     }
 }

@@ -136,7 +136,7 @@
         /// </returns>
         public IRuleDataConstraint DataConstraints()
         {
-            return RuleDataConstraint.Empty().Case;
+            return this.cloneSource.DataConstraints();
         }
 
         /// <summary>

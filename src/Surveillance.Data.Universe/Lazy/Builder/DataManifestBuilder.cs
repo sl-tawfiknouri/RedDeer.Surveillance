@@ -37,11 +37,6 @@
         private readonly IOrdersRepository ordersRepository;
 
         /// <summary>
-        /// The operation context.
-        /// </summary>
-        private readonly ISystemProcessOperationContext operationContext;
-
-        /// <summary>
         /// The market open close event service.
         /// </summary>
         private readonly IMarketOpenCloseEventService marketOpenCloseEventService;
@@ -71,9 +66,6 @@
         /// <param name="marketOpenCloseEventService">
         /// The market open close hours service.
         /// </param>
-        /// <param name="operationContext">
-        /// The system process operation context.
-        /// </param>
         /// <param name="logger">
         /// The logger.
         /// </param>
@@ -82,7 +74,6 @@
             IOrdersRepository ordersRepository,
             IReddeerMarketRepository marketRepository,
             IMarketOpenCloseEventService marketOpenCloseEventService,
-            ISystemProcessOperationContext operationContext,
             ILogger<IDataManifestBuilder> logger)
         {
             this.universeBuilder = 
@@ -93,8 +84,6 @@
                 marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             this.marketOpenCloseEventService = 
                 marketOpenCloseEventService ?? throw new ArgumentNullException(nameof(marketOpenCloseEventService));
-            this.operationContext = 
-                operationContext ?? throw new ArgumentNullException(nameof(operationContext));
             this.logger = 
                 logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -172,7 +161,7 @@
                     manifest,
                     this.universeBuilder,
                     this.ordersRepository,
-                    this.operationContext,
+                    systemProcessOperationContext,
                     this.marketOpenCloseEventService,
                     this.marketRepository);
 

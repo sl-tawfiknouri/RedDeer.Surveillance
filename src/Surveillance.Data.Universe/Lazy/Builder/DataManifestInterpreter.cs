@@ -192,6 +192,7 @@
 
         /// <summary>
         /// The scan intra day time bars.
+        /// This is current presumed to be BMLL.
         /// </summary>
         /// <param name="span">
         /// The span.
@@ -249,6 +250,7 @@
 
         /// <summary>
         /// The scan inter day time bars.
+        /// This is currently presumed to be fact set
         /// </summary>
         /// <param name="span">
         /// The span.

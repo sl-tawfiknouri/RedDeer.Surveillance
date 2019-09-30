@@ -6,7 +6,7 @@
     public enum DataSource
     {
         /// <summary>
-        /// The all.
+        /// The any data source
         /// </summary>
         Any = 0,
 

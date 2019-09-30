@@ -14,6 +14,7 @@
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DataManifest"/> class.
+        /// Expects stacks to be ordered with oldest queries at the top
         /// </summary>
         /// <param name="execution">
         /// The execution.

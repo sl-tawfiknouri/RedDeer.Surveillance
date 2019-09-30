@@ -31,5 +31,44 @@
         /// Gets the end universal central time.
         /// </summary>
         public DateTime EndUtc { get; }
+
+        /// <summary>
+        /// The get hash code.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return 
+                (this.StartUtc.GetHashCode() * 13) 
+                + (this.EndUtc.GetHashCode() * 19);
+        }
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="obj">
+        /// The obj.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var query = obj as UnfilteredOrdersQuery;
+            if (query == null)
+            {
+                return false;
+            }
+
+            return this.StartUtc == query.StartUtc 
+                   && this.EndUtc == query.EndUtc;
+        }
     }
 }

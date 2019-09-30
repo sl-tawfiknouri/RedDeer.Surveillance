@@ -45,5 +45,47 @@
         /// Gets the identifiers.
         /// </summary>
         public InstrumentIdentifiers Identifiers { get; }
+
+        /// <summary>
+        /// The get hash code.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return 
+                (this.StartUtc.GetHashCode() * 13)
+                + (this.EndUtc.GetHashCode() * 17)
+                + (this.Identifiers.GetHashCode() * 19);
+        }
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="obj">
+        /// The object.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            var query = obj as FactSetTimeBarQuery;
+            if (query == null)
+            {
+                return false;
+            }
+
+            return 
+                query.StartUtc == this.StartUtc
+                && query.EndUtc == this.EndUtc
+                && query.Identifiers.Equals(this.Identifiers);
+        }
     }
 }

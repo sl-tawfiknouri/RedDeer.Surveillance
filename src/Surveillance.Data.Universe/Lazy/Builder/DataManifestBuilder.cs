@@ -149,6 +149,12 @@
                 this.MapSubConstraintToQuery(sub, orders, bmllTimeBar, factsetTimeBar);
             }
 
+            // remove 1 - 1 correspondences
+            bmllTimeBar = bmllTimeBar.Distinct().ToList();
+            factsetTimeBar = factsetTimeBar.Distinct().ToList();
+            refinitiveTimeBar = refinitiveTimeBar.Distinct().ToList();
+            unfilteredOrders = unfilteredOrders.Distinct().ToList();
+
             var manifest = this.BuildManifest(
                 execution,
                 unfilteredOrders,

@@ -157,23 +157,23 @@
         {
             var constraints = new List<RuleDataSubConstraint>();
 
-            if (this.source == DataSource.AllInterday)
+            if (this.source == DataSource.AnyInterday)
             {
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => true);
 
                 constraints.Add(constraint);
             }
 
-            if (this.source == DataSource.AllIntraday)
+            if (this.source == DataSource.AnyIntraday)
             {
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllIntraday,
+                    DataSource.AnyIntraday,
                     _ => true);
 
                 constraints.Add(constraint);
@@ -306,7 +306,7 @@
         private long? RetrieveMarketTradedVolume(Order mostRecentTrade, ITradingHours tradingHours, Stack<Order> activeHistory)
         {
             var closeTime =
-                this.source == DataSource.AllIntraday
+                this.source == DataSource.AnyIntraday
                     ? UniverseDateTime
                     : tradingHours.ClosingInUtcForDay(UniverseDateTime);
 
@@ -325,7 +325,7 @@
 
             switch (this.source)
             {
-                case DataSource.AllInterday:
+                case DataSource.AnyInterday:
                     var securityResultInterday = UniverseEquityInterdayCache.GetMarkets(marketDataRequest);
                     hadMissingData = securityResultInterday.HadMissingData;
 
@@ -333,7 +333,7 @@
                         marketTradedVolume = this.InterdayMarketTradedVolume(securityResultInterday);
 
                     break;
-                case DataSource.AllIntraday:
+                case DataSource.AnyIntraday:
                     var securityResultIntraday = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
                     hadMissingData = securityResultIntraday.HadMissingData;
 

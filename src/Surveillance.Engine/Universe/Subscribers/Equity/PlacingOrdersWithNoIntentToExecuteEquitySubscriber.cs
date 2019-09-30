@@ -223,7 +223,7 @@
                         parameter.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        DataSource.AllIntraday,
+                        DataSource.AnyIntraday,
                         ruleRunMode);
                 }
 

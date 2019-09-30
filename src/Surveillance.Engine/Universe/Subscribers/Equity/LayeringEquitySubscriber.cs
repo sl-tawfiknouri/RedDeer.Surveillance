@@ -247,17 +247,17 @@
         {
             if (parameters == null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             if (parameters.PercentageOfMarketWindowVolume != null)
             {
-                return DataSource.AllIntraday;
+                return DataSource.AnyIntraday;
             }
 
             if (parameters.PercentageOfMarketDailyVolume != null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             return this.DataSourceForWindow(parameters.Windows);

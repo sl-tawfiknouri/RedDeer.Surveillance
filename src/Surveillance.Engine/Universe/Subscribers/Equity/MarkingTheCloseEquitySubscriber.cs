@@ -246,17 +246,17 @@
         {
             if (parameters == null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             if (parameters.PercentageThresholdWindowVolume != null)
             {
-                return DataSource.AllIntraday;
+                return DataSource.AnyIntraday;
             }
 
             if (parameters.PercentageThresholdDailyVolume != null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             return this.DataSourceForWindow(parameters.Windows);

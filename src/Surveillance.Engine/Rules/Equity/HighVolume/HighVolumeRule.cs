@@ -171,7 +171,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => true);
 
                 constraints.Add(constraint);
@@ -182,7 +182,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -193,7 +193,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllIntraday,
+                    DataSource.AnyIntraday,
                     _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -404,7 +404,7 @@
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 this.RuleCtx?.Id(),
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
@@ -472,7 +472,7 @@
                     tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     this.RuleCtx?.Id(),
-                    DataSource.AllIntraday);
+                    DataSource.AnyIntraday);
 
             var marketResult = this.UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
 
@@ -541,7 +541,7 @@
                 tradingHours.OpeningInUtcForDay(this.UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(this.UniverseDateTime),
                 this.RuleCtx?.Id(),
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             var securityResult = this.UniverseEquityInterdayCache.Get(marketDataRequest);
 

@@ -227,7 +227,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilterService.Filter(_));
 
                 constraints.Add(constraint);
@@ -238,7 +238,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilterService.Filter(_));
 
                 constraints.Add(constraint);
@@ -674,7 +674,7 @@
                 opening,
                 closing,
                 this.RuleCtx?.Id(),
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
         }
 
         /// <summary>
@@ -910,7 +910,7 @@
                 openingHours,
                 closingHours,
                 this.RuleCtx?.Id(),
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
         }
 
         /// <summary>

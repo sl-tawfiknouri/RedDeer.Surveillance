@@ -213,13 +213,13 @@
             var intradayConstraint = new RuleDataSubConstraint(
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
-                DataSource.AllIntraday,
+                DataSource.AnyIntraday,
                 _ => !this.orderFilter.Filter(_));
 
             var interdayConstraint = new RuleDataSubConstraint(
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
-                DataSource.AllInterday,
+                DataSource.AnyInterday,
                 _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(

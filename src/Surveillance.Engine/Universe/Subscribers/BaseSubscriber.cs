@@ -22,14 +22,14 @@
         {
             if (windows == null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             return windows.BackwardWindowSize.Hours > 0 
                    || windows.BackwardWindowSize.Minutes > 0
                    || windows.BackwardWindowSize.Days < 1
-                       ? DataSource.AllIntraday
-                       : DataSource.AllInterday;
+                       ? DataSource.AnyIntraday
+                       : DataSource.AnyInterday;
         }
     }
 }

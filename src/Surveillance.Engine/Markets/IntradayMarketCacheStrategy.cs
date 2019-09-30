@@ -15,7 +15,7 @@
             this._cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public DataSource DataSource { get; } = DataSource.AllIntraday;
+        public DataSource DataSource { get; } = DataSource.AnyIntraday;
 
         public IQueryableMarketDataResponse Query(MarketDataRequest request)
         {

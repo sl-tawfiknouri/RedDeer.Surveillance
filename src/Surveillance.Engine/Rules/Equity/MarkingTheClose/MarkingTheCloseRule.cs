@@ -174,7 +174,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -185,7 +185,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -373,7 +373,7 @@
                 UniverseDateTime.Subtract(this.TradeBackwardWindowSize), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
                 this.ruleContext?.Id(),
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             var dataResponse = UniverseEquityInterdayCache.Get(marketDataRequest);
 
@@ -439,7 +439,7 @@
                     UniverseDateTime.Subtract(this.TradeBackwardWindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     this.ruleContext?.Id(),
-                    DataSource.AllIntraday);
+                    DataSource.AnyIntraday);
             
             // marking the close should not have windows exceeding a few hours
             var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);

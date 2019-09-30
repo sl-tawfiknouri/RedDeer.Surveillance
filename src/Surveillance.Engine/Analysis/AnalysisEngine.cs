@@ -314,7 +314,7 @@
 
             this.logger.LogInformation("START PLAYING UNIVERSE TO SUBSCRIBERS");
             var dataConstraints = subscribedRules?.Rules?.Select(_ => _.DataConstraints())?.ToList();
-            var dataManifestInterpreter = this.dataManifestBuilder.Build(execution, dataConstraints);
+            var dataManifestInterpreter = await this.dataManifestBuilder.Build(execution, dataConstraints, operationContext);
             var lazyUniverse = this.universeFactory.Build(execution, operationContext, dataManifestInterpreter);
             player.Play(lazyUniverse);
             this.logger.LogInformation("STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");

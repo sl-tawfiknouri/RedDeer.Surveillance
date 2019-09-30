@@ -113,7 +113,7 @@
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
                 _operationRunRuleContext?.Id(),
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             var securityResult = _universeEquityInterdayCache.Get(marketDataRequest);
 

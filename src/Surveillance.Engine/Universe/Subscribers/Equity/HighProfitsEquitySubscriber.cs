@@ -244,17 +244,17 @@
         {
             if (parameters == null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             if (parameters.PerformHighProfitWindowAnalysis)
             {
-                return DataSource.AllIntraday;
+                return DataSource.AnyIntraday;
             }
 
             if (parameters.PerformHighProfitDailyAnalysis)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             return this.DataSourceForWindow(parameters.Windows);

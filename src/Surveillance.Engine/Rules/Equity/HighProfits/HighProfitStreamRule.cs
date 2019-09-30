@@ -266,7 +266,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -277,7 +277,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllIntraday,
+                    DataSource.AnyIntraday,
                     _ => !this.OrderFilter.Filter(_));
 
                 constraints.Add(constraint);

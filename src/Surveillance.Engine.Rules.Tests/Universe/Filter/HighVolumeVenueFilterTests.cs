@@ -72,7 +72,7 @@
                     this._ruleRunMode,
                     this._marketTradingHoursService,
                     this._dataRequestSubscriber,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     this._tradingLogger,
                     null));
         }

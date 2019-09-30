@@ -195,7 +195,7 @@
                 RuleRunMode.ValidationRun,
                 this._tradingHoursService,
                 this._universeDataRequestsSubscriber,
-                DataSource.AllIntraday,
+                DataSource.AnyIntraday,
                 new NullLogger<TradingHistoryStack>(),
                 new NullLogger<HighVolumeVenueFilter>());
 

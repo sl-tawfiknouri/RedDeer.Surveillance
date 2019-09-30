@@ -156,7 +156,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -167,7 +167,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AllInterday,
+                    DataSource.AnyInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -465,7 +465,7 @@
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(this.TradeBackwardWindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     this.ruleContext?.Id(),
-                    DataSource.AllInterday);
+                    DataSource.AnyInterday);
             
             var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
@@ -523,7 +523,7 @@
                     UniverseDateTime.Subtract(this.TradeBackwardWindowSize),
                     UniverseDateTime,
                     this.ruleContext?.Id(),
-                    DataSource.AllIntraday);
+                    DataSource.AnyIntraday);
 
             var tradingDays =
                 this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
@@ -602,7 +602,7 @@
                     startDate.Subtract(this.TradeBackwardWindowSize),
                     endDate,
                     this.ruleContext?.Id(),
-                    DataSource.AllIntraday);
+                    DataSource.AnyIntraday);
 
             var tradingDays =
                 this.tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(

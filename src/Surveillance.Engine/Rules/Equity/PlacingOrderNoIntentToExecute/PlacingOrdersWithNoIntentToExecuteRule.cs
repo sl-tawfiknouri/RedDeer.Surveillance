@@ -171,7 +171,7 @@
             var constraint = new RuleDataSubConstraint(
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
-                DataSource.AllIntraday,
+                DataSource.AnyIntraday,
                 _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(
@@ -249,7 +249,7 @@
                 UniverseDateTime.Subtract(openingHours), // implicitly correct (market closure event trigger)
                 UniverseDateTime,
                 this.ruleContext?.Id(),
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
 
             var dataResponse = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDates, RunMode);
 

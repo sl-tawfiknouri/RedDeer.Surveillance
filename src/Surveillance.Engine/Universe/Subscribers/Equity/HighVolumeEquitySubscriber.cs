@@ -248,22 +248,22 @@
         {
             if (parameters == null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             if (parameters.HighVolumePercentageWindow != null)
             {
-                return DataSource.AllIntraday;
+                return DataSource.AnyIntraday;
             }
 
             if (parameters.HighVolumePercentageDaily != null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             if (parameters.HighVolumePercentageMarketCap != null)
             {
-                return DataSource.AllInterday;
+                return DataSource.AnyInterday;
             }
 
             return this.DataSourceForWindow(parameters.Windows);

@@ -8,7 +8,7 @@
         /// <summary>
         /// The all.
         /// </summary>
-        All = 0,
+        Any = 0,
 
         /// <summary>
         /// The none.
@@ -18,12 +18,12 @@
         /// <summary>
         /// The all inter day.
         /// </summary>
-        AllInterday = 2,
+        AnyInterday = 2,
 
         /// <summary>
         /// The all intraday.
         /// </summary>
-        AllIntraday = 3,
+        AnyIntraday = 3,
 
         /// <summary>
         /// The data provider.

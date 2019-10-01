@@ -7,7 +7,7 @@
     /// <summary>
     /// The time bar query.
     /// </summary>
-    public class RefinitiveTimeBarQuery : TimeSegment
+    public class RefinitiveTimeBarQuery : TimeSegment<RefinitiveTimeBarQuery>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RefinitiveTimeBarQuery"/> class.
@@ -69,6 +69,28 @@
             return query.StartUtc == this.StartUtc 
                    && query.EndUtc == this.EndUtc
                    && query.Identifiers.Equals(this.Identifiers);
+        }
+
+        /// <summary>
+        /// The combine.
+        /// </summary>
+        /// <param name="right">
+        /// The right.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RefinitiveTimeBarQuery"/>.
+        /// </returns>
+        public override RefinitiveTimeBarQuery Combine(RefinitiveTimeBarQuery right)
+        {
+            if (right == null)
+            {
+                return this;
+            }
+
+            var newStartDate = this.StartUtc < right.StartUtc ? this.StartUtc : right.StartUtc;
+            var newEndDate = this.EndUtc > right.EndUtc ? this.EndUtc : right.EndUtc;
+
+            return new RefinitiveTimeBarQuery(newStartDate, newEndDate, this.Identifiers);
         }
     }
 }

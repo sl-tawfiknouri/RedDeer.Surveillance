@@ -7,7 +7,7 @@
     /// <summary>
     /// The time bar query.
     /// </summary>
-    public class BmllTimeBarQuery : TimeSegment
+    public class BmllTimeBarQuery : TimeSegment<BmllTimeBarQuery>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BmllTimeBarQuery"/> class.
@@ -71,6 +71,28 @@
                 query.StartUtc == this.StartUtc
                 && query.EndUtc == this.EndUtc
                 && query.Identifiers.Equals(this.Identifiers);
+        }
+
+        /// <summary>
+        /// The combine.
+        /// </summary>
+        /// <param name="right">
+        /// The right.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BmllTimeBarQuery"/>.
+        /// </returns>
+        public override BmllTimeBarQuery Combine(BmllTimeBarQuery right)
+        {
+            if (right == null)
+            {
+                return this;
+            }
+
+            var newStartDate = this.StartUtc < right.StartUtc ? this.StartUtc : right.StartUtc;
+            var newEndDate = this.EndUtc > right.EndUtc ? this.EndUtc : right.EndUtc;
+
+            return new BmllTimeBarQuery(newStartDate, newEndDate, this.Identifiers);
         }
     }
 }

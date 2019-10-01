@@ -7,7 +7,7 @@
     /// <summary>
     /// The fact set time bar query.
     /// </summary>
-    public class FactSetTimeBarQuery : TimeSegment
+    public class FactSetTimeBarQuery : TimeSegment<FactSetTimeBarQuery>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FactSetTimeBarQuery"/> class.
@@ -71,6 +71,28 @@
                 query.StartUtc == this.StartUtc
                 && query.EndUtc == this.EndUtc
                 && query.Identifiers.Equals(this.Identifiers);
+        }
+
+        /// <summary>
+        /// The combine.
+        /// </summary>
+        /// <param name="right">
+        /// The right.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FactSetTimeBarQuery"/>.
+        /// </returns>
+        public override FactSetTimeBarQuery Combine(FactSetTimeBarQuery right)
+        {
+            if (right == null)
+            {
+                return this;
+            }
+
+            var newStartDate = this.StartUtc < right.StartUtc ? this.StartUtc : right.StartUtc;
+            var newEndDate = this.EndUtc > right.EndUtc ? this.EndUtc : right.EndUtc;
+
+            return new FactSetTimeBarQuery(newStartDate, newEndDate, this.Identifiers);
         }
     }
 }

@@ -5,7 +5,7 @@
     /// <summary>
     /// The unfiltered orders query.
     /// </summary>
-    public class UnfilteredOrdersQuery : TimeSegment
+    public class UnfilteredOrdersQuery : TimeSegment<UnfilteredOrdersQuery>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnfilteredOrdersQuery"/> class.
@@ -59,6 +59,28 @@
 
             return this.StartUtc == query.StartUtc 
                    && this.EndUtc == query.EndUtc;
+        }
+
+        /// <summary>
+        /// The combine.
+        /// </summary>
+        /// <param name="right">
+        /// The right.
+        /// </param>
+        /// <returns>
+        /// The <see cref="UnfilteredOrdersQuery"/>.
+        /// </returns>
+        public override UnfilteredOrdersQuery Combine(UnfilteredOrdersQuery right)
+        {
+            if (right == null)
+            {
+                return this;
+            }
+
+            var newStartDate = this.StartUtc < right.StartUtc ? this.StartUtc : right.StartUtc;
+            var newEndDate = this.EndUtc > right.EndUtc ? this.EndUtc : right.EndUtc;
+
+            return new UnfilteredOrdersQuery(newStartDate, newEndDate);
         }
     }
 }

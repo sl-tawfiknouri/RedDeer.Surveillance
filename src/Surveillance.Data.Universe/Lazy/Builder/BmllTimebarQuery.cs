@@ -7,7 +7,7 @@
     /// <summary>
     /// The time bar query.
     /// </summary>
-    public class BmllTimeBarQuery
+    public class BmllTimeBarQuery : TimeSegment
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BmllTimeBarQuery"/> class.
@@ -30,21 +30,6 @@
             this.EndUtc = endUtc;
             this.Identifiers = identifiers;
         }
-
-        /// <summary>
-        /// Gets the start universal central time.
-        /// </summary>
-        public DateTime StartUtc { get; }
-
-        /// <summary>
-        /// Gets the end universal central time.
-        /// </summary>
-        public DateTime EndUtc { get; }
-
-        /// <summary>
-        /// Gets the identifiers.
-        /// </summary>
-        public InstrumentIdentifiers Identifiers { get; }
 
         /// <summary>
         /// The get hash code.

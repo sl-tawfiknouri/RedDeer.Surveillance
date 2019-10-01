@@ -5,7 +5,7 @@
     /// <summary>
     /// The unfiltered orders query.
     /// </summary>
-    public class UnfilteredOrdersQuery
+    public class UnfilteredOrdersQuery : TimeSegment
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnfilteredOrdersQuery"/> class.
@@ -21,16 +21,6 @@
             this.StartUtc = startUtc;
             this.EndUtc = endUtc;
         }
-
-        /// <summary>
-        /// Gets the start universal central time.
-        /// </summary>
-        public DateTime StartUtc { get;  }
-
-        /// <summary>
-        /// Gets the end universal central time.
-        /// </summary>
-        public DateTime EndUtc { get; }
 
         /// <summary>
         /// The get hash code.

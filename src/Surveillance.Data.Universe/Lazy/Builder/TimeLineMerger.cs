@@ -89,8 +89,8 @@
                 return true;
             }
 
-            var leadingEdge = segmentLeft.StartUtc > segmentRight.StartUtc ? segmentLeft : segmentRight;
-            var trailingEdge = segmentLeft.StartUtc > segmentRight.StartUtc ? segmentRight : segmentLeft;
+            var leadingEdge = segmentLeft.StartUtc < segmentRight.StartUtc ? segmentLeft : segmentRight;
+            var trailingEdge = segmentLeft.StartUtc < segmentRight.StartUtc ? segmentRight : segmentLeft;
 
             return leadingEdge.EndUtc >= trailingEdge.StartUtc;
         }

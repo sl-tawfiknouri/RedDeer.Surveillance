@@ -51,8 +51,8 @@
         {
             var merger = new TimeLineMerger<BmllTimeBarQuery>();
             var query = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-01"), 
-                DateTime.Parse("2019-03-01"),
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
                 InstrumentIdentifiers.Null());
 
             var result = merger.Merge(new BmllTimeBarQuery[] { query });
@@ -72,12 +72,12 @@
             id.Sedol = "1234567";
             var merger = new TimeLineMerger<BmllTimeBarQuery>();
             var queryOne = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-01"),
-                DateTime.Parse("2019-03-01"),
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
                 id);
             var queryTwo = new BmllTimeBarQuery(
-                DateTime.Parse("2019-04-01"),
-                DateTime.Parse("2019-05-01"),
+                new DateTime(2019, 04, 01),
+                new DateTime(2019, 05, 01),
                 id);
 
             var result = merger.Merge(new[] { queryOne, queryTwo });
@@ -98,12 +98,12 @@
             id.Sedol = "1234567";
             var merger = new TimeLineMerger<BmllTimeBarQuery>();
             var queryOne = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-01"),
-                DateTime.Parse("2019-03-01"),
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
                 id);
             var queryTwo = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-01"),
-                DateTime.Parse("2019-03-01"),
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
                 id);
 
             var result = merger.Merge(new[] { queryOne, queryTwo });
@@ -123,12 +123,12 @@
             id.Sedol = "1234567";
             var merger = new TimeLineMerger<BmllTimeBarQuery>();
             var queryOne = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-01"),
-                DateTime.Parse("2019-03-01"),
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
                 id);
             var queryTwo = new BmllTimeBarQuery(
-                DateTime.Parse("2019-01-02"),
-                DateTime.Parse("2019-02-01"),
+                new DateTime(2019, 01, 02),
+                new DateTime(2019, 02, 01),
                 id);
 
             var result = merger.Merge(new[] { queryOne, queryTwo });
@@ -136,6 +136,36 @@
             Assert.IsNotNull(result);
             Assert.Contains(queryOne, result.ToList());
             Assert.AreEqual(result.Count, 1);
+        }
+
+        /// <summary>
+        /// The merge three with one super set and one disjoint time line collection returns two time line.
+        /// </summary>
+        [Test]
+        public void MergeThreeWithOneSuperSetAndOneDisjointTimeLineCollectionReturnsTwoTimeLine()
+        {
+            var id = InstrumentIdentifiers.Null();
+            id.Sedol = "1234567";
+            var merger = new TimeLineMerger<BmllTimeBarQuery>();
+            var queryOne = new BmllTimeBarQuery(
+                new DateTime(2019, 01, 01),
+                new DateTime(2019, 03, 01),
+                id);
+            var queryTwo = new BmllTimeBarQuery(
+                new DateTime(2019, 01, 02),
+                new DateTime(2019, 02, 01),
+                id);
+            var queryThree = new BmllTimeBarQuery(
+                new DateTime(2020, 01, 02),
+                new DateTime(2020, 02, 01),
+                id);
+
+            var result = merger.Merge(new[] { queryOne, queryTwo, queryThree });
+
+            Assert.IsNotNull(result);
+            Assert.Contains(queryOne, result.ToList());
+            Assert.Contains(queryThree, result.ToList());
+            Assert.AreEqual(result.Count, 2);
         }
     }
 }

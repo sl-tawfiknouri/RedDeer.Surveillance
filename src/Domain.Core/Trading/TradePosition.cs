@@ -37,6 +37,11 @@
         /// </param>
         public void Add(Order item)
         {
+            if (item == null)
+            {
+                return;
+            }
+
             this.trades.Add(item);
         }
 
@@ -95,7 +100,6 @@
         public decimal TotalVolumeOrderedOrFilled()
         {
             return this.trades
-                .Where(_ => _ != null)
                 .Sum(_ => _.OrderFilledVolume == 0
                             ? _.OrderOrderedVolume.GetValueOrDefault(0)
                             : _.OrderFilledVolume.GetValueOrDefault(0));
@@ -113,7 +117,7 @@
         public decimal VolumeInStatus(OrderStatus status)
         {
             return this.trades
-                .Where(_ => _ != null && _.OrderStatus() == status)
+                .Where(_ => _.OrderStatus() == status)
                 .Sum(_ => _.OrderFilledVolume.GetValueOrDefault(0));
         }
 
@@ -129,7 +133,7 @@
         public decimal VolumeNotInStatus(OrderStatus status)
         {
             return this.trades
-                .Where(_ => _ != null && _.OrderStatus() != status)
+                .Where(_ => _.OrderStatus() != status)
                 .Sum(_ => _.OrderFilledVolume.GetValueOrDefault(0));
         }
     }

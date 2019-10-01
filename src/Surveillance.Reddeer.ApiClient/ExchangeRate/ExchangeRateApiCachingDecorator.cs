@@ -79,10 +79,9 @@
             this.CleanCache();
 
             var dateRange = new DateRange(commencement, termination);
-            if (this.cache.ContainsKey(dateRange))
-            {
-                this.cache.TryGetValue(dateRange, out var cachedRates);
 
+            if (this.cache.TryGetValue(dateRange, out var cachedRates))
+            {
                 if (cachedRates == null)
                 {
                     return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();

@@ -47,6 +47,11 @@
         private readonly IReddeerMarketRepository marketRepository;
 
         /// <summary>
+        /// The time line continuum.
+        /// </summary>
+        private readonly ITimeLineContinuum timeLineContinuum;
+
+        /// <summary>
         /// The logger.
         /// </summary>
         private readonly ILogger<IDataManifestBuilder> logger;
@@ -66,6 +71,9 @@
         /// <param name="marketOpenCloseEventService">
         /// The market open close hours service.
         /// </param>
+        /// <param name="timeLineContinuum">
+        /// The time line continuum.
+        /// </param>
         /// <param name="logger">
         /// The logger.
         /// </param>
@@ -74,6 +82,7 @@
             IOrdersRepository ordersRepository,
             IReddeerMarketRepository marketRepository,
             IMarketOpenCloseEventService marketOpenCloseEventService,
+            ITimeLineContinuum timeLineContinuum,
             ILogger<IDataManifestBuilder> logger)
         {
             this.universeBuilder = 
@@ -84,8 +93,8 @@
                 marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             this.marketOpenCloseEventService = 
                 marketOpenCloseEventService ?? throw new ArgumentNullException(nameof(marketOpenCloseEventService));
-            this.logger = 
-                logger ?? throw new ArgumentNullException(nameof(logger));
+            this.timeLineContinuum = timeLineContinuum ?? throw new ArgumentNullException(nameof(timeLineContinuum));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -116,26 +125,24 @@
 
             if (orders == null || !orders.Any())
             {
-                // TODO
-                // the empty data manifest
                 this.logger.LogInformation($"No orders were found in the schedule passed into the data manifest builder");
+                var dataManifestInterpreter = this.EmptyManifestInterpreter(execution, systemProcessOperationContext);
 
-                return null;
+                return dataManifestInterpreter;
             }
 
             var subConstraints =
                 ruleDataConstraints
                     ?.SelectMany(_ => _.Constraints)
-                    ?.Where(_ => _ != null)
+                    ?.Where(_ => _ != null && _.Source != DataSource.None)
                     ?.ToList();
 
             if (subConstraints == null || !subConstraints.Any())
             {
-                // TODO
-                // the empty data manifest
                 this.logger.LogInformation($"No rule constraints were passed into the data manifest builder");
+                var dataManifestInterpreter = this.EmptyManifestInterpreter(execution, systemProcessOperationContext);
 
-                return null;
+                return dataManifestInterpreter;
             }
 
             var bmllTimeBar = new List<BmllTimeBarQuery>();
@@ -149,10 +156,10 @@
                 this.MapSubConstraintToQuery(sub, orders, bmllTimeBar, factsetTimeBar);
             }
 
-            bmllTimeBar = bmllTimeBar.Distinct().ToList();
-            factsetTimeBar = factsetTimeBar.Distinct().ToList();
-            refinitiveTimeBar = refinitiveTimeBar.Distinct().ToList();
-            unfilteredOrders = unfilteredOrders.Distinct().ToList();
+            bmllTimeBar = this.timeLineContinuum.Merge(bmllTimeBar.Distinct().ToList()).ToList();
+            factsetTimeBar = this.timeLineContinuum.Merge(factsetTimeBar.Distinct().ToList()).ToList();
+            refinitiveTimeBar = this.timeLineContinuum.Merge(refinitiveTimeBar.Distinct().ToList()).ToList();
+            unfilteredOrders = this.timeLineContinuum.Merge(unfilteredOrders.Distinct().ToList()).ToList();
 
             var manifest = this.BuildManifest(
                 execution,
@@ -171,6 +178,39 @@
                     this.marketRepository);
 
             return interpreter;
+        }
+
+        /// <summary>
+        /// The empty manifest interpreter.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="systemProcessOperationContext">
+        /// The system process operation context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IDataManifestInterpreter"/>.
+        /// </returns>
+        private IDataManifestInterpreter EmptyManifestInterpreter(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext systemProcessOperationContext)
+        {
+            var dataManifest =
+                new DataManifest(
+                    execution,
+                    new Stack<UnfilteredOrdersQuery>(),
+                    new Stack<BmllTimeBarQuery>(),
+                    new Stack<FactSetTimeBarQuery>(),
+                    new Stack<RefinitiveTimeBarQuery>());
+
+            return new DataManifestInterpreter(
+                dataManifest,
+                this.universeBuilder,
+                this.ordersRepository,
+                systemProcessOperationContext,
+                this.marketOpenCloseEventService,
+                this.marketRepository);
         }
 
         /// <summary>

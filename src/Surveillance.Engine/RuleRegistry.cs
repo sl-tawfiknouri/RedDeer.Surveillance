@@ -322,6 +322,7 @@ namespace Surveillance.Engine.Rules
 
             this.For<IDataManifestInterpreter>().Use<DataManifestInterpreter>();
             this.For<IDataManifestBuilder>().Use<DataManifestBuilder>();
+            this.For<ITimeLineContinuum>().Use<TimeLineContinuum>();
         }
     }
 }

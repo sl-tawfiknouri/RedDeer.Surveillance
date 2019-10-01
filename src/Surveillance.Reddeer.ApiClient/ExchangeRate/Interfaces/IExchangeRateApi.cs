@@ -8,10 +8,23 @@
 
     using Surveillance.Reddeer.ApiClient.Interfaces;
 
+    /// <summary>
+    /// The ExchangeRate interface.
+    /// </summary>
     public interface IExchangeRateApi : IHeartbeatApi
     {
-        Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(
-            DateTime commencement,
-            DateTime termination);
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="commencement">
+        /// The commencement.
+        /// </param>
+        /// <param name="termination">
+        /// The termination.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> GetAsync(DateTime commencement, DateTime termination);
     }
 }

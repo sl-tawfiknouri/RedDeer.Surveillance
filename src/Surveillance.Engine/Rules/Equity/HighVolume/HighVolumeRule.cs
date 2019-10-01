@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
 
     using Microsoft.Extensions.Logging;
@@ -99,9 +100,7 @@
                         tr.OrderFilledVolume.GetValueOrDefault() > 0)
                     .ToList();
 
-            var tradedVolume =
-                tradedSecurities
-                    .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
+            var tradedVolume = tradedSecurities.Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradedSecurities.ToList());
             var mostRecentTrade = tradeWindow.Peek();
@@ -281,7 +280,7 @@
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"Window volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 

@@ -11,7 +11,8 @@
                                          IMarkingTheCloseJudgementService,
                                          IPlacingOrdersJudgementService,
                                          IRampingJudgementService,
-                                         ISpoofingJudgementService
+                                         ISpoofingJudgementService,
+                                         IFixedIncomeHighVolumeJudgementService
     {
         /// <summary>
         /// The pass judgement method which will process the underlying judgement cache.

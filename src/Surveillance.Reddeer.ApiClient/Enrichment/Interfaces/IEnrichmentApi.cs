@@ -5,10 +5,31 @@
 
     using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 
+    /// <summary>
+    /// The Enrichment interface.
+    /// </summary>
     public interface IEnrichmentApi
     {
-        Task<bool> HeartBeating(CancellationToken token);
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<bool> HeartBeatingAsync(CancellationToken token);
 
-        Task<SecurityEnrichmentMessage> Post(SecurityEnrichmentMessage message);
+        /// <summary>
+        /// The post async.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<SecurityEnrichmentMessage> PostAsync(SecurityEnrichmentMessage message);
     }
 }

@@ -5,6 +5,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
     using System.Collections.Generic;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
 
     using NUnit.Framework;

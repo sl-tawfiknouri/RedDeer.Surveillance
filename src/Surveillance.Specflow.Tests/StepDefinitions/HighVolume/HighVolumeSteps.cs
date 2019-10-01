@@ -82,7 +82,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                                          };
 
             A.CallTo(() =>
-                    exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
+                    exchangeRateApiRepository.GetAsync(A<DateTime>.Ignored, A<DateTime>.Ignored))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
                         {
                             { new DateTime(2018, 01, 01), new ExchangeRateDto[]
@@ -96,7 +96,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             var repository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
 
             A
-                .CallTo(() => repository.Get()).
+                .CallTo(() => repository.GetAsync()).
                 Returns(new ExchangeDto[]
                 {
                     new ExchangeDto

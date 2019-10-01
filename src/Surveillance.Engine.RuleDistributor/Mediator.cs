@@ -7,31 +7,57 @@
     using Surveillance.Engine.RuleDistributor.Interfaces;
     using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 
+    /// <summary>
+    /// The mediator.
+    /// </summary>
     public class Mediator : IRuleDistributorMediator
     {
-        private readonly IQueueDistributedRuleSubscriber _distributedRuleSubscriber;
+        /// <summary>
+        /// The distributed rule subscriber.
+        /// </summary>
+        private readonly IQueueDistributedRuleSubscriber distributedRuleSubscriber;
 
-        private readonly ILogger<Mediator> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<Mediator> logger;
 
-        public Mediator(IQueueDistributedRuleSubscriber distributedRuleSubscriber, ILogger<Mediator> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Mediator"/> class.
+        /// </summary>
+        /// <param name="distributedRuleSubscriber">
+        /// The distributed rule subscriber.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        public Mediator(
+            IQueueDistributedRuleSubscriber distributedRuleSubscriber,
+            ILogger<Mediator> logger)
         {
-            this._distributedRuleSubscriber = distributedRuleSubscriber
-                                              ?? throw new ArgumentNullException(nameof(distributedRuleSubscriber));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.distributedRuleSubscriber =
+                distributedRuleSubscriber ?? throw new ArgumentNullException(nameof(distributedRuleSubscriber));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The initiate.
+        /// </summary>
         public void Initiate()
         {
-            this._logger?.LogInformation("initiating");
-            this._distributedRuleSubscriber?.Initiate();
-            this._logger?.LogInformation("completed initiating");
+            this.logger?.LogInformation("initiating");
+            this.distributedRuleSubscriber?.Initiate();
+            this.logger?.LogInformation("completed initiating");
         }
 
+        /// <summary>
+        /// The terminate.
+        /// </summary>
         public void Terminate()
         {
-            this._logger?.LogInformation("terminating");
-            this._distributedRuleSubscriber?.Terminate();
-            this._logger?.LogInformation("completed terminating");
+            this.logger?.LogInformation("terminating");
+            this.distributedRuleSubscriber?.Terminate();
+            this.logger?.LogInformation("completed terminating");
         }
     }
 }

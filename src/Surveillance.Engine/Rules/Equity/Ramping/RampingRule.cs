@@ -23,6 +23,8 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 {
+    using Domain.Core.Trading;
+
     /// <summary>
     /// We've tried to solve some issues imperatively with logic that can be
     /// solved with using statistics - such as using cross correlation and/or auto correlations

@@ -25,7 +25,7 @@
     using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
     using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
     using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
@@ -280,7 +280,7 @@
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
                 this._logger.LogInformation(
-                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
+                    $"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeRule)}");
                 player.Subscribe(sub);
             }
 

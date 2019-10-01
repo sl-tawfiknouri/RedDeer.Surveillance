@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.Equity;
     using Domain.Surveillance.Scheduling;

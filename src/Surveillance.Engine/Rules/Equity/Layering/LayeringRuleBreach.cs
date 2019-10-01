@@ -3,6 +3,7 @@
     using System;
 
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading.Interfaces;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;

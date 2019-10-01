@@ -52,7 +52,7 @@
 
             foreach (var req in consolidatedMinuteBarRequests)
             {
-                var responseTask = this._timeBarRepository.GetMinuteBars(req);
+                var responseTask = this._timeBarRepository.GetMinuteBarsAsync(req);
                 responseTask.Wait();
                 var pair = new GetTimeBarPair(req, responseTask.Result);
                 timeBarResponses.Add(pair);

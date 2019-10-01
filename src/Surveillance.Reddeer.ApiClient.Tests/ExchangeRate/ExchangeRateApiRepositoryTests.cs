@@ -17,48 +17,84 @@
     using Surveillance.Reddeer.ApiClient.ExchangeRate;
     using Surveillance.Reddeer.ApiClient.Tests.Helpers;
 
+    // ReSharper disable ObjectCreationAsStatement
+
+    /// <summary>
+    /// The exchange rate api repository tests.
+    /// </summary>
     [TestFixture]
     public class ExchangeRateApiRepositoryTests
     {
-        private IApiClientConfiguration _configuration;
+        /// <summary>
+        /// The configuration.
+        /// </summary>
+        private IApiClientConfiguration configuration;
 
-        private IHttpClientFactory _httpClientFactory;
+        /// <summary>
+        /// The http client factory.
+        /// </summary>
+        private IHttpClientFactory httpClientFactory;
 
-        private ILogger<ExchangeRateApi> _logger;
+        /// <summary>
+        /// The policy factory.
+        /// </summary>
+        private IPolicyFactory policyFactory;
 
-        private IPolicyFactory _policyFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<ExchangeRateApi> logger;
 
+        /// <summary>
+        /// The constructor null logger considered throws exception.
+        /// </summary>
         [Test]
-        public void Constructor_NullLogger_ConsideredThrows_Exception()
+        public void ConstructorNullLoggerConsideredThrowsException()
         {
-            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(
-                () => new ExchangeRateApi(this._configuration, this._httpClientFactory, this._policyFactory, null));
+                () => new ExchangeRateApi(
+                    this.configuration, 
+                    this.httpClientFactory,
+                    this.policyFactory, 
+                    null));
         }
 
+        /// <summary>
+        /// The get.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
         [Explicit]
         public async Task Get()
         {
             var repository = new ExchangeRateApi(
-                this._configuration,
-                this._httpClientFactory,
-                this._policyFactory,
-                this._logger);
+                this.configuration,
+                this.httpClientFactory,
+                this.policyFactory,
+                this.logger);
 
-            var response = await repository.Get(new DateTime(2017, 09, 25), new DateTime(2017, 09, 29));
+            var response =
+                await repository
+                    .GetAsync(
+                        new DateTime(2017, 09, 25),
+                        new DateTime(2017, 09, 29));
 
             Assert.IsNotNull(response);
             Assert.IsNotEmpty(response);
         }
 
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._httpClientFactory = A.Fake<IHttpClientFactory>();
-            this._configuration = TestHelpers.Config();
-            this._policyFactory = A.Fake<IPolicyFactory>();
-            this._logger = A.Fake<ILogger<ExchangeRateApi>>();
+            this.httpClientFactory = A.Fake<IHttpClientFactory>();
+            this.configuration = TestHelpers.Config();
+            this.policyFactory = A.Fake<IPolicyFactory>();
+            this.logger = A.Fake<ILogger<ExchangeRateApi>>();
         }
     }
 }

@@ -12,43 +12,88 @@
 
     using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 
+    /// <summary>
+    /// The queue distributed rule publisher.
+    /// </summary>
     public class QueueDistributedRulePublisher : IQueueDistributedRulePublisher
     {
-        private readonly IAwsConfiguration _awsConfiguration;
+        /// <summary>
+        /// The aws configuration.
+        /// </summary>
+        private readonly IAwsConfiguration awsConfiguration;
 
-        private readonly IAwsQueueClient _awsQueueClient;
+        /// <summary>
+        /// The aws queue client.
+        /// </summary>
+        private readonly IAwsQueueClient awsQueueClient;
 
-        private readonly ILogger<QueueDistributedRulePublisher> _logger;
+        /// <summary>
+        /// The message bus serializer.
+        /// </summary>
+        private readonly IScheduledExecutionMessageBusSerialiser messageBusSerialiser;
 
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<QueueDistributedRulePublisher> logger;
 
-        private CancellationTokenSource _messageBusCts;
+        /// <summary>
+        /// The message bus cancellation token source.
+        /// </summary>
+        private CancellationTokenSource messageBusCancellationTokenSource;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueueDistributedRulePublisher"/> class.
+        /// </summary>
+        /// <param name="awsQueueClient">
+        /// The aws queue client.
+        /// </param>
+        /// <param name="awsConfiguration">
+        /// The aws configuration.
+        /// </param>
+        /// <param name="messageBusSerialiser">
+        /// The message bus serializer.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public QueueDistributedRulePublisher(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ILogger<QueueDistributedRulePublisher> logger)
         {
-            this._awsQueueClient = awsQueueClient;
-            this._awsConfiguration = awsConfiguration;
-            this._messageBusSerialiser = messageBusSerialiser;
-            this._logger = logger;
+            this.awsQueueClient = awsQueueClient;
+            this.awsConfiguration = awsConfiguration;
+            this.messageBusSerialiser = messageBusSerialiser;
+            this.logger = logger;
         }
 
+        /// <summary>
+        /// The schedule execution.
+        /// </summary>
+        /// <param name="distributedExecution">
+        /// The distributed execution.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task ScheduleExecution(ScheduledExecution distributedExecution)
         {
-            var serialisedDistributedExecution =
-                this._messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
+            var serialisedDistributedExecution = this.messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
 
-            this._logger.LogInformation($"dispatching distribute message to queue - {serialisedDistributedExecution}");
+            this.logger.LogInformation($"dispatching distribute message to queue - {serialisedDistributedExecution}");
 
-            this._messageBusCts = this._messageBusCts ?? new CancellationTokenSource();
+            this.messageBusCancellationTokenSource = this.messageBusCancellationTokenSource ?? new CancellationTokenSource();
 
-            await this._awsQueueClient.SendToQueue(
-                this._awsConfiguration.ScheduleRuleDistributedWorkQueueName,
-                serialisedDistributedExecution,
-                this._messageBusCts.Token);
+            await 
+                this
+                    .awsQueueClient
+                    .SendToQueue(
+                        this.awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+                        serialisedDistributedExecution,
+                        this.messageBusCancellationTokenSource.Token)
+                    ;
         }
     }
 }

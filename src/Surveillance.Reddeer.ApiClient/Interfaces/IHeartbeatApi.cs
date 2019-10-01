@@ -3,8 +3,20 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// The Heartbeat interface.
+    /// </summary>
     public interface IHeartbeatApi
     {
-        Task<bool> HeartBeating(CancellationToken token);
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<bool> HeartBeatingAsync(CancellationToken token);
     }
 }

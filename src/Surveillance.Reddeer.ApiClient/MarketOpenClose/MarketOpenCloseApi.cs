@@ -16,14 +16,41 @@
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
 
+    /// <summary>
+    /// The market open close.
+    /// </summary>
     public class MarketOpenCloseApi : BaseClientServiceApi, IMarketOpenCloseApi
     {
+        /// <summary>
+        /// The heartbeat route.
+        /// </summary>
         private const string HeartbeatRoute = "api/markets/heartbeat";
 
+        /// <summary>
+        /// The route.
+        /// </summary>
         private const string Route = "api/markets/get/v1";
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarketOpenCloseApi"/> class.
+        /// </summary>
+        /// <param name="apiClientConfiguration">
+        /// The client configuration.
+        /// </param>
+        /// <param name="httpClientFactory">
+        /// The http client factory.
+        /// </param>
+        /// <param name="pollyFactory">
+        /// The polly factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public MarketOpenCloseApi(
             IApiClientConfiguration apiClientConfiguration,
             IHttpClientFactory httpClientFactory,
@@ -31,23 +58,38 @@
             ILogger<MarketOpenCloseApi> logger)
             : base(apiClientConfiguration, httpClientFactory, pollyFactory, logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<ExchangeDto>> Get()
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<IReadOnlyCollection<ExchangeDto>> GetAsync()
         {
-            this._logger.LogInformation($"get request initiating {Route}");
-            var response = await this.Get<ExchangeDto[]>(Route);
-            this._logger.LogInformation($"get request completed for {Route}");
+            this.logger.LogInformation($"get request initiating {Route}");
+            var response = await this.GetAsync<ExchangeDto[]>(Route);
+            this.logger.LogInformation($"get request completed for {Route}");
 
             response = response ?? new ExchangeDto[0];
 
             return response;
         }
 
-        public async Task<bool> HeartBeating(CancellationToken token)
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeat(HeartbeatRoute, token);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
     }
 }

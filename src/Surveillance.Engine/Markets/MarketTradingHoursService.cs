@@ -1,27 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Core.Dates;
-using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
-
-namespace Surveillance.Engine.Rules.Markets
+﻿namespace Surveillance.Engine.Rules.Markets
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Domain.Core.Dates;
+    using Microsoft.Extensions.Logging;
+    using RedDeer.Contracts.SurveillanceService.Api.Markets;
+    using Surveillance.Engine.Rules.Markets.Interfaces;
+    using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
+
+    /// <summary>
+    /// The market trading hours service.
+    /// </summary>
     public class MarketTradingHoursService : IMarketTradingHoursService
     {
-        private readonly IMarketOpenCloseApiCachingDecorator _repository;
-        private readonly ILogger<MarketTradingHoursService> _logger;
+        /// <summary>
+        /// The market open close caching decorator.
+        /// </summary>
+        private readonly IMarketOpenCloseApiCachingDecorator marketOpenCloseCachingDecorator;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<MarketTradingHoursService> logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarketTradingHoursService"/> class.
+        /// </summary>
+        /// <param name="repository">
+        /// The repository.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public MarketTradingHoursService(
             IMarketOpenCloseApiCachingDecorator repository,
             ILogger<MarketTradingHoursService> logger)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.marketOpenCloseCachingDecorator = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The get trading hours for mic.
+        /// </summary>
+        /// <param name="marketIdentifierCode">
+        /// The market identifier code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITradingHours"/>.
+        /// </returns>
         public ITradingHours GetTradingHoursForMic(string marketIdentifierCode)
         {
             if (string.Equals(marketIdentifierCode, "NA", StringComparison.OrdinalIgnoreCase)
@@ -58,8 +86,20 @@ namespace Surveillance.Engine.Rules.Markets
         }
 
         /// <summary>
-        /// Will create a series of requests based off of the from utc (and time) to the to utc (and time)
+        /// Will create a series of requests based off of the from universal time zone (and time) to the to universal time zone (and time)
         /// </summary>
+        /// <param name="fromUtc">
+        /// The from universal time zone.
+        /// </param>
+        /// <param name="toUtc">
+        /// The to universal time zone.
+        /// </param>
+        /// <param name="marketIdentifierCode">
+        /// The market Identifier Code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateRange"/>.
+        /// </returns>
         public IReadOnlyCollection<DateRange> GetTradingDaysWithinRangeAdjustedToTime(DateTime fromUtc, DateTime toUtc, string marketIdentifierCode)
         {
             if (string.IsNullOrWhiteSpace(marketIdentifierCode))
@@ -112,6 +152,18 @@ namespace Surveillance.Engine.Rules.Markets
             return holidayAdjustedDateRange;
         }
 
+        /// <summary>
+        /// The filter out for non trading days.
+        /// </summary>
+        /// <param name="dateRanges">
+        /// The date ranges.
+        /// </param>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private List<DateRange> FilterOutForNonTradingDays(List<DateRange> dateRanges, ExchangeDto exchange)
         {
             if (dateRanges == null
@@ -124,6 +176,18 @@ namespace Surveillance.Engine.Rules.Markets
             return dateRanges.Where(i => ExchangeIsOpenOnDayStart(i, exchange)).ToList();
         }
 
+        /// <summary>
+        /// The exchange is open on day start.
+        /// </summary>
+        /// <param name="range">
+        /// The range.
+        /// </param>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool ExchangeIsOpenOnDayStart(DateRange range, ExchangeDto exchange)
         {
             if (range == null
@@ -153,6 +217,18 @@ namespace Surveillance.Engine.Rules.Markets
             }
         }
 
+        /// <summary>
+        /// The filter out for holidays.
+        /// </summary>
+        /// <param name="dateRanges">
+        /// The date ranges.
+        /// </param>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
         private List<DateRange> FilterOutForHolidays(List<DateRange> dateRanges, ExchangeDto exchange)
         {
             if (dateRanges == null
@@ -176,33 +252,42 @@ namespace Surveillance.Engine.Rules.Markets
             return dateRanges;
         }
 
+        /// <summary>
+        /// The get exchange.
+        /// </summary>
+        /// <param name="marketIdentifierCode">
+        /// The market identifier code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ExchangeDto"/>.
+        /// </returns>
         private ExchangeDto GetExchange(string marketIdentifierCode)
         {
             if (string.IsNullOrWhiteSpace(marketIdentifierCode))
             {
-                _logger.LogInformation($"received a null or empty MIC {marketIdentifierCode}");
+                this.logger.LogInformation($"received a null or empty MIC {marketIdentifierCode}");
                 return null;
             }
 
             if (string.Equals(marketIdentifierCode, "na", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(marketIdentifierCode, "n/a", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.LogDebug($"received an na or n/a MIC {marketIdentifierCode}");
+                this.logger.LogDebug($"received an na or n/a MIC {marketIdentifierCode}");
                 return null;
             }
 
-            var resultTask = _repository.Get();
+            var resultTask = this.marketOpenCloseCachingDecorator.GetAsync();
             var result = resultTask.Result;
 
             var exchange = result.FirstOrDefault(res => string.Equals(res.Code, marketIdentifierCode, StringComparison.InvariantCultureIgnoreCase));
 
             if (exchange == null)
             {
-                _logger.LogError($"could not find a match for {marketIdentifierCode}");
+                this.logger.LogError($"could not find a match for {marketIdentifierCode}");
                 return null;               
             }
 
-            _logger.LogInformation($"found a match for {marketIdentifierCode}");
+            this.logger.LogInformation($"found a match for {marketIdentifierCode}");
 
             return exchange;
         }

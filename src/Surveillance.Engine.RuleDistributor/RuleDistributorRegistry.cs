@@ -15,8 +15,14 @@
     using Surveillance.Engine.RuleDistributor.Queues;
     using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 
+    /// <summary>
+    /// The rule distributor registry.
+    /// </summary>
     public class RuleDistributorRegistry : Registry
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleDistributorRegistry"/> class.
+        /// </summary>
         public RuleDistributorRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();

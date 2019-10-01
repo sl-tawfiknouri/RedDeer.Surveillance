@@ -15,14 +15,41 @@
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
+    /// <summary>
+    /// The rule parameter.
+    /// </summary>
     public class RuleParameterApi : BaseClientServiceApi, IRuleParameterApi
     {
+        /// <summary>
+        /// The heartbeat route.
+        /// </summary>
         private const string HeartbeatRoute = "api/surveillanceruleparameter/heartbeat";
 
+        /// <summary>
+        /// The route v 2.
+        /// </summary>
         private const string RouteV2 = "api/surveillanceruleparameter/get/v2";
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuleParameterApi"/> class.
+        /// </summary>
+        /// <param name="apiClientConfiguration">
+        /// The client configuration.
+        /// </param>
+        /// <param name="httpClientFactory">
+        /// The http client factory.
+        /// </param>
+        /// <param name="pollyFactory">
+        /// The polly factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public RuleParameterApi(
             IApiClientConfiguration apiClientConfiguration,
             IHttpClientFactory httpClientFactory,
@@ -30,32 +57,56 @@
             ILogger<RuleParameterApi> logger)
             : base(apiClientConfiguration, httpClientFactory, pollyFactory, logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<RuleParameterDto> Get(string id)
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<RuleParameterDto> GetAsync(string id)
         {
             var routeId = $"{RouteV2}/{id}";
 
-            this._logger.LogInformation($"httpclient making get request to {routeId}");
-            var response = await this.Get<RuleParameterDto>(routeId);
-            this._logger.LogInformation($"httpclient making get request to {routeId}");
+            this.logger.LogInformation($"http client making get request to {routeId}");
+            var response = await this.GetAsync<RuleParameterDto>(routeId);
+            this.logger.LogInformation($"http client making get request to {routeId}");
 
             return response;
         }
 
-        public async Task<RuleParameterDto> Get()
+        /// <summary>
+        /// The get async.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<RuleParameterDto> GetAsync()
         {
-            this._logger.LogInformation($"httpclient making get request to {RouteV2}");
-            var response = await this.Get<RuleParameterDto>(RouteV2);
-            this._logger.LogInformation($"httpclient making get request to {RouteV2}");
+            this.logger.LogInformation($"http client making get request to {RouteV2}");
+            var response = await this.GetAsync<RuleParameterDto>(RouteV2);
+            this.logger.LogInformation($"http client making get request to {RouteV2}");
 
             return response;
         }
 
-        public async Task<bool> HeartBeating(CancellationToken token)
+        /// <summary>
+        /// The heart beating async.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public async Task<bool> HeartBeatingAsync(CancellationToken token)
         {
-            return await this.GetHeartbeat(HeartbeatRoute, token);
+            return await this.GetHeartbeatAsync(HeartbeatRoute, token);
         }
     }
 }

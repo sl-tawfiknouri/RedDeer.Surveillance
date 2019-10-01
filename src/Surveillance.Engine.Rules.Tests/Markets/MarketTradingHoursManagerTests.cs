@@ -68,7 +68,7 @@
                                       IsOpenOnSunday = true
                                   };
 
-            A.CallTo(() => this._marketOpenCloseRepository.Get()).Returns(new[] { exchangeDto });
+            A.CallTo(() => this._marketOpenCloseRepository.GetAsync()).Returns(new[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
                 DateTime.Parse("2018/01/01"),
@@ -98,7 +98,7 @@
                                       IsOpenOnSunday = false
                                   };
 
-            A.CallTo(() => this._marketOpenCloseRepository.Get()).Returns(new[] { exchangeDto });
+            A.CallTo(() => this._marketOpenCloseRepository.GetAsync()).Returns(new[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
                 DateTime.Parse("2019/02/01"),
@@ -127,7 +127,7 @@
                                       IsOpenOnSunday = true
                                   };
 
-            A.CallTo(() => this._marketOpenCloseRepository.Get()).Returns(new[] { exchangeDto });
+            A.CallTo(() => this._marketOpenCloseRepository.GetAsync()).Returns(new[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
                 DateTime.Parse("2018/01/01"),
@@ -158,7 +158,7 @@
                                       IsOpenOnSunday = true
                                   };
 
-            A.CallTo(() => this._marketOpenCloseRepository.Get()).Returns(new[] { exchangeDto });
+            A.CallTo(() => this._marketOpenCloseRepository.GetAsync()).Returns(new[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
                 DateTime.Parse("2019/02/01"),

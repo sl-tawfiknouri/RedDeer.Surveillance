@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
             _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
-            A.CallTo(() => _tradingHoursRepository.Get())
+            A.CallTo(() => _tradingHoursRepository.GetAsync())
                 .Returns(
                     new ExchangeDto[]
                     {

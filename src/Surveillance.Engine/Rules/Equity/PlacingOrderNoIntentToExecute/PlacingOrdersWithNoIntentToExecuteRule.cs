@@ -22,6 +22,8 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.PlacingOrderNoIntentToExecute
 {
+    using Domain.Core.Trading;
+
     public class PlacingOrdersWithNoIntentToExecuteRule : BaseUniverseRule, IPlacingOrdersWithNoIntentToExecuteRule
     {
         private bool _hadMissingData;

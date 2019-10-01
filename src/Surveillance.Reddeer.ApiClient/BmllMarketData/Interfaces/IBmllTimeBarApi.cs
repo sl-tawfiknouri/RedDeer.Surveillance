@@ -6,14 +6,53 @@
     using Firefly.Service.Data.BMLL.Shared.Commands;
     using Firefly.Service.Data.BMLL.Shared.Requests;
 
+    /// <summary>
+    /// The Time Bar interface.
+    /// </summary>
     public interface IBmllTimeBarApi
     {
-        Task<GetMinuteBarsResponse> GetMinuteBars(GetMinuteBarsRequest request);
+        /// <summary>
+        /// The get minute bars.
+        /// </summary>
+        /// <param name="request">
+        /// The request.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<GetMinuteBarsResponse> GetMinuteBarsAsync(GetMinuteBarsRequest request);
 
-        Task<bool> HeartBeating(CancellationToken token);
+        /// <summary>
+        /// The heart beating.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<bool> HeartBeatingAsync(CancellationToken token);
 
-        Task RequestMinuteBars(CreateMinuteBarRequestCommand createCommand);
+        /// <summary>
+        /// The request minute bars.
+        /// </summary>
+        /// <param name="createCommand">
+        /// The create command.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task RequestMinuteBarsAsync(CreateMinuteBarRequestCommand createCommand);
 
-        Task<BmllStatusMinuteBarResult> StatusMinuteBars(GetMinuteBarRequestStatusesRequest statusCommand);
+        /// <summary>
+        /// The status minute bars.
+        /// </summary>
+        /// <param name="statusCommand">
+        /// The status command.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task<BmllStatusMinuteBarResult> StatusMinuteBarsAsync(GetMinuteBarRequestStatusesRequest statusCommand);
     }
 }

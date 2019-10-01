@@ -14,107 +14,145 @@
     using Surveillance.Engine.Rules.Interfaces;
     using Surveillance.Engine.Scheduler.Interfaces;
 
+    // ReSharper disable ObjectCreationAsStatement
+
+    /// <summary>
+    /// The mediator tests.
+    /// </summary>
     [TestFixture]
     public class MediatorTests
     {
-        private ICoordinatorMediator _coordinatorMediator;
+        /// <summary>
+        /// The coordinator mediator.
+        /// </summary>
+        private ICoordinatorMediator coordinatorMediator;
 
-        private IApplicationHeartbeatService _heartbeatService;
+        /// <summary>
+        /// The heartbeat service.
+        /// </summary>
+        private IApplicationHeartbeatService heartbeatService;
 
-        private ILogger<Mediator> _logger;
+        /// <summary>
+        /// The rule distributor mediator.
+        /// </summary>
+        private IRuleDistributorMediator ruleDistributorMediator;
 
-        private IRuleDistributorMediator _ruleDistributorMediator;
+        /// <summary>
+        /// The rule engine mediator.
+        /// </summary>
+        private IRulesEngineMediator ruleEngineMediator;
 
-        private IRulesEngineMediator _ruleEngineMediator;
+        /// <summary>
+        /// The rule scheduler mediator.
+        /// </summary>
+        private IRuleSchedulerMediator ruleSchedulerMediator;
 
-        private IRuleSchedulerMediator _ruleSchedulerMediator;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<Mediator> logger;
 
-        [Test]
-        public void Constructor_NullCoordinatorMediator_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(
-                () => new Mediator(
-                    this._ruleDistributorMediator,
-                    this._ruleEngineMediator,
-                    null,
-                    this._ruleSchedulerMediator,
-                    this._heartbeatService,
-                    this._logger));
-        }
-
-        [Test]
-        public void Constructor_NullRuleDistributorMediator_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(
-                () => new Mediator(
-                    null,
-                    this._ruleEngineMediator,
-                    this._coordinatorMediator,
-                    this._ruleSchedulerMediator,
-                    this._heartbeatService,
-                    this._logger));
-        }
-
-        [Test]
-        public void Constructor_NullRuleScheduler_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(
-                () => new Mediator(
-                    this._ruleDistributorMediator,
-                    null,
-                    this._coordinatorMediator,
-                    this._ruleSchedulerMediator,
-                    this._heartbeatService,
-                    this._logger));
-        }
-
-        [Test]
-        public void Initiate_CallsInitiateOnTradeServiceAndScheduler()
-        {
-            var mediator = new Mediator(
-                this._ruleDistributorMediator,
-                this._ruleEngineMediator,
-                this._coordinatorMediator,
-                this._ruleSchedulerMediator,
-                this._heartbeatService,
-                this._logger);
-
-            mediator.Initiate();
-
-            A.CallTo(() => this._heartbeatService.Initialise()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleDistributorMediator.Initiate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleEngineMediator.Initiate()).MustHaveHappenedOnceExactly();
-        }
-
+        /// <summary>
+        /// The test setup.
+        /// </summary>
         [SetUp]
         public void Setup()
         {
-            this._ruleEngineMediator = A.Fake<IRulesEngineMediator>();
-            this._ruleDistributorMediator = A.Fake<IRuleDistributorMediator>();
-            this._coordinatorMediator = A.Fake<ICoordinatorMediator>();
-            this._ruleSchedulerMediator = A.Fake<IRuleSchedulerMediator>();
-            this._heartbeatService = A.Fake<IApplicationHeartbeatService>();
-            this._logger = A.Fake<ILogger<Mediator>>();
+            this.ruleEngineMediator = A.Fake<IRulesEngineMediator>();
+            this.ruleDistributorMediator = A.Fake<IRuleDistributorMediator>();
+            this.coordinatorMediator = A.Fake<ICoordinatorMediator>();
+            this.ruleSchedulerMediator = A.Fake<IRuleSchedulerMediator>();
+            this.heartbeatService = A.Fake<IApplicationHeartbeatService>();
+            this.logger = A.Fake<ILogger<Mediator>>();
         }
 
+        /// <summary>
+        /// The constructor null coordinator mediator throws exception.
+        /// </summary>
         [Test]
-        public void Terminate_CallsTerminateOnTradeServiceAndScheduler()
+        public void ConstructorNullCoordinatorMediatorThrowsException()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () => new Mediator(
+                    this.ruleDistributorMediator,
+                    this.ruleEngineMediator,
+                    null,
+                    this.ruleSchedulerMediator,
+                    this.heartbeatService,
+                    this.logger));
+        }
+
+        /// <summary>
+        /// The constructor null rule distributor mediator throws exception.
+        /// </summary>
+        [Test]
+        public void ConstructorNullRuleDistributorMediatorThrowsException()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () => new Mediator(
+                    null,
+                    this.ruleEngineMediator,
+                    this.coordinatorMediator,
+                    this.ruleSchedulerMediator,
+                    this.heartbeatService,
+                    this.logger));
+        }
+
+        /// <summary>
+        /// The constructor null rule scheduler throws exception.
+        /// </summary>
+        [Test]
+        public void ConstructorNullRuleSchedulerThrowsException()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () => new Mediator(
+                    this.ruleDistributorMediator,
+                    null,
+                    this.coordinatorMediator,
+                    this.ruleSchedulerMediator,
+                    this.heartbeatService,
+                    this.logger));
+        }
+
+        /// <summary>
+        /// The initiate calls initiate on trade service and scheduler.
+        /// </summary>
+        [Test]
+        public void InitiateCallsInitiateOnTradeServiceAndScheduler()
         {
             var mediator = new Mediator(
-                this._ruleDistributorMediator,
-                this._ruleEngineMediator,
-                this._coordinatorMediator,
-                this._ruleSchedulerMediator,
-                this._heartbeatService,
-                this._logger);
+                this.ruleDistributorMediator,
+                this.ruleEngineMediator,
+                this.coordinatorMediator,
+                this.ruleSchedulerMediator,
+                this.heartbeatService,
+                this.logger);
+
+            mediator.Initiate();
+
+            A.CallTo(() => this.heartbeatService.Initialise()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleDistributorMediator.Initiate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleEngineMediator.Initiate()).MustHaveHappenedOnceExactly();
+        }
+
+        /// <summary>
+        /// The terminate calls terminate on trade service and scheduler.
+        /// </summary>
+        [Test]
+        public void TerminateCallsTerminateOnTradeServiceAndScheduler()
+        {
+            var mediator = new Mediator(
+                this.ruleDistributorMediator,
+                this.ruleEngineMediator,
+                this.coordinatorMediator,
+                this.ruleSchedulerMediator,
+                this.heartbeatService,
+                this.logger);
 
             mediator.Terminate();
 
-            A.CallTo(() => this._ruleDistributorMediator.Terminate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._ruleEngineMediator.Terminate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleDistributorMediator.Terminate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.ruleEngineMediator.Terminate()).MustHaveHappenedOnceExactly();
         }
     }
 }

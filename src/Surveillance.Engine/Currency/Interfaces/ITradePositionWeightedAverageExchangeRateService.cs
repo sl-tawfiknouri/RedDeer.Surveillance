@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading.Interfaces;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.Trades.Interfaces;

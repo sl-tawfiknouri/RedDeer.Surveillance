@@ -4,6 +4,8 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces
 {
+    using Domain.Core.Trading.Interfaces;
+
     public interface IExchangeRateProfitCalculator
     {
         Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(

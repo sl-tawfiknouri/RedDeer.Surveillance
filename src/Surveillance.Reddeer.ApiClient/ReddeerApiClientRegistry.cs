@@ -18,8 +18,14 @@
     using Surveillance.Reddeer.ApiClient.RuleParameter;
     using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
+    /// <summary>
+    /// The red deer client registry.
+    /// </summary>
     public class ReddeerApiClientRegistry : Registry
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReddeerApiClientRegistry"/> class.
+        /// </summary>
         public ReddeerApiClientRegistry()
         {
             this.For<IMarketOpenCloseApi>().Use<MarketOpenCloseApi>();

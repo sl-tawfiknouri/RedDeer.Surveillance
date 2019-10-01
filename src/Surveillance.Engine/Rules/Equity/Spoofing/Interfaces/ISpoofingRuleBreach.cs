@@ -2,6 +2,7 @@
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces
 {
+    using Domain.Core.Trading.Interfaces;
     using Domain.Core.Trading.Orders;
 
     using Surveillance.Engine.Rules.Rules.Interfaces;

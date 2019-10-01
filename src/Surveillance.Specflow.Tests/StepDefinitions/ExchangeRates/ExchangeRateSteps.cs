@@ -56,7 +56,7 @@
             }
 
             A.CallTo(
-                    () => this._exchangeRateSelection.ExchangeRateRepository.Get(
+                    () => this._exchangeRateSelection.ExchangeRateRepository.GetAsync(
                         A<DateTime>.Ignored,
                         A<DateTime>.Ignored))
                 .Returns(exchangeRateDtos);

@@ -223,7 +223,7 @@
 
             IReadOnlyCollection<ExchangeDto> testCollection = new List<ExchangeDto> { this._marketOpenClose };
 
-            A.CallTo(() => this._repository.Get()).Returns(Task.FromResult(testCollection));
+            A.CallTo(() => this._repository.GetAsync()).Returns(Task.FromResult(testCollection));
         }
     }
 }

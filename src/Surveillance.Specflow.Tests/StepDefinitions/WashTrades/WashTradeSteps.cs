@@ -75,7 +75,7 @@
                                           Rate = 200d
                                       };
 
-            A.CallTo(() => exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
+            A.CallTo(() => exchangeRateApiRepository.GetAsync(A<DateTime>.Ignored, A<DateTime>.Ignored)).Returns(
                 new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
                     {
                         { new DateTime(2018, 01, 01), new[] { exchangeRateDto } }

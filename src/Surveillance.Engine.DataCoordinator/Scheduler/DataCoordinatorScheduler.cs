@@ -1,6 +1,7 @@
 ﻿namespace Surveillance.Engine.DataCoordinator.Scheduler
 {
     using System;
+    using System.Threading.Tasks;
     using System.Timers;
 
     using Microsoft.Extensions.Logging;
@@ -9,57 +10,107 @@
     using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
 
     /// <summary>
-    ///     Timer to check for data health issue and run auto schedules
+    /// Timer to check for data health issue and run auto schedules
     /// </summary>
     public class DataCoordinatorScheduler : IDataCoordinatorScheduler
     {
-        private const int HeartbeatFrequency = 1000 * 60 * 20; // milliseconds (20 min)
+        /// <summary>
+        /// The heartbeat frequency milliseconds (20 min).
+        /// </summary>
+        private const int HeartbeatFrequency = 1000 * 60 * 20;
 
-        private readonly IAutoSchedule _autoScheduler;
+        /// <summary>
+        /// The auto scheduler.
+        /// </summary>
+        private readonly IAutoSchedule autoScheduler;
 
-        private readonly IDataVerifier _dataVerifier;
+        /// <summary>
+        /// The data verifier.
+        /// </summary>
+        private readonly IDataVerifier dataVerifier;
 
-        private readonly ILogger<DataCoordinatorScheduler> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<DataCoordinatorScheduler> logger;
 
-        private Timer _timer;
+        /// <summary>
+        /// The timer.
+        /// </summary>
+        private Timer timer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataCoordinatorScheduler"/> class.
+        /// </summary>
+        /// <param name="dataVerifier">
+        /// The data verifier.
+        /// </param>
+        /// <param name="autoScheduler">
+        /// The auto scheduler.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public DataCoordinatorScheduler(
             IDataVerifier dataVerifier,
             IAutoSchedule autoScheduler,
             ILogger<DataCoordinatorScheduler> logger)
         {
-            this._dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
-            this._autoScheduler = autoScheduler ?? throw new ArgumentNullException(nameof(autoScheduler));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
+            this.autoScheduler = autoScheduler ?? throw new ArgumentNullException(nameof(autoScheduler));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The initialize.
+        /// </summary>
         public void Initialise()
         {
             this.TimerOnElapsed(null, null);
 
-            this._timer = new Timer(HeartbeatFrequency) { AutoReset = true, Interval = HeartbeatFrequency };
+            this.timer = 
+                new Timer(HeartbeatFrequency)
+                    {
+                        AutoReset = true,
+                        Interval = HeartbeatFrequency
+                    };
 
-            this._timer.Elapsed += this.TimerOnElapsed;
-            this._timer.Start();
+            this.timer.Elapsed += (_, __) => this.TimerOnElapsed(_, __);
+            this.timer.Start();
         }
 
+        /// <summary>
+        /// The terminate.
+        /// </summary>
         public void Terminate()
         {
-            this._timer?.Stop();
+            this.timer?.Stop();
         }
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+        /// <summary>
+        /// The timer on elapsed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        private async Task TimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             try
             {
-                this._logger.LogInformation("heart beat. Scanning data verifier and auto scheduler");
-                this._dataVerifier.Scan().Wait();
-                this._autoScheduler.Scan().Wait();
-                this._logger.LogInformation("heart beat complete");
+                this.logger.LogInformation("heart beat. Scanning data verifier and auto scheduler");
+                await this.dataVerifier.Scan();
+                await this.autoScheduler.Scan();
+                this.logger.LogInformation("heart beat complete");
             }
             catch (Exception a)
             {
-                this._logger.LogError($"encountered an exception {a.Message}");
+                this.logger.LogError($"encountered an exception {a.Message}");
             }
         }
     }

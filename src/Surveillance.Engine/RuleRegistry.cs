@@ -87,8 +87,8 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
-    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+    using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
@@ -206,7 +206,7 @@ namespace Surveillance.Engine.Rules
             this.For<IClusteringService>().Use<ClusteringService>().Singleton();
 
             this.For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
-            this.For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeIssuanceRule>();
+            this.For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
             this.For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
 
             this.For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
@@ -311,6 +311,8 @@ namespace Surveillance.Engine.Rules
             this.For<IRampingJudgementService>().Use<JudgementService>();
             this.For<ISpoofingJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
+            this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
+            this.For<IFixedIncomeHighVolumeJudgementMapper>().Use<FixedIncomeHighVolumeJudgementMapper>();
         }
     }
 }

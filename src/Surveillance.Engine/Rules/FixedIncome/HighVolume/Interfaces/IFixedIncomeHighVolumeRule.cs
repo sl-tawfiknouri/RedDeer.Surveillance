@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces
+﻿namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces
 {
     using Surveillance.Engine.Rules.Rules.Interfaces;
 

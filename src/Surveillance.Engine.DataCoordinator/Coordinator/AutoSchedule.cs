@@ -14,41 +14,77 @@
     using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
     using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
 
+    /// <summary>
+    /// The auto schedule.
+    /// </summary>
     public class AutoSchedule : IAutoSchedule
     {
-        private readonly IActiveRulesService _activeRulesService;
+        /// <summary>
+        /// The active rules service.
+        /// </summary>
+        private readonly IActiveRulesService activeRulesService;
 
-        private readonly ILogger<AutoSchedule> _logger;
+        /// <summary>
+        /// The orders repository.
+        /// </summary>
+        private readonly IOrdersRepository ordersRepository;
 
-        private readonly IOrdersRepository _ordersRepository;
+        /// <summary>
+        /// The publisher.
+        /// </summary>
+        private readonly IQueueScheduleRulePublisher publisher;
 
-        private readonly IQueueScheduleRulePublisher _publisher;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<AutoSchedule> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AutoSchedule"/> class.
+        /// </summary>
+        /// <param name="ordersRepository">
+        /// The orders repository.
+        /// </param>
+        /// <param name="publisher">
+        /// The publisher.
+        /// </param>
+        /// <param name="activeRulesService">
+        /// The active rules service.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public AutoSchedule(
             IOrdersRepository ordersRepository,
             IQueueScheduleRulePublisher publisher,
             IActiveRulesService activeRulesService,
             ILogger<AutoSchedule> logger)
         {
-            this._ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
-            this._publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-            this._activeRulesService =
+            this.ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            this.publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
+            this.activeRulesService =
                 activeRulesService ?? throw new ArgumentNullException(nameof(activeRulesService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// The scan.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         public async Task Scan()
         {
             try
             {
-                this._logger?.LogInformation("about to scan for auto scheduling.");
+                this.logger?.LogInformation("about to scan for auto scheduling.");
 
-                var orders = await this._ordersRepository.LiveUnscheduledOrders();
+                var orders = await this.ordersRepository.LiveUnscheduledOrders();
                 var filteredOrders = orders?.Where(i => i?.PlacedDate != null)?.ToList();
 
                 if (filteredOrders == null || !filteredOrders.Any())
                 {
-                    this._logger?.LogInformation("found no orders requiring scheduling. Exiting.");
+                    this.logger?.LogInformation("found no orders requiring scheduling. Exiting.");
                     return;
                 }
 
@@ -57,44 +93,69 @@
 
                 if (initiationDate == null)
                 {
-                    this._logger?.LogInformation("found no orders requiring scheduling with valid date sets. Exiting.");
+                    this.logger?.LogInformation("found no orders requiring scheduling with valid date sets. Exiting.");
                     return;
                 }
 
-                this._logger?.LogInformation("found orders requiring scheduling. Constructing schedule.");
+                this.logger?.LogInformation("found orders requiring scheduling. Constructing schedule.");
                 var schedule = this.BuildSchedule(initiationDate.Value, terminationDate);
 
-                this._logger?.LogInformation("about to dispatch schedule to the queue");
-                await this._publisher.Send(schedule);
-                this._logger?.LogInformation("finished dispatched schedule to the queue");
+                this.logger?.LogInformation("about to dispatch schedule to the queue");
+                await this.publisher.Send(schedule);
+                this.logger?.LogInformation("finished dispatched schedule to the queue");
 
-                await this._ordersRepository.SetOrdersScheduled(filteredOrders);
-                this._logger?.LogInformation("finished updating orders with scheduled status. Completing.");
+                await this.ordersRepository.SetOrdersScheduled(filteredOrders);
+                this.logger?.LogInformation("finished updating orders with scheduled status. Completing.");
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"exception {e.Message}");
+                this.logger?.LogError($"exception {e.Message}");
             }
         }
 
+        /// <summary>
+        /// The build schedule.
+        /// </summary>
+        /// <param name="initiation">
+        /// The initiation.
+        /// </param>
+        /// <param name="termination">
+        /// The termination.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScheduledExecution"/>.
+        /// </returns>
         private ScheduledExecution BuildSchedule(DateTime initiation, DateTime termination)
         {
-            if (initiation > termination) initiation = termination;
+            if (initiation > termination)
+            {
+                initiation = termination;
+            }
 
             var schedule = new ScheduledExecution
-                               {
-                                   Rules = this.GetAllRules(),
-                                   TimeSeriesInitiation = initiation,
-                                   TimeSeriesTermination = termination
-                               };
+               {
+                   Rules = this.GetAllRules(),
+                   TimeSeriesInitiation = initiation,
+                   TimeSeriesTermination = termination
+               };
 
             return schedule;
         }
 
+        /// <summary>
+        /// The get all rules.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RuleIdentifier"/>.
+        /// </returns>
         private List<RuleIdentifier> GetAllRules()
         {
-            return this._activeRulesService.EnabledRules()
-                .Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] }).ToList();
+            return 
+                this
+                    .activeRulesService
+                    .EnabledRules()
+                    .Select(_ => new RuleIdentifier { Rule = _, Ids = new string[0] })
+                    .ToList();
         }
     }
 }

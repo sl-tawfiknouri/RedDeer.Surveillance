@@ -5,6 +5,7 @@
 
     using Domain.Core.Financial.Assets;
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading.Interfaces;
 
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Interfaces;

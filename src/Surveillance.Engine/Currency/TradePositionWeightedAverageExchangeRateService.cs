@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading.Interfaces;
 
     using Microsoft.Extensions.Logging;
 

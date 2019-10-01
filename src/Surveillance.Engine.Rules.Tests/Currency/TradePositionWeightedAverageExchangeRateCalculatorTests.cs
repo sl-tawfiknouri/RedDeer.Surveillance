@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
 
     using Domain.Core.Financial.Money;
+    using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
 
     using FakeItEasy;

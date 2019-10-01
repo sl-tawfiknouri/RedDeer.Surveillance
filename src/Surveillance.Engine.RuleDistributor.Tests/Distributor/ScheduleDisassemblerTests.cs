@@ -20,30 +20,63 @@
     using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
     using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 
+    /// <summary>
+    /// The schedule disassembler tests.
+    /// </summary>
     [TestFixture]
     public class ScheduleDisassemblerTests
     {
-        private IRuleParameterApi _apiRepository;
+        /// <summary>
+        /// The application programming interface repository.
+        /// </summary>
+        private IRuleParameterApi apiRepository;
 
-        private IQueueDistributedRulePublisher _distributedRulePublisher;
+        /// <summary>
+        /// The distributed rule publisher.
+        /// </summary>
+        private IQueueDistributedRulePublisher distributedRulePublisher;
 
-        private ILogger<ScheduleDisassembler> _logger;
+        /// <summary>
+        /// The system process operation context.
+        /// </summary>
+        private ISystemProcessOperationContext systemProcessOperationContext;
 
-        private ISystemProcessOperationContext _systemProcessOperationContext;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger<ScheduleDisassembler> logger;
 
-        [Test]
-        public async Task Initiate_RuleRunForEightDays_JustRunsRuleWithTimeWindowOf10Days()
+        /// <summary>
+        /// The test setup.
+        /// </summary>
+        [SetUp]
+        public void Setup()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            this.apiRepository = A.Fake<IRuleParameterApi>();
+            this.systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
+            this.distributedRulePublisher = A.Fake<IQueueDistributedRulePublisher>();
+            this.logger = A.Fake<ILogger<ScheduleDisassembler>>();
+        }
+
+        /// <summary>
+        /// The initiate rule run for eight days just runs rule with time window of 10 days.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        [Test]
+        public async Task InitiateRuleRunForEightDaysJustRunsRuleWithTimeWindowOf10Days()
+        {
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
-                                          {
-                                              new HighVolumeRuleParameterDto
-                                                  {
-                                                      Id = "abc", WindowSize = new TimeSpan(10, 0, 0, 0, 0)
-                                                  }
-                                          }
+                          {
+                              new HighVolumeRuleParameterDto
+                                  {
+                                      Id = "abc", WindowSize = new TimeSpan(10, 0, 0, 0, 0)
+                                  }
+                          }
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
@@ -61,26 +94,32 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate rule run for eight days runs rule with time window of 1 days over two executions.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForEightDays_RunsRuleWithTimeWindowOf1DaysOverTwoExecutions()
+        public async Task InitiateRuleRunForEightDaysRunsRuleWithTimeWindowOf1DaysOverTwoExecutions()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
-                                          {
-                                              new HighVolumeRuleParameterDto
-                                                  {
-                                                      Id = "abc", WindowSize = new TimeSpan(1, 0, 0, 0, 0)
-                                                  }
-                                          }
+                      {
+                          new HighVolumeRuleParameterDto
+                              {
+                                  Id = "abc", WindowSize = new TimeSpan(1, 0, 0, 0, 0)
+                              }
+                      }
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
@@ -98,17 +137,23 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 2);
         }
 
+        /// <summary>
+        /// The initiate rule run for fourteen days just runs rule with time window of 1 days three times.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForFourteenDays_JustRunsRuleWithTimeWindowOf1DaysThreeTimes()
+        public async Task InitiateRuleRunForFourteenDaysJustRunsRuleWithTimeWindowOf1DaysThreeTimes()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -135,26 +180,32 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 3);
         }
 
+        /// <summary>
+        /// The initiate rule run for less than one day just runs rule.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForLessThanOneDay_JustRunsRule()
+        public async Task InitiateRuleRunForLessThanOneDayJustRunsRule()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
-                                          {
-                                              new HighVolumeRuleParameterDto
-                                                  {
-                                                      Id = "abc", WindowSize = new TimeSpan(1, 0, 0, 0, 0)
-                                                  }
-                                          }
+                          {
+                              new HighVolumeRuleParameterDto
+                                  {
+                                      Id = "abc", WindowSize = new TimeSpan(1, 0, 0, 0, 0)
+                                  }
+                          }
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
@@ -172,25 +223,31 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate rule run for one hour only just runs rule.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForOneHourOnly_JustRunsRule()
+        public async Task InitiateRuleRunForOneHourOnlyJustRunsRule()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
-                                          {
-                                              new HighVolumeRuleParameterDto
-                                                  {
-                                                      Id = "abc", WindowSize = new TimeSpan(0, 5, 0, 0, 0)
-                                                  }
-                                          }
+                          {
+                              new HighVolumeRuleParameterDto
+                                  {
+                                      Id = "abc", WindowSize = new TimeSpan(0, 5, 0, 0, 0)
+                                  }
+                          }
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
@@ -208,16 +265,22 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate rule run for one year just runs rule with time window of eight days schedules 22 runs.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForOneYear_JustRunsRuleWithTimeWindowOfEightDaysSchedules22Runs()
+        public async Task InitiateRuleRunForOneYearJustRunsRuleWithTimeWindowOfEightDaysSchedules22Runs()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -244,17 +307,23 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 22);
         }
 
+        /// <summary>
+        /// The initiate rule run for one year just runs rule with time window of three days schedules 22 runs.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForOneYear_JustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
+        public async Task InitiateRuleRunForOneYearJustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -281,17 +350,23 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 52);
         }
 
+        /// <summary>
+        /// The initiate rule run for seven days just runs rule.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForSevenDays_JustRunsRule()
+        public async Task InitiateRuleRunForSevenDaysJustRunsRule()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -318,16 +393,22 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate rule run for six days just runs rule.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForSixDays_JustRunsRule()
+        public async Task InitiateRuleRunForSixDaysJustRunsRule()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighVolumes = new[]
@@ -354,16 +435,22 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// The initiate rule run for two weeks but null params does not do anything.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
-        public async Task Initiate_RuleRunForTwoWeeksButNullParams_DoesNotDoAnything()
+        public async Task InitiateRuleRunForTwoWeeksButNullParamsDoesNotDoAnything()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(new RuleParameterDto { HighProfits = null });
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(new RuleParameterDto { HighProfits = null });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
             var scheduler = this.Build();
@@ -380,17 +467,23 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustNotHaveHappened();
         }
 
+        /// <summary>
+        /// The initiate rule run two rules for one year just runs rule with time window of three days schedules 22 runs.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
         [Test]
         [Ignore("Not supporting this atm")]
-        public async Task Initiate_RuleRunTwoRulesForOneYear_JustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
+        public async Task InitiateRuleRunTwoRulesForOneYearJustRunsRuleWithTimeWindowOfThreeDaysSchedules22Runs()
         {
-            A.CallTo(() => this._apiRepository.Get()).Returns(
+            A.CallTo(() => this.apiRepository.GetAsync()).Returns(
                 new RuleParameterDto
                     {
                         HighProfits =
@@ -424,25 +517,22 @@
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);
 
-            await scheduler.Disassemble(this._systemProcessOperationContext, execution, "any-id", messageBody);
+            await scheduler.Disassemble(this.systemProcessOperationContext, execution, "any-id", messageBody);
 
-            A.CallTo(() => this._apiRepository.Get()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => this._distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
+            A.CallTo(() => this.apiRepository.GetAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 74);
         }
 
-        [SetUp]
-        public void Setup()
-        {
-            this._apiRepository = A.Fake<IRuleParameterApi>();
-            this._systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
-            this._distributedRulePublisher = A.Fake<IQueueDistributedRulePublisher>();
-            this._logger = A.Fake<ILogger<ScheduleDisassembler>>();
-        }
-
+        /// <summary>
+        /// The build.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ScheduleDisassembler"/>.
+        /// </returns>
         private ScheduleDisassembler Build()
         {
-            return new ScheduleDisassembler(this._apiRepository, this._distributedRulePublisher, this._logger);
+            return new ScheduleDisassembler(this.apiRepository, this.distributedRulePublisher, this.logger);
         }
     }
 }

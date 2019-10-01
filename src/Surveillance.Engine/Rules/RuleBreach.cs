@@ -3,6 +3,7 @@
     using System;
 
     using Domain.Core.Financial.Assets;
+    using Domain.Core.Trading.Interfaces;
 
     using Surveillance.Engine.Rules.RuleParameters.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;

@@ -1,9 +1,4 @@
-﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules
+﻿namespace Surveillance.Engine.Rules
 {
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Execution.Interfaces;
@@ -101,6 +96,10 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
     using Surveillance.Engine.Rules.Trades;
@@ -319,7 +318,7 @@ namespace Surveillance.Engine.Rules
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementMapper>().Use<FixedIncomeHighVolumeJudgementMapper>();
-
+            
             this.For<IDataManifestInterpreter>().Use<DataManifestInterpreter>();
             this.For<IDataManifestBuilder>().Use<DataManifestBuilder>();
             this.For<ITimeLineContinuum>().Use<TimeLineContinuum>();

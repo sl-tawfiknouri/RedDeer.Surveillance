@@ -29,14 +29,14 @@
         private readonly IOrdersToAllocatedOrdersProjector allocateOrdersProjector;
 
         /// <summary>
-        /// The aurora market repository.
+        /// The market repository.
         /// </summary>
-        private readonly IReddeerMarketRepository auroraMarketRepository;
+        private readonly IReddeerMarketRepository marketRepository;
 
         /// <summary>
-        /// The aurora orders repository.
+        /// The orders repository.
         /// </summary>
-        private readonly IOrdersRepository auroraOrdersRepository;
+        private readonly IOrdersRepository ordersRepository;
 
         /// <summary>
         /// The market service.
@@ -56,14 +56,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="UniverseBuilder"/> class.
         /// </summary>
-        /// <param name="auroraOrdersRepository">
-        /// The aurora orders repository.
+        /// <param name="ordersRepository">
+        /// The orders repository.
         /// </param>
         /// <param name="allocateOrdersProjector">
         /// The allocate orders projector.
         /// </param>
-        /// <param name="auroraMarketRepository">
-        /// The aurora market repository.
+        /// <param name="marketRepository">
+        /// The market repository.
         /// </param>
         /// <param name="marketService">
         /// The market service.
@@ -75,19 +75,19 @@
         /// The logger.
         /// </param>
         public UniverseBuilder(
-            IOrdersRepository auroraOrdersRepository,
+            IOrdersRepository ordersRepository,
             IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
-            IReddeerMarketRepository auroraMarketRepository,
+            IReddeerMarketRepository marketRepository,
             IMarketOpenCloseEventService marketService,
             IUniverseSortComparer universeSorter,
             ILogger<UniverseBuilder> logger)
         {
-            this.auroraOrdersRepository =
-                auroraOrdersRepository ?? throw new ArgumentNullException(nameof(auroraOrdersRepository));
+            this.ordersRepository =
+                ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             this.allocateOrdersProjector = allocateOrdersProjector
                                             ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
-            this.auroraMarketRepository =
-                auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
+            this.marketRepository =
+                marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             this.marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
             this.universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -376,7 +376,7 @@
         {
             var startDate = execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date;
 
-            var equities = await this.auroraMarketRepository.GetEquityInterDay(
+            var equities = await this.marketRepository.GetEquityInterDay(
                                startDate,
                                execution.TimeSeriesTermination.Date,
                                operationContext);
@@ -403,7 +403,7 @@
             var startDate = execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan ?? TimeSpan.Zero).Date;
 
             var equities = 
-                await this.auroraMarketRepository.GetEquityIntraday(
+                await this.marketRepository.GetEquityIntraday(
                     startDate,
                     execution.TimeSeriesTermination.Date,
                     operationContext);
@@ -427,7 +427,7 @@
             ScheduledExecution execution,
             ISystemProcessOperationContext operationContext)
         {
-            var trades = await this.auroraOrdersRepository.Get(
+            var trades = await this.ordersRepository.Get(
                              execution.TimeSeriesInitiation.Date,
                              execution.TimeSeriesTermination.Date,
                              operationContext);

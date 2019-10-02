@@ -135,7 +135,7 @@ Scenario: One order above daily volume yields one alerts
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 	
-	@test
+
 @fixedincomehighvolumedailyvolume
 Scenario: Two order at daily volume on exact window yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

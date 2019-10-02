@@ -1,4 +1,5 @@
-﻿@fixedincomehighvolumedailyvolume
+﻿@FixedIncomeHighVolume
+@fixedincomehighvolumedailyvolume
 Feature: Fixed Income High Volume Daily Volume
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
@@ -28,28 +29,29 @@ Scenario: One order at daily volume yields one alert
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 
+	
 @fixedincomehighvolumedailyvolume
 Scenario: Two order one inside and one outside but next day for window at daily volume yields zero alert
 	Given I have the high volume rule parameter values
 	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
 	| 23           |	0.01					  |		                       | 			     			   |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
-	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 15:30:00 |            |             |              |               | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 5          | 5         |
-	| UKGovtBondSecondaryMarket     | 0       | 01/02/2018 16:30:00 |            |             |              |               | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 5          | 5         |
+	| SecurityName              | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| UKGovtBondSecondaryMarket | 0       | 01/01/2018 15:30:00 |            |             |              |               | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10               | 5             | 5            |
+	| UKGovtBondSecondaryMarket | 0       | 01/02/2018 16:30:00 |            |             |              |               | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10               | 5             | 5            |
 	And With the interday market data :
-	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| UKGovtBondSecondaryMarket     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
-	| UKGovtBondSecondaryMarket     | 01/02/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	| SecurityName              | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+	| UKGovtBondSecondaryMarket | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 1000        | GBX      |
+	| UKGovtBondSecondaryMarket | 01/02/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 1000        | GBX      |
 	When I run the fixed income high volume rule
 	Then I will have 0 fixed income high volume alerts
 
 @fixedincomehighvolumedailyvolume
 Scenario: Two order one inside and one outside trading hours at daily volume yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
-	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 15:30:00 |            |             |              |               | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 5          | 5         |
-	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 16:30:00 |            |             |              |               | 01/01/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 5          | 5         |
+	| SecurityName              | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| UKGovtBondSecondaryMarket | 0       | 01/01/2018 15:30:00 |            |             |              |               | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10               | 5             | 5            |
+	| UKGovtBondSecondaryMarket | 0       | 01/01/2018 16:30:00 |            |             |              |               | 01/01/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10               | 5             | 5            |
 	And With the interday market data :
 	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
@@ -95,8 +97,8 @@ Scenario: One order just sell at daily volume yields one alert
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Barclays     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL       | GBX      |            | 10              | 10          | 10         |
 	And With the interday market data :
-	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-	| Barclays     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+	| Barclays     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 1000        | GBX      |
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 
@@ -133,6 +135,7 @@ Scenario: One order above daily volume yields one alerts
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 	
+	@test
 @fixedincomehighvolumedailyvolume
 Scenario: Two order at daily volume on exact window yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

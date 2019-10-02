@@ -237,7 +237,7 @@
 
         public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(
             ScheduledExecution execution,
-            List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+            List<FixedIncomeHighVolumeRuleParameterDto> dtos)
         {
             if (!execution?.IsBackTest ?? true) return this._mapper.Map(execution, dtos);
 

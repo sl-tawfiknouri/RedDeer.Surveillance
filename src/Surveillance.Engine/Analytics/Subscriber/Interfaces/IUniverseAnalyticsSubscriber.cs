@@ -2,8 +2,8 @@
 {
     using System;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.DataLayer.Aurora.Analytics;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     public interface IUniverseAnalyticsSubscriber : IObserver<IUniverseEvent>
     {

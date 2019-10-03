@@ -26,7 +26,7 @@
                                        new DateTime(2018, 01, 01),
                                        new DateTime(2018, 01, 06),
                                        "1",
-                                       DataSource.All),
+                                       DataSource.Any),
                                    new MarketDataRequest(
                                        "XLON",
                                        "ENTSPB",
@@ -34,7 +34,7 @@
                                        new DateTime(2018, 01, 01),
                                        new DateTime(2018, 01, 06),
                                        "1",
-                                       DataSource.All)
+                                       DataSource.Any)
                                };
 
             var keyProjector = new MarketDataRequestToMinuteBarRequestKeyDtoProjector();

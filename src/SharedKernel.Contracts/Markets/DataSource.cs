@@ -1,21 +1,48 @@
 ﻿namespace SharedKernel.Contracts.Markets
 {
+    /// <summary>
+    /// The data source.
+    /// </summary>
     public enum DataSource
     {
-        All = 0,
+        /// <summary>
+        /// The any data source
+        /// </summary>
+        Any = 0,
 
+        /// <summary>
+        /// The none.
+        /// </summary>
         None = 1,
 
-        AllInterday = 2,
+        /// <summary>
+        /// The all inter day.
+        /// </summary>
+        AnyInterday = 2,
 
-        AllIntraday = 3,
+        /// <summary>
+        /// The all intraday.
+        /// </summary>
+        AnyIntraday = 3,
 
+        /// <summary>
+        /// The data provider.
+        /// </summary>
         Bmll = 4,
 
+        /// <summary>
+        /// The fact set.
+        /// </summary>
         Factset = 5,
 
+        /// <summary>
+        /// The mark it.
+        /// </summary>
         Markit = 6,
 
-        ThomsonReuters = 7
+        /// <summary>
+        /// The thomson reuters.
+        /// </summary>
+        Refinitive = 7
     }
 }

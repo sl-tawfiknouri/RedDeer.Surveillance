@@ -13,6 +13,7 @@
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -23,24 +24,65 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
+    /// <summary>
+    /// The wash trade equity subscriber.
+    /// </summary>
     public class WashTradeEquitySubscriber : BaseSubscriber, IWashTradeEquitySubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+        /// <summary>
+        /// The decorator filter factory.
+        /// </summary>
+        private readonly IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory;
 
-        private readonly IEquityRuleWashTradeFactory _equityRuleWashTradeFactory;
+        /// <summary>
+        /// The equity rule wash trade factory.
+        /// </summary>
+        private readonly IEquityRuleWashTradeFactory equityRuleWashTradeFactory;
 
-        private readonly ILogger<WashTradeEquitySubscriber> _logger;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<WashTradeEquitySubscriber> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WashTradeEquitySubscriber"/> class.
+        /// </summary>
+        /// <param name="equityRuleWashTradeFactory">
+        /// The equity rule wash trade factory.
+        /// </param>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="decoratorFilterFactory">
+        /// The decorator filter factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public WashTradeEquitySubscriber(
             IEquityRuleWashTradeFactory equityRuleWashTradeFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
@@ -49,20 +91,44 @@
             IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<WashTradeEquitySubscriber> logger)
         {
-            this._equityRuleWashTradeFactory = equityRuleWashTradeFactory
+            this.equityRuleWashTradeFactory = equityRuleWashTradeFactory
                                                ?? throw new ArgumentNullException(nameof(equityRuleWashTradeFactory));
-            this._ruleParameterMapper =
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._decoratorFilterFactory =
+            this.decoratorFilterFactory =
                 decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -71,13 +137,15 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(Rules.WashTrade) ?? true)
-                return new IObserver<IUniverseEvent>[0];
+            {
+                return new IUniverseRule[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos = ruleParameters.WashTrades
                 .Where(wt => filteredParameters.Contains(wt.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var washTradeParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var washTradeParameters = this.ruleParameterMapper.Map(execution, dtos);
             var subscriptions = this.SubscribeToUniverse(
                 execution,
                 operationContext,
@@ -88,30 +156,54 @@
             return subscriptions;
         }
 
+        /// <summary>
+        /// The decorate with filter.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="washTrade">
+        /// The wash trade.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilter(
-            ISystemProcessOperationContext opCtx,
-            IWashTradeRuleEquitiesParameters param,
+            ISystemProcessOperationContext operationContext,
+            IWashTradeRuleEquitiesParameters parameters,
             IUniverseRule washTrade,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
-                || param.HasVenueVolumeFilters())
+            if (parameters.HasInternalFilters() || parameters.HasReferenceDataFilters() || parameters.HasMarketCapFilters()
+                || parameters.HasVenueVolumeFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
-                    param.Sectors,
-                    param.Industries,
-                    param.Regions,
-                    param.Countries,
-                    param.MarketCapFilter,
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameters.Accounts,
+                    parameters.Traders,
+                    parameters.Markets,
+                    parameters.Funds,
+                    parameters.Strategies,
+                    parameters.Sectors,
+                    parameters.Industries,
+                    parameters.Regions,
+                    parameters.Countries,
+                    parameters.MarketCapFilter,
                     ruleRunMode,
                     "Wash Trade Equity",
                     universeDataRequestsSubscriber,
@@ -119,15 +211,17 @@
 
                 var decoratedFilter = filteredUniverse;
 
-                if (param.HasVenueVolumeFilters())
-                    decoratedFilter = this._decoratorFilterFactory.Build(
-                        param.Windows,
+                if (parameters.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = this.decoratorFilterFactory.Build(
+                        parameters.Windows,
                         filteredUniverse,
-                        param.VenueVolumeFilter,
+                        parameters.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        this.DataSourceForWindow(param.Windows),
+                        this.DataSourceForWindow(parameters.Windows),
                         ruleRunMode);
+                }
 
                 decoratedFilter.Subscribe(washTrade);
 
@@ -137,17 +231,38 @@
             return washTrade;
         }
 
+        /// <summary>
+        /// The subscribe to parameters.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
-            IWashTradeRuleEquitiesParameters param)
+            IWashTradeRuleEquitiesParameters parameters)
         {
-            var ctx = opCtx.CreateAndStartRuleRunContext(
+            var ctx = operationContext.CreateAndStartRuleRunContext(
                 Rules.WashTrade.GetDescription(),
                 EquityRuleWashTradeFactory.Version,
-                param.Id,
+                parameters.Id,
                 (int)Rules.WashTrade,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -156,15 +271,15 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var washTrade = this._equityRuleWashTradeFactory.Build(param, ctx, alertStream, runMode);
-            var washTradeOrgFactors = this._brokerServiceFactory.Build(
+            var washTrade = this.equityRuleWashTradeFactory.Build(parameters, ctx, alertStream, runMode);
+            var washTradeOrgFactors = this.brokerServiceFactory.Build(
                 washTrade,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameters.Factors,
+                parameters.AggregateNonFactorableIntoOwnCategory);
 
             var washTradeFiltered = this.DecorateWithFilter(
-                opCtx,
-                param,
+                operationContext,
+                parameters,
                 washTradeOrgFactors,
                 universeDataRequestsSubscriber,
                 ctx,
@@ -173,14 +288,35 @@
             return washTradeFiltered;
         }
 
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="washTradeParameters">
+        /// The wash trade parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<IWashTradeRuleEquitiesParameters> washTradeParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             if (washTradeParameters != null && washTradeParameters.Any())
             {
@@ -188,7 +324,7 @@
                 {
                     var paramSubscriptions = this.SubscribeToParameters(
                         execution,
-                        opCtx,
+                        operationContext,
                         alertStream,
                         universeDataRequestsSubscriber,
                         param);
@@ -197,9 +333,9 @@
             }
             else
             {
-                const string errorMessage = "tried to schedule a wash trade rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                const string ErrorMessage = "tried to schedule a wash trade rule execution with no parameters set";
+                this.logger.LogError(ErrorMessage);
+                operationContext.EventError(ErrorMessage);
             }
 
             return subscriptions;

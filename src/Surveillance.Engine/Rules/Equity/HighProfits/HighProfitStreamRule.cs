@@ -8,13 +8,19 @@
     using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.Equity;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
 
     using Newtonsoft.Json;
 
+    using SharedKernel.Contracts.Markets;
+
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -28,35 +34,115 @@
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
+    /// <summary>
+    /// The high profit stream rule.
+    /// </summary>
     public class HighProfitStreamRule : BaseUniverseRule, IHighProfitStreamRule
     {
-        protected readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
+        /// <summary>
+        /// The equities parameters.
+        /// </summary>
+        protected readonly IHighProfitsRuleEquitiesParameters EquitiesParameters;
 
-        protected readonly IHighProfitJudgementService _judgementService;
+        /// <summary>
+        /// The judgement service.
+        /// </summary>
+        protected readonly IHighProfitJudgementService JudgementService;
 
-        protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        /// <summary>
+        /// The rule context.
+        /// </summary>
+        protected readonly ISystemProcessOperationRunRuleContext RuleContext;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
         protected readonly ILogger<HighProfitsRule> Logger;
 
+        /// <summary>
+        /// The market closure rule.
+        /// </summary>
         protected bool MarketClosureRule = false;
 
-        private readonly ICostCalculatorFactory _costCalculatorFactory;
+        /// <summary>
+        /// The cost calculator factory.
+        /// </summary>
+        private readonly ICostCalculatorFactory CostCalculatorFactory;
 
-        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private readonly IUniverseDataRequestsSubscriber DataRequestSubscriber;
 
-        private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+        /// <summary>
+        /// The exchange rate profit calculator.
+        /// </summary>
+        private readonly IExchangeRateProfitCalculator ExchangeRateProfitCalculator;
 
-        private readonly IMarketDataCacheStrategyFactory _marketDataCacheFactory;
+        /// <summary>
+        /// The market data cache factory.
+        /// </summary>
+        private readonly IMarketDataCacheStrategyFactory MarketDataCacheFactory;
 
-        private readonly IUniverseOrderFilter _orderFilter;
+        /// <summary>
+        /// The order filter.
+        /// </summary>
+        private readonly IUniverseOrderFilter OrderFilter;
 
-        private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
+        /// <summary>
+        /// The revenue calculator factory.
+        /// </summary>
+        private readonly IRevenueCalculatorFactory RevenueCalculatorFactory;
 
-        private bool _hasMissingData;
+        /// <summary>
+        /// The has missing data.
+        /// </summary>
+        private bool HasMissingData;
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighProfitStreamRule"/> class.
+        /// </summary>
+        /// <param name="equitiesParameters">
+        /// The equities parameters.
+        /// </param>
+        /// <param name="ruleContext">
+        /// The rule context.
+        /// </param>
+        /// <param name="costCalculatorFactory">
+        /// The cost calculator factory.
+        /// </param>
+        /// <param name="revenueCalculatorFactory">
+        /// The revenue calculator factory.
+        /// </param>
+        /// <param name="exchangeRateProfitCalculator">
+        /// The exchange rate profit calculator.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="marketDataCacheFactory">
+        /// The market data cache factory.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingHistoryLogger">
+        /// The trading history logger.
+        /// </param>
         public HighProfitStreamRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleContext,
@@ -84,27 +170,38 @@
                 logger,
                 tradingHistoryLogger)
         {
-            this._equitiesParameters =
+            this.EquitiesParameters =
                 equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            this._ruleCtx = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
-            this._costCalculatorFactory =
+            this.RuleContext = ruleContext ?? throw new ArgumentNullException(nameof(ruleContext));
+            this.CostCalculatorFactory =
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
-            this._revenueCalculatorFactory = revenueCalculatorFactory
-                                             ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
-            this._marketDataCacheFactory =
+            this.RevenueCalculatorFactory = 
+                revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
+            this.MarketDataCacheFactory =
                 marketDataCacheFactory ?? throw new ArgumentNullException(nameof(marketDataCacheFactory));
-            this._exchangeRateProfitCalculator = exchangeRateProfitCalculator
-                                                 ?? throw new ArgumentNullException(
-                                                     nameof(exchangeRateProfitCalculator));
-            this._orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            this._dataRequestSubscriber =
+            this.ExchangeRateProfitCalculator =
+                exchangeRateProfitCalculator ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            this.OrderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            this.DataRequestSubscriber =
                 dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
-            this._judgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
+            this.JudgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Gets or sets the organisation factor value.
+        /// </summary>
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factor">
+        /// The factor.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public virtual IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (HighProfitStreamRule)this.Clone();
@@ -113,6 +210,12 @@
             return clone;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object Clone()
         {
             var clone = (HighProfitStreamRule)this.MemberwiseClone();
@@ -121,37 +224,110 @@
             return clone;
         }
 
+        /// <summary>
+        /// The run order filled event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run order filled event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            if (this.EquitiesParameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.EquitiesParameters.PerformHighProfitDailyAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AnyInterday,
+                    _ => !this.OrderFilter.Filter(_));
+
+                constraints.Add(constraint);
+            }
+
+            if (this.EquitiesParameters.PerformHighProfitWindowAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AnyIntraday,
+                    _ => !this.OrderFilter.Filter(_));
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.EquitiesParameters.Id,
+                constraints);
+        }
+
+        /// <summary>
+        /// The end of universe.
+        /// </summary>
         protected override void EndOfUniverse()
         {
             this.Logger.LogInformation("Universe Eschaton occurred.");
 
-            if (!this.MarketClosureRule) this.RunRuleForAllTradingHistories();
+            if (!this.MarketClosureRule)
+            {
+                this.RunRuleForAllTradingHistories();
+            }
 
-            if (this._hasMissingData && this.RunMode == RuleRunMode.ValidationRun)
+            if (this.HasMissingData && this.RunMode == RuleRunMode.ValidationRun)
             {
                 this.Logger.LogInformation("Deleting alerts off the message sender");
-                this._dataRequestSubscriber.SubmitRequest();
-                this._ruleCtx?.EndEvent();
+                this.DataRequestSubscriber.SubmitRequest();
+                this.RuleContext?.EndEvent();
             }
             else
             {
-                this._ruleCtx?.EndEvent();
+                this.RuleContext?.EndEvent();
             }
         }
 
+        /// <summary>
+        /// The evaluate high profits.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
+        /// <param name="intradayCache">
+        /// The intraday cache.
+        /// </param>
         protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
         {
-            if (!this.RunRuleGuard(history)) return;
+            if (!this.RunRuleGuard(history))
+            {
+                return;
+            }
 
             var orderUnderAnalysis = this.UniverseEvent.UnderlyingEvent as Order;
 
@@ -159,7 +335,10 @@
 
             var liveTrades = activeTrades.Where(at => at.OrderStatus() == OrderStatus.Filled).ToList();
 
-            if (orderUnderAnalysis == null) orderUnderAnalysis = activeTrades.LastOrDefault();
+            if (orderUnderAnalysis == null)
+            {
+                orderUnderAnalysis = activeTrades.LastOrDefault();
+            }
 
             if (!liveTrades.Any())
             {
@@ -168,7 +347,7 @@
                 return;
             }
 
-            var targetCurrency = new Currency(this._equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new Currency(this.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency = liveTrades.Any() && liveTrades.All(
                                                 x => string.Equals(
@@ -180,14 +359,14 @@
             var revenueCalculator = this.GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
             var marketCache = this.MarketClosureRule
-                                  ? this._marketDataCacheFactory.InterdayStrategy(this.UniverseEquityInterdayCache)
-                                  : this._marketDataCacheFactory.IntradayStrategy(intradayCache);
+                                  ? this.MarketDataCacheFactory.InterdayStrategy(this.UniverseEquityInterdayCache)
+                                  : this.MarketDataCacheFactory.IntradayStrategy(intradayCache);
 
-            var costTask = costCalculator.CalculateCostOfPosition(liveTrades, this.UniverseDateTime, this._ruleCtx);
+            var costTask = costCalculator.CalculateCostOfPosition(liveTrades, this.UniverseDateTime, this.RuleContext);
             var revenueTask = revenueCalculator.CalculateRevenueOfPosition(
                 liveTrades,
                 this.UniverseDateTime,
-                this._ruleCtx,
+                this.RuleContext,
                 marketCache);
 
             var cost = costTask.Result;
@@ -196,7 +375,7 @@
             if (revenueResponse.HadMissingMarketData)
             {
                 this.SetMissingMarketDataJudgement(orderUnderAnalysis);
-                this._hasMissingData = true;
+                this.HasMissingData = true;
 
                 return;
             }
@@ -229,11 +408,11 @@
 
             IExchangeRateProfitBreakdown exchangeRateProfits = null;
 
-            if (this._equitiesParameters.UseCurrencyConversions && !string.IsNullOrEmpty(
-                    this._equitiesParameters.HighProfitCurrencyConversionTargetCurrency))
+            if (this.EquitiesParameters.UseCurrencyConversions && !string.IsNullOrEmpty(
+                    this.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency))
             {
                 this.Logger.LogInformation(
-                    $"is set to use currency conversions and has a target conversion currency to {this._equitiesParameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
+                    $"is set to use currency conversions and has a target conversion currency to {this.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
 
                 exchangeRateProfits = this.SetExchangeRateProfits(liveTrades);
             }
@@ -246,16 +425,16 @@
                     $"had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
 
                 ruleBreachContext = new RuleBreachContext(
-                    this._equitiesParameters.Windows.BackwardWindowSize
-                    + this._equitiesParameters.Windows.FutureWindowSize,
+                    this.EquitiesParameters.Windows.BackwardWindowSize
+                    + this.EquitiesParameters.Windows.FutureWindowSize,
                     new TradePosition(liveTrades),
                     liveTrades.FirstOrDefault(_ => _?.Instrument != null)?.Instrument,
-                    this._ruleCtx.IsBackTest(),
-                    this._ruleCtx.RuleParameterId(),
-                    this._ruleCtx.SystemProcessOperationContext().Id.ToString(),
-                    this._ruleCtx.CorrelationId(),
+                    this.RuleContext.IsBackTest(),
+                    this.RuleContext.RuleParameterId(),
+                    this.RuleContext.SystemProcessOperationContext().Id.ToString(),
+                    this.RuleContext.CorrelationId(),
                     this.OrganisationFactorValue,
-                    this._equitiesParameters,
+                    this.EquitiesParameters,
                     this.UniverseDateTime);
             }
 
@@ -269,16 +448,34 @@
                 orderUnderAnalysis);
         }
 
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return this._orderFilter.Filter(value);
+            return this.OrderFilter.Filter(value);
         }
 
+        /// <summary>
+        /// The genesis.
+        /// </summary>
         protected override void Genesis()
         {
             this.Logger.LogInformation("Universe Genesis occurred");
         }
 
+        /// <summary>
+        /// The market close.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketClose(MarketOpenClose exchange)
         {
             this.Logger.LogInformation(
@@ -287,42 +484,87 @@
             this.RunRuleForAllDelayedTradingHistoriesInMarket(exchange, this.UniverseDateTime);
         }
 
+        /// <summary>
+        /// The market open.
+        /// </summary>
+        /// <param name="exchange">
+        /// The exchange.
+        /// </param>
         protected override void MarketOpen(MarketOpenClose exchange)
         {
             this.Logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
         }
 
+        /// <summary>
+        /// The run initial submission event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEvent(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run initial submission event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunInitialSubmissionEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
         }
 
+        /// <summary>
+        /// The run post order event.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             this.EvaluateHighProfits(history, this.UniverseEquityIntradayCache);
         }
 
+        /// <summary>
+        /// The run post order event delayed.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
             this.EvaluateHighProfits(history, this.FutureUniverseEquityIntradayCache);
         }
 
+        /// <summary>
+        /// The run rule guard.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         protected virtual bool RunRuleGuard(ITradingHistoryStack history)
         {
             return true;
         }
 
+        /// <summary>
+        /// The set no live trades judgement.
+        /// </summary>
+        /// <param name="orderUnderAnalysis">
+        /// The order under analysis.
+        /// </param>
         protected void SetNoLiveTradesJudgement(Order orderUnderAnalysis)
         {
-            var noTradesParameters = JsonConvert.SerializeObject(this._equitiesParameters);
+            var noTradesParameters = JsonConvert.SerializeObject(this.EquitiesParameters);
             var noTradesJudgement = new HighProfitJudgement(
-                this._ruleCtx.RuleParameterId(),
-                this._ruleCtx.CorrelationId(),
+                this.RuleContext.RuleParameterId(),
+                this.RuleContext.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                 orderUnderAnalysis?.OrderId,
                 null,
@@ -332,34 +574,58 @@
                 false,
                 true);
 
-            this._judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+            this.JudgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
         }
 
+        /// <summary>
+        /// The get cost calculator.
+        /// </summary>
+        /// <param name="allTradesInCommonCurrency">
+        /// The all trades in common currency.
+        /// </param>
+        /// <param name="targetCurrency">
+        /// The target currency.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ICostCalculator"/>.
+        /// </returns>
         private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Currency targetCurrency)
         {
-            if (!this._equitiesParameters.UseCurrencyConversions || allTradesInCommonCurrency
+            if (!this.EquitiesParameters.UseCurrencyConversions || allTradesInCommonCurrency
                                                                  || string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
                 this.Logger.LogInformation(
                     $"GetCostCalculator using non currency conversion one for {targetCurrency.Code} at {this.UniverseDateTime}");
 
-                return this._costCalculatorFactory.CostCalculator();
+                return this.CostCalculatorFactory.CostCalculator();
             }
 
             this.Logger.LogInformation(
                 $"GetCostCalculator using currency conversion one for {targetCurrency.Code} at {this.UniverseDateTime}");
 
-            return this._costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
+            return this.CostCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
 
+        /// <summary>
+        /// The get revenue calculator.
+        /// </summary>
+        /// <param name="allTradesInCommonCurrency">
+        /// The all trades in common currency.
+        /// </param>
+        /// <param name="targetCurrency">
+        /// The target currency.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IRevenueCalculator"/>.
+        /// </returns>
         private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Currency targetCurrency)
         {
-            if (!this._equitiesParameters.UseCurrencyConversions || allTradesInCommonCurrency
+            if (!this.EquitiesParameters.UseCurrencyConversions || allTradesInCommonCurrency
                                                                  || string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
                 var calculator = this.MarketClosureRule
-                                     ? this._revenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
-                                     : this._revenueCalculatorFactory.RevenueCalculator();
+                                     ? this.RevenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
+                                     : this.RevenueCalculatorFactory.RevenueCalculator();
 
                 this.Logger.LogInformation(
                     $"GetRevenueCalculator using non currency conversion one for {targetCurrency.Code} at {this.UniverseDateTime}");
@@ -368,9 +634,9 @@
             }
 
             var currencyConvertingCalculator = this.MarketClosureRule
-                                                   ? this._revenueCalculatorFactory
+                                                   ? this.RevenueCalculatorFactory
                                                        .RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency)
-                                                   : this._revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(
+                                                   : this.RevenueCalculatorFactory.RevenueCurrencyConvertingCalculator(
                                                        targetCurrency);
 
             this.Logger.LogInformation(
@@ -379,36 +645,62 @@
             return currencyConvertingCalculator;
         }
 
+        /// <summary>
+        /// The has high profit absolute.
+        /// </summary>
+        /// <param name="absoluteProfits">
+        /// The absolute profits.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// </exception>
         private bool HasHighProfitAbsolute(Money absoluteProfits)
         {
-            if (this._equitiesParameters.HighProfitAbsoluteThreshold == null) return false;
+            if (this.EquitiesParameters.HighProfitAbsoluteThreshold == null) return false;
 
-            if (this._equitiesParameters.UseCurrencyConversions && !string.Equals(
-                    this._equitiesParameters.HighProfitCurrencyConversionTargetCurrency,
+            if (this.EquitiesParameters.UseCurrencyConversions && !string.Equals(
+                    this.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency,
                     absoluteProfits.Currency.Code,
                     StringComparison.InvariantCultureIgnoreCase))
             {
-                this._ruleCtx.EventException(
+                this.RuleContext.EventException(
                     "had mismatching absolute profits currencies. Something went horribly wrong!");
                 throw new InvalidOperationException(
                     "had mismatching absolute profits currencies. Something went horribly wrong!");
             }
 
-            return absoluteProfits.Value >= this._equitiesParameters.HighProfitAbsoluteThreshold;
+            return absoluteProfits.Value >= this.EquitiesParameters.HighProfitAbsoluteThreshold;
         }
 
+        /// <summary>
+        /// The has high profit percentage.
+        /// </summary>
+        /// <param name="profitRatio">
+        /// The profit ratio.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool HasHighProfitPercentage(decimal profitRatio)
         {
-            return this._equitiesParameters.HighProfitPercentageThreshold.HasValue
-                   && this._equitiesParameters.HighProfitPercentageThreshold.Value <= profitRatio;
+            return this.EquitiesParameters.HighProfitPercentageThreshold.HasValue
+                   && this.EquitiesParameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
+        /// <summary>
+        /// The no revenue or cost judgement.
+        /// </summary>
+        /// <param name="orderUnderAnalysis">
+        /// The order under analysis.
+        /// </param>
         private void NoRevenueOrCostJudgement(Order orderUnderAnalysis)
         {
-            var noRevenueJsonParameters = JsonConvert.SerializeObject(this._equitiesParameters);
+            var noRevenueJsonParameters = JsonConvert.SerializeObject(this.EquitiesParameters);
             var noRevenueJudgement = new HighProfitJudgement(
-                this._ruleCtx.RuleParameterId(),
-                this._ruleCtx.CorrelationId(),
+                this.RuleContext.RuleParameterId(),
+                this.RuleContext.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                 orderUnderAnalysis?.OrderId,
                 null,
@@ -418,12 +710,21 @@
                 false,
                 false);
 
-            this._judgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
+            this.JudgementService.Judgement(new HighProfitJudgementContext(noRevenueJudgement, false));
         }
 
+        /// <summary>
+        /// The set exchange rate profits.
+        /// </summary>
+        /// <param name="liveTrades">
+        /// The live trades.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IExchangeRateProfitBreakdown"/>.
+        /// </returns>
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new Currency(this._equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new Currency(this.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(
                 liveTrades.Where(
                         lt => lt.OrderDirection == OrderDirections.BUY || lt.OrderDirection == OrderDirections.COVER)
@@ -434,17 +735,41 @@
                         lt => lt.OrderDirection == OrderDirections.SELL || lt.OrderDirection == OrderDirections.SHORT)
                     .ToList());
 
-            var exchangeRateProfitsTask = this._exchangeRateProfitCalculator.ExchangeRateMovement(
+            var exchangeRateProfitsTask = this.ExchangeRateProfitCalculator.ExchangeRateMovement(
                 buys,
                 sells,
                 currency,
-                this._ruleCtx);
+                this.RuleContext);
 
             var exchangeRateProfits = exchangeRateProfitsTask.Result;
 
             return exchangeRateProfits;
         }
 
+        /// <summary>
+        /// The set judgement for full analysis.
+        /// </summary>
+        /// <param name="absoluteProfit">
+        /// The absolute profit.
+        /// </param>
+        /// <param name="profitRatio">
+        /// The profit ratio.
+        /// </param>
+        /// <param name="hasHighProfitAbsolute">
+        /// The has high profit absolute.
+        /// </param>
+        /// <param name="hasHighProfitPercentage">
+        /// The has high profit percentage.
+        /// </param>
+        /// <param name="exchangeRateProfits">
+        /// The exchange rate profits.
+        /// </param>
+        /// <param name="ruleBreachContext">
+        /// The rule breach context.
+        /// </param>
+        /// <param name="orderUnderAnalysis">
+        /// The order under analysis.
+        /// </param>
         private void SetJudgementForFullAnalysis(
             Money absoluteProfit,
             decimal profitRatio,
@@ -460,10 +785,10 @@
 
             var percentageHighProfit = hasHighProfitPercentage ? profitRatio : (decimal?)null;
 
-            var jsonParameters = JsonConvert.SerializeObject(this._equitiesParameters);
+            var jsonParameters = JsonConvert.SerializeObject(this.EquitiesParameters);
             var judgement = new HighProfitJudgement(
-                this._ruleCtx.RuleParameterId(),
-                this._ruleCtx.CorrelationId(),
+                this.RuleContext.RuleParameterId(),
+                this.RuleContext.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                 orderUnderAnalysis?.OrderId,
                 absoluteHighProfit,
@@ -473,12 +798,12 @@
                 false,
                 false);
 
-            this._judgementService.Judgement(
+            this.JudgementService.Judgement(
                 new HighProfitJudgementContext(
                     judgement,
                     hasHighProfitAbsolute || hasHighProfitPercentage,
                     ruleBreachContext,
-                    this._equitiesParameters,
+                    this.EquitiesParameters,
                     absoluteProfit,
                     absoluteProfit.Currency.Symbol,
                     profitRatio,
@@ -487,12 +812,18 @@
                     exchangeRateProfits));
         }
 
+        /// <summary>
+        /// The set missing market data judgement.
+        /// </summary>
+        /// <param name="orderUnderAnalysis">
+        /// The order under analysis.
+        /// </param>
         private void SetMissingMarketDataJudgement(Order orderUnderAnalysis)
         {
-            var noTradesParameters = JsonConvert.SerializeObject(this._equitiesParameters);
+            var noTradesParameters = JsonConvert.SerializeObject(this.EquitiesParameters);
             var noTradesJudgement = new HighProfitJudgement(
-                this._ruleCtx.RuleParameterId(),
-                this._ruleCtx.CorrelationId(),
+                this.RuleContext.RuleParameterId(),
+                this.RuleContext.CorrelationId(),
                 orderUnderAnalysis?.ReddeerOrderId?.ToString(),
                 orderUnderAnalysis?.OrderId,
                 null,
@@ -502,7 +833,7 @@
                 true,
                 false);
 
-            this._judgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
+            this.JudgementService.Judgement(new HighProfitJudgementContext(noTradesJudgement, false));
         }
     }
 }

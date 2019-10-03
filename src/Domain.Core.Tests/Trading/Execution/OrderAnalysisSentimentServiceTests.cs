@@ -3,11 +3,12 @@
     using System;
     using System.Collections.Generic;
 
-    using Domain.Core.Tests.Helpers;
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Orders;
 
-    using NUnit.Framework;   
+    using NUnit.Framework;
+
+    using TestHelpers;
 
     [TestFixture]
     public class OrderAnalysisSentimentServiceTests
@@ -18,10 +19,10 @@
             var service = this.Service();
             var rawValues = Enum.GetValues(typeof(PriceSentiment));
 
-            var order1 = new Order().Random();
+            var order1 = OrderTestHelper.Random(new Order());
             order1.OrderDirection = OrderDirections.BUY;
             var orderAnalysis1 = new OrderAnalysis(order1, PriceSentiment.Positive);
-            var order2 = new Order().Random();
+            var order2 = OrderTestHelper.Random(new Order());
             order2.OrderDirection = OrderDirections.SELL;
             var orderAnalysis2 = new OrderAnalysis(order2, PriceSentiment.Negative);
             var orders = new[] { orderAnalysis1, orderAnalysis2 };
@@ -34,7 +35,7 @@
         public void ResolveSentiment_BuyOrder_IsPositive()
         {
             var service = this.Service();
-            var order = new Order().Random();
+            var order = OrderTestHelper.Random(new Order());
             order.OrderDirection = OrderDirections.BUY;
 
             var sentiment = service.ResolveSentiment(new[] { order });
@@ -46,9 +47,9 @@
         public void ResolveSentiment_BuyThenSell_IsMixed()
         {
             var service = this.Service();
-            var order1 = new Order().Random();
+            var order1 = OrderTestHelper.Random(new Order());
             order1.OrderDirection = OrderDirections.BUY;
-            var order2 = new Order().Random();
+            var order2 = OrderTestHelper.Random(new Order());
             order2.OrderDirection = OrderDirections.SELL;
 
             var sentiment = service.ResolveSentiment(new[] { order1, order2 });
@@ -60,7 +61,7 @@
         public void ResolveSentiment_CoverOrder_IsPositive()
         {
             var service = this.Service();
-            var order = new Order().Random();
+            var order = OrderTestHelper.Random(new Order());
             order.OrderDirection = OrderDirections.COVER;
 
             var sentiment = service.ResolveSentiment(new[] { order });
@@ -92,7 +93,7 @@
         public void ResolveSentiment_SellOrder_IsNegative()
         {
             var service = this.Service();
-            var order = new Order().Random();
+            var order = OrderTestHelper.Random(new Order());
             order.OrderDirection = OrderDirections.SELL;
 
             var sentiment = service.ResolveSentiment(new[] { order });
@@ -104,7 +105,7 @@
         public void ResolveSentiment_ShortOrder_IsNegative()
         {
             var service = this.Service();
-            var order = new Order().Random();
+            var order = OrderTestHelper.Random(new Order());
             order.OrderDirection = OrderDirections.SHORT;
 
             var sentiment = service.ResolveSentiment(new[] { order });

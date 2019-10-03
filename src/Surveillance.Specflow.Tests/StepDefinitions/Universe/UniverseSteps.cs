@@ -10,9 +10,9 @@
     using Domain.Core.Markets.Timebars;
     using Domain.Core.Trading.Orders;
 
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
     using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
     using Surveillance.Specflow.Tests.StepDefinitions.Orders;

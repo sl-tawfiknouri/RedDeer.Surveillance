@@ -2,10 +2,11 @@
 {
     using System;
 
-    using Domain.Core.Tests.Helpers;
     using Domain.Core.Trading.Orders;
 
     using NUnit.Framework;
+
+    using TestHelpers;
 
     [TestFixture]
     public class OrderAllocationTests
@@ -40,7 +41,7 @@
             var clientAccount = "client-account";
             var orderFilledVolume = 1002;
 
-            var order = new Order().Random();
+            var order = OrderTestHelper.Random(new Order());
 
             order.OrderId = orderId;
             order.OrderFund = fund;

@@ -4,10 +4,19 @@
 
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
+    /// <summary>
+    /// The UniversePercentageOfTimeCompletionLogger interface.
+    /// </summary>
     public interface IUniversePercentageOfTimeCompletionLogger : IObserver<IUniverseEvent>
     {
+        /// <summary>
+        /// The initiate time logger.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
         void InitiateTimeLogger(ScheduledExecution execution);
     }
 }

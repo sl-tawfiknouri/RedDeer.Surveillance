@@ -230,7 +230,7 @@
                 DateTime.UtcNow.AddDays(1),
                 "1",
                 false,
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             this._mdr2 = new MarketDataRequest(
                 "2",
@@ -241,7 +241,7 @@
                 DateTime.UtcNow.AddDays(-4),
                 "1",
                 false,
-                DataSource.AllInterday);
+                DataSource.AnyInterday);
 
             this._interdayTimeBarCollectionNasdaq = new EquityInterDayTimeBarCollection(
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE),

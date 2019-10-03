@@ -214,7 +214,7 @@
                     i.End,
                     request.SystemProcessOperationRuleRunId,
                     request.IsCompleted,
-                    DataSource.AllInterday)).ToList();
+                    DataSource.AnyInterday)).ToList();
 
             var responseList = new List<MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>>();
             foreach (var paramSet in projectedRequests) responseList.Add(this.GetMarkets(paramSet));

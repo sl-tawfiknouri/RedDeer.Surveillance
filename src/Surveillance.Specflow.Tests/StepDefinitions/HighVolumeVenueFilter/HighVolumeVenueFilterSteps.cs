@@ -14,6 +14,8 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.DataLayer.Aurora.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -27,10 +29,8 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
     using Surveillance.Engine.Rules.Trades;
-    using Surveillance.Engine.Rules.Universe;
     using Surveillance.Engine.Rules.Universe.Filter;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Reddeer.ApiClient.ExchangeRate.Interfaces;
     using Surveillance.Reddeer.ApiClient.MarketOpenClose.Interfaces;
     using Surveillance.Specflow.Tests.StepDefinitions.Universe;
@@ -195,7 +195,7 @@
                 RuleRunMode.ValidationRun,
                 this._tradingHoursService,
                 this._universeDataRequestsSubscriber,
-                DataSource.AllIntraday,
+                DataSource.AnyIntraday,
                 new NullLogger<TradingHistoryStack>(),
                 new NullLogger<HighVolumeVenueFilter>());
 

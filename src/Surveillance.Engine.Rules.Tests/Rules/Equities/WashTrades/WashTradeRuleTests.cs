@@ -12,6 +12,7 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -23,10 +24,10 @@
     using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
-    using Surveillance.Engine.Rules.Tests.Helpers;
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+
+    using TestHelpers;
 
     [TestFixture]
     public class WashTradeRuleTests

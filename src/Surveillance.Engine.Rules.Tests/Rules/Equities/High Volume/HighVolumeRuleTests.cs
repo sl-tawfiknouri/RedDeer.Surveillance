@@ -21,15 +21,16 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
-using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
-using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 {
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Currency.Interfaces;
+
+    using TestHelpers;
 
     [TestFixture]
     public class HighVolumeRuleTests

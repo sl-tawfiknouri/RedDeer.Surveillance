@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Tests.Helpers
+﻿namespace TestHelpers
 {
     using System;
 

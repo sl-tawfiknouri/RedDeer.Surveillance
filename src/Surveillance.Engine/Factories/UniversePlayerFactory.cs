@@ -7,9 +7,9 @@
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
     /// <summary>
     /// The universe player factory.

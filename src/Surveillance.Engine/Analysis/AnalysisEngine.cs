@@ -13,6 +13,8 @@
     using Newtonsoft.Json;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
     using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
     using Surveillance.Engine.Rules.Analysis.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
@@ -25,7 +27,6 @@
     using Surveillance.Engine.Rules.Rules.Cancellation;
     using Surveillance.Engine.Rules.Rules.Cancellation.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
     /// <summary>
@@ -74,7 +75,7 @@
         private readonly IQueueRuleUpdatePublisher queueRuleUpdatePublisher;
 
         /// <summary>
-        /// The rescheduler service.
+        /// The re scheduler service.
         /// </summary>
         private readonly ITaskReSchedulerService reschedulerService;
 
@@ -99,19 +100,24 @@
         private readonly IUniverseRuleSubscriber ruleSubscriber;
 
         /// <summary>
-        /// The _timespan service.
+        /// The timespan service.
         /// </summary>
         private readonly IRuleParameterAdjustedTimespanService timespanService;
 
         /// <summary>
-        /// The _universe completion logger.
+        /// The universe completion logger.
         /// </summary>
         private readonly IUniversePercentageCompletionLogger universeCompletionLogger;
 
         /// <summary>
-        /// The _universe factory.
+        /// The universe factory.
         /// </summary>
         private readonly ILazyTransientUniverseFactory universeFactory;
+
+        /// <summary>
+        /// The data manifest builder.
+        /// </summary>
+        private readonly IDataManifestBuilder dataManifestBuilder;
 
         /// <summary>
         /// The _universe player factory.
@@ -169,6 +175,9 @@
         /// <param name="reschedulerService">
         /// The reschedule service.
         /// </param>
+        /// <param name="dataManifestBuilder">
+        /// The data Manifest Builder.
+        /// </param>
         /// <param name="logger">
         /// The logger.
         /// </param>
@@ -189,6 +198,7 @@
             ILazyTransientUniverseFactory universeFactory,
             IRuleCancellation ruleCancellation,
             ITaskReSchedulerService reschedulerService,
+            IDataManifestBuilder dataManifestBuilder,
             ILogger<AnalysisEngine> logger)
         {
             this.universePlayerFactory =
@@ -223,6 +233,8 @@
                 ruleCancellation ?? throw new ArgumentNullException(nameof(ruleCancellation));
             this.reschedulerService =
                 reschedulerService ?? throw new ArgumentNullException(nameof(reschedulerService));
+            this.dataManifestBuilder =
+                dataManifestBuilder ?? throw new ArgumentNullException(nameof(dataManifestBuilder));
             this.logger =
                 logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -273,7 +285,8 @@
             var alertStream = this.alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            var ids = await this.ruleSubscriber.SubscribeRules(
+            // internally subscribes rules to the player
+            var subscribedRules = await this.ruleSubscriber.SubscribeRules(
                           execution,
                           player,
                           alertStream,
@@ -283,11 +296,11 @@
                           ruleParameters);
 
             player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
-            this.RuleRunUpdateMessageSend(execution, ids);
+            this.RuleRunUpdateMessageSend(execution, subscribedRules.RuleIds);
 
             if (this.GuardForBackTestIntoFutureExecution(execution))
             {
-                this.SetFailedBackTestDueToFutureExecution(operationContext, execution, cancellableRule, ids);
+                this.SetFailedBackTestDueToFutureExecution(operationContext, execution, cancellableRule, subscribedRules.RuleIds);
                 return;
             }
 
@@ -300,13 +313,15 @@
             player.Subscribe(universeAnalyticsSubscriber);
 
             this.logger.LogInformation("START PLAYING UNIVERSE TO SUBSCRIBERS");
-            var lazyUniverse = this.universeFactory.Build(execution, operationContext);
+            var dataConstraints = subscribedRules?.Rules?.Select(_ => _.DataConstraints())?.ToList();
+            var dataManifestInterpreter = await this.dataManifestBuilder.Build(execution, dataConstraints, operationContext);
+            var lazyUniverse = this.universeFactory.Build(execution, operationContext, dataManifestInterpreter);
             player.Play(lazyUniverse);
             this.logger.LogInformation("STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             if (cts.IsCancellationRequested)
             {
-                this.SetRuleCancelledState(operationContext, execution, cancellableRule, ids);
+                this.SetRuleCancelledState(operationContext, execution, cancellableRule, subscribedRules.RuleIds);
                 return;
             }
 
@@ -320,7 +335,7 @@
             this.SetOperationContextEndState(dataRequestSubscriber, operationContext);
 
             this.logger.LogInformation("calling rule run update message send");
-            this.RuleRunUpdateMessageSend(execution, ids);
+            this.RuleRunUpdateMessageSend(execution, subscribedRules.RuleIds);
             this.logger.LogInformation("completed rule run update message send");
 
             this.ruleCancellation.Unsubscribe(cancellableRule);

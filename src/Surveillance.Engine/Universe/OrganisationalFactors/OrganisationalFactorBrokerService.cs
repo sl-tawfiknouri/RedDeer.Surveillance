@@ -5,140 +5,235 @@
     using System.Linq;
 
     using Domain.Core.Trading.Orders;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 
+    /// <summary>
+    /// The organizational factor broker service.
+    /// </summary>
     public class OrganisationalFactorBrokerService : IOrganisationalFactorBrokerService
     {
-        private readonly object _accountLock = new object();
+        /// <summary>
+        /// The account lock.
+        /// </summary>
+        private readonly object accountLock = new object();
 
-        private readonly bool _aggregateNonFactorableIntoOwnCategory;
+        /// <summary>
+        /// The aggregate non factorable into own category.
+        /// </summary>
+        private readonly bool aggregateNonFactorableIntoOwnCategory;
 
         /// <summary>
         ///     don't pass trades into the clone source
         /// </summary>
-        private readonly IUniverseCloneableRule _cloneSource;
+        private readonly IUniverseCloneableRule cloneSource;
 
-        private readonly IReadOnlyCollection<ClientOrganisationalFactors> _factors;
+        /// <summary>
+        /// The factors.
+        /// </summary>
+        private readonly IReadOnlyCollection<ClientOrganisationalFactors> factors;
 
-        private readonly IDictionary<string, IUniverseRule> _fundFactors;
+        /// <summary>
+        /// The fund factors.
+        /// </summary>
+        private readonly IDictionary<string, IUniverseRule> fundFactors;
 
-        private readonly ILogger<OrganisationalFactorBrokerService> _logger;
+        /// <summary>
+        /// The none factor.
+        /// </summary>
+        private readonly IUniverseCloneableRule noneFactor;
 
-        private readonly IUniverseCloneableRule _noneFactor;
+        /// <summary>
+        /// The portfolio manager factors.
+        /// </summary>
+        private readonly IDictionary<string, IUniverseRule> portfolioManagerFactors;
 
-        private readonly IDictionary<string, IUniverseRule> _portfolioManagerFactors;
+        /// <summary>
+        /// The strategy factors.
+        /// </summary>
+        private readonly IDictionary<string, IUniverseRule> strategyFactors;
 
-        private readonly IDictionary<string, IUniverseRule> _strategyFactors;
+        /// <summary>
+        /// The strategy lock.
+        /// </summary>
+        private readonly object strategyLock = new object();
 
-        private readonly object _strategyLock = new object();
+        /// <summary>
+        /// The trader factors.
+        /// </summary>
+        private readonly IDictionary<string, IUniverseRule> traderFactors;
 
-        private readonly IDictionary<string, IUniverseRule> _traderFactors;
+        /// <summary>
+        /// The trader lock.
+        /// </summary>
+        private readonly object traderLock = new object();
 
-        private readonly object _traderLock = new object();
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<OrganisationalFactorBrokerService> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrganisationalFactorBrokerService"/> class.
+        /// </summary>
+        /// <param name="cloneSource">
+        /// The clone source.
+        /// </param>
+        /// <param name="factors">
+        /// The factors.
+        /// </param>
+        /// <param name="aggregateNonFactorableIntoOwnCategory">
+        /// The aggregate non factorable into own category.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public OrganisationalFactorBrokerService(
             IUniverseCloneableRule cloneSource,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
             ILogger<OrganisationalFactorBrokerService> logger)
         {
-            this._cloneSource = cloneSource ?? throw new ArgumentNullException(nameof(cloneSource));
-            this._noneFactor = this._cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.None, string.Empty));
-            this._factors = this.FactorGuard(factors);
+            this.cloneSource = cloneSource ?? throw new ArgumentNullException(nameof(cloneSource));
+            this.noneFactor = this.cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.None, string.Empty));
+            this.factors = this.FactorGuard(factors);
 
-            this._aggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
+            this.aggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
 
-            this._traderFactors = new Dictionary<string, IUniverseRule>();
-            this._portfolioManagerFactors = new Dictionary<string, IUniverseRule>();
-            this._fundFactors = new Dictionary<string, IUniverseRule>();
-            this._strategyFactors = new Dictionary<string, IUniverseRule>();
+            this.traderFactors = new Dictionary<string, IUniverseRule>();
+            this.portfolioManagerFactors = new Dictionary<string, IUniverseRule>();
+            this.fundFactors = new Dictionary<string, IUniverseRule>();
+            this.strategyFactors = new Dictionary<string, IUniverseRule>();
 
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Rules Rule => this._cloneSource.Rule;
+        /// <summary>
+        /// The rule.
+        /// </summary>
+        public Rules Rule => this.cloneSource.Rule;
 
-        public string Version => this._cloneSource.Version;
+        /// <summary>
+        /// The version.
+        /// </summary>
+        public string Version => this.cloneSource.Version;
 
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public IRuleDataConstraint DataConstraints()
+        {
+            return this.cloneSource.DataConstraints();
+        }
+
+        /// <summary>
+        /// The on completed.
+        /// </summary>
         public void OnCompleted()
         {
-            this._logger.LogInformation("received OnCompleted() event from the universe stream");
-            this._cloneSource.OnCompleted();
+            this.logger.LogInformation("received OnCompleted() event from the universe stream");
+            this.cloneSource.OnCompleted();
         }
 
+        /// <summary>
+        /// The on error.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         public void OnError(Exception error)
         {
-            this._logger.LogError("received OnError() event from the universe stream");
-            this._cloneSource.OnError(error);
+            this.logger.LogError("received OnError() event from the universe stream");
+            this.cloneSource.OnError(error);
         }
 
+        /// <summary>
+        /// The on next.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
             if (value == null) return;
 
             if (value.StateChange != UniverseStateEvent.Order && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
-                this._logger.LogInformation(
+                this.logger.LogInformation(
                     $"received an event that was not an order. No brokering to perform. {value.EventTime} of type {value.StateChange}");
 
-                this._cloneSource.OnNext(value);
-                this._noneFactor.OnNext(value);
+                this.cloneSource.OnNext(value);
+                this.noneFactor.OnNext(value);
 
-                foreach (var rule in this._traderFactors)
+                foreach (var rule in this.traderFactors)
                     rule.Value?.OnNext(value);
 
-                foreach (var rule in this._portfolioManagerFactors)
+                foreach (var rule in this.portfolioManagerFactors)
                     rule.Value?.OnNext(value);
 
-                foreach (var rule in this._fundFactors)
+                foreach (var rule in this.fundFactors)
                     rule.Value?.OnNext(value);
 
-                foreach (var rule in this._strategyFactors)
+                foreach (var rule in this.strategyFactors)
                     rule.Value?.OnNext(value);
 
                 return;
             }
 
-            if (this._factors.Contains(ClientOrganisationalFactors.None))
+            if (this.factors.Contains(ClientOrganisationalFactors.None))
             {
-                this._logger.LogInformation("has a none organisational factor so passing onto next");
-                this._noneFactor.OnNext(value);
+                this.logger.LogInformation("has a none organisational factor so passing onto next");
+                this.noneFactor.OnNext(value);
             }
 
-            if (this._factors.Contains(ClientOrganisationalFactors.Trader))
+            if (this.factors.Contains(ClientOrganisationalFactors.Trader))
             {
-                this._logger.LogInformation("has a trader organisational factor passing to trade factoring");
+                this.logger.LogInformation("has a trader organisational factor passing to trade factoring");
                 this.TraderFactor(value);
             }
 
-            if (this._factors.Contains(ClientOrganisationalFactors.Fund))
+            if (this.factors.Contains(ClientOrganisationalFactors.Fund))
             {
-                this._logger.LogInformation("has a fund organisational factor so passing to fund factoring");
+                this.logger.LogInformation("has a fund organisational factor so passing to fund factoring");
                 this.FundFactor(value);
             }
 
-            if (this._factors.Contains(ClientOrganisationalFactors.Strategy))
+            if (this.factors.Contains(ClientOrganisationalFactors.Strategy))
             {
-                this._logger.LogInformation("has a strategy organisational factor so passing to strategy factoring");
+                this.logger.LogInformation("has a strategy organisational factor so passing to strategy factoring");
                 this.StrategyFactor(value);
             }
 
-            if (this._factors.Contains(ClientOrganisationalFactors.PortfolioManager))
-                this._logger.LogInformation(
+            if (this.factors.Contains(ClientOrganisationalFactors.PortfolioManager))
+                this.logger.LogInformation(
                     "passed a portfolio manager organisational factor which is not currently supported");
 
-            if (this._factors.Contains(ClientOrganisationalFactors.Unknown))
-                this._logger.LogInformation("passed a unknown organisational factor which is not currently supported");
+            if (this.factors.Contains(ClientOrganisationalFactors.Unknown))
+                this.logger.LogInformation("passed a unknown organisational factor which is not currently supported");
         }
 
+        /// <summary>
+        /// The factor guard.
+        /// </summary>
+        /// <param name="factors">
+        /// The factors.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IReadOnlyCollection"/>.
+        /// </returns>
         private IReadOnlyCollection<ClientOrganisationalFactors> FactorGuard(
             IReadOnlyCollection<ClientOrganisationalFactors> factors)
         {
@@ -148,6 +243,12 @@
             return factors;
         }
 
+        /// <summary>
+        /// The fund factor.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         private void FundFactor(IUniverseEvent value)
         {
             var data = (Order)value.UnderlyingEvent;
@@ -156,9 +257,9 @@
 
             if (string.IsNullOrWhiteSpace(data.OrderFund)
                 && string.IsNullOrWhiteSpace(data.OrderClientAccountAttributionId)
-                && !this._aggregateNonFactorableIntoOwnCategory) return;
+                && !this.aggregateNonFactorableIntoOwnCategory) return;
 
-            lock (this._accountLock)
+            lock (this.accountLock)
             {
                 var orderFund = data.OrderFund;
 
@@ -167,101 +268,113 @@
 
                 if (string.IsNullOrWhiteSpace(orderFund)) orderFund = string.Empty;
 
-                if (!this._fundFactors.ContainsKey(orderFund))
+                if (!this.fundFactors.ContainsKey(orderFund))
                 {
                     var kvp = new KeyValuePair<string, IUniverseRule>(
                         orderFund,
-                        this._cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Fund, orderFund)));
+                        this.cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Fund, orderFund)));
 
-                    this._fundFactors.Add(kvp);
+                    this.fundFactors.Add(kvp);
                 }
 
-                if (this._fundFactors.ContainsKey(orderFund))
+                if (this.fundFactors.ContainsKey(orderFund))
                 {
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a fund organisational factor and found a rule for fund {orderFund}");
-                    this._fundFactors.TryGetValue(orderFund, out var rule);
+                    this.fundFactors.TryGetValue(orderFund, out var rule);
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a fund organisational factor but could not find a rule for {orderFund}");
                 }
             }
         }
 
+        /// <summary>
+        /// The strategy factor.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         private void StrategyFactor(IUniverseEvent value)
         {
             var data = (Order)value.UnderlyingEvent;
 
             if (data == null) return;
 
-            if (string.IsNullOrWhiteSpace(data.OrderStrategy) && !this._aggregateNonFactorableIntoOwnCategory) return;
+            if (string.IsNullOrWhiteSpace(data.OrderStrategy) && !this.aggregateNonFactorableIntoOwnCategory) return;
 
-            lock (this._strategyLock)
+            lock (this.strategyLock)
             {
                 var orderStrategy = data.OrderStrategy;
                 if (string.IsNullOrWhiteSpace(orderStrategy)) orderStrategy = string.Empty;
 
-                if (!this._strategyFactors.ContainsKey(orderStrategy))
+                if (!this.strategyFactors.ContainsKey(orderStrategy))
                 {
                     var kvp = new KeyValuePair<string, IUniverseRule>(
                         orderStrategy,
-                        this._cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Strategy, orderStrategy)));
+                        this.cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Strategy, orderStrategy)));
 
-                    this._strategyFactors.Add(kvp);
+                    this.strategyFactors.Add(kvp);
                 }
 
-                if (this._strategyFactors.ContainsKey(orderStrategy))
+                if (this.strategyFactors.ContainsKey(orderStrategy))
                 {
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a strategy organisational factor and found a rule for strategy {orderStrategy}");
-                    this._strategyFactors.TryGetValue(orderStrategy, out var rule);
+                    this.strategyFactors.TryGetValue(orderStrategy, out var rule);
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a strategy organisational factor and could not find a rule for strategy {orderStrategy}");
                 }
             }
         }
 
+        /// <summary>
+        /// The trader factor.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         private void TraderFactor(IUniverseEvent value)
         {
             var data = (Order)value.UnderlyingEvent;
 
             if (data == null) return;
 
-            if (string.IsNullOrWhiteSpace(data.OrderTraderId) && !this._aggregateNonFactorableIntoOwnCategory) return;
+            if (string.IsNullOrWhiteSpace(data.OrderTraderId) && !this.aggregateNonFactorableIntoOwnCategory) return;
 
-            lock (this._traderLock)
+            lock (this.traderLock)
             {
                 var orderTraderId = data.OrderTraderId;
 
                 if (string.IsNullOrWhiteSpace(orderTraderId)) orderTraderId = string.Empty;
 
-                if (!this._traderFactors.ContainsKey(orderTraderId))
+                if (!this.traderFactors.ContainsKey(orderTraderId))
                 {
                     var kvp = new KeyValuePair<string, IUniverseRule>(
                         orderTraderId,
-                        this._cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Trader, orderTraderId)));
+                        this.cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Trader, orderTraderId)));
 
-                    this._traderFactors.Add(kvp);
+                    this.traderFactors.Add(kvp);
                 }
 
-                if (this._traderFactors.ContainsKey(orderTraderId))
+                if (this.traderFactors.ContainsKey(orderTraderId))
                 {
-                    this._traderFactors.TryGetValue(orderTraderId, out var rule);
+                    this.traderFactors.TryGetValue(orderTraderId, out var rule);
 
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a trader organisational factor and found a rule for order trader id {orderTraderId}. Brokering.");
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    this._logger.LogInformation(
+                    this.logger.LogInformation(
                         $"has a trader organisational factor but could not find a factored rule to pass onto for trader {orderTraderId}. Not brokering.");
                 }
             }

@@ -8,6 +8,7 @@
 
     using NUnit.Framework;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
     using Surveillance.Engine.Rules.Rules;

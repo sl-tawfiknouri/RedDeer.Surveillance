@@ -10,11 +10,11 @@
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.DataLayer.Aurora.Analytics;
     using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;
-    using Surveillance.Engine.Rules.Universe;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
     public class UniverseAnalyticsSubscriber : IUniverseAnalyticsSubscriber
     {

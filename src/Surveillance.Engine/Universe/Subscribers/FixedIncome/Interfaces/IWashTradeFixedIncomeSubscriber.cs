@@ -2,6 +2,9 @@
 {
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
+    /// <summary>
+    /// The WashTradeFixedIncomeSubscriber interface.
+    /// </summary>
     public interface IWashTradeFixedIncomeSubscriber : IRuleSubscriber
     {
     }

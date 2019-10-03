@@ -4,51 +4,96 @@
 
     using Domain.Surveillance.Scheduling;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
+    /// <summary>
+    /// The universe percentage completion logger.
+    /// </summary>
     public class UniversePercentageCompletionLogger : IUniversePercentageCompletionLogger
     {
-        private readonly IUniversePercentageOfEventCompletionLogger _percentageOfEventsLogger;
+        /// <summary>
+        /// The percentage of events logger.
+        /// </summary>
+        private readonly IUniversePercentageOfEventCompletionLogger percentageOfEventsLogger;
 
-        private readonly IUniversePercentageOfTimeCompletionLogger _percentOfTimeLogger;
+        /// <summary>
+        /// The percent of time logger.
+        /// </summary>
+        private readonly IUniversePercentageOfTimeCompletionLogger percentOfTimeLogger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniversePercentageCompletionLogger"/> class.
+        /// </summary>
+        /// <param name="percentageOfEventsLogger">
+        /// The percentage of events logger.
+        /// </param>
+        /// <param name="percentOfTimeLogger">
+        /// The percent of time logger.
+        /// </param>
         public UniversePercentageCompletionLogger(
             IUniversePercentageOfEventCompletionLogger percentageOfEventsLogger,
             IUniversePercentageOfTimeCompletionLogger percentOfTimeLogger)
         {
-            this._percentageOfEventsLogger = percentageOfEventsLogger
+            this.percentageOfEventsLogger = percentageOfEventsLogger
                                              ?? throw new ArgumentNullException(nameof(percentageOfEventsLogger));
-            this._percentOfTimeLogger =
+            this.percentOfTimeLogger =
                 percentOfTimeLogger ?? throw new ArgumentNullException(nameof(percentOfTimeLogger));
         }
 
+        /// <summary>
+        /// The initiate event logger.
+        /// </summary>
+        /// <param name="universe">
+        /// The universe.
+        /// </param>
         public void InitiateEventLogger(IUniverse universe)
         {
-            this._percentageOfEventsLogger?.InitiateEventLogger(universe);
+            this.percentageOfEventsLogger?.InitiateEventLogger(universe);
         }
 
+        /// <summary>
+        /// The initiate time logger.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
         public void InitiateTimeLogger(ScheduledExecution execution)
         {
-            this._percentOfTimeLogger?.InitiateTimeLogger(execution);
+            this.percentOfTimeLogger?.InitiateTimeLogger(execution);
         }
 
+        /// <summary>
+        /// The on completed.
+        /// </summary>
         public void OnCompleted()
         {
-            this._percentageOfEventsLogger.OnCompleted();
-            this._percentOfTimeLogger.OnCompleted();
+            this.percentageOfEventsLogger.OnCompleted();
+            this.percentOfTimeLogger.OnCompleted();
         }
 
+        /// <summary>
+        /// The on error.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         public void OnError(Exception error)
         {
-            this._percentageOfEventsLogger.OnError(error);
-            this._percentOfTimeLogger.OnError(error);
+            this.percentageOfEventsLogger.OnError(error);
+            this.percentOfTimeLogger.OnError(error);
         }
 
+        /// <summary>
+        /// The on next.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
         public void OnNext(IUniverseEvent value)
         {
-            this._percentageOfEventsLogger.OnNext(value);
-            this._percentOfTimeLogger.OnNext(value);
+            this.percentageOfEventsLogger.OnNext(value);
+            this.percentOfTimeLogger.OnNext(value);
         }
     }
 }

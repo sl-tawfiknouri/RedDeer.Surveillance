@@ -23,24 +23,65 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
+    /// <summary>
+    /// The spoofing equity subscriber.
+    /// </summary>
     public class SpoofingEquitySubscriber : BaseSubscriber, ISpoofingEquitySubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+        /// <summary>
+        /// The decorator filter factory.
+        /// </summary>
+        private readonly IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory;
 
-        private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
+        /// <summary>
+        /// The equity rule spoofing factory.
+        /// </summary>
+        private readonly IEquityRuleSpoofingFactory equityRuleSpoofingFactory;
 
-        private readonly ILogger _logger;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpoofingEquitySubscriber"/> class.
+        /// </summary>
+        /// <param name="equityRuleSpoofingFactory">
+        /// The equity rule spoofing factory.
+        /// </param>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="decoratorFilterFactory">
+        /// The decorator filter factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public SpoofingEquitySubscriber(
             IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
@@ -49,20 +90,44 @@
             IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
-            this._equityRuleSpoofingFactory = equityRuleSpoofingFactory
+            this.equityRuleSpoofingFactory = equityRuleSpoofingFactory
                                               ?? throw new ArgumentNullException(nameof(equityRuleSpoofingFactory));
-            this._ruleParameterMapper =
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._decoratorFilterFactory =
+            this.decoratorFilterFactory =
                 decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -71,14 +136,16 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Rules.Spoofing) ?? true)
-                return new IObserver<IUniverseEvent>[0];
+            {
+                return new IUniverseRule[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
 
             var dtos = ruleParameters.Spoofings
                 .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var spoofingParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var spoofingParameters = this.ruleParameterMapper.Map(execution, dtos);
             var subscriptionRequests = this.SubscribeToUniverse(
                 execution,
                 operationContext,
@@ -89,30 +156,54 @@
             return subscriptionRequests;
         }
 
+        /// <summary>
+        /// The decorate with filters.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="spoofingRule">
+        /// The spoofing rule.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilters(
-            ISystemProcessOperationContext opCtx,
-            ISpoofingRuleEquitiesParameters param,
+            ISystemProcessOperationContext operationContext,
+            ISpoofingRuleEquitiesParameters parameter,
             IUniverseRule spoofingRule,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
-                || param.HasVenueVolumeFilters())
+            if (parameter.HasInternalFilters() || parameter.HasReferenceDataFilters() || parameter.HasMarketCapFilters()
+                || parameter.HasVenueVolumeFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
-                    param.Sectors,
-                    param.Industries,
-                    param.Regions,
-                    param.Countries,
-                    param.MarketCapFilter,
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameter.Accounts,
+                    parameter.Traders,
+                    parameter.Markets,
+                    parameter.Funds,
+                    parameter.Strategies,
+                    parameter.Sectors,
+                    parameter.Industries,
+                    parameter.Regions,
+                    parameter.Countries,
+                    parameter.MarketCapFilter,
                     ruleRunMode,
                     "Spoofing Equity",
                     universeDataRequestsSubscriber,
@@ -120,15 +211,17 @@
 
                 var decoratedFilter = filteredUniverse;
 
-                if (param.HasVenueVolumeFilters())
-                    decoratedFilter = this._decoratorFilterFactory.Build(
-                        param.Windows,
+                if (parameter.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = this.decoratorFilterFactory.Build(
+                        parameter.Windows,
                         filteredUniverse,
-                        param.VenueVolumeFilter,
+                        parameter.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        this.DataSourceForWindow(param.Windows),
+                        this.DataSourceForWindow(parameter.Windows),
                         ruleRunMode);
+                }
 
                 decoratedFilter.Subscribe(spoofingRule);
 
@@ -138,17 +231,38 @@
             return spoofingRule;
         }
 
-        private IUniverseRule SubscribeForParams(
+        /// <summary>
+        /// The subscribe for parameters.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IUniverseRule SubscribeForParameters(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
-            ISpoofingRuleEquitiesParameters param)
+            ISpoofingRuleEquitiesParameters parameter)
         {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
                 Rules.Spoofing.GetDescription(),
                 EquityRuleSpoofingFactory.Version,
-                param.Id,
+                parameter.Id,
                 (int)Rules.Spoofing,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -157,15 +271,15 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var spoofingRule = this._equityRuleSpoofingFactory.Build(param, ruleCtx, alertStream, runMode);
-            var spoofingRuleOrgFactors = this._brokerServiceFactory.Build(
+            var spoofingRule = this.equityRuleSpoofingFactory.Build(parameter, ruleCtx, alertStream, runMode);
+            var spoofingRuleOrgFactors = this.brokerServiceFactory.Build(
                 spoofingRule,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameter.Factors,
+                parameter.AggregateNonFactorableIntoOwnCategory);
 
             var filteredSpoofingRule = this.DecorateWithFilters(
-                opCtx,
-                param,
+                operationContext,
+                parameter,
                 spoofingRuleOrgFactors,
                 universeDataRequestsSubscriber,
                 ruleCtx,
@@ -174,22 +288,43 @@
             return filteredSpoofingRule;
         }
 
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="spoofingParameters">
+        /// The spoofing parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             IReadOnlyCollection<ISpoofingRuleEquitiesParameters> spoofingParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             if (spoofingParameters != null && spoofingParameters.Any())
             {
                 foreach (var param in spoofingParameters)
                 {
-                    var paramSubscriptions = this.SubscribeForParams(
+                    var paramSubscriptions = this.SubscribeForParameters(
                         execution,
-                        opCtx,
+                        operationContext,
                         alertStream,
                         universeDataRequestsSubscriber,
                         param);
@@ -198,9 +333,9 @@
             }
             else
             {
-                const string errorMessage = "tried to schedule a spoofing rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                const string ErrorMessage = "tried to schedule a spoofing rule execution with no parameters set";
+                this.logger.LogError(ErrorMessage);
+                operationContext.EventError(ErrorMessage);
             }
 
             return subscriptions;

@@ -1,9 +1,4 @@
-﻿using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
-
-namespace Surveillance.Engine.Rules
+﻿namespace Surveillance.Engine.Rules
 {
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Execution.Interfaces;
@@ -22,6 +17,16 @@ namespace Surveillance.Engine.Rules
 
     using StructureMap;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.Lazy;
+    using Surveillance.Data.Universe.Lazy.Builder;
+    using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
+    using Surveillance.Data.Universe.Lazy.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Trades;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Judgements;
     using Surveillance.DataLayer.Aurora.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Analysis;
@@ -91,6 +96,10 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
     using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Factories.Interfaces;
+    using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
     using Surveillance.Engine.Rules.Trades;
@@ -99,10 +108,6 @@ namespace Surveillance.Engine.Rules
     using Surveillance.Engine.Rules.Universe.Filter;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
     using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Lazy;
-    using Surveillance.Engine.Rules.Universe.Lazy.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
-    using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers;
@@ -144,7 +149,7 @@ namespace Surveillance.Engine.Rules
 
             this.For<IFixedIncomeHighProfitJudgementMapper>().Use<FixedIncomeHighProfitJudgementMapper>();
 
-            this.For<IUniverse>().Use<Universe.Universe>();
+            this.For<IUniverse>().Use<Surveillance.Data.Universe.Universe>();
             this.For<IUniverseBuilder>().Use<UniverseBuilder>();
             this.For<IUniverseEvent>().Use<UniverseEvent>();
             this.For<IUniversePlayer>().Use<UniversePlayer>();
@@ -313,6 +318,10 @@ namespace Surveillance.Engine.Rules
             this.For<IFixedIncomeHighProfitJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementService>().Use<JudgementService>();
             this.For<IFixedIncomeHighVolumeJudgementMapper>().Use<FixedIncomeHighVolumeJudgementMapper>();
+            
+            this.For<IDataManifestInterpreter>().Use<DataManifestInterpreter>();
+            this.For<IDataManifestBuilder>().Use<DataManifestBuilder>();
+            this.For<ITimeLineContinuum>().Use<TimeLineContinuum>();
         }
     }
 }

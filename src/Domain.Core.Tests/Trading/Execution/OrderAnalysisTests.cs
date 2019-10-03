@@ -2,11 +2,12 @@
 {
     using System;
 
-    using Domain.Core.Tests.Helpers;
     using Domain.Core.Trading.Execution;
     using Domain.Core.Trading.Orders;
 
     using NUnit.Framework;
+
+    using TestHelpers;
 
     [TestFixture]
     public class OrderAnalysisTests
@@ -14,7 +15,7 @@
         [Test]
         public void Ctor_AssignsVariables_Correctly()
         {
-            var order = new Order().Random(30);
+            var order = OrderTestHelper.Random(new Order(), 30);
             var orderAnalysis = new OrderAnalysis(order, PriceSentiment.Negative);
 
             Assert.AreEqual(PriceSentiment.Negative, orderAnalysis.Sentiment);

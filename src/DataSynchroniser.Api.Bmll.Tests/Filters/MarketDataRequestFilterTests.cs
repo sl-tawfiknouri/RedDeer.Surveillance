@@ -25,7 +25,7 @@
                 null,
                 null,
                 false,
-                DataSource.All);
+                DataSource.Any);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 
@@ -56,7 +56,7 @@
                 null,
                 null,
                 false,
-                DataSource.All);
+                DataSource.Any);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 
@@ -89,7 +89,7 @@
                 null,
                 null,
                 false,
-                DataSource.All);
+                DataSource.Any);
 
             var result = filter.ValidAssetType(emptyCfiRequest);
 

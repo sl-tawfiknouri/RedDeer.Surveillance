@@ -2,9 +2,12 @@
 {
     using System;
 
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
+    /// <summary>
+    /// The UniverseFilterService interface.
+    /// </summary>
     public interface IUniverseFilterService : IObservable<IUniverseEvent>, IUniverseRule
     {
     }

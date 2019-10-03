@@ -9,12 +9,18 @@
     using Domain.Core.Trading;
     using Domain.Core.Trading.Orders;
     using Domain.Surveillance.Judgement.FixedIncome;
+    using Domain.Surveillance.Rules;
+    using Domain.Surveillance.Rules.Interfaces;
 
     using Microsoft.Extensions.Logging;
 
     using Newtonsoft.Json;
 
+    using SharedKernel.Contracts.Markets;
+
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
+    using Surveillance.Data.Universe.MarketEvents;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -29,8 +35,6 @@
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
-    using Surveillance.Engine.Rules.Universe.MarketEvents;
 
     /// <summary>
     /// Analyses fixed income trading for profitability
@@ -248,6 +252,49 @@
         public override void RunOrderFilledEventDelayed(ITradingHistoryStack history)
         {
             // do nothing
+        }
+
+        /// <summary>
+        /// The data constraints.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRuleDataConstraint"/>.
+        /// </returns>
+        public override IRuleDataConstraint DataConstraints()
+        {
+            if (this.FixedIncomeParameters == null)
+            {
+                return RuleDataConstraint.Empty().Case;
+            }
+
+            var constraints = new List<RuleDataSubConstraint>();
+
+            if (this.FixedIncomeParameters.PerformHighProfitDailyAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AnyInterday,
+                    _ => !this.orderFilter.Filter(_));
+
+                constraints.Add(constraint);
+            }
+
+            if (this.FixedIncomeParameters.PerformHighProfitWindowAnalysis)
+            {
+                var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.AnyIntraday,
+                    _ => !this.orderFilter.Filter(_));
+
+                constraints.Add(constraint);
+            }
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.FixedIncomeParameters.Id,
+                constraints);
         }
 
         /// <summary>

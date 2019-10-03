@@ -81,7 +81,7 @@
                 DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                 DateTime.UtcNow,
                 "0",
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
 
             cache.Add(frame);
 
@@ -145,7 +145,7 @@
                 DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                 DateTime.UtcNow,
                 "0",
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
 
             cache.Add(frame);
 
@@ -209,7 +209,7 @@
                 DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                 DateTime.UtcNow,
                 "0",
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
 
             cache.Add(frame);
 
@@ -273,7 +273,7 @@
                 DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)),
                 DateTime.UtcNow,
                 "0",
-                DataSource.AllIntraday);
+                DataSource.AnyIntraday);
             cache.Add(frame);
 
             var result = cache.GetMarkets(marketData).Response;

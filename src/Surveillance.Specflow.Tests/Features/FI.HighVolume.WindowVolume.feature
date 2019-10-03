@@ -1,4 +1,5 @@
-﻿@fixedincomehighvolumewindowvolume
+﻿@FixedIncomeHighVolume
+@fixedincomehighvolumewindowvolume
 Feature: Fixed Income High Volume Window Volume
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
@@ -20,12 +21,12 @@ Scenario: Empty Universe yields no alerts
 @fixedincomehighvolumewindowvolume
 Scenario: One order at window volume yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
-	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 100          | 100         |
+	| SecurityName              | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| UKGovtBondSecondaryMarket | 0       | 01/01/2018 09:30:00 | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100         |
 	And With the intraday market data :
-	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
-	| UKGovtBondSecondaryMarket     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
-	| UKGovtBondSecondaryMarket     | 01/01/2018  09:28:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| SecurityName              | Epoch                | Bid | Ask | Price | Currency | Volume |
+	| UKGovtBondSecondaryMarket | 01/01/2018  09:29:00 | 1   | 20  | 10    | GBX      | 5000   |
+	| UKGovtBondSecondaryMarket | 01/01/2018  09:28:00 | 1   | 20  | 10    | GBX      | 5000   |
 	When I run the fixed income high volume rule
 	Then I will have 1 fixed income high volume alerts
 
@@ -49,15 +50,15 @@ Scenario: Two order one inside and one inside window but next day at window volu
 Scenario: Two order one inside and one outside window and next day at window volume yields zero alert
 	Given I have the fixed income high volume rule parameter values
 	| WindowHours | FixedIncomeHighVolumePercentageDaily | FixedIncomeHighVolumePercentageWindow |
-	| 23           |                                      | 0.01                                 |
+	| 25          |                                      | 0.01                                  |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
-	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 25         |
-	| UKGovtBondSecondaryMarket     | 0       | 01/02/2018 16:30:00 | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 25         |
+	| SecurityName              | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| UKGovtBondSecondaryMarket | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10               | 50            | 25           |
+	| UKGovtBondSecondaryMarket | 0       | 01/02/2018 16:30:00 | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10               | 50            | 25           |
 	And With the intraday market data :
-	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
-	| UKGovtBondSecondaryMarket     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
-	| UKGovtBondSecondaryMarket     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| SecurityName              | Epoch                | Bid | Ask | Price | Currency | Volume |
+	| UKGovtBondSecondaryMarket | 01/01/2018  09:30:00 | 1   | 20  | 10    | GBX      | 5000   |
+	| UKGovtBondSecondaryMarket | 01/02/2018  09:29:00 | 1   | 20  | 10    | GBX      | 5000   |
 	When I run the fixed income high volume rule
 	Then I will have 0 fixed income high volume alerts
 

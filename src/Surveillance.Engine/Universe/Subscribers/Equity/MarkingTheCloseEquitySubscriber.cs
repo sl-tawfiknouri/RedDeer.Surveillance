@@ -15,6 +15,7 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -25,24 +26,65 @@
     using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
+    /// <summary>
+    /// The marking the close equity subscriber.
+    /// </summary>
     public class MarkingTheCloseEquitySubscriber : BaseSubscriber, IMarkingTheCloseEquitySubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+        /// <summary>
+        /// The decorator filter factory.
+        /// </summary>
+        private readonly IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory;
 
-        private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
+        /// <summary>
+        /// The equity rule marking the close factory.
+        /// </summary>
+        private readonly IEquityRuleMarkingTheCloseFactory equityRuleMarkingTheCloseFactory;
 
-        private readonly ILogger<MarkingTheCloseEquitySubscriber> _logger;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<MarkingTheCloseEquitySubscriber> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarkingTheCloseEquitySubscriber"/> class.
+        /// </summary>
+        /// <param name="equityRuleMarkingTheCloseFactory">
+        /// The equity rule marking the close factory.
+        /// </param>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="decoratorFilterFactory">
+        /// The decorator filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public MarkingTheCloseEquitySubscriber(
             IEquityRuleMarkingTheCloseFactory equityRuleMarkingTheCloseFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
@@ -51,21 +93,44 @@
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<MarkingTheCloseEquitySubscriber> logger)
         {
-            this._equityRuleMarkingTheCloseFactory = equityRuleMarkingTheCloseFactory
-                                                     ?? throw new ArgumentNullException(
-                                                         nameof(equityRuleMarkingTheCloseFactory));
-            this._ruleParameterMapper =
+            this.equityRuleMarkingTheCloseFactory = 
+                equityRuleMarkingTheCloseFactory ?? throw new ArgumentNullException(nameof(equityRuleMarkingTheCloseFactory));
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._decoratorFilterFactory =
+            this.decoratorFilterFactory =
                 decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -74,13 +139,15 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Rules.MarkingTheClose) ?? true)
-                return new IObserver<IUniverseEvent>[0];
+            {
+                return new IUniverseRule[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos = ruleParameters.MarkingTheCloses.Where(
                 mtc => filteredParameters.Contains(mtc.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var markingTheCloseParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var markingTheCloseParameters = this.ruleParameterMapper.Map(execution, dtos);
             var subscriptions = this.SubscribeToUniverse(
                 execution,
                 operationContext,
@@ -91,30 +158,54 @@
             return subscriptions;
         }
 
+        /// <summary>
+        /// The decorate with filters.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="markingTheClose">
+        /// The marking the close.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilters(
-            ISystemProcessOperationContext opCtx,
-            IMarkingTheCloseEquitiesParameters param,
+            ISystemProcessOperationContext operationContext,
+            IMarkingTheCloseEquitiesParameters parameter,
             IUniverseRule markingTheClose,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
-                || param.HasVenueVolumeFilters())
+            if (parameter.HasInternalFilters() || parameter.HasReferenceDataFilters() || parameter.HasMarketCapFilters()
+                || parameter.HasVenueVolumeFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
-                    param.Sectors,
-                    param.Industries,
-                    param.Regions,
-                    param.Countries,
-                    param.MarketCapFilter,
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameter.Accounts,
+                    parameter.Traders,
+                    parameter.Markets,
+                    parameter.Funds,
+                    parameter.Strategies,
+                    parameter.Sectors,
+                    parameter.Industries,
+                    parameter.Regions,
+                    parameter.Countries,
+                    parameter.MarketCapFilter,
                     ruleRunMode,
                     "Marking The Close Equity",
                     universeDataRequestsSubscriber,
@@ -122,15 +213,17 @@
 
                 var decoratedFilter = filteredUniverse;
 
-                if (param.HasVenueVolumeFilters())
-                    decoratedFilter = this._decoratorFilterFactory.Build(
-                        param.Windows,
+                if (parameter.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = this.decoratorFilterFactory.Build(
+                        parameter.Windows,
                         filteredUniverse,
-                        param.VenueVolumeFilter,
+                        parameter.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        this.MarkingTheCloseDataSource(param),
+                        this.MarkingTheCloseDataSource(parameter),
                         ruleRunMode);
+                }
 
                 decoratedFilter.Subscribe(markingTheClose);
 
@@ -140,28 +233,67 @@
             return markingTheClose;
         }
 
+        /// <summary>
+        /// The marking the close data source.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DataSource"/>.
+        /// </returns>
         private DataSource MarkingTheCloseDataSource(IMarkingTheCloseEquitiesParameters parameters)
         {
-            if (parameters == null) return DataSource.AllInterday;
+            if (parameters == null)
+            {
+                return DataSource.AnyInterday;
+            }
 
-            if (parameters.PercentageThresholdWindowVolume != null) return DataSource.AllIntraday;
+            if (parameters.PercentageThresholdWindowVolume != null)
+            {
+                return DataSource.AnyIntraday;
+            }
 
-            if (parameters.PercentageThresholdDailyVolume != null) return DataSource.AllInterday;
+            if (parameters.PercentageThresholdDailyVolume != null)
+            {
+                return DataSource.AnyInterday;
+            }
 
             return this.DataSourceForWindow(parameters.Windows);
         }
 
-        private IUniverseRule SubscribeToParams(
+        /// <summary>
+        /// The subscribe to parameters.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
-            IMarkingTheCloseEquitiesParameters param,
+            IMarkingTheCloseEquitiesParameters parameter,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
                 Rules.MarkingTheClose.GetDescription(),
                 EquityRuleMarkingTheCloseFactory.Version,
-                param.Id,
+                parameter.Id,
                 (int)Rules.MarkingTheClose,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -170,20 +302,20 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var markingTheClose = this._equityRuleMarkingTheCloseFactory.Build(
-                param,
+            var markingTheClose = this.equityRuleMarkingTheCloseFactory.Build(
+                parameter,
                 ruleCtx,
                 alertStream,
                 runMode,
                 dataRequestSubscriber);
-            var markingTheCloseOrgFactors = this._brokerServiceFactory.Build(
+            var markingTheCloseOrgFactors = this.brokerServiceFactory.Build(
                 markingTheClose,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameter.Factors,
+                parameter.AggregateNonFactorableIntoOwnCategory);
 
             var filteredMarkingTheClose = this.DecorateWithFilters(
-                opCtx,
-                param,
+                operationContext,
+                parameter,
                 markingTheCloseOrgFactors,
                 dataRequestSubscriber,
                 ruleCtx,
@@ -192,22 +324,43 @@
             return filteredMarkingTheClose;
         }
 
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="markingTheCloseParameters">
+        /// The marking the close parameters.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> markingTheCloseParameters)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             if (markingTheCloseParameters != null && markingTheCloseParameters.Any())
             {
                 foreach (var param in markingTheCloseParameters)
                 {
-                    var paramSubscriptions = this.SubscribeToParams(
+                    var paramSubscriptions = this.SubscribeToParameters(
                         execution,
-                        opCtx,
+                        operationContext,
                         alertStream,
                         param,
                         dataRequestSubscriber);
@@ -216,10 +369,9 @@
             }
             else
             {
-                const string errorMessage =
-                    "tried to schedule a marking the close rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                const string ErrorMessage = "tried to schedule a marking the close rule execution with no parameters set";
+                this.logger.LogError(ErrorMessage);
+                operationContext.EventError(ErrorMessage);
             }
 
             return subscriptions;

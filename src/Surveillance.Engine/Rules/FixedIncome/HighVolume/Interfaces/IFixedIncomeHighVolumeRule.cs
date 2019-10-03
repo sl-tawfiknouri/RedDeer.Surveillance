@@ -2,6 +2,9 @@
 {
     using Surveillance.Engine.Rules.Rules.Interfaces;
 
+    /// <summary>
+    /// The FixedIncomeHighVolumeRule interface.
+    /// </summary>
     public interface IFixedIncomeHighVolumeRule : IUniverseCloneableRule
     {
     }

@@ -76,16 +76,16 @@
             {
                 // Equity handling
                 var factsetData = dataRequests.Where(
-                    _ => _.DataSource == DataSource.Factset || _.DataSource == DataSource.All
-                                                            || _.DataSource == DataSource.AllInterday).ToList();
+                    _ => _.DataSource == DataSource.Factset || _.DataSource == DataSource.Any
+                                                            || _.DataSource == DataSource.AnyInterday).ToList();
                 this._logger.LogInformation(
                     $"handling request with id {systemProcessOperationId} had {factsetData.Count} factset data requests to process");
                 if (factsetData.Any())
                     await this._factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, factsetData);
 
                 var bmllData = dataRequests.Where(
-                    _ => _.DataSource == DataSource.Bmll || _.DataSource == DataSource.All
-                                                         || _.DataSource == DataSource.AllIntraday).ToList();
+                    _ => _.DataSource == DataSource.Bmll || _.DataSource == DataSource.Any
+                                                         || _.DataSource == DataSource.AnyIntraday).ToList();
                 this._logger.LogInformation(
                     $"handling request with id {systemProcessOperationId} had {bmllData.Count} bmll data requests to process");
                 if (bmllData.Any())
@@ -93,9 +93,9 @@
 
                 // Fixed income handling
                 var markitData = dataRequests.Where(
-                    _ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.All
-                                                           || _.DataSource == DataSource.AllInterday
-                                                           || _.DataSource == DataSource.AllIntraday).ToList();
+                    _ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.Any
+                                                           || _.DataSource == DataSource.AnyInterday
+                                                           || _.DataSource == DataSource.AnyIntraday).ToList();
                 this._logger.LogInformation(
                     $"handling request with id {systemProcessOperationId} had {markitData.Count} markit data requests to process");
                 if (markitData.Any())

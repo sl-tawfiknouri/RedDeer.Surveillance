@@ -2,23 +2,47 @@
 {
     using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
+    /// <summary>
+    /// The universe percentage completion logger factory.
+    /// </summary>
     public class UniversePercentageCompletionLoggerFactory : IUniversePercentageCompletionLoggerFactory
     {
-        private readonly IUniversePercentageOfEventCompletionLoggerFactory _eventFactory;
+        /// <summary>
+        /// The event factory.
+        /// </summary>
+        private readonly IUniversePercentageOfEventCompletionLoggerFactory eventFactory;
 
-        private readonly IUniversePercentageOfTimeCompletionLoggerFactory _timeFactory;
+        /// <summary>
+        /// The time factory.
+        /// </summary>
+        private readonly IUniversePercentageOfTimeCompletionLoggerFactory timeFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniversePercentageCompletionLoggerFactory"/> class.
+        /// </summary>
+        /// <param name="eventFactory">
+        /// The event factory.
+        /// </param>
+        /// <param name="timeFactory">
+        /// The time factory.
+        /// </param>
         public UniversePercentageCompletionLoggerFactory(
             IUniversePercentageOfEventCompletionLoggerFactory eventFactory,
             IUniversePercentageOfTimeCompletionLoggerFactory timeFactory)
         {
-            this._eventFactory = eventFactory;
-            this._timeFactory = timeFactory;
+            this.eventFactory = eventFactory;
+            this.timeFactory = timeFactory;
         }
 
+        /// <summary>
+        /// The build.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IUniversePercentageCompletionLogger"/>.
+        /// </returns>
         public IUniversePercentageCompletionLogger Build()
         {
-            return new UniversePercentageCompletionLogger(this._eventFactory.Build(), this._timeFactory.Build());
+            return new UniversePercentageCompletionLogger(this.eventFactory.Build(), this.timeFactory.Build());
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     using System.Threading;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
     /// <summary>
     /// The UniversePlayerFactory interface.

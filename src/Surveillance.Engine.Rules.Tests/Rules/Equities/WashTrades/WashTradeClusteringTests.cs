@@ -5,7 +5,8 @@
     using NUnit.Framework;
 
     using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
-    using Surveillance.Engine.Rules.Tests.Helpers;
+
+    using TestHelpers;
 
     [TestFixture]
     public class WashTradeClusteringTests

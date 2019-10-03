@@ -19,9 +19,54 @@
     using Surveillance.Engine.Rules.Trades;
     using Surveillance.Engine.Rules.Trades.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    
+
+    /// <summary>
+    /// The high profit market closure rule.
+    /// </summary>
     public class HighProfitMarketClosureRule : HighProfitStreamRule, IHighProfitMarketClosureRule
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighProfitMarketClosureRule"/> class.
+        /// </summary>
+        /// <param name="equitiesParameters">
+        /// The equities parameters.
+        /// </param>
+        /// <param name="ruleContext">
+        /// The rule context.
+        /// </param>
+        /// <param name="costCalculatorFactory">
+        /// The cost calculator factory.
+        /// </param>
+        /// <param name="revenueCalculatorFactory">
+        /// The revenue calculator factory.
+        /// </param>
+        /// <param name="exchangeRateProfitCalculator">
+        /// The exchange rate profit calculator.
+        /// </param>
+        /// <param name="orderFilter">
+        /// The order filter.
+        /// </param>
+        /// <param name="marketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="marketDataCacheFactory">
+        /// The market data cache factory.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="runMode">
+        /// The run mode.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
+        /// <param name="tradingHistoryLogger">
+        /// The trading history logger.
+        /// </param>
         public HighProfitMarketClosureRule(
             IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleContext,
@@ -54,6 +99,15 @@
             this.MarketClosureRule = true;
         }
 
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="factorValue">
+        /// The factor value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseCloneableRule"/>.
+        /// </returns>
         public override IUniverseCloneableRule Clone(IFactorValue factorValue)
         {
             var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
@@ -63,11 +117,23 @@
             return clone;
         }
 
+        /// <summary>
+        /// The run rule guard.
+        /// </summary>
+        /// <param name="history">
+        /// The history.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         protected override bool RunRuleGuard(ITradingHistoryStack history)
         {
             var activeWindow = history.ActiveTradeHistory();
 
-            if (!activeWindow.Any()) return false;
+            if (!activeWindow.Any())
+            {
+                return false;
+            }
 
             var baseOrder = activeWindow.Any() ? activeWindow.Peek() : null;
 

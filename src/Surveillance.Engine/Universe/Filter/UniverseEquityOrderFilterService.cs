@@ -7,21 +7,40 @@
 
     using Microsoft.Extensions.Logging;
 
+    using Surveillance.Data.Universe;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
 
+    /// <summary>
+    /// The universe equity order filter service.
+    /// </summary>
     public class UniverseEquityOrderFilterService : IUniverseEquityOrderFilterService
     {
-        private readonly ILogger<UniverseEquityOrderFilterService> _logger;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<UniverseEquityOrderFilterService> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniverseEquityOrderFilterService"/> class.
+        /// </summary>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public UniverseEquityOrderFilterService(ILogger<UniverseEquityOrderFilterService> logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
-        ///     Returns null if it has filtered out the event
+        /// Returns null if it has filtered out the event
         /// </summary>
+        /// <param name="universeEvent">
+        /// The universe Event.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseEvent"/>.
+        /// </returns>
         public IUniverseEvent Filter(IUniverseEvent universeEvent)
         {
             switch (universeEvent.StateChange)
@@ -37,18 +56,48 @@
 
             if (order == null)
             {
-                this._logger.LogError(
+                this.logger.LogError(
                     "encountered an unexpected type for the underlying value of a trade event. Not filtering.");
                 return universeEvent;
+            }
+
+            var excludeUniverseEvent = this.Filter(order);
+
+            if (excludeUniverseEvent)
+            {
+                return null;
+            }
+            
+            return universeEvent;
+        }
+
+        /// <summary>
+        /// The filter.
+        /// </summary>
+        /// <param name="order">
+        /// The order.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool Filter(Order order)
+        {
+            if (order == null)
+            {
+                this.logger.LogError(
+                    "encountered an unexpected type for the underlying value of a trade event. Not filtering.");
+
+                return false;
             }
 
             var cfi = order.Instrument.Cfi;
 
             if (string.IsNullOrWhiteSpace(cfi))
             {
-                this._logger.LogError(
+                this.logger.LogError(
                     $"tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
-                return null;
+
+                return true;
             }
 
             var cfiWrap = new Cfi(cfi);
@@ -56,11 +105,12 @@
 
             if (filter)
             {
-                this._logger.LogInformation($"filtering out cfi of {cfi} as it did not have a leading character of e");
-                return null;
+                this.logger.LogInformation($"filtering out cfi of {cfi} as it did not have a leading character of e");
+
+                return true;
             }
 
-            return universeEvent;
+            return false;
         }
     }
 }

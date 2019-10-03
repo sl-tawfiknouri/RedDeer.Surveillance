@@ -220,7 +220,7 @@
                     i.End,
                     request.SystemProcessOperationRuleRunId,
                     request.IsCompleted,
-                    DataSource.AllIntraday)).ToList();
+                    DataSource.AnyIntraday)).ToList();
 
             var responseList = new List<MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>>();
             foreach (var paramSet in projectedRequests) responseList.Add(this.GetMarkets(paramSet));

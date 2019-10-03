@@ -2,10 +2,19 @@
 {
     using System;
 
-    using Surveillance.Engine.Rules.Universe.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
 
+    /// <summary>
+    /// The UniversePercentageOfEventCompletionLogger interface.
+    /// </summary>
     public interface IUniversePercentageOfEventCompletionLogger : IObserver<IUniverseEvent>
     {
+        /// <summary>
+        /// The initiate event logger.
+        /// </summary>
+        /// <param name="universe">
+        /// The universe.
+        /// </param>
         void InitiateEventLogger(IUniverse universe);
     }
 }

@@ -14,6 +14,7 @@
     using SharedKernel.Contracts.Markets;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
@@ -24,25 +25,65 @@
     using Surveillance.Engine.Rules.Rules;
     using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-    using Surveillance.Engine.Rules.Universe.Interfaces;
     using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
     using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 
-    public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : BaseSubscriber,
-                                                                      IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
+    /// <summary>
+    /// The placing orders with no intent to execute equity subscriber.
+    /// </summary>
+    public class PlacingOrdersWithNoIntentToExecuteEquitySubscriber : BaseSubscriber, IPlacingOrdersWithNoIntentToExecuteEquitySubscriber
     {
-        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        /// <summary>
+        /// The broker service factory.
+        /// </summary>
+        private readonly IOrganisationalFactorBrokerServiceFactory brokerServiceFactory;
 
-        private readonly IHighVolumeVenueDecoratorFilterFactory _decoratorFilterFactory;
+        /// <summary>
+        /// The decorator filter factory.
+        /// </summary>
+        private readonly IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory;
 
-        private readonly IEquityRulePlacingOrdersWithoutIntentToExecuteFactory _equityRulePlacingOrdersFactory;
+        /// <summary>
+        /// The equity rule placing orders factory.
+        /// </summary>
+        private readonly IEquityRulePlacingOrdersWithoutIntentToExecuteFactory equityRulePlacingOrdersFactory;
 
-        private readonly ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> _logger;
+        /// <summary>
+        /// The rule parameter mapper.
+        /// </summary>
+        private readonly IRuleParameterToRulesMapperDecorator ruleParameterMapper;
 
-        private readonly IRuleParameterToRulesMapperDecorator _ruleParameterMapper;
+        /// <summary>
+        /// The universe filter factory.
+        /// </summary>
+        private readonly IUniverseFilterFactory universeFilterFactory;
 
-        private readonly IUniverseFilterFactory _universeFilterFactory;
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlacingOrdersWithNoIntentToExecuteEquitySubscriber"/> class.
+        /// </summary>
+        /// <param name="equityRulePlacingOrdersFactory">
+        /// The equity rule placing orders factory.
+        /// </param>
+        /// <param name="ruleParameterMapper">
+        /// The rule parameter mapper.
+        /// </param>
+        /// <param name="universeFilterFactory">
+        /// The universe filter factory.
+        /// </param>
+        /// <param name="brokerServiceFactory">
+        /// The broker service factory.
+        /// </param>
+        /// <param name="decoratorFilterFactory">
+        /// The decorator filter factory.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public PlacingOrdersWithNoIntentToExecuteEquitySubscriber(
             IEquityRulePlacingOrdersWithoutIntentToExecuteFactory equityRulePlacingOrdersFactory,
             IRuleParameterToRulesMapperDecorator ruleParameterMapper,
@@ -51,21 +92,44 @@
             IHighVolumeVenueDecoratorFilterFactory decoratorFilterFactory,
             ILogger<PlacingOrdersWithNoIntentToExecuteEquitySubscriber> logger)
         {
-            this._equityRulePlacingOrdersFactory = equityRulePlacingOrdersFactory
-                                                   ?? throw new ArgumentNullException(
-                                                       nameof(equityRulePlacingOrdersFactory));
-            this._ruleParameterMapper =
+            this.equityRulePlacingOrdersFactory = 
+                equityRulePlacingOrdersFactory ?? throw new ArgumentNullException(nameof(equityRulePlacingOrdersFactory));
+            this.ruleParameterMapper =
                 ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-            this._universeFilterFactory =
+            this.universeFilterFactory =
                 universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            this._brokerServiceFactory =
+            this.brokerServiceFactory =
                 brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
-            this._decoratorFilterFactory =
+            this.decoratorFilterFactory =
                 decoratorFilterFactory ?? throw new ArgumentNullException(nameof(decoratorFilterFactory));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
+        /// <summary>
+        /// The collate subscriptions.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="ruleParameters">
+        /// The rule parameters.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <param name="judgementService">
+        /// The judgement service.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        public IReadOnlyCollection<IUniverseRule> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext operationContext,
@@ -74,14 +138,16 @@
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(_ => _.Rule)?.Contains(Rules.PlacingOrderWithNoIntentToExecute) ?? true)
-                return new IObserver<IUniverseEvent>[0];
+            {
+                return new IUniverseRule[0];
+            }
 
             var filteredParameters = execution.Rules.SelectMany(_ => _.Ids).Where(_ => _ != null).ToList();
 
             var dtos = ruleParameters.PlacingOrders
                 .Where(_ => filteredParameters.Contains(_.Id, StringComparer.InvariantCultureIgnoreCase)).ToList();
 
-            var placingOrderParameters = this._ruleParameterMapper.Map(execution, dtos);
+            var placingOrderParameters = this.ruleParameterMapper.Map(execution, dtos);
             var subscriptions = this.SubscribeToUniverse(
                 execution,
                 operationContext,
@@ -92,30 +158,56 @@
             return subscriptions;
         }
 
+        /// <summary>
+        /// The decorate with filters.
+        /// </summary>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="placingOrders">
+        /// The placing orders.
+        /// </param>
+        /// <param name="universeDataRequestsSubscriber">
+        /// The universe data requests subscriber.
+        /// </param>
+        /// <param name="processOperationRunRuleContext">
+        /// The process operation run rule context.
+        /// </param>
+        /// <param name="ruleRunMode">
+        /// The rule run mode.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule DecorateWithFilters(
-            ISystemProcessOperationContext opCtx,
-            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters param,
+            ISystemProcessOperationContext operationContext,
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameter,
             IUniverseRule placingOrders,
             IUniverseDataRequestsSubscriber universeDataRequestsSubscriber,
             ISystemProcessOperationRunRuleContext processOperationRunRuleContext,
             RuleRunMode ruleRunMode)
         {
-            if (param.HasInternalFilters() || param.HasReferenceDataFilters() || param.HasMarketCapFilters()
-                || param.HasVenueVolumeFilters())
+            if (parameter.HasInternalFilters() 
+                || parameter.HasReferenceDataFilters() 
+                || parameter.HasMarketCapFilters()
+                || parameter.HasVenueVolumeFilters())
             {
-                this._logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
 
-                var filteredUniverse = this._universeFilterFactory.Build(
-                    param.Accounts,
-                    param.Traders,
-                    param.Markets,
-                    param.Funds,
-                    param.Strategies,
-                    param.Sectors,
-                    param.Industries,
-                    param.Regions,
-                    param.Countries,
-                    param.MarketCapFilter,
+                var filteredUniverse = this.universeFilterFactory.Build(
+                    parameter.Accounts,
+                    parameter.Traders,
+                    parameter.Markets,
+                    parameter.Funds,
+                    parameter.Strategies,
+                    parameter.Sectors,
+                    parameter.Industries,
+                    parameter.Regions,
+                    parameter.Countries,
+                    parameter.MarketCapFilter,
                     ruleRunMode,
                     "Placing Orders Equity",
                     universeDataRequestsSubscriber,
@@ -123,15 +215,17 @@
 
                 var decoratedFilter = filteredUniverse;
 
-                if (param.HasVenueVolumeFilters())
-                    decoratedFilter = this._decoratorFilterFactory.Build(
-                        param.Windows,
+                if (parameter.HasVenueVolumeFilters())
+                {
+                    decoratedFilter = this.decoratorFilterFactory.Build(
+                        parameter.Windows,
                         filteredUniverse,
-                        param.VenueVolumeFilter,
+                        parameter.VenueVolumeFilter,
                         processOperationRunRuleContext,
                         universeDataRequestsSubscriber,
-                        DataSource.AllIntraday,
+                        DataSource.AnyIntraday,
                         ruleRunMode);
+                }
 
                 decoratedFilter.Subscribe(placingOrders);
 
@@ -141,17 +235,38 @@
             return placingOrders;
         }
 
+        /// <summary>
+        /// The subscribe to parameters.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
         private IUniverseRule SubscribeToParameters(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
-            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters param,
+            IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameter,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            var ruleCtx = opCtx.CreateAndStartRuleRunContext(
+            var ruleCtx = operationContext.CreateAndStartRuleRunContext(
                 Rules.PlacingOrderWithNoIntentToExecute.GetDescription(),
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
-                param.Id,
+                parameter.Id,
                 (int)Rules.PlacingOrderWithNoIntentToExecute,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
@@ -160,19 +275,19 @@
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var placingOrders = this._equityRulePlacingOrdersFactory.Build(
-                param,
+            var placingOrders = this.equityRulePlacingOrdersFactory.Build(
+                parameter,
                 alertStream,
                 ruleCtx,
                 dataRequestSubscriber,
                 runMode);
-            var placingOrdersOrgFactors = this._brokerServiceFactory.Build(
+            var placingOrdersOrgFactors = this.brokerServiceFactory.Build(
                 placingOrders,
-                param.Factors,
-                param.AggregateNonFactorableIntoOwnCategory);
+                parameter.Factors,
+                parameter.AggregateNonFactorableIntoOwnCategory);
             var filteredPlacingOrders = this.DecorateWithFilters(
-                opCtx,
-                param,
+                operationContext,
+                parameter,
                 placingOrdersOrgFactors,
                 dataRequestSubscriber,
                 ruleCtx,
@@ -181,14 +296,35 @@
             return filteredPlacingOrders;
         }
 
-        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
+        /// <summary>
+        /// The subscribe to universe.
+        /// </summary>
+        /// <param name="execution">
+        /// The execution.
+        /// </param>
+        /// <param name="operationContext">
+        /// The operation context.
+        /// </param>
+        /// <param name="alertStream">
+        /// The alert stream.
+        /// </param>
+        /// <param name="placingOrdersParameters">
+        /// The placing orders parameters.
+        /// </param>
+        /// <param name="dataRequestSubscriber">
+        /// The data request subscriber.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IUniverseRule"/>.
+        /// </returns>
+        private IReadOnlyCollection<IUniverseRule> SubscribeToUniverse(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx,
+            ISystemProcessOperationContext operationContext,
             IUniverseAlertStream alertStream,
             IReadOnlyCollection<IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters> placingOrdersParameters,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            var subscriptions = new List<IObserver<IUniverseEvent>>();
+            var subscriptions = new List<IUniverseRule>();
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (placingOrdersParameters != null && placingOrdersParameters.Any())
@@ -197,7 +333,7 @@
                 {
                     var paramSubscriptions = this.SubscribeToParameters(
                         execution,
-                        opCtx,
+                        operationContext,
                         alertStream,
                         param,
                         dataRequestSubscriber);
@@ -206,10 +342,9 @@
             }
             else
             {
-                const string errorMessage =
-                    "tried to schedule a placing orders with no intent to execute rule execution with no parameters set";
-                this._logger.LogError(errorMessage);
-                opCtx.EventError(errorMessage);
+                const string ErrorMessage = "tried to schedule a placing orders with no intent to execute rule execution with no parameters set";
+                this.logger.LogError(ErrorMessage);
+                operationContext.EventError(ErrorMessage);
             }
 
             return subscriptions;

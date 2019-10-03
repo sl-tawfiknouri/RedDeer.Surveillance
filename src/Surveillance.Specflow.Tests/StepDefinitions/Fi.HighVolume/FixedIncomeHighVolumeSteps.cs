@@ -135,7 +135,7 @@
                 highVolumeParameters.FixedIncomeHighVolumePercentageDaily,
                 highVolumeParameters.FixedIncomeHighVolumePercentageWindow,
                 DecimalRangeRuleFilter.None(),
-                DecimalRangeRuleFilter.None(), 
+                DecimalRangeRuleFilter.None(),
                 RuleFilter.None(),
                 RuleFilter.None(),
                 RuleFilter.None(),

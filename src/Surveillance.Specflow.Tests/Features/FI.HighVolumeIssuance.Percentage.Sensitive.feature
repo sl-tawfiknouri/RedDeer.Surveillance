@@ -1,4 +1,5 @@
-﻿@fixedincomehighvolumeissuance
+﻿@FixedIncomeHighVolume
+@fixedincomehighvolumeissuance
 @fixedincomehighvolumeissuancepercentage
 @fixedincomehighvolumeissuancepercentagesensitive
 Feature: Fixed Income High Volume Issuance Percentage Sensitive

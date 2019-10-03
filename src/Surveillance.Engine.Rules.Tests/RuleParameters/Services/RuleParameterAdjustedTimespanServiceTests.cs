@@ -63,7 +63,7 @@
                   PlacingOrders = new[] { new PlacingOrdersWithNoIntentToExecuteRuleParameterDto { WindowSize = TimeSpan.FromDays(9) } },
                   FixedIncomeWashTrades = new[] { new FixedIncomeWashTradeRuleParameterDto { WindowSize = TimeSpan.FromDays(10) } },
                   FixedIncomeHighProfits = new[] { new FixedIncomeHighProfitRuleParameterDto { WindowSize = TimeSpan.FromDays(11) } },
-                  FixedIncomeHighVolumeIssuance = new[] { new FixedIncomeHighVolumeIssuanceRuleParameterDto { WindowSize = TimeSpan.FromDays(12) } }
+                  FixedIncomeHighVolumeIssuance = new[] { new FixedIncomeHighVolumeRuleParameterDto { WindowSize = TimeSpan.FromDays(12) } }
               };
 
             var trail = service.LeadingTimespan(dto);

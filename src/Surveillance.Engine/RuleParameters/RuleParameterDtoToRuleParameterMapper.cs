@@ -391,12 +391,12 @@
 
         public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(
             ScheduledExecution execution,
-            List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+            List<FixedIncomeHighVolumeRuleParameterDto> dtos)
         {
             if (dtos == null || !dtos.Any())
             {
                 this._logger.LogInformation(
-                    $"asked to map null or empty {nameof(FixedIncomeHighVolumeIssuanceRuleParameterDto)}");
+                    $"asked to map null or empty {nameof(FixedIncomeHighVolumeRuleParameterDto)}");
                 return null;
             }
 
@@ -404,8 +404,8 @@
                 _ => new HighVolumeIssuanceRuleFixedIncomeParameters(
                     _.Id,
                     _.WindowSize,
-                    _.PerformDailyAnalysis ? _.FixedIncomeHighVolumePercentageDaily : null,
-                     _.PerformWindowAnalysis ? _.FixedIncomeHighVolumePercentageWindow : null,
+                    _.PerformDailyAnalysis ? _.HighVolumePercentageDaily : null,
+                     _.PerformWindowAnalysis ? _.HighVolumePercentageWindow : null,
                     this._decimalRangeRuleFilterProjector.Project(_.MarketCap),
                     this._decimalRangeRuleFilterProjector.Project(_.Turnover),
                     this._ruleFilterProjector.Project(_.Accounts),

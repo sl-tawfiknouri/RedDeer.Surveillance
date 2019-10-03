@@ -59,6 +59,6 @@
 
         IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(
             ScheduledExecution execution,
-            List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos);
+            List<FixedIncomeHighVolumeRuleParameterDto> dtos);
     }
 }

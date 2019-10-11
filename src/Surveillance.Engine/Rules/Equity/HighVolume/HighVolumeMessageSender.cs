@@ -60,44 +60,35 @@
 
             if (ruleBreach.DailyBreach.HasBreach)
             {
-                var dailyPercentage = Math.Ceiling(
-                    ruleBreach.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
-                var dailyBreachPercentage =
-                    Math.Ceiling(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
+                var dailyPercentage = Math.Round(ruleBreach.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100, 2);
+                var dailyBreachPercentage = Math.Round(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100, 2);
                 
                 dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage.ToString("0.##")}% was exceeded by trading {dailyBreachPercentage.ToString("0.##")}% of daily volume{venueDailyDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount.ToString("0.##")}.";
             }
 
             if (ruleBreach.WindowBreach.HasBreach)
             {
-                var windowPercentage = Math.Ceiling(
-                    ruleBreach.EquitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100);
-                var windowBreachPercentage =
-                    Math.Ceiling(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-
+                var windowPercentage = Math.Round(ruleBreach.EquitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100, 2);
+                var windowBreachPercentage = Math.Round(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100, 2);
+                
                 windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage.ToString("0.##")}% was exceeded by trading {windowBreachPercentage.ToString("0.##")}% of window volume within the window of {ruleBreach.EquitiesParameters.Windows.BackwardWindowSize.TotalMinutes} minutes{venueWindowDescription}. {ruleBreach.TotalOrdersTradedInWindow.ToString("0.##")} volume was the allocated fill against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount.ToString("0.##")}.";
             }
 
             if (ruleBreach.MarketCapBreach.HasBreach)
             {
-                var marketCapPercentage = Math.Ceiling(
-                    ruleBreach.EquitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100);
+                var marketCapPercentage = Math.Round(
+                    ruleBreach.EquitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100, 2);
                 var marketCapBreachPercentage =
-                    Math.Ceiling(ruleBreach.MarketCapBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-                var tradedAmount = Math.Round(
-                    ruleBreach.MarketCapBreach.BreachTradedMoney.Value,
-                    2,
-                    MidpointRounding.AwayFromZero);
+                    Math.Round(ruleBreach.MarketCapBreach.BreachPercentage.GetValueOrDefault(0) * 100, 2);
+                var tradedAmount = Math.Round(ruleBreach.MarketCapBreach.BreachTradedMoney.Value, 2, MidpointRounding.AwayFromZero);
                 var currencyCode =
                     string.IsNullOrWhiteSpace(ruleBreach.MarketCapBreach.BreachTradedMoney.Currency.Code)
                     ? string.Empty
                     : $"({ruleBreach.MarketCapBreach.BreachTradedMoney.Currency.Code})";
-                var thresholdAmount = Math.Round(
-                    ruleBreach.MarketCapBreach.BreachThresholdMoney.Value,
-                    2,
-                    MidpointRounding.AwayFromZero);
+                var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdMoney.Value, 2, MidpointRounding.AwayFromZero);
 
                 marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage.ToString("0.##")}% was exceeded by trading {marketCapBreachPercentage.ToString("0.##")}% of market capitalisation.  {currencyCode} {tradedAmount.ToString("0.##")} was traded against a breach threshold value of {currencyCode} {thresholdAmount.ToString("0.##")}.";
+                var x = "0";
             }
 
             description = $"{description}{dailyDescription}{windowDescription}{marketCapDescription}";

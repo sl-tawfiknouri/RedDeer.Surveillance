@@ -94,8 +94,8 @@
                 return string.Empty;
             }
 
-            var dailyPercentage = Math.Ceiling(judgementContext.Judgement.DailyAnalysisAnalysis.VolumeThresholdPercentage.GetValueOrDefault(0) * 100);
-            var dailyBreachPercentage = Math.Ceiling(judgementContext.Judgement.DailyAnalysisAnalysis.VolumeTradedPercentage.GetValueOrDefault(0) * 100);
+            var dailyPercentage = Math.Round(judgementContext.Judgement.DailyAnalysisAnalysis.VolumeThresholdPercentage.GetValueOrDefault(0) * 100, 2);
+            var dailyBreachPercentage = Math.Round(judgementContext.Judgement.DailyAnalysisAnalysis.VolumeTradedPercentage.GetValueOrDefault(0) * 100, 2);
 
             var venueDailyDescription =
                 judgementContext.Venue != null
@@ -123,8 +123,8 @@
                 return string.Empty;
             }
 
-            var windowPercentage = Math.Ceiling(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdPercentage.GetValueOrDefault(0) * 100);
-            var windowBreachPercentage = Math.Ceiling(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeTradedPercentage.GetValueOrDefault(0) * 100);
+            var windowPercentage = Math.Round(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeThresholdPercentage.GetValueOrDefault(0) * 100, 2);
+            var windowBreachPercentage = Math.Round(judgementContext.Judgement.WindowAnalysisAnalysis.VolumeTradedPercentage.GetValueOrDefault(0) * 100, 2);
 
             var venueWindowDescription =
                 judgementContext.Venue != null

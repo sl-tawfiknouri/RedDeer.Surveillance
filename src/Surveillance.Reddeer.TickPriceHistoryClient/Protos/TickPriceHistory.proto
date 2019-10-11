@@ -1,0 +1,158 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Firefly.Service.Data.TickPriceHistory.Shared.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service TickPriceHistoryService {
+	rpc QuerySecurityTimeBars (SecurityTimeBarQueryRequest) returns (SecurityTimeBarQueryResponse) {}
+	rpc PutSecuritySynchronisation (SecuritySynchronisationRequest) returns (SecuritySynchronisationResponse) {}
+	rpc PutDataSynchronisation (DataSynchronisationRequest) returns (DataSynchronisationResponse) {}
+	rpc DeleteDataSynchronisation (DeleteDataSynchronisationRequest) returns (DeleteDataSynchronisationResponse) {}
+}
+
+message SecurityIdentifiers {
+	string ExternalIdentifiers = 1;
+	string Ric = 2;
+	string Sedol = 3;
+	string Isin = 4;
+	string Cusip = 5;
+}
+
+enum TimeBarPolicyOptions {
+	Exclude = 0;
+	Default = 1;
+	OneSecond = 2;
+	FiveSecond = 3;
+	OneMinute = 4;
+	FiveMinute = 5;
+	TenMinute = 6;
+	FifteenMinute = 7;
+	OneHour = 8;
+}
+
+/* Request types */
+
+message DeleteDataSynchronisationRequest {
+	SecurityIdentifiers Identifiers = 1;
+	string RequestOriginApplication = 2;
+	string RequestOriginClientName = 3;
+	string RequestOriginMachineId = 4;
+	repeated TimeBarPolicyOptions PolicyOptions = 5;
+}
+
+/* Response types */
+
+message DeleteDataSynchronisationResponse {
+	bool Success = 1;
+}
+
+/* Request types */
+
+message DataSynchronisationRequest {
+	SecurityIdentifiers Identifiers = 1;
+	google.protobuf.Timestamp StartUtc = 2;
+	google.protobuf.Timestamp EndUtc = 3;
+	string RequestOriginApplication = 4;
+	string RequestOriginClientName = 5;
+	string RequestOriginMachineId = 6;
+	repeated TimeBarPolicyOptions PolicyOptions = 7;
+}
+
+/* Response types */
+
+message DataSynchronisationResponse {
+	bool Success = 1;
+}
+
+/* Request types */
+
+message SecuritySynchronisationRequest {
+	SecurityIdentifiers Identifiers = 1;
+	repeated TimeBarPolicyOptions PolicyOptions = 2;
+	string RequestOriginApplication = 3;
+	string RequestOriginClientName = 4;
+	string RequestOriginMachineId = 5;
+}
+
+/* Response types */
+
+message SecuritySynchronisationResponse {
+	bool Success = 1;
+}
+
+/* Request types */
+
+message SecurityTimeBarSubqueryRequest {
+	SecurityIdentifiers Identifiers = 1;
+	google.protobuf.Timestamp StartUtc = 2;
+	google.protobuf.Timestamp EndUtc = 3;
+	TimeBarPolicyOptions PolicyOptions = 4;
+	string ReferenceId = 5;
+}
+
+message SecurityTimeBarQueryRequest {
+	repeated SecurityTimeBarSubqueryRequest Subqueries = 1;
+}
+
+/* Response types */
+message TimeBar {
+	google.protobuf.Timestamp EpochUtc = 1;
+	double CloseAsk = 2;
+	double CloseAskYield = 3; 
+	double CloseBid = 4;
+	double CloseBidYield = 5; 
+	double CloseDiscountFactor = 6; 
+	double CloseYield = 7;
+	double CloseZeroYield = 8;
+	double High = 9;
+	double HighAsk = 10;
+	double HighAskYield = 11;
+	double HighBid = 12;
+	double HighBidYield = 13;
+	double HighDiscountFactor = 14; 
+	double HighYield = 15;
+	double HighZeroYield = 16;
+	double Last = 17;
+	double Low = 18;
+	double LowAsk = 19;
+	double LowAskYield = 20;
+	double LowBid = 21;
+	double LowBidYield = 22;
+	double LowDiscountFactor = 23; 
+	double LowYield = 24;
+	double LowZeroYield = 25;
+	double NoAsks = 26;
+	double NoAskYields = 27;
+	double NoBids = 28;
+	double NoBidYields = 29;
+	double NoDiscountFactors = 30; 
+	double NoTrades = 31;
+	double NoYields = 32;
+	double NoZeroYields = 33;
+	double Open = 34;
+	double OpenAsk = 35;
+	double OpenAskYield = 36;
+	double OpenBid = 37;
+	double OpenBidYield = 38;
+	double OpenDiscountFactor = 39;
+	double OpenYield = 40;
+	double OpenZeroYield = 41;
+	double Volume = 42;
+}
+
+message SecurityTimeBarQuerySubResponse {
+	SecurityIdentifiers Identifiers = 1;
+	google.protobuf.Timestamp StartUtc = 2;
+	google.protobuf.Timestamp EndUtc = 3;
+	TimeBarPolicyOptions PolicyOptions = 4;
+	string ReferenceId = 5;
+	repeated TimeBar Timebars = 6;
+}
+
+message SecurityTimeBarQueryResponse {
+	bool Success = 1;
+	repeated SecurityTimeBarQuerySubResponse SubResponses = 2;
+}
+

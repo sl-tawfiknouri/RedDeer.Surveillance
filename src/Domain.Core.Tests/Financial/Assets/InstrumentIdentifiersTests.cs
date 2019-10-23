@@ -42,6 +42,7 @@
             var exchangeSymbol = "exch symbol";
             var lei = "lei";
             var bloombergTicker = "bloomberg";
+            var ric = "ric";
 
             var instrumentIdentifiers = new InstrumentIdentifiers(
                 id,
@@ -54,7 +55,8 @@
                 cusip,
                 exchangeSymbol,
                 lei,
-                bloombergTicker);
+                bloombergTicker,
+                ric);
 
             var instrumentIdentifiers2 = new InstrumentIdentifiers(
                 id,
@@ -67,7 +69,8 @@
                 cusipArg,
                 "some-other-exchange-symbol",
                 "some-other-lei",
-                bloombergArg);
+                bloombergArg,
+                "some-other-ric");
 
             if (isMatch) Assert.AreEqual(instrumentIdentifiers, instrumentIdentifiers2);
             else Assert.AreNotEqual(instrumentIdentifiers, instrumentIdentifiers2);
@@ -143,6 +146,7 @@
             var exchangeSymbol = "exch symbol";
             var lei = "lei";
             var bloombergTicker = "bloomberg";
+            var ric = "ric";
             var underlyingSedol = "u-sedol";
             var underlyingIsin = "u-isin";
             var underlyingFigi = "u-figi";
@@ -151,6 +155,7 @@
             var underlyingExchangeSymbol = "u-exch";
             var underlyingBloombergTicker = "u-bloomberg";
             var underlyingClientIdentifier = "u-client";
+            var underlyingRic = "u-ric";
 
             var instrumentIdentifiers = new InstrumentIdentifiers(
                 id,
@@ -164,6 +169,7 @@
                 exchangeSymbol,
                 lei,
                 bloombergTicker,
+                ric,
                 underlyingSedol,
                 underlyingIsin,
                 underlyingFigi,
@@ -171,7 +177,8 @@
                 underlyingLei,
                 underlyingExchangeSymbol,
                 underlyingBloombergTicker,
-                underlyingClientIdentifier);
+                underlyingClientIdentifier,
+                underlyingRic);
 
             Assert.AreEqual(instrumentIdentifiers.Id, id);
             Assert.AreEqual(instrumentIdentifiers.ReddeerId, reddeerId);
@@ -218,6 +225,7 @@
             var exchangeSymbol = "exch symbol";
             var lei = "lei";
             var bloombergTicker = "bloomberg";
+            var ric = "ric";
             var underlyingSedol = "u-sedol";
             var underlyingIsin = "u-isin";
             var underlyingFigi = "u-figi";
@@ -226,6 +234,7 @@
             var underlyingExchangeSymbol = "u-exch";
             var underlyingBloombergTicker = "u-bloomberg";
             var underlyingClientIdentifier = "u-client";
+            var underlyingRic = "u-ric";
 
             var instrumentIdentifiers = new InstrumentIdentifiers(
                 id,
@@ -239,6 +248,7 @@
                 exchangeSymbol,
                 lei,
                 bloombergTicker,
+                ric,
                 underlyingSedol,
                 underlyingIsin,
                 underlyingFigi,
@@ -246,13 +256,14 @@
                 underlyingLei,
                 underlyingExchangeSymbol,
                 underlyingBloombergTicker,
-                underlyingClientIdentifier);
+                underlyingClientIdentifier,
+                underlyingRic);
 
             var outputStr = instrumentIdentifiers.ToString();
 
             Assert.AreEqual(
                 outputStr,
-                "Client Id: client-id | Sedol sedol | Isin isin | Figi figi | Cusip cusip | Exchange Symbol exch symbol | Lei lei | Bloomberg Ticker bloomberg");
+                "Client Id: client-id | Sedol sedol | Isin isin | Figi figi | Cusip cusip | Exchange Symbol exch symbol | Lei lei | Bloomberg Ticker bloomberg | Ric ric");
         }
     }
 }

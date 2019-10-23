@@ -116,6 +116,7 @@
                 contract.InstrumentExchangeSymbol,
                 contract.InstrumentLei,
                 contract.InstrumentBloombergTicker,
+                contract.InstrumentRic,
                 contract.InstrumentUnderlyingSedol,
                 contract.InstrumentUnderlyingIsin,
                 contract.InstrumentUnderlyingFigi,
@@ -123,7 +124,8 @@
                 contract.InstrumentUnderlyingLei,
                 contract.InstrumentUnderlyingExchangeSymbol,
                 contract.InstrumentUnderlyingBloombergTicker,
-                contract.InstrumentUnderlyingClientIdentifier);
+                contract.InstrumentUnderlyingClientIdentifier,
+                contract.InstrumentUnderlyingRic);
 
             return new FinancialInstrument(
                 this.MapCfi(contract.InstrumentCfi),

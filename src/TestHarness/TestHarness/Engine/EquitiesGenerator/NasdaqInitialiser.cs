@@ -49,6 +49,7 @@
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,
+                            raw.Symbol,
                             raw.Symbol),
                         raw.Symbol,
                         "CFI",

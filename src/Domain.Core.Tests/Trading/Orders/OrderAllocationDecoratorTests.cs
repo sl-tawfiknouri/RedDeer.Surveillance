@@ -136,6 +136,7 @@
                     "123456",
                     "abc",
                     null,
+                    null,
                     null),
                 "mock-instrument",
                 "entspb",

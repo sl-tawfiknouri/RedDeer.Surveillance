@@ -38,6 +38,7 @@
              MSES.Lei as Lei,
              MSES.ExchangeSymbol as ExchangeSymbol,
              MSES.BloombergTicker as BloombergTicker,
+             MSES.Ric as Ric,
              MSES.SecurityName as SecurityName,
              MSES.Cfi as Cfi,
              MSES.IssuerIdentifier as IssuerIdentifier,
@@ -53,6 +54,7 @@
              MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
              MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
              MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
+             MSES.UnderlyingRic as UnderlyingRic,
              MSES.SectorCode as SectorCode,
              MSES.IndustryCode as IndustryCode,
              MSES.RegionCode as RegionCode,
@@ -95,6 +97,7 @@
              MSES.Lei as Lei,
              MSES.ExchangeSymbol as ExchangeSymbol,
              MSES.BloombergTicker as BloombergTicker,
+             MSES.Ric as Ric,
              MSES.SecurityName as SecurityName,
              MSES.Cfi as Cfi,
              MSES.IssuerIdentifier as IssuerIdentifier,
@@ -110,6 +113,7 @@
              MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
              MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
              MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
+             MSES.UnderlyingRic as UnderlyingRic,
              MSES.SectorCode as SectorCode,
              MSES.IndustryCode as IndustryCode,
              MSES.RegionCode as RegionCode,
@@ -148,6 +152,7 @@
               sec.Cusip As Cusip,
               sec.Lei As Lei,
               sec.BloombergTicker As BloombergTicker,
+              sec.Ric as Ric,
               sec.SectorCode As SectorCode,
               sec.IndustryCode As IndustryCode,
               sec.RegionCode As RegionCode,
@@ -172,6 +177,7 @@
               Cusip = @Cusip,
               Lei = @Lei,
               BloombergTicker = @BloombergTicker,
+              Ric = @Ric,
               InstrumentType = @InstrumentType,
               SectorCode = @SectorCode,
               IndustryCode = @IndustryCode,
@@ -203,6 +209,7 @@
                 Lei,
                 ExchangeSymbol,
                 BloombergTicker,
+                Ric,
                 SecurityName,
                 Cfi,
                 IssuerIdentifier,
@@ -219,12 +226,13 @@
                 UnderlyingExchangeSymbol,
                 UnderlyingBloombergTicker,
                 UnderlyingClientIdentifier,
+                UnderlyingRic,
                 SectorCode,
                 IndustryCode,
                 RegionCode,
                 CountryCode)
-            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
-                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
+            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @Ric, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
+                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @UnderlyingRic, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
             FROM DUAL
             WHERE NOT EXISTS(
 	            SELECT 1
@@ -248,6 +256,7 @@
                 Lei,
                 ExchangeSymbol,
                 BloombergTicker,
+                Ric,
                 SecurityName,
                 Cfi,
                 IssuerIdentifier,
@@ -264,12 +273,13 @@
                 UnderlyingExchangeSymbol,
                 UnderlyingBloombergTicker,
                 UnderlyingClientIdentifier,
+                UnderlyingRic,
                 SectorCode,
                 IndustryCode,
                 RegionCode,
                 CountryCode)
-            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
-                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
+            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @Ric, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
+                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @UnderlyingRic, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
             FROM DUAL
             WHERE NOT EXISTS(
 	            SELECT 1
@@ -692,7 +702,8 @@
                         dto.Cusip,
                         dto.ExchangeSymbol,
                         dto.Lei,
-                        dto.BloombergTicker),
+                        dto.BloombergTicker,
+                        dto.Ric),
                     dto.SecurityName,
                     dto.Cfi,
                     dto.SecurityCurrency,
@@ -762,7 +773,8 @@
                         dto.Cusip,
                         dto.ExchangeSymbol,
                         dto.Lei,
-                        dto.BloombergTicker),
+                        dto.BloombergTicker,
+                        dto.Ric),
                     dto.SecurityName,
                     dto.Cfi,
                     dto.SecurityCurrency,
@@ -856,6 +868,7 @@
                 this.Lei = entity.Security?.Identifiers.Lei;
                 this.ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
                 this.BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
+                this.Ric = entity.Security?.Identifiers.Ric;
                 this.SecurityName = entity.Security?.Name;
                 this.Cfi = entity.Security?.Cfi;
                 this.IssuerIdentifier = entity.Security?.IssuerIdentifier;
@@ -891,6 +904,7 @@
                 this.UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
                 this.UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
                 this.UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingRic = entity?.Security?.Identifiers.UnderlyingRic;
 
                 this.SectorCode = entity?.Security?.SectorCode;
                 this.IndustryCode = entity?.Security?.IndustryCode;
@@ -920,6 +934,8 @@
 
             public string BloombergTicker { get; set; }
 
+            public string Ric { get; set; }
+
             public string SecurityName { get; set; }
 
             public string Cfi { get; set; }
@@ -941,6 +957,7 @@
             public string UnderlyingExchangeSymbol { get; set; }
             public string UnderlyingBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
+            public string UnderlyingRic { get; set; }
 
             public string SectorCode { get; set; }
             public string IndustryCode { get; set; }
@@ -1011,6 +1028,7 @@
                 this.Lei = entity.Security?.Identifiers.Lei;
                 this.ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
                 this.BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
+                this.Ric = entity.Security?.Identifiers.Ric;
                 this.SecurityName = entity.Security?.Name;
                 this.Cfi = entity.Security?.Cfi;
                 this.IssuerIdentifier = entity.Security?.IssuerIdentifier;
@@ -1045,6 +1063,7 @@
                 this.UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
                 this.UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
                 this.UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingRic = entity?.Security?.Identifiers.UnderlyingRic;
 
                 this.SectorCode = entity?.Security?.SectorCode;
                 this.IndustryCode = entity?.Security?.IndustryCode;
@@ -1066,6 +1085,7 @@
                 this.Lei = security.Identifiers.Lei;
                 this.ExchangeSymbol = security.Identifiers.ExchangeSymbol;
                 this.BloombergTicker = security.Identifiers.BloombergTicker;
+                this.Ric = security.Identifiers.Ric;
                 this.SecurityName = security.Name;
                 this.Cfi = security.Cfi;
                 this.IssuerIdentifier = security.IssuerIdentifier;
@@ -1082,6 +1102,7 @@
                 this.UnderlyingExchangeSymbol = security.Identifiers.UnderlyingExchangeSymbol;
                 this.UnderlyingBloombergTicker = security.Identifiers.UnderlyingBloombergTicker;
                 this.UnderlyingClientIdentifier = security.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingRic = security.Identifiers.UnderlyingRic;
 
                 this.SectorCode = security.SectorCode;
                 this.IndustryCode = security.IndustryCode;
@@ -1114,6 +1135,8 @@
 
             public string BloombergTicker { get; set; }
 
+            public string Ric { get; set; }
+
             public string SecurityName { get; set; }
 
             public string Cfi { get; set; }
@@ -1133,6 +1156,7 @@
             public string UnderlyingExchangeSymbol { get; set; }
             public string UnderlyingBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
+            public string UnderlyingRic { get; set; }
 
             public string SectorCode { get; set; }
             public string IndustryCode { get; set; }
@@ -1206,6 +1230,7 @@
                 this.Cusip = dto.Cusip;
                 this.Lei = dto.Lei;
                 this.BloombergTicker = dto.BloombergTicker;
+                this.Ric = dto.Ric;
                 this.InstrumentType = (int)cfiMapper.MapCfi(dto.Cfi);
                 this.SectorCode = dto.SectorCode;
                 this.IndustryCode = dto.IndustryCode;
@@ -1228,6 +1253,7 @@
             public string Cusip { get; set; }
             public string Lei { get; set; }
             public string BloombergTicker { get; set; }
+            public string Ric { get; set; }
             public int InstrumentType { get; set; }
             public string SectorCode { get; set; }
             public string IndustryCode { get; set; }

@@ -52,6 +52,7 @@
                 "MSF12341234",
                 "MSFT",
                 "MSFT",
+                "MSFT",
                 "MSFT");
             var security = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -98,6 +99,7 @@
                 "MSF123456789",
                 "MSFT",
                 "MSF12341234",
+                "MSFT",
                 "MSFT",
                 "MSFT",
                 "MSFT");

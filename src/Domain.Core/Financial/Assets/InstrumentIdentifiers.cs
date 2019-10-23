@@ -15,7 +15,8 @@
             string cusip,
             string exchangeSymbol,
             string lei,
-            string bloombergTicker)
+            string bloombergTicker,
+            string ric)
             : this(
                 id,
                 reddeerId,
@@ -28,6 +29,8 @@
                 exchangeSymbol,
                 lei,
                 bloombergTicker,
+                ric,
+                string.Empty,
                 string.Empty,
                 string.Empty,
                 string.Empty,
@@ -51,6 +54,7 @@
             string exchangeSymbol,
             string lei,
             string bloombergTicker,
+            string ric,
             string underlyingSedol,
             string underlyingIsin,
             string underlyingFigi,
@@ -58,7 +62,8 @@
             string underlyingLei,
             string underlyingExchangeSymbol,
             string underlyingBloombergTicker,
-            string underlyingClientIdentifier)
+            string underlyingClientIdentifier,
+            string underlyingRic)
         {
             this.Id = id ?? string.Empty;
             this.ReddeerId = reddeerId ?? string.Empty;
@@ -71,6 +76,7 @@
             this.ExchangeSymbol = exchangeSymbol ?? string.Empty;
             this.Lei = lei ?? string.Empty;
             this.BloombergTicker = bloombergTicker ?? string.Empty;
+            this.Ric = ric ?? string.Empty;
 
             this.UnderlyingSedol = underlyingSedol ?? string.Empty;
             this.UnderlyingIsin = underlyingIsin ?? string.Empty;
@@ -80,11 +86,13 @@
             this.UnderlyingExchangeSymbol = underlyingExchangeSymbol ?? string.Empty;
             this.UnderlyingBloombergTicker = underlyingBloombergTicker ?? string.Empty;
             this.UnderlyingClientIdentifier = underlyingClientIdentifier ?? string.Empty;
+            this.UnderlyingRic = underlyingRic ?? string.Empty;
         }
 
         public static InstrumentIdentifiers Null()
         {
             return new InstrumentIdentifiers(
+                string.Empty,
                 string.Empty,
                 string.Empty,
                 string.Empty,
@@ -123,6 +131,8 @@
 
         public string BloombergTicker { get; set; }
 
+        public string Ric { get; set; }
+
         public string UnderlyingSedol { get; set; }
 
         public string UnderlyingIsin { get; set; }
@@ -138,6 +148,8 @@
         public string UnderlyingBloombergTicker { get; set; }
 
         public string UnderlyingClientIdentifier { get; set; }
+
+        public string UnderlyingRic { get; set; }
 
         public override int GetHashCode()
         {
@@ -187,6 +199,11 @@
                     otherId.BloombergTicker,
                     StringComparison.InvariantCultureIgnoreCase)) return true;
 
+            if (!string.IsNullOrWhiteSpace(this.Ric) && string.Equals(
+                    this.Ric,
+                    otherId.Ric,
+                    StringComparison.InvariantCultureIgnoreCase)) return true;
+
             return false;
         }
 
@@ -196,7 +213,7 @@
         public override string ToString()
         {
             return
-                $"Client Id: {this.ClientIdentifier} | Sedol {this.Sedol} | Isin {this.Isin} | Figi {this.Figi} | Cusip {this.Cusip} | Exchange Symbol {this.ExchangeSymbol} | Lei {this.Lei} | Bloomberg Ticker {this.BloombergTicker}";
+                $"Client Id: {this.ClientIdentifier} | Sedol {this.Sedol} | Isin {this.Isin} | Figi {this.Figi} | Cusip {this.Cusip} | Exchange Symbol {this.ExchangeSymbol} | Lei {this.Lei} | Bloomberg Ticker {this.BloombergTicker} | Ric {this.Ric}";
         }
     }
 }

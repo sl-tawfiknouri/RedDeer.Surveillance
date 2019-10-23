@@ -43,6 +43,7 @@
                                    InstrumentLei = this.PreProcess(rawRecord["InstrumentLei"]),
                                    InstrumentExchangeSymbol = this.PreProcess(rawRecord["InstrumentExchangeSymbol"]),
                                    InstrumentBloombergTicker = this.PreProcess(rawRecord["InstrumentBloombergTicker"]),
+                                   InstrumentRic = this.PreProcess(rawRecord["InstrumentRic"]),
                                    InstrumentUnderlyingName = this.PreProcess(rawRecord["InstrumentUnderlyingName"]),
                                    InstrumentUnderlyingCfi = this.PreProcess(rawRecord["InstrumentUnderlyingCfi"]),
                                    InstrumentUnderlyingIssuerIdentifier =
@@ -58,6 +59,7 @@
                                        this.PreProcess(rawRecord["InstrumentUnderlyingExchangeSymbol"]),
                                    InstrumentUnderlyingBloombergTicker =
                                        this.PreProcess(rawRecord["InstrumentUnderlyingBloombergTicker"]),
+                                   InstrumentUnderlyingRic = this.PreProcess(rawRecord["InstrumentUnderlyingRic"]),
                                    OrderId = this.PreProcess(rawRecord["OrderId"]),
                                    OrderVersion = this.PreProcess(rawRecord["OrderVersion"]),
                                    OrderVersionLinkId = this.PreProcess(rawRecord["OrderVersionLinkId"]),

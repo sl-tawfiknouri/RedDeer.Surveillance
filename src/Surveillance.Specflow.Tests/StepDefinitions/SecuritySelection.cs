@@ -52,7 +52,8 @@
                 string.Empty,
                 "AMD",
                 string.Empty,
-                "Advanced Micro Devices Inc");
+                "Advanced Micro Devices Inc",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -86,7 +87,8 @@
                 string.Empty,
                 "BAE",
                 "549300D72VDDRVGKSH48",
-                "BAE Systems Plc");
+                "BAE Systems Plc",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -120,7 +122,8 @@
                 string.Empty,
                 "BARC",
                 "G5GSEF7VJP5I7OUK5573",
-                "Barclays Lon");
+                "Barclays Lon",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -154,7 +157,8 @@
                 string.Empty,
                 "Micron",
                 string.Empty,
-                "Micron Technology Inc");
+                "Micron Technology Inc",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -199,7 +203,8 @@
                 string.Empty,
                 "Nvidia",
                 string.Empty,
-                "Nvidia Corp Inc");
+                "Nvidia Corp Inc",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -244,7 +249,8 @@
                 "G924502U1",
                 "UKTI 1.25 11/22/32 3MO Govt",
                 string.Empty,
-                "UKTI 1.25 11/22/32 3MO Govt");
+                "UKTI 1.25 11/22/32 3MO Govt",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Bond,
@@ -278,7 +284,8 @@
                 "G924502U1",
                 "UKTI 1.25 11/22/32 3MO Govt",
                 string.Empty,
-                "UKTI 1.25 11/22/32 3MO Govt");
+                "UKTI 1.25 11/22/32 3MO Govt",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Bond,
@@ -323,7 +330,8 @@
                 string.Empty,
                 "VOD",
                 "213800WP8QQ8YTL6MH84",
-                "Vodafone Lon");
+                "Vodafone Lon",
+                string.Empty);
 
             var financialInstrument = new FinancialInstrument(
                 InstrumentTypes.Equity,

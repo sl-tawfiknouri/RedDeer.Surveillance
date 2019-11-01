@@ -37,7 +37,7 @@
         private bool _requestData = false;
 
         public HighMarketCapFilter(
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory factory,
             RuleRunMode ruleRunMode,
             DecimalRangeRuleFilter marketCap,
             IMarketTradingHoursService tradingHoursService,

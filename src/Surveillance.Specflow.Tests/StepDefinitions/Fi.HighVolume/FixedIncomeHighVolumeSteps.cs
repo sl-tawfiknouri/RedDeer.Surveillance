@@ -51,9 +51,14 @@
         private readonly UniverseSelectionState universeSelectionState;
 
         /// <summary>
-        /// The interday universe market cache factory.
+        /// The universe market cache factory.
         /// </summary>
-        private UniverseMarketCacheFactory interdayUniverseMarketCacheFactory;
+        private UniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The universe market cache factory.
+        /// </summary>
+        private UniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The order filter service.
@@ -178,7 +183,8 @@
                 this.parameters,
                 this.orderFilterService,
                 this.ruleContext,
-                this.interdayUniverseMarketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 this.judgementService,
                 this.dataRequestSubscriber,
                 this.marketTradingHoursService,
@@ -264,10 +270,15 @@
 
             this.marketTradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());
             
-            this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this.equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            this.fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
         }
     }
 }

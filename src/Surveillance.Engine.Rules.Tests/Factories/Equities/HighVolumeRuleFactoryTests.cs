@@ -22,7 +22,8 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     public class HighVolumeRuleFactoryTests
     {
         private IUniverseEquityOrderFilterService _orderFilterService;
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
         private IMarketTradingHoursService _tradingHoursService;
         private ICurrencyConverterService currencyConverterService;
         private ILogger<IHighVolumeRule> _logger;
@@ -37,7 +38,8 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Setup()
         {
             _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
+            _equityFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            _fixedIncomeFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             this.currencyConverterService = A.Fake<ICurrencyConverterService>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
@@ -53,41 +55,41 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Order_Filter_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(null, _factory, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(null, _equityFactory, _fixedIncomeFactory, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Market_Cache_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, null, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, null, _fixedIncomeFactory, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Market_Trading_Hours_Manager_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _factory, null, this.currencyConverterService, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _equityFactory, _fixedIncomeFactory, null, this.currencyConverterService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _factory, _tradingHoursService, this.currencyConverterService, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _equityFactory, _fixedIncomeFactory, _tradingHoursService, this.currencyConverterService, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Trading_History_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _factory, _tradingHoursService, this.currencyConverterService, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilterService, _equityFactory, _fixedIncomeFactory, _tradingHoursService, this.currencyConverterService, _logger, null));
         }
 
         [Test]
         public void Build_Has_Non_Null_Response()
         {
-            var factory = new EquityRuleHighVolumeFactory(_orderFilterService, _factory, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleHighVolumeFactory(_orderFilterService, _equityFactory, _fixedIncomeFactory, _tradingHoursService, this.currencyConverterService, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_equitiesParameters, _opCtx, _alertStream, _dataRequestSubscriber, RuleRunMode.ForceRun);
 

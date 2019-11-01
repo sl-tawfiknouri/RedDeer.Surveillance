@@ -21,7 +21,8 @@
     public class EquityRuleHighVolumeFactory : IEquityRuleHighVolumeFactory
     {
         private readonly IUniverseEquityOrderFilterService orderFilterService;
-        private readonly IUniverseMarketCacheFactory factory;
+        private readonly IUniverseEquityMarketCacheFactory equityFactory;
+        private readonly IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory;
         private readonly IMarketTradingHoursService tradingHoursService;
         private readonly ICurrencyConverterService currencyConverterService;
         private readonly ILogger<IHighVolumeRule> logger;
@@ -29,14 +30,16 @@
 
         public EquityRuleHighVolumeFactory(
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IMarketTradingHoursService tradingHoursService,
             ICurrencyConverterService currencyConverterService,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             this.orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this.equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this.fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this.tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             this.currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -58,7 +61,8 @@
                 operationContext,
                 alertStream,
                 this.orderFilterService,
-                this.factory,
+                this.equityFactory,
+                this.fixedIncomeFactory,
                 this.tradingHoursService,
                 dataRequestSubscriber,
                 this.currencyConverterService,

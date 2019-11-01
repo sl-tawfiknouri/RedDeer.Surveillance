@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 
     public class EquityRuleHighProfitFactory : IEquityRuleHighProfitFactory
     {
-        private readonly IMarketDataCacheStrategyFactory _cacheStrategyFactory;
+        private readonly IEquityMarketDataCacheStrategyFactory _cacheStrategyFactory;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
 
@@ -32,7 +32,9 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 
         private readonly ILogger<HighProfitsRule> _logger;
 
-        private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
 
@@ -45,8 +47,9 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory cacheStrategyFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
+            IEquityMarketDataCacheStrategyFactory cacheStrategyFactory,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -57,8 +60,10 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             this._exchangeRateProfitCalculator = exchangeRateProfitCalculator
                                                  ?? throw new ArgumentNullException(
                                                      nameof(exchangeRateProfitCalculator));
-            this._marketCacheFactory =
-                marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            this._equityMarketCacheFactory =
+                equityMarketCacheFactory ?? throw new ArgumentNullException(nameof(equityMarketCacheFactory));
+            this._fixedIncomeMarketCacheFactory =
+                fixedIncomeMarketCacheFactory ?? throw new ArgumentNullException(nameof(fixedIncomeMarketCacheFactory));
             this._cacheStrategyFactory =
                 cacheStrategyFactory ?? throw new ArgumentNullException(nameof(cacheStrategyFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -87,7 +92,8 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 this._revenueCalculatorFactory,
                 this._exchangeRateProfitCalculator,
                 this._orderFilterService,
-                this._marketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 this._cacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
@@ -102,7 +108,8 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 this._revenueCalculatorFactory,
                 this._exchangeRateProfitCalculator,
                 this._orderFilterService,
-                this._marketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 this._cacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,

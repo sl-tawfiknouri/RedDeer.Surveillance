@@ -11,7 +11,7 @@
 
     using Surveillance.Engine.Rules.Rules;
 
-    public interface IUniverseEquityIntradayCache : ICloneable
+    public interface IUniverseEquityIntraDayCache : ICloneable
     {
         void Add(EquityIntraDayTimeBarCollection value);
 

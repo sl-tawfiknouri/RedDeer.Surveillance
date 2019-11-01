@@ -86,7 +86,10 @@
         /// <param name="runRuleContext">
         /// The run rule context.
         /// </param>
-        /// <param name="universeMarketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The universe market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The universe market cache factory.
         /// </param>
         /// <param name="ruleRunMode">
@@ -112,7 +115,8 @@
             DecimalRangeRuleFilter decimalRangeRuleFilter,
             IUniverseOrderFilter universeOrderFilter,
             ISystemProcessOperationRunRuleContext runRuleContext,
-            IUniverseMarketCacheFactory universeMarketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             RuleRunMode ruleRunMode,
             IMarketTradingHoursService marketTradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestsSubscriber,
@@ -127,7 +131,8 @@
                 Versioner.Version(1,0),
                 nameof(HighVolumeVenueFilter),
                 runRuleContext,
-                universeMarketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 ruleRunMode,
                 logger,
                 stackLogger)

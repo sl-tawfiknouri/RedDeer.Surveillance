@@ -381,9 +381,9 @@
 
             if (value.StateChange != UniverseStateEvent.Order && value.StateChange != UniverseStateEvent.OrderPlaced
                                                               && value.StateChange
-                                                              != UniverseStateEvent.EquityIntradayTick) return false;
+                                                              != UniverseStateEvent.EquityIntraDayTick) return false;
 
-            if (value.StateChange == UniverseStateEvent.EquityIntradayTick)
+            if (value.StateChange == UniverseStateEvent.EquityIntraDayTick)
                 return this.FilterOnMarketIntradayTick(value);
 
             if (value.StateChange == UniverseStateEvent.Order || value.StateChange == UniverseStateEvent.OrderPlaced)

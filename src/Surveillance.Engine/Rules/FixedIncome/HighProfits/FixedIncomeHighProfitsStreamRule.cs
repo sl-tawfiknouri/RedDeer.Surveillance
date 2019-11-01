@@ -83,7 +83,7 @@
         /// <summary>
         /// Caching strategy - varies over market closure or stream analysis
         /// </summary>
-        private readonly IMarketDataCacheStrategyFactory marketDataCacheFactory;
+        private readonly IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheFactory;
 
         /// <summary>
         /// Filters out trades with incorrect CFI
@@ -122,7 +122,10 @@
         /// <param name="orderFilter">
         /// classification financial instruments filtering service
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// time bar cache factory
+        /// </param>
+        /// /// <param name="fixedIncomeMarketCacheFactory">
         /// time bar cache factory
         /// </param>
         /// <param name="marketDataCacheFactory">
@@ -150,8 +153,9 @@
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseFixedIncomeOrderFilterService orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
+            IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IFixedIncomeHighProfitJudgementService judgementService,
             RuleRunMode runMode,
@@ -165,7 +169,8 @@
                 FixedIncomeHighProfitFactory.Version,
                 "Fixed Income High Profit Rule",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -274,7 +279,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AnyInterday,
+                    DataSource.RefinitivInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -285,7 +290,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AnyIntraday,
+                    DataSource.RefinitivIntraday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -328,7 +333,7 @@
         /// </summary>
         /// <param name="history">Trading history qualified for high profit analysis</param>
         /// <param name="intradayCache">Market data for analysis</param>
-        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
+        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseFixedIncomeIntraDayCache intradayCache)
         {
             if (!this.RunRuleGuard(history))
             {
@@ -366,7 +371,7 @@
 
             var marketCache = 
                 this.MarketClosureRule
-                    ? this.marketDataCacheFactory.InterdayStrategy(this.UniverseEquityInterdayCache)
+                    ? this.marketDataCacheFactory.InterdayStrategy(this.UniverseFixedIncomeInterdayCache)
                     : this.marketDataCacheFactory.IntradayStrategy(intradayCache);
 
             var costTask = costCalculator.CalculateCostOfPosition(cleanTrades, this.UniverseDateTime, this.RuleCtx);
@@ -527,7 +532,7 @@
         /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            this.EvaluateHighProfits(history, this.UniverseEquityIntradayCache);
+            this.EvaluateHighProfits(history, this.UniverseFixedIncomeIntradayCache);
         }
 
         /// <summary>
@@ -538,7 +543,7 @@
         /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
-            this.EvaluateHighProfits(history, this.FutureUniverseEquityIntradayCache);
+            this.EvaluateHighProfits(history, this.FutureUniverseFixedIncomeIntradayCache);
         }
 
         /// <summary>

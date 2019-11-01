@@ -19,7 +19,7 @@
 
     public class TradingMarkingTheCloseProcess : BaseTradingProcess
     {
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+        private readonly IEquityIntraDayHistoryStack _intraDayHistoryStack;
 
         private readonly object _lock = new object();
 
@@ -41,7 +41,7 @@
             this._markingTheCloseTargetSedols =
                 markingTheCloseTargetSedols?.Where(cts => !string.IsNullOrWhiteSpace(cts))?.ToList()
                 ?? new List<string>();
-            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromMinutes(29));
+            this._intraDayHistoryStack = new EquityIntraDayHistoryStack(TimeSpan.FromMinutes(29));
             this._marketDto = marketDto ?? throw new ArgumentNullException(nameof(marketDto));
         }
 

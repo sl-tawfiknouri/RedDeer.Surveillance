@@ -17,7 +17,9 @@
 
     public class EquityRuleCancelledOrderFactory : IEquityRuleCancelledOrderFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<CancelledOrderRule> _logger;
 
@@ -27,13 +29,15 @@
 
         public EquityRuleCancelledOrderFactory(
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._tradingHistoryLogger = tradingHistoryLogger;
         }
@@ -51,7 +55,8 @@
                 ruleCtx,
                 alertStream,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 runMode,
                 this._logger,
                 this._tradingHistoryLogger);

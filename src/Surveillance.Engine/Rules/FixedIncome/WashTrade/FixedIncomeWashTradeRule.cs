@@ -75,7 +75,10 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="factory">
+        /// <param name="equityFactory">
+        /// The factory.
+        /// </param>
+        /// <param name="fixedIncomeFactory">
         /// The factory.
         /// </param>
         /// <param name="runMode">
@@ -100,7 +103,8 @@
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             IClusteringService clusteringService,
@@ -115,7 +119,8 @@
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleContext,
-                factory,
+                equityFactory,
+                fixedIncomeFactory,
                 runMode,
                 logger,
                 tradingStackLogger)

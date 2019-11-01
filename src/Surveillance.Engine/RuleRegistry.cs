@@ -243,7 +243,8 @@
 
             this.For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             this.For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
-            this.For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
+            this.For<IUniverseEquityMarketCacheFactory>().Use<UniverseEquityMarketCacheFactory>();
+            this.For<IUniverseFixedIncomeMarketCacheFactory>().Use<UniverseFixedIncomeMarketCacheFactory>();
             this.For<IMarketTradingHoursService>().Use<MarketTradingHoursService>();
             this.For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
 
@@ -261,7 +262,8 @@
             this.For<IUniverseDataRequestsSubscriber>().Use<UniverseDataRequestsSubscriber>();
             this.For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
 
-            this.For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
+            this.For<IEquityMarketDataCacheStrategyFactory>().Use<EquityMarketDataCacheStrategyFactory>();
+            this.For<IFixedIncomeMarketDataCacheStrategyFactory>().Use<FixedIncomeMarketDataCacheStrategyFactory>();
             this.For<IRuleParameterService>().Use<RuleParameterService>();
             this.For<IRuleParameterAdjustedTimespanService>().Use<RuleParameterAdjustedTimespanService>();
 

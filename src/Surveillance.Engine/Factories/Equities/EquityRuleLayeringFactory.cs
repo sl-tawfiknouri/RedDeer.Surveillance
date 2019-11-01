@@ -18,7 +18,9 @@
 
     public class EquityRuleLayeringFactory : IEquityRuleLayeringFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<EquityRuleLayeringFactory> _logger;
 
@@ -31,7 +33,8 @@
         public EquityRuleLayeringFactory(
             IUniverseEquityOrderFilterService orderFilterService,
             IMarketTradingHoursService tradingHoursService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             ILogger<EquityRuleLayeringFactory> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -39,7 +42,8 @@
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             this._tradingHoursService =
                 tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._tradingHistoryLogger =
                 tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -58,7 +62,8 @@
                 alertStream,
                 this._orderFilterService,
                 this._logger,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._tradingHoursService,
                 ruleCtx,
                 runMode,

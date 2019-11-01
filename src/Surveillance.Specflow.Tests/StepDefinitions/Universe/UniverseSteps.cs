@@ -240,7 +240,7 @@
                 marketDataParam.Epoch,
                 new[] { marketData });
             var universeEvent = new UniverseEvent(
-                UniverseStateEvent.EquityIntradayTick,
+                UniverseStateEvent.EquityIntraDayTick,
                 marketDataParam.Epoch,
                 timeBarCollection);
 

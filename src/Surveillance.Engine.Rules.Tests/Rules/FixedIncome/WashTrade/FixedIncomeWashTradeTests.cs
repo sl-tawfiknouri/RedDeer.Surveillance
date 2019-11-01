@@ -35,7 +35,9 @@
 
         private ILogger<FixedIncomeHighProfitsRule> _logger;
 
-        private IUniverseMarketCacheFactory _marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private IWashTradeRuleFixedIncomeParameters _parameters;
 
@@ -54,7 +56,8 @@
                     this._parameters,
                     this._fixedIncomeOrderFile,
                     this._ruleCtx,
-                    this._marketCacheFactory,
+                    this._equityMarketCacheFactory,
+                    this._fixedIncomeMarketCacheFactory,
                     this._runMode,
                     this._alertStream,
                     this._clusteringService,
@@ -69,7 +72,8 @@
             this._parameters = A.Fake<IWashTradeRuleFixedIncomeParameters>();
             this._fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._alertStream = A.Fake<IUniverseAlertStream>();
             this._clusteringService = A.Fake<IClusteringService>();
             this._portfolioFactory = A.Fake<IPortfolioFactory>();

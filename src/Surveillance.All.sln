@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject
@@ -139,9 +139,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.Tests", "Surveillance.Data.Universe.Tests\Surveillance.Data.Universe.Tests.csproj", "{2C425CF5-F8FB-464F-9E17-4004108D931D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.TickPriceHistoryClient", "Surveillance.Reddeer.TickPriceHistoryClient\Surveillance.Reddeer.TickPriceHistoryClient.csproj", "{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClient", "Surveillance.Reddeer.TickPriceHistoryClient\Surveillance.Reddeer.TickPriceHistoryClient.csproj", "{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Reddeer.TickPriceHistoryClientTests", "Surveillance.Reddeer.TickPriceHistoryClientTests\Surveillance.Reddeer.TickPriceHistoryClientTests.csproj", "{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClientTests", "Surveillance.Reddeer.TickPriceHistoryClientTests\Surveillance.Reddeer.TickPriceHistoryClientTests.csproj", "{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -377,6 +379,10 @@ Global
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -439,6 +445,7 @@ Global
 		{2C425CF5-F8FB-464F-9E17-4004108D931D} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517} = {93E57B33-108D-4DF9-840A-693277AAA75B}
+		{7AD49B1E-89C8-4CFD-8BDF-EF9E4B390EE4} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

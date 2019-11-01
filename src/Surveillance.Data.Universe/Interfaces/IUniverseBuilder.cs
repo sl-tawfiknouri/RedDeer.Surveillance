@@ -70,11 +70,17 @@
         /// <param name="trades">
         /// The trades.
         /// </param>
-        /// <param name="equityIntradayUpdates">
+        /// <param name="equityIntraDayUpdates">
         /// The equity intraday updates.
         /// </param>
         /// <param name="equityInterDayUpdates">
         /// The equity inter day updates.
+        /// </param>
+        /// <param name="fixedIncomeIntraDayUpdates">
+        /// The fixed income intraday updates.
+        /// </param>
+        /// <param name="fixedIncomeInterDayUpdates">
+        /// The fixed income inter day updates.
         /// </param>
         /// <param name="marketEvents">
         /// The market events open/close.
@@ -97,8 +103,10 @@
         IUniverse PackageUniverse(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
+            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntraDayUpdates,
             IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
+            IReadOnlyCollection<FixedIncomeIntraDayTimeBarCollection> fixedIncomeIntraDayUpdates,
+            IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection> fixedIncomeInterDayUpdates,
             IReadOnlyCollection<IUniverseEvent> marketEvents,
             bool includeGenesis,
             bool includeEschaton,

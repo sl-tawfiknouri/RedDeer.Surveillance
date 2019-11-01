@@ -30,7 +30,12 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private readonly IUniverseMarketCacheFactory marketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private readonly IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The market trading hours service.
@@ -53,7 +58,10 @@
         /// <param name="filterService">
         /// The filter service.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="logger">
@@ -67,14 +75,17 @@
         /// </param>
         public FixedIncomeHighVolumeFactory(
             IUniverseFixedIncomeOrderFilterService filterService,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingLogger,
             IMarketTradingHoursService marketTradingHoursService)
         {
             this.filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
-            this.marketCacheFactory =
-                marketCacheFactory ?? throw new ArgumentNullException(nameof(this.marketCacheFactory));
+            this.equityMarketCacheFactory =
+                equityMarketCacheFactory ?? throw new ArgumentNullException(nameof(this.equityMarketCacheFactory));
+            this.fixedIncomeMarketCacheFactory =
+                fixedIncomeMarketCacheFactory ?? throw new ArgumentNullException(nameof(this.fixedIncomeMarketCacheFactory));
             this.marketTradingHoursService = marketTradingHoursService ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.tradingLogger = tradingLogger ?? throw new ArgumentNullException(nameof(tradingLogger));
@@ -117,7 +128,8 @@
                 parameters,
                 this.filterService,
                 operationContext,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 judgementService,
                 dataRequestSubscriber,
                 this.marketTradingHoursService,

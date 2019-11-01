@@ -14,6 +14,7 @@
     using Surveillance.DataLayer.Aurora.BMLL;
     using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
     using Surveillance.Engine.Rules.Factories;
+    using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
     using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
@@ -39,7 +40,9 @@
 
         private IClusteringService _clusteringService;
 
-        private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private IUniverseFixedIncomeOrderFilterService _orderFilterService;
 
@@ -107,7 +110,8 @@
                 this._parameters,
                 this._orderFilterService,
                 this._ruleCtx,
-                this._interdayUniverseMarketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 RuleRunMode.ForceRun,
                 this._alertStream,
                 this._clusteringService,
@@ -127,10 +131,14 @@
 
             this._portfolioFactory = new PortfolioFactory();
             this._clusteringService = new ClusteringService();
-            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this._equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+            this._fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
         }
     }
 }

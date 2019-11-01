@@ -147,18 +147,20 @@
 
             var bmllTimeBar = new List<BmllTimeBarQuery>();
             var factsetTimeBar = new List<FactSetTimeBarQuery>();
-            var refinitiveTimeBar = new List<RefinitiveTimeBarQuery>();
+            var refinitivIntraDayTimeBar = new List<RefinitivIntraDayTimeBarQuery>();
+            var refinitivInterDayTimeBar = new List<RefinitivInterDayTimeBarQuery>();
             var unfilteredOrders = this.BuildUnfilteredOrdersQueries(execution);
 
             foreach (var sub in subConstraints)
             {
                 // updates relevant list by reference
-                this.MapSubConstraintToQuery(sub, orders, bmllTimeBar, factsetTimeBar);
+                this.MapSubConstraintToQuery(sub, orders, bmllTimeBar, factsetTimeBar, refinitivIntraDayTimeBar, refinitivInterDayTimeBar);
             }
 
             bmllTimeBar = this.timeLineContinuum.Merge(bmllTimeBar.Distinct().ToList()).ToList();
             factsetTimeBar = this.timeLineContinuum.Merge(factsetTimeBar.Distinct().ToList()).ToList();
-            refinitiveTimeBar = this.timeLineContinuum.Merge(refinitiveTimeBar.Distinct().ToList()).ToList();
+            refinitivIntraDayTimeBar = this.timeLineContinuum.Merge(refinitivIntraDayTimeBar.Distinct().ToList()).ToList();
+            refinitivInterDayTimeBar = this.timeLineContinuum.Merge(refinitivInterDayTimeBar.Distinct().ToList()).ToList();
             unfilteredOrders = this.timeLineContinuum.Merge(unfilteredOrders.Distinct().ToList()).ToList();
 
             var manifest = this.BuildManifest(
@@ -166,7 +168,8 @@
                 unfilteredOrders,
                 bmllTimeBar,
                 factsetTimeBar,
-                refinitiveTimeBar);
+                refinitivIntraDayTimeBar,
+                refinitivInterDayTimeBar);
 
             var interpreter =
                 new DataManifestInterpreter(
@@ -202,7 +205,8 @@
                     new Stack<UnfilteredOrdersQuery>(),
                     new Stack<BmllTimeBarQuery>(),
                     new Stack<FactSetTimeBarQuery>(),
-                    new Stack<RefinitiveTimeBarQuery>());
+                    new Stack<RefinitivIntraDayTimeBarQuery>(),
+                    new Stack<RefinitivInterDayTimeBarQuery>());
 
             return new DataManifestInterpreter(
                 dataManifest,
@@ -228,11 +232,19 @@
         /// <param name="factsetTimeBar">
         /// The fact set time bar.
         /// </param>
+        /// <param name="refinitivIntraDayTimeBar">
+        /// The refinitiv intra day set time bar.
+        /// </param>
+        /// <param name="refinitivInterDayTimeBar">
+        /// The refinitiv inter day set time bar.
+        /// </param>
         private void MapSubConstraintToQuery(
             IRuleDataSubConstraint sub,
             IReadOnlyCollection<Order> orders,
             List<BmllTimeBarQuery> bmllTimeBar,
-            List<FactSetTimeBarQuery> factsetTimeBar)
+            List<FactSetTimeBarQuery> factsetTimeBar,
+            List<RefinitivIntraDayTimeBarQuery> refinitivIntraDayTimeBar,
+            List<RefinitivInterDayTimeBarQuery> refinitivInterDayTimeBar)
         {
             var filteredOrders = orders.Where(sub.Predicate).ToList();
 
@@ -274,8 +286,19 @@
                     break;
                 case DataSource.None:
                     break;
-                case DataSource.Refinitive:
-                    this.logger.LogWarning("Refinitive data requests are being issued without support in the data manifest builder");
+                case DataSource.RefinitivInterday:
+                    var refinitivIntraDayTimeBarQueries = this.TimeBarAdd(
+                        filteredOrders,
+                        sub,
+                        (a, b, c) => new RefinitivIntraDayTimeBarQuery(a, b, c));
+                    refinitivIntraDayTimeBar.AddRange(refinitivIntraDayTimeBarQueries);
+                    break;
+                case DataSource.RefinitivIntraday:
+                    var refinitivInterDayTimeBarQueries = this.TimeBarAdd(
+                        filteredOrders,
+                        sub,
+                        (a, b, c) => new RefinitivInterDayTimeBarQuery(a, b, c));
+                    refinitivInterDayTimeBar.AddRange(refinitivInterDayTimeBarQueries);
                     break;
                 default:
                     this.logger.LogError($"Argument out of range for data source {sub.Source}");
@@ -298,8 +321,11 @@
         /// <param name="factSetQueries">
         /// The fact set queries.
         /// </param>
-        /// <param name="refinitiveQueries">
-        /// The other queries.
+        /// <param name="refinitivIntraDayQueries">
+        /// The refinitiv intra day queries.
+        /// </param>
+        /// <param name="refinitivInterDayQueries">
+        /// The refinitiv inter day queries.
         /// </param>
         /// <returns>
         /// The <see cref="IDataManifest"/>.
@@ -309,7 +335,8 @@
             IList<UnfilteredOrdersQuery> orders,
             IList<BmllTimeBarQuery> bmllQueries,
             IList<FactSetTimeBarQuery> factSetQueries,
-            IList<RefinitiveTimeBarQuery> refinitiveQueries)
+            IList<RefinitivIntraDayTimeBarQuery> refinitivIntraDayQueries,
+            IList<RefinitivInterDayTimeBarQuery> refinitivInterDayQueries)
         {
             var stackedOrders = new Stack<UnfilteredOrdersQuery>();
             orders = orders?.OrderByDescending(_ => _.StartUtc)?.ToList() ?? new List<UnfilteredOrdersQuery>();
@@ -332,11 +359,18 @@
                 stackedFactSetQueries.Push(factSetQuery);
             }
 
-            var stackedRefinitiveQueries = new Stack<RefinitiveTimeBarQuery>();
-            refinitiveQueries = refinitiveQueries?.OrderByDescending(_ => _.StartUtc)?.ToList() ?? new List<RefinitiveTimeBarQuery>();
-            foreach (var refinitiveQuery in refinitiveQueries)
+            var stackedRefinitivIntraDayQueries = new Stack<RefinitivIntraDayTimeBarQuery>();
+            refinitivIntraDayQueries = refinitivIntraDayQueries?.OrderByDescending(_ => _.StartUtc)?.ToList() ?? new List<RefinitivIntraDayTimeBarQuery>();
+            foreach (var refinitivQuery in refinitivIntraDayQueries)
             {
-                stackedRefinitiveQueries.Push(refinitiveQuery);
+                stackedRefinitivIntraDayQueries.Push(refinitivQuery);
+            }
+
+            var stackedRefinitivInterDayQueries = new Stack<RefinitivInterDayTimeBarQuery>();
+            refinitivInterDayQueries = refinitivInterDayQueries?.OrderByDescending(_ => _.StartUtc)?.ToList() ?? new List<RefinitivInterDayTimeBarQuery>();
+            foreach (var refinitivQuery in refinitivInterDayQueries)
+            {
+                stackedRefinitivInterDayQueries.Push(refinitivQuery);
             }
 
             return new DataManifest(
@@ -344,7 +378,8 @@
                 stackedOrders,
                 stackedBmllQueries,
                 stackedFactSetQueries,
-                stackedRefinitiveQueries);
+                stackedRefinitivIntraDayQueries,
+                stackedRefinitivInterDayQueries);
         }
 
         /// <summary>

@@ -102,12 +102,17 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private IUniverseMarketCacheFactory marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The cost calculator factory.
@@ -281,12 +286,17 @@
             this.logger = A.Fake<ILogger<FixedIncomeHighProfitsRule>>();
             this.stackLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            this.marketCacheFactory = new UniverseMarketCacheFactory(
+            this.equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
 
-            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+            this.fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
+
+            this.marketDataCacheStrategyFactory = new FixedIncomeMarketDataCacheStrategyFactory();
 
             this.costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(
@@ -317,7 +327,8 @@
             
             this.factory = new FixedIncomeHighProfitFactory(
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 this.costCalculatorFactory,
                 this.revenueCalculatorFactory,

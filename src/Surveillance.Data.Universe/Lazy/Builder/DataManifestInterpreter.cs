@@ -115,8 +115,10 @@
             }
 
             var orders = await this.ScanOrders(span);
-            var equityIntradayTimeBars = await this.ScanIntraDayTimeBars(span);
-            var equityInterdayTimeBars = await this.ScanInterDayTimeBars(span);
+            var equityIntradayTimeBars = await this.ScanEquityIntraDayTimeBars(span);
+            var equityInterdayTimeBars = await this.ScanEquityInterDayTimeBars(span);
+            var fixedIncomeIntradayTimeBars = await this.ScanFixedIncomeIntraDayTimeBars(span);
+            var fixedIncomeInterdayTimeBars = await this.ScanFixedIncomeInterDayTimeBars(span);
             var marketOpenClose = await this.ScanMarketOpenClose(span);
 
             // ReSharper disable once PossibleInvalidOperationException
@@ -128,6 +130,8 @@
                 orders,
                 equityIntradayTimeBars,
                 equityInterdayTimeBars,
+                fixedIncomeIntradayTimeBars,
+                fixedIncomeInterdayTimeBars,
                 marketOpenClose,
                 includeGenesis,
                 includeEschaton,
@@ -200,7 +204,7 @@
         /// <returns>
         /// The <see cref="EquityIntraDayTimeBarCollection"/>.
         /// </returns>
-        private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> ScanIntraDayTimeBars(TimeSpan span)
+        private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> ScanEquityIntraDayTimeBars(TimeSpan span)
         {
             if (this.DataManifest.BmllTimeBar == null
                 || !this.DataManifest.BmllTimeBar.Any())
@@ -258,7 +262,7 @@
         /// <returns>
         /// The <see cref="EquityInterDayTimeBarCollection"/>.
         /// </returns>
-        private async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> ScanInterDayTimeBars(TimeSpan span)
+        private async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> ScanEquityInterDayTimeBars(TimeSpan span)
         {
             if (this.DataManifest.FactsetTimeBar == null
                 || !this.DataManifest.FactsetTimeBar.Any())
@@ -303,6 +307,16 @@
             }
 
             return queriedTimeBars;
+        }
+
+        private async Task<IReadOnlyCollection<FixedIncomeIntraDayTimeBarCollection>> ScanFixedIncomeIntraDayTimeBars(TimeSpan span)
+        {
+            return await Task.FromResult(new List<FixedIncomeIntraDayTimeBarCollection>());
+        }
+
+        private async Task<IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection>> ScanFixedIncomeInterDayTimeBars(TimeSpan span)
+        {
+            return await Task.FromResult(new List<FixedIncomeInterDayTimeBarCollection>());
         }
 
         /// <summary>

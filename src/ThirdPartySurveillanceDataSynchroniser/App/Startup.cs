@@ -5,6 +5,7 @@
     using DataSynchroniser.Api.Bmll;
     using DataSynchroniser.Api.Factset;
     using DataSynchroniser.Api.Markit;
+    using DataSynchroniser.Api.Refinitiv;
     using DataSynchroniser.Configuration;
 
     using Infrastructure.Network.Aws.Interfaces;
@@ -72,6 +73,7 @@
                         config.IncludeRegistry<BmllDataSynchroniserRegistry>();
                         config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
                         config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
+                        config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                         config.IncludeRegistry<AppRegistry>();
                         config.IncludeRegistry<ReddeerApiClientRegistry>();
                         config.Populate(services);

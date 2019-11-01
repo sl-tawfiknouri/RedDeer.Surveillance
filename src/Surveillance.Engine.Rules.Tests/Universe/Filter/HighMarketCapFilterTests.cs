@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
     public class HighMarketCapFilterTests
     {
         private ICurrencyConverterService currencyConverterService;
-        private IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _universeMarketCacheFactory;
         private IUniverseEquityInterDayCache _universeEquityInterDayCache;
         private IMarketTradingHoursService _tradingHoursService;
         private ISystemProcessOperationRunRuleContext _operationRunRuleContext;
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         public void SetUp()
         {
             this.currencyConverterService = A.Fake<ICurrencyConverterService>();
-            _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            _universeMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
             _universeEquityInterDayCache = A.Fake<IUniverseEquityInterDayCache>();
             _universeDataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 

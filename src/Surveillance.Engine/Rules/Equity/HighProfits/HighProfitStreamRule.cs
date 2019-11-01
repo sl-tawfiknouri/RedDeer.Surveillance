@@ -83,7 +83,7 @@
         /// <summary>
         /// The market data cache factory.
         /// </summary>
-        private readonly IMarketDataCacheStrategyFactory MarketDataCacheFactory;
+        private readonly IEquityMarketDataCacheStrategyFactory MarketDataCacheFactory;
 
         /// <summary>
         /// The order filter.
@@ -122,7 +122,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="marketDataCacheFactory">
@@ -150,8 +153,9 @@
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
+            IEquityMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitJudgementService judgementService,
             RuleRunMode runMode,
@@ -165,7 +169,8 @@
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -322,7 +327,7 @@
         /// <param name="intradayCache">
         /// The intraday cache.
         /// </param>
-        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
+        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntraDayCache intradayCache)
         {
             if (!this.RunRuleGuard(history))
             {

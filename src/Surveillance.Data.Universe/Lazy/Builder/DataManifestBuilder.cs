@@ -286,14 +286,14 @@
                     break;
                 case DataSource.None:
                     break;
-                case DataSource.RefinitivInterday:
+                case DataSource.RefinitivIntraday:
                     var refinitivIntraDayTimeBarQueries = this.TimeBarAdd(
                         filteredOrders,
                         sub,
                         (a, b, c) => new RefinitivIntraDayTimeBarQuery(a, b, c));
                     refinitivIntraDayTimeBar.AddRange(refinitivIntraDayTimeBarQueries);
                     break;
-                case DataSource.RefinitivIntraday:
+                case DataSource.RefinitivInterday:
                     var refinitivInterDayTimeBarQueries = this.TimeBarAdd(
                         filteredOrders,
                         sub,

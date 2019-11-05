@@ -99,7 +99,7 @@
 
                 // Fixed income handling
                 var refinitivData = dataRequests.Where(
-                    _ => _.DataSource == DataSource.RefinitivInterday || _.DataSource == DataSource.AnyIntraday).ToList();
+                    _ => _.DataSource == DataSource.RefinitivInterday).ToList();
 
                 this._logger.LogInformation(
                     $"handling request with id {systemProcessOperationId} had {refinitivData.Count} refinitiv data requests to process");

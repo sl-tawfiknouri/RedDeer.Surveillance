@@ -4,8 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using Domain.Core.Financial.Assets;
+    using Domain.Core.Financial.Money;
+    using Domain.Core.Markets;
     using Domain.Core.Markets.Collections;
+    using Domain.Core.Markets.Timebars;
     using Domain.Core.Trading.Orders;
 
     using Surveillance.Auditing.Context.Interfaces;
@@ -316,7 +319,89 @@
 
         private async Task<IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection>> ScanFixedIncomeInterDayTimeBars(TimeSpan span)
         {
-            return await Task.FromResult(new List<FixedIncomeInterDayTimeBarCollection>());
+            if (this.DataManifest.RefinitivInterDayTimeBar == null
+                || !this.DataManifest.RefinitivInterDayTimeBar.Any())
+            {
+                return new FixedIncomeInterDayTimeBarCollection[0];
+            }
+
+            var scanStack = new Stack<RefinitivInterDayTimeBarQuery>();
+            var scanEnd = this.CurrentTimeUtc.Add(span);
+
+            while (this.DataManifest.RefinitivInterDayTimeBar.Any()
+                   && this.DataManifest.RefinitivInterDayTimeBar.Peek().StartUtc <= scanEnd)
+            {
+                scanStack.Push(this.DataManifest.RefinitivInterDayTimeBar.Pop());
+            }
+
+            var queriedStack = new Stack<RefinitivInterDayTimeBarQuery>();
+            var queriedTimeBars = new List<FixedIncomeInterDayTimeBarCollection>();
+
+            while (scanStack.Any())
+            {
+                var query = scanStack.Pop();
+                var queryEnd = query.EndUtc < scanEnd ? query.EndUtc : scanEnd;
+
+                var timeBars = this.GetTestFixedIncomeInterDayData(query.StartUtc, queryEnd);
+
+                queriedTimeBars.AddRange(timeBars);
+
+                if (query.EndUtc >= scanEnd)
+                {
+                    var cpy = new RefinitivInterDayTimeBarQuery(scanEnd, query.EndUtc, query.Identifiers);
+                    queriedStack.Push(cpy);
+                }
+            }
+
+            while (queriedStack.Any())
+            {
+                this.DataManifest.RefinitivInterDayTimeBar.Push(queriedStack.Pop());
+            }
+
+            return queriedTimeBars;
+        }
+
+        private IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection> GetTestFixedIncomeInterDayData(DateTime startUtc, DateTime endUtc)
+        {
+            var items = new List<FixedIncomeInterDayTimeBarCollection>();
+
+            var testDate = new DateTime(2018, 04, 10, 00, 00, 00, DateTimeKind.Utc);
+            if (testDate >= startUtc && testDate <= endUtc)
+            {
+                var market = new Market("47", "RDFI", "RDFI", MarketTypes.OTC);
+                items.Add(new FixedIncomeInterDayTimeBarCollection(
+                    market,
+                    testDate,
+                    new List<FixedIncomeInstrumentInterDayTimeBar>
+                    {
+                        new FixedIncomeInstrumentInterDayTimeBar(
+                            new FinancialInstrument
+                            {
+                                Identifiers = new InstrumentIdentifiers
+                                {
+                                    Ric = "GB10YT=RR"
+                                }
+                            },
+                            new DailySummaryTimeBar(
+                                0,
+                                "GBX",
+                                new IntradayPrices(
+                                    new Money(200, new Currency("GBX")),
+                                    new Money(201, new Currency("GBX")),
+                                    new Money(202, new Currency("GBX")),
+                                    new Money(203, new Currency("GBX"))
+                                    ),
+                                null,
+                                new Volume(),
+                                testDate
+                                ),
+                            testDate,
+                            market)
+                    }
+                    ));
+            }
+
+            return items;
         }
 
         /// <summary>

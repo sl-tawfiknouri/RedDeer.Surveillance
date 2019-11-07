@@ -88,7 +88,7 @@
             return new MarketDataRequest(
                 "XLON",
                 "ENTSPB",
-                new InstrumentIdentifiers(null, null, null, null, null, null, "figi", null, null, null, null),
+                new InstrumentIdentifiers(null, null, null, null, null, null, "figi", null, null, null, null, null),
                 DateTime.UtcNow,
                 DateTime.UtcNow.AddMinutes(1),
                 "test-process",

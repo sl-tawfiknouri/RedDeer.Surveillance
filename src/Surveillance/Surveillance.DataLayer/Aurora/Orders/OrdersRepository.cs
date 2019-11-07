@@ -100,6 +100,7 @@
 	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
 	            fi.Lei AS SecurityLei,
 	            fi.BloombergTicker AS SecurityBloombergTicker,
+                fi.Ric AS SecurityRic,
 	            fi.SecurityName AS SecurityName,
 	            fi.Cfi AS SecurityCfi,
 	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
@@ -113,6 +114,7 @@
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.UnderlyingRic AS UnderlyingRic,
                 fi.SectorCode As SectorCode,
                 fi.IndustryCode As IndustryCode,
                 fi.RegionCode As RegionCode,
@@ -176,6 +178,7 @@
 	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
 	            fi.Lei AS SecurityLei,
 	            fi.BloombergTicker AS SecurityBloombergTicker,
+                fi.Ric AS SecurityRic,
 	            fi.SecurityName AS SecurityName,
 	            fi.Cfi AS SecurityCfi,
 	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
@@ -189,6 +192,7 @@
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.UnderlyingRic AS UnderlyingRic,
                 fi.SectorCode As SectorCode,
                 fi.IndustryCode As IndustryCode,
                 fi.RegionCode As RegionCode,
@@ -253,6 +257,7 @@
 	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
 	            fi.Lei AS SecurityLei,
 	            fi.BloombergTicker AS SecurityBloombergTicker,
+                fi.Ric AS SecurityRic,
 	            fi.SecurityName AS SecurityName,
 	            fi.Cfi AS SecurityCfi,
 	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
@@ -266,6 +271,7 @@
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.UnderlyingRic AS UnderlyingRic,
                 fi.SectorCode As SectorCode,
                 fi.IndustryCode As IndustryCode,
                 fi.RegionCode As RegionCode,
@@ -331,6 +337,7 @@
 	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
 	            fi.Lei AS SecurityLei,
 	            fi.BloombergTicker AS SecurityBloombergTicker,
+                fi.Ric AS SecurityRic,
 	            fi.SecurityName AS SecurityName,
 	            fi.Cfi AS SecurityCfi,
 	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
@@ -344,6 +351,7 @@
 	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
 	            fi.UnderlyingName AS UnderlyingName,
 	            fi.UnderlyingCfi AS UnderlyingCfi,
+                fi.UnderlyingRic AS UnderlyingRic,
                 fi.SectorCode As SectorCode,
                 fi.IndustryCode As IndustryCode,
                 fi.RegionCode As RegionCode,
@@ -919,6 +927,7 @@
                     dto.SecurityExchangeSymbol,
                     dto.SecurityLei,
                     dto.SecurityBloombergTicker,
+                    dto.SecurityRic,
                     dto.UnderlyingSecuritySedol,
                     dto.UnderlyingSecurityIsin,
                     dto.UnderlyingSecurityFigi,
@@ -926,7 +935,8 @@
                     dto.UnderlyingSecurityLei,
                     dto.UnderlyingSecurityExchangeSymbol,
                     dto.UnderlyingSecurityBloombergTicker,
-                    dto.UnderlyingClientIdentifier),
+                    dto.UnderlyingClientIdentifier,
+                    dto.UnderlyingSecurityRic),
                 dto.SecurityName,
                 dto.SecurityCfi,
                 dto.OrderCurrency,
@@ -1214,6 +1224,7 @@
                 this.SecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
                 this.SecurityLei = order?.Instrument.Identifiers.Lei;
                 this.SecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+                this.SecurityRic = order?.Instrument.Identifiers.Ric;
 
                 this.UnderlyingSecurityName = order?.Instrument.Name;
                 this.UnderlyingSecurityCfi = order?.Instrument.Cfi;
@@ -1227,6 +1238,7 @@
                 this.UnderlyingSecurityLei = order?.Instrument.Identifiers.Lei;
                 this.UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
                 this.UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
+                this.UnderlyingSecurityRic = order?.Instrument.Identifiers.Ric;
 
                 this.SectorCode = order?.Instrument.SectorCode;
                 this.IndustryCode = order?.Instrument.IndustryCode;
@@ -1409,6 +1421,8 @@
             // primary key
             public string SecurityReddeerId { get; set; }
 
+            public string SecurityRic { get; set; }
+
             public string SecuritySedol { get; }
 
             public int? SecurityType { get; }
@@ -1432,6 +1446,8 @@
             public string UnderlyingSecurityLei { get; }
 
             public string UnderlyingSecurityName { get; }
+
+            public string UnderlyingSecurityRic { get; }
 
             public string UnderlyingSecuritySedol { get; }
         }

@@ -82,6 +82,8 @@
 
         public string InstrumentLei { get; set; }
 
+        public string InstrumentRic { get; set; }
+
         /* SECURITY IDENTIFICATION */
         public string InstrumentName { get; set; }
 
@@ -104,6 +106,8 @@
         public string InstrumentUnderlyingIssuerIdentifier { get; set; }
 
         public string InstrumentUnderlyingLei { get; set; }
+
+        public string InstrumentUnderlyingRic { get; set; }
 
         /* DERIVATIVE FURTHER IDENTIFICATION */
         public string InstrumentUnderlyingName { get; set; }

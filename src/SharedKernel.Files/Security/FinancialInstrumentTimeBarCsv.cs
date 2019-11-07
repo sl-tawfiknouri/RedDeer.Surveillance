@@ -46,6 +46,8 @@
 
         public int RowId { get; set; }
 
+        public string Ric { get; set; }
+
         public string SecurityClientIdentifier { get; set; }
 
         public string SecurityName { get; set; }

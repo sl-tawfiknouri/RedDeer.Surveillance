@@ -86,7 +86,8 @@
                 null,
                 null,
                 null,
-                "STAN1");
+                "STAN1",
+                null);
 
             var security1 = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -107,7 +108,8 @@
                 null,
                 null,
                 null,
-                "STAN1");
+                "STAN1",
+                null);
 
             var security2 = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -128,7 +130,8 @@
                 null,
                 null,
                 null,
-                "STAN1");
+                "STAN1",
+                null);
 
             var security3 = new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -285,7 +288,8 @@
                 "sta12345",
                 "stan",
                 "stan",
-                "STAN");
+                "STAN",
+                "stanRic");
 
             var security = new FinancialInstrument(
                 InstrumentTypes.Equity,

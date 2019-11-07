@@ -206,7 +206,8 @@
                 "abc123",
                 "TEST",
                 "TEST INC",
-                "TSTY");
+                "TSTY",
+                "testRic");
 
             this._instrument2 = new InstrumentIdentifiers(
                 "2",
@@ -219,7 +220,8 @@
                 "abc122",
                 "TES2",
                 "TEST2 INC",
-                "TST2Y");
+                "TST2Y",
+                "test2Ric");
 
             this._mdr1 = new MarketDataRequest(
                 "1",

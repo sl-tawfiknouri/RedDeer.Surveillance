@@ -228,6 +228,7 @@
                     re.InstrumentExchangeSymbol,
                     re.InstrumentLei,
                     re.InstrumentBloombergTicker,
+                    re.InstrumentRic,
                     re.InstrumentUnderlyingSedol,
                     re.InstrumentUnderlyingIsin,
                     re.InstrumentUnderlyingFigi,
@@ -235,7 +236,8 @@
                     re.InstrumentUnderlyingLei,
                     re.InstrumentUnderlyingExchangeSymbol,
                     re.InstrumentUnderlyingBloombergTicker,
-                    re.InstrumentUnderlyingClientIdentifier),
+                    re.InstrumentUnderlyingClientIdentifier,
+                    re.InstrumentUnderlyingRic),
                 re.StartTime,
                 re.EndTime,
                 re.SystemProcessOperationRuleRunId,
@@ -295,6 +297,8 @@
 
             public string InstrumentSedol { get; set; }
 
+            public string InstrumentRic { get; set; }
+
             public string InstrumentUnderlyingBloombergTicker { get; set; }
 
             public string InstrumentUnderlyingClientIdentifier { get; set; }
@@ -310,6 +314,8 @@
             public string InstrumentUnderlyingLei { get; set; }
 
             public string InstrumentUnderlyingSedol { get; set; }
+
+            public string InstrumentUnderlyingRic { get; set; }
 
             public string MarketIdentifierCode { get; set; }
 

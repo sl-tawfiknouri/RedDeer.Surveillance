@@ -23,7 +23,8 @@
                 "sta12345",
                 "stan",
                 "stan lei",
-                "stan");
+                "stan",
+                "stanRic");
 
             var sec = new FinancialInstrument(
                 InstrumentTypes.Equity,

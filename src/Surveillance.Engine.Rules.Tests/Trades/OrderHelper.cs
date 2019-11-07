@@ -22,7 +22,8 @@
                 "cusip",
                 "test",
                 "test lei",
-                "ticker");
+                "ticker",
+                "ric");
 
             var security = new FinancialInstrument(
                 InstrumentTypes.Equity,

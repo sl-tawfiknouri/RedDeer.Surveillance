@@ -8,7 +8,6 @@
     using DataSynchroniser.Api.Bmll.Interfaces;
     using DataSynchroniser.Api.Factset.Interfaces;
     using DataSynchroniser.Api.Markit.Interfaces;
-    using DataSynchroniser.Api.Refinitiv.Interfaces;
     using DataSynchroniser.Manager.Interfaces;
     using DataSynchroniser.Queues.Interfaces;
 
@@ -31,15 +30,12 @@
 
         private readonly IMarkitDataSynchroniser _markitSynchroniser;
 
-        private readonly IRefinitivDataSynchroniser _refinitivDataSynchroniser;
-
         private readonly IScheduleRulePublisher _rulePublisher;
 
         public DataRequestManager(
             IBmllDataSynchroniser bmllSynchroniser,
             IFactsetDataSynchroniser factsetSynchroniser,
             IMarkitDataSynchroniser markitSynchroniser,
-            IRefinitivDataSynchroniser refinitivDataSynchroniser,
             IScheduleRulePublisher rulePublisher,
             IRuleRunDataRequestRepository dataRequestRepository,
             ILogger<DataRequestManager> logger)
@@ -49,8 +45,6 @@
                 factsetSynchroniser ?? throw new ArgumentNullException(nameof(factsetSynchroniser));
             this._markitSynchroniser =
                 markitSynchroniser ?? throw new ArgumentNullException(nameof(markitSynchroniser));
-            this._refinitivDataSynchroniser =
-                refinitivDataSynchroniser ?? throw new ArgumentNullException(nameof(refinitivDataSynchroniser));
             this._rulePublisher = rulePublisher ?? throw new ArgumentNullException(nameof(rulePublisher));
             this._dataRequestRepository =
                 dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
@@ -98,13 +92,13 @@
                     await this._bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, bmllData);
 
                 // Fixed income handling
-                var refinitivData = dataRequests.Where(
+                var refinitivInterdayData = dataRequests.Where(
                     _ => _.DataSource == DataSource.RefinitivInterday).ToList();
 
                 this._logger.LogInformation(
-                    $"handling request with id {systemProcessOperationId} had {refinitivData.Count} refinitiv data requests to process");
-                if (refinitivData.Any())
-                    await this._refinitivDataSynchroniser.Handle(systemProcessOperationId, dataRequestContext, refinitivData);
+                    $"handling request with id {systemProcessOperationId} had {refinitivInterdayData.Count} refinitiv data requests to process");
+                //if (refinitivInterdayData.Any())
+                //    await this._refinitivDataSynchroniser.Handle(systemProcessOperationId, dataRequestContext, refinitivInterdayData);
 
                 var markitData = dataRequests.Where(
                     _ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.Any

@@ -368,7 +368,7 @@
             var testDate = new DateTime(2018, 04, 10, 00, 00, 00, DateTimeKind.Utc);
             if (testDate >= startUtc && testDate <= endUtc)
             {
-                var market = new Market("47", "RDFI", "RDFI", MarketTypes.OTC);
+                var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
                 items.Add(new FixedIncomeInterDayTimeBarCollection(
                     market,
                     testDate,

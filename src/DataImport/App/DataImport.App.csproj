@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>RedDeer.DataImport.DataImport.App</AssemblyName>
     <RootNamespace>RedDeer.DataImport.DataImport.App</RootNamespace>
   </PropertyGroup>
@@ -37,7 +37,6 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.1.14" />
     <PackageReference Include="AWSSDK.SQS" Version="3.3.3.22" />
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.6.0" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />

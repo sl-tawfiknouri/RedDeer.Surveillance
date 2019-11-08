@@ -8,7 +8,6 @@
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Internal;
     using Microsoft.Extensions.Logging;
 
     public class RequestResponseLoggingMiddleware : IMiddleware
@@ -95,7 +94,7 @@
         private static async Task<string> GetRequestBody(HttpRequest request)
         {
             request.EnableBuffering();
-            request.EnableRewind();
+            
 
             using (var requestStream = new MemoryStream())
             {

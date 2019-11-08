@@ -11,6 +11,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Hosting;
 
     using NLog;
     using NLog.Web;
@@ -86,7 +87,7 @@
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
-            this._webHost.Services.GetRequiredService<IApplicationLifetime>().ApplicationStopped.Register(
+            this._webHost.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopped.Register(
                 () =>
                     {
                         if (this._stopRequestedByWindows == false) serviceStoppedCallback();

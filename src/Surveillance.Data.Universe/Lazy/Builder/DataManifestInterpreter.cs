@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain.Core.Financial.Assets;
@@ -15,6 +16,7 @@
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Refinitiv.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
@@ -48,6 +50,8 @@
         /// </summary>
         private readonly ISystemProcessOperationContext systemProcessOperationContext;
 
+        private readonly IRefinitivTickPriceHistoryApi refinitivTickPriceHistoryApi;
+
         /// <summary>
         /// The has set current time universal central time.
         /// </summary>
@@ -80,7 +84,8 @@
             IOrdersRepository ordersRepository,
             ISystemProcessOperationContext systemProcessOperationContext,
             IMarketOpenCloseEventService marketService,
-            IReddeerMarketRepository marketRepository)
+            IReddeerMarketRepository marketRepository,
+            IRefinitivTickPriceHistoryApi refinitivTickPriceHistoryApi)
         {
             this.DataManifest = dataManifest ?? throw new ArgumentNullException(nameof(dataManifest));
             this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -88,6 +93,7 @@
             this.systemProcessOperationContext = systemProcessOperationContext ?? throw new ArgumentNullException(nameof(systemProcessOperationContext));
             this.marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
             this.marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
+            this.refinitivTickPriceHistoryApi = refinitivTickPriceHistoryApi ?? throw new ArgumentNullException(nameof(refinitivTickPriceHistoryApi));
         }
 
         /// <summary>
@@ -342,7 +348,7 @@
                 var query = scanStack.Pop();
                 var queryEnd = query.EndUtc < scanEnd ? query.EndUtc : scanEnd;
 
-                var timeBars = this.GetTestFixedIncomeInterDayData(query.StartUtc, queryEnd);
+                var timeBars = await this.GetTestFixedIncomeInterDayData(query.StartUtc, queryEnd);
 
                 queriedTimeBars.AddRange(timeBars);
 
@@ -361,47 +367,93 @@
             return queriedTimeBars;
         }
 
-        private IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection> GetTestFixedIncomeInterDayData(DateTime startUtc, DateTime endUtc)
+        private async Task<IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection>> GetTestFixedIncomeInterDayData(DateTime startUtc, DateTime endUtc)
         {
+            var getInterdayTimeBars = await this.refinitivTickPriceHistoryApi.GetInterdayTimeBars(startUtc, endUtc);
+
+            var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
             var items = new List<FixedIncomeInterDayTimeBarCollection>();
 
-            var testDate = new DateTime(2018, 04, 10, 00, 00, 00, DateTimeKind.Utc);
-            if (testDate >= startUtc && testDate <= endUtc)
+            foreach (var getInterdayTimeBar in getInterdayTimeBars)
             {
-                var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
-                items.Add(new FixedIncomeInterDayTimeBarCollection(
-                    market,
-                    testDate,
-                    new List<FixedIncomeInstrumentInterDayTimeBar>
-                    {
+                var date = getInterdayTimeBar.TimeBar.EpochUtc;
+                var list = new List<FixedIncomeInstrumentInterDayTimeBar> {
                         new FixedIncomeInstrumentInterDayTimeBar(
                             new FinancialInstrument
                             {
                                 Identifiers = new InstrumentIdentifiers
                                 {
-                                    Ric = "GB10YT=RR"
+                                    Cusip = getInterdayTimeBar.SecurityIdentifiers.Cusip,
+                                    //  = getInterdayTimeBar.SecurityIdentifiers.ExternalId,
+                                    Isin = getInterdayTimeBar.SecurityIdentifiers.Isin,
+                                    UnderlyingRic = getInterdayTimeBar.SecurityIdentifiers.Ric,
+                                    Sedol = getInterdayTimeBar.SecurityIdentifiers.Sedol,
+
                                 }
                             },
                             new DailySummaryTimeBar(
-                                0,
-                                "GBX",
+                                null,
+                                getInterdayTimeBar.TimeBar.CurrencyCode,
                                 new IntradayPrices(
-                                    new Money(200, new Currency("GBX")),
-                                    new Money(201, new Currency("GBX")),
-                                    new Money(202, new Currency("GBX")),
-                                    new Money(203, new Currency("GBX"))
+                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.Open), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)),
+                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.CloseAsk), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)), // ??? 
+                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.High), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)),
+                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.Low), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode))
                                     ),
                                 null,
                                 new Volume(),
-                                testDate
+                                date
                                 ),
-                            testDate,
+                            date,
                             market)
-                    }
-                    ));
+                    };
+
+                var fixedIncomeInterDayTimeBarCollection = new FixedIncomeInterDayTimeBarCollection(market, getInterdayTimeBar.TimeBar.EpochUtc, list);
+                items.Add(fixedIncomeInterDayTimeBarCollection);
             }
 
-            return items;
+            return items.AsReadOnly();
+
+            //var items = new List<FixedIncomeInterDayTimeBarCollection>();
+
+            //var testDate = new DateTime(2018, 04, 10, 00, 00, 00, DateTimeKind.Utc);
+            //if (testDate >= startUtc && testDate <= endUtc)
+            //{
+            //    var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
+            //    items.Add(new FixedIncomeInterDayTimeBarCollection(
+            //        market,
+            //        testDate,
+            //        new List<FixedIncomeInstrumentInterDayTimeBar>
+            //        {
+            //            new FixedIncomeInstrumentInterDayTimeBar(
+            //                new FinancialInstrument
+            //                {
+            //                    Identifiers = new InstrumentIdentifiers
+            //                    {
+            //                        Ric = "GB10YT=RR",
+            //                        UnderlyingRic ?? 
+            //                    }
+            //                },
+            //                new DailySummaryTimeBar(
+            //                    0,
+            //                    "GBX",
+            //                    new IntradayPrices(
+            //                        new Money(200, new Currency("GBX")),
+            //                        new Money(201, new Currency("GBX")),
+            //                        new Money(202, new Currency("GBX")),
+            //                        new Money(203, new Currency("GBX"))
+            //                        ),
+            //                    null,
+            //                    new Volume(),
+            //                    testDate
+            //                    ),
+            //                testDate,
+            //                market)
+            //        }
+            //        ));
+            //}
+
+            //return items;
         }
 
         /// <summary>

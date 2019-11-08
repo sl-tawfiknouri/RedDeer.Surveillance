@@ -8,6 +8,7 @@
     using global::Surveillance.Auditing.DataLayer;
     using global::Surveillance.Auditing.DataLayer.Interfaces;
     using global::Surveillance.Auditing.DataLayer.Processes;
+    using global::Surveillance.Data.Universe.Refinitiv;
     using global::Surveillance.DataLayer;
     using global::Surveillance.DataLayer.Configuration.Interfaces;
     using global::Surveillance.Engine.DataCoordinator;
@@ -75,6 +76,7 @@
                         config.IncludeRegistry<RuleRegistry>();
                         config.IncludeRegistry<ReddeerApiClientRegistry>();
                         config.IncludeRegistry<AppRegistry>();
+                        config.IncludeRegistry<RefinitivRegistry>();
                         config.Populate(services);
                     });
 

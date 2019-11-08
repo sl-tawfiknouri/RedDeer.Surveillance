@@ -18,6 +18,7 @@
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
+    using Surveillance.Data.Universe.Refinitiv.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
@@ -51,6 +52,8 @@
         /// </summary>
         private readonly ITimeLineContinuum timeLineContinuum;
 
+        private readonly IRefinitivTickPriceHistoryApi refinitivTickPriceHistoryApi;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -83,6 +86,7 @@
             IReddeerMarketRepository marketRepository,
             IMarketOpenCloseEventService marketOpenCloseEventService,
             ITimeLineContinuum timeLineContinuum,
+            IRefinitivTickPriceHistoryApi refinitivTickPriceHistoryApi,
             ILogger<IDataManifestBuilder> logger)
         {
             this.universeBuilder = 
@@ -94,6 +98,7 @@
             this.marketOpenCloseEventService = 
                 marketOpenCloseEventService ?? throw new ArgumentNullException(nameof(marketOpenCloseEventService));
             this.timeLineContinuum = timeLineContinuum ?? throw new ArgumentNullException(nameof(timeLineContinuum));
+            this.refinitivTickPriceHistoryApi = refinitivTickPriceHistoryApi ?? throw new ArgumentNullException(nameof(refinitivTickPriceHistoryApi));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -178,7 +183,8 @@
                     this.ordersRepository,
                     systemProcessOperationContext,
                     this.marketOpenCloseEventService,
-                    this.marketRepository);
+                    this.marketRepository,
+                    this.refinitivTickPriceHistoryApi);
 
             return interpreter;
         }
@@ -214,7 +220,8 @@
                 this.ordersRepository,
                 systemProcessOperationContext,
                 this.marketOpenCloseEventService,
-                this.marketRepository);
+                this.marketRepository,
+                this.refinitivTickPriceHistoryApi);
         }
 
         /// <summary>

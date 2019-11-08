@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject
@@ -142,6 +142,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClient", "Surveillance.Reddeer.TickPriceHistoryClient\Surveillance.Reddeer.TickPriceHistoryClient.csproj", "{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClientTests", "Surveillance.Reddeer.TickPriceHistoryClientTests\Surveillance.Reddeer.TickPriceHistoryClientTests.csproj", "{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.Refinitiv", "Surveillance.Data.Universe.Refinitiv\Surveillance.Data.Universe.Refinitiv.csproj", "{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Data.Universe.Refinitiv.UnitTests", "Surveillance.Data.Universe.Refinitiv.UnitTests\Surveillance.Data.Universe.Refinitiv.UnitTests.csproj", "{B893BDB3-E352-4C41-8264-92A757A9C394}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -377,6 +381,14 @@ Global
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B893BDB3-E352-4C41-8264-92A757A9C394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B893BDB3-E352-4C41-8264-92A757A9C394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B893BDB3-E352-4C41-8264-92A757A9C394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B893BDB3-E352-4C41-8264-92A757A9C394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -439,6 +451,8 @@ Global
 		{2C425CF5-F8FB-464F-9E17-4004108D931D} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517} = {93E57B33-108D-4DF9-840A-693277AAA75B}
+		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0} = {93E57B33-108D-4DF9-840A-693277AAA75B}
+		{B893BDB3-E352-4C41-8264-92A757A9C394} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

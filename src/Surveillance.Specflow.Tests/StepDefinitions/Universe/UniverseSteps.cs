@@ -154,6 +154,35 @@
             this._universeSelectionState.SelectedUniverse = new Universe(orderedUniverse);
         }
 
+        [Given(@"With the fixed income intraday market data :")]
+        public void GivenWithTheFixedIncomeIntradayMarketData(Table intradayMarketDataTable)
+        {
+            if (this._universeSelectionState.SelectedUniverse == null || intradayMarketDataTable == null)
+            {
+                this._scenarioContext.Pending();
+                return;
+            }
+
+            var eventList = new List<IUniverseEvent>();
+            var intradayMarketDataParams = intradayMarketDataTable.CreateSet<IntradayMarketDataParameters>();
+            foreach (var row in intradayMarketDataParams)
+            {
+                var proRow = this.MapRowToFixedIncomeIntradayMarketDataEvent(row);
+
+                if (proRow == null) continue;
+
+                eventList.Add(proRow);
+            }
+
+            var otherEvents = this._universeSelectionState.SelectedUniverse.UniverseEvents.ToList();
+            otherEvents.AddRange(eventList);
+
+            var comparer = new UniverseEventComparer();
+            var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
+
+            this._universeSelectionState.SelectedUniverse = new Universe(orderedUniverse);
+        }
+
         private Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
             return new Universe(universeEvents);
@@ -241,6 +270,50 @@
                 new[] { marketData });
             var universeEvent = new UniverseEvent(
                 UniverseStateEvent.EquityIntraDayTick,
+                marketDataParam.Epoch,
+                timeBarCollection);
+
+            return universeEvent;
+        }
+
+        private IUniverseEvent MapRowToFixedIncomeIntradayMarketDataEvent(IntradayMarketDataParameters marketDataParam)
+        {
+            if (marketDataParam == null) return null;
+
+            if (string.IsNullOrWhiteSpace(marketDataParam.SecurityName)
+                || !this._securitySelection.Securities.ContainsKey(marketDataParam.SecurityName))
+            {
+                this._scenarioContext.Pending();
+                return null;
+            }
+
+            if (marketDataParam.Bid == null || marketDataParam.Ask == null || marketDataParam.Price == null)
+            {
+                this._scenarioContext.Pending();
+                return null;
+            }
+
+            var security = this._securitySelection.Securities[marketDataParam.SecurityName];
+            var bid = this.MapToMoney(marketDataParam.Bid, marketDataParam.Currency);
+            var ask = this.MapToMoney(marketDataParam.Ask, marketDataParam.Currency);
+            var price = this.MapToMoney(marketDataParam.Price, marketDataParam.Currency);
+            var volume = new Volume(marketDataParam.Volume.GetValueOrDefault(0));
+
+            var intradayPrices = new SpreadTimeBar(bid.Value, ask.Value, price.Value, volume);
+
+            var marketData = new FixedIncomeInstrumentIntraDayTimeBar(
+                security.Instrument,
+                intradayPrices,
+                null,
+                marketDataParam.Epoch,
+                security.Market);
+
+            var timeBarCollection = new FixedIncomeIntraDayTimeBarCollection(
+                security.Market,
+                marketDataParam.Epoch,
+                new[] { marketData });
+            var universeEvent = new UniverseEvent(
+                UniverseStateEvent.FixedIncomeIntraDayTick,
                 marketDataParam.Epoch,
                 timeBarCollection);
 

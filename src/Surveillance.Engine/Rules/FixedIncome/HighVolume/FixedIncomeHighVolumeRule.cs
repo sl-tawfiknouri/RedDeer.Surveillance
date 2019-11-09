@@ -88,7 +88,10 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="factory">
+        /// <param name="equityFactory">
+        /// The factory.
+        /// </param>
+        /// <param name="fixedIncomeFactory">
         /// The factory.
         /// </param>
         /// <param name="judgementService">
@@ -113,7 +116,8 @@
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IFixedIncomeHighVolumeJudgementService judgementService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IMarketTradingHoursService tradingHoursService,
@@ -128,7 +132,8 @@
                 FixedIncomeHighVolumeFactory.Version,
                 $"{nameof(FixedIncomeHighVolumeRule)}",
                 ruleContext,
-                factory,
+                equityFactory,
+                fixedIncomeFactory,
                 runMode,
                 logger,
                 tradingStackLogger)

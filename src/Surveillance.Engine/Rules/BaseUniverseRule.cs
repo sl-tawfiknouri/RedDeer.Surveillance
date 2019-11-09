@@ -45,12 +45,22 @@
         /// <summary>
         /// The universe equity intraday cache.
         /// </summary>
-        protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
+        protected IUniverseEquityIntraDayCache UniverseEquityIntradayCache;
 
         /// <summary>
         /// The universe equity interday cache.
         /// </summary>
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
+
+        /// <summary>
+        /// The universe fixed income intraday cache.
+        /// </summary>
+        protected IUniverseFixedIncomeIntraDayCache UniverseFixedIncomeIntradayCache;
+
+        /// <summary>
+        /// The universe fixed income interday cache.
+        /// </summary>
+        protected IUniverseFixedIncomeInterDayCache UniverseFixedIncomeInterdayCache;
 
         /// <summary>
         /// The universe event.
@@ -61,7 +71,13 @@
         /// These are paid up with the delayed trading histories to create the illusion of future data analysis
         /// whilst maintaining a singular set of abstractions around the backward aspect of analysis
         /// </summary>
-        protected IUniverseEquityIntradayCache FutureUniverseEquityIntradayCache;
+        protected IUniverseEquityIntraDayCache FutureUniverseEquityIntradayCache;
+
+        /// <summary>
+        /// These are paid up with the delayed trading histories to create the illusion of future data analysis
+        /// whilst maintaining a singular set of abstractions around the backward aspect of analysis
+        /// </summary>
+        protected IUniverseFixedIncomeIntraDayCache FutureUniverseFixedIncomeIntradayCache;
 
         /// <summary>
         /// The trading history.
@@ -162,8 +178,11 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="factory">
-        /// The factory.
+        /// <param name="equityFactory">
+        /// The equity factory.
+        /// </param>
+        /// <param name="fixedIncomeFactory">
+        /// The fixed income factory.
         /// </param>
         /// <param name="runMode">
         /// The run mode.
@@ -182,7 +201,8 @@
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
@@ -194,16 +214,28 @@
             this.Version = version ?? string.Empty;
 
             this.UniverseEquityIntradayCache =
-                factory?.BuildIntraday(marketBackwardWindowSize, runMode)
-                ?? throw new ArgumentNullException(nameof(factory));
+                equityFactory?.BuildIntraday(marketBackwardWindowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(equityFactory));
 
             this.FutureUniverseEquityIntradayCache =
-                factory?.BuildIntraday(forwardWindowSize, runMode)
-                ?? throw new ArgumentNullException(nameof(factory));
+                equityFactory?.BuildIntraday(forwardWindowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(equityFactory));
 
             this.UniverseEquityInterdayCache =
-                factory?.BuildInterday(runMode)
-                ?? throw new ArgumentNullException(nameof(factory));
+                equityFactory?.BuildInterday(runMode)
+                ?? throw new ArgumentNullException(nameof(equityFactory));
+
+            this.UniverseFixedIncomeIntradayCache =
+                fixedIncomeFactory?.BuildIntraday(marketBackwardWindowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
+
+            this.FutureUniverseFixedIncomeIntradayCache =
+                fixedIncomeFactory?.BuildIntraday(forwardWindowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
+
+            this.UniverseFixedIncomeInterdayCache =
+                fixedIncomeFactory?.BuildInterday(runMode)
+                ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
 
             this.TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             this.TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
@@ -279,12 +311,19 @@
                     case UniverseStateEvent.Genesis:
                         this.Genesis(value);
                         break;
-                    case UniverseStateEvent.EquityIntradayTick:
+                    case UniverseStateEvent.EquityIntraDayTick:
                         this.EquityIntraDay(value);
                         this.FutureEquityIntraDay(value);
                         break;
                     case UniverseStateEvent.EquityInterDayTick:
                         this.EquityInterDay(value);
+                        break;
+                    case UniverseStateEvent.FixedIncomeIntraDayTick:
+                        this.FixedIncomeIntraDay(value);
+                        this.FutureFixedIncomeIntraDay(value);
+                        break;
+                    case UniverseStateEvent.FixedIncomeInterDayTick:
+                        this.FixedIncomeInterDay(value);
                         break;
                     case UniverseStateEvent.OrderPlaced:
                         this.TradeSubmitted(value);
@@ -331,8 +370,12 @@
         /// </summary>
         public void BaseClone()
         {
-            this.UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)this.UniverseEquityIntradayCache.Clone();
+            this.UniverseEquityIntradayCache = (IUniverseEquityIntraDayCache)this.UniverseEquityIntradayCache.Clone();
             this.UniverseEquityInterdayCache = (IUniverseEquityInterDayCache)this.UniverseEquityInterdayCache.Clone();
+            this.FutureUniverseEquityIntradayCache = (IUniverseEquityIntraDayCache)this.FutureUniverseEquityIntradayCache.Clone();
+            this.UniverseFixedIncomeInterdayCache = (IUniverseFixedIncomeInterDayCache)this.UniverseFixedIncomeInterdayCache.Clone();
+            this.UniverseFixedIncomeIntradayCache = (IUniverseFixedIncomeIntraDayCache)this.UniverseFixedIncomeIntradayCache.Clone();
+            this.FutureUniverseFixedIncomeIntradayCache = (IUniverseFixedIncomeIntraDayCache)this.FutureUniverseFixedIncomeIntradayCache.Clone();
             this.TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingHistory);
             this.TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingFillsHistory);
             this.TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(this.TradingInitialHistory);
@@ -427,6 +470,63 @@
 
             this.UniverseDateTime = universeEvent.EventTime;
             this.UniverseEquityInterdayCache.Add(value);
+        }
+
+        /// <summary>
+        /// The fixed income intra day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
+        private void FixedIncomeIntraDay(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is FixedIncomeIntraDayTimeBarCollection value))
+            {
+                return;
+            }
+
+            this.logger?.LogInformation($"Fixed income intra day event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.UniverseFixedIncomeIntradayCache.Add(value);
+        }
+
+        /// <summary>
+        /// The future fixed income intra day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
+        private void FutureFixedIncomeIntraDay(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is FixedIncomeIntraDayTimeBarCollection value))
+            {
+                return;
+            }
+
+            this.logger?.LogInformation($"Fixed income intra day event (future) in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.FutureUniverseFixedIncomeIntradayCache.Add(value);
+        }
+
+        /// <summary>
+        /// The fixed income inter day.
+        /// </summary>
+        /// <param name="universeEvent">
+        /// The universe event.
+        /// </param>
+        private void FixedIncomeInterDay(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is FixedIncomeInterDayTimeBarCollection value))
+            {
+                return;
+            }
+
+            this.logger?.LogInformation($"Fixed income inter day event in base universe rule occuring for {this.name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+
+            this.UniverseDateTime = universeEvent.EventTime;
+            this.UniverseFixedIncomeInterdayCache.Add(value);
         }
 
         /// <summary>

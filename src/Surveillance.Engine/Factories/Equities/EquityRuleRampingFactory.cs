@@ -20,7 +20,9 @@
 
     public class EquityRuleRampingFactory : IEquityRuleRampingFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<IRampingRule> _logger;
 
@@ -35,7 +37,8 @@
         public EquityRuleRampingFactory(
             IRampingAnalyser rampingAnalyser,
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IMarketTradingHoursService tradingHoursService,
             ILogger<IRampingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -43,7 +46,8 @@
             this._rampingAnalyser = rampingAnalyser ?? throw new ArgumentNullException(nameof(rampingAnalyser));
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._tradingHistoryLogger =
                 tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -64,7 +68,8 @@
                 equitiesParameters,
                 alertStream,
                 ruleCtx,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._orderFilterService,
                 runMode,
                 this._rampingAnalyser,

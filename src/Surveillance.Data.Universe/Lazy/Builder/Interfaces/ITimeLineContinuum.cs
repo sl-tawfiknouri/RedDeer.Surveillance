@@ -36,9 +36,20 @@
         /// The queries.
         /// </param>
         /// <returns>
-        /// The <see cref="RefinitiveTimeBarQuery"/>.
+        /// The <see cref="RefinitivIntraDayTimeBarQuery"/>.
         /// </returns>
-        IReadOnlyCollection<RefinitiveTimeBarQuery> Merge(IReadOnlyCollection<RefinitiveTimeBarQuery> queries);
+        IReadOnlyCollection<RefinitivIntraDayTimeBarQuery> Merge(IReadOnlyCollection<RefinitivIntraDayTimeBarQuery> queries);
+
+        /// <summary>
+        /// The merge.
+        /// </summary>
+        /// <param name="queries">
+        /// The queries.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RefinitivInterDayTimeBarQuery"/>.
+        /// </returns>
+        IReadOnlyCollection<RefinitivInterDayTimeBarQuery> Merge(IReadOnlyCollection<RefinitivInterDayTimeBarQuery> queries);
 
         /// <summary>
         /// The merge.

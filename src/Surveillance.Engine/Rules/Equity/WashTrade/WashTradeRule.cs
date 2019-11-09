@@ -93,7 +93,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="runMode">
@@ -112,7 +115,8 @@
             IUniverseAlertStream alertStream,
             ICurrencyConverterService currencyConverterService,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -124,7 +128,8 @@
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

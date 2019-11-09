@@ -23,7 +23,9 @@
 
         private readonly ICurrencyConverterService _currencyConverterService;
 
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger _logger;
 
@@ -35,7 +37,8 @@
             ICurrencyConverterService currencyConverterService,
             IClusteringService clustering,
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             ILogger<WashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -44,7 +47,8 @@
             this._clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._tradingHistoryLogger =
                 tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -69,7 +73,8 @@
                 alertStream,
                 this._currencyConverterService,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 runMode,
                 this._logger,
                 this._tradingHistoryLogger);

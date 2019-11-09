@@ -20,7 +20,9 @@
 
     public class EquityRuleSpoofingFactory : IEquityRuleSpoofingFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<SpoofingRule> _logger;
 
@@ -33,7 +35,8 @@
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleSpoofingFactory(
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IUniverseEquityOrderFilterService orderFilterService,
             IPortfolioFactory portfolioFactory,
             IOrderAnalysisService analysisService,
@@ -42,7 +45,8 @@
         {
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             this._orderAnalysisService = analysisService ?? throw new ArgumentNullException(nameof(analysisService));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -63,7 +67,8 @@
                 ruleCtx,
                 alertStream,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 runMode,
                 this._portfolioFactory,
                 this._orderAnalysisService,

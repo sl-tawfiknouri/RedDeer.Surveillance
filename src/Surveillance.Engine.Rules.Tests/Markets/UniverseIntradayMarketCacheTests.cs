@@ -30,7 +30,7 @@
         [Test]
         public void Add_ExchangeFrame_InDateRange_DoesNotCall()
         {
-            var cache = new UniverseEquityIntradayCache(
+            var cache = new UniverseEquityIntraDayCache(
                 TimeSpan.FromMinutes(15),
                 this._requestRepository,
                 this._logger);
@@ -95,7 +95,7 @@
         [Test]
         public void Add_ExchangeFrame_InDateRange_GetMarkets_DoesNotCall()
         {
-            var cache = new UniverseEquityIntradayCache(
+            var cache = new UniverseEquityIntraDayCache(
                 TimeSpan.FromMinutes(15),
                 this._requestRepository,
                 this._logger);
@@ -160,7 +160,7 @@
         [Test]
         public void Add_ExchangeFrame_OutOfDateRange_CallsDataRequestRepository()
         {
-            var cache = new UniverseEquityIntradayCache(
+            var cache = new UniverseEquityIntraDayCache(
                 TimeSpan.FromMinutes(15),
                 this._requestRepository,
                 this._logger);
@@ -225,7 +225,7 @@
         [Test]
         public void Add_ExchangeFrame_OutOfDateRange_GetMarkets_CallsDataRequestRepository()
         {
-            var cache = new UniverseEquityIntradayCache(
+            var cache = new UniverseEquityIntraDayCache(
                 TimeSpan.FromMinutes(15),
                 this._requestRepository,
                 this._logger);

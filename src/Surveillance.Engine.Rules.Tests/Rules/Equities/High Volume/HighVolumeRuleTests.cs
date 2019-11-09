@@ -40,14 +40,16 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _opCtx;
         private IUniverseOrderFilter _orderFilter;
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
         private IMarketTradingHoursService _tradingHoursService;
         private IRuleRunDataRequestRepository _dataRequestRepository;
         private IStubRuleRunDataRequestRepository _stubDataRequestRepository;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ICurrencyConverterService currencyConverterService;
         private ILogger<IHighVolumeRule> _logger;
-        private ILogger<UniverseMarketCacheFactory> _factoryCache;
+        private ILogger<UniverseEquityMarketCacheFactory> _equityFactoryCache;
+        private ILogger<UniverseFixedIncomeMarketCacheFactory> _fixedIncomeFactoryCache;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
@@ -60,8 +62,12 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
             _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
             _stubDataRequestRepository = A.Fake<IStubRuleRunDataRequestRepository>();
 
-            _factoryCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
-            _factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _factoryCache);
+            _equityFactoryCache = A.Fake<ILogger<UniverseEquityMarketCacheFactory>>();
+            _equityFactory = new UniverseEquityMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _equityFactoryCache);
+
+            _fixedIncomeFactoryCache = A.Fake<ILogger<UniverseFixedIncomeMarketCacheFactory>>();
+            _fixedIncomeFactory = new UniverseFixedIncomeMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _fixedIncomeFactoryCache);
+
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             this.currencyConverterService = A.Fake<ICurrencyConverterService>();
@@ -79,7 +85,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -87,7 +93,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, null, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, null, _alertStream, _orderFilter, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -95,7 +101,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, _ruleCtx, _alertStream, _orderFilter, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _dataRequestSubscriber, this.currencyConverterService, RuleRunMode.ValidationRun, null, _tradingLogger));
         }
 
         [Test]
@@ -162,7 +168,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.EquityIntradayTick,
+                    UniverseStateEvent.EquityIntraDayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -211,7 +217,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.EquityIntradayTick,
+                    UniverseStateEvent.EquityIntraDayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -262,7 +268,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.EquityIntradayTick,
+                    UniverseStateEvent.EquityIntraDayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -295,7 +301,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
                 _ruleCtx,
                 _alertStream,
                 _orderFilter,
-                _factory,
+                _equityFactory,
+                _fixedIncomeFactory,
                 _tradingHoursService,
                 _dataRequestSubscriber,
                 this.currencyConverterService,

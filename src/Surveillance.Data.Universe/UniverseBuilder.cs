@@ -164,12 +164,16 @@
             this.logger.LogInformation("completed fetching aurora trade allocation data");
 
             this.logger.LogInformation("fetching intraday for equities");
-            var intradayEquityBars = await this.MarketEquityIntraDayDataFetchAurora(execution, operationContext);
+            var intraDayEquityBars = await this.MarketEquityIntraDayDataFetchAurora(execution, operationContext);
             this.logger.LogInformation("completed fetching intraday for equities");
 
             this.logger.LogInformation("fetching inter day for equities");
             var interDayEquityBars = await this.MarketEquityInterDayDataFetchAurora(execution, operationContext);
             this.logger.LogInformation("completed fetching inter day for equities");
+
+            // TODO - fetch data if this Summon function is used
+            var intraDayFixedIncomeBars = new List<FixedIncomeIntraDayTimeBarCollection>();
+            var interDayFixedIncomeBars = new List<FixedIncomeInterDayTimeBarCollection>();
 
             var marketOpenClose = await this.marketService.AllOpenCloseEvents(
                 execution.TimeSeriesInitiation.DateTime,
@@ -179,8 +183,10 @@
             var universe = this.PackageUniverse(
                                execution,
                                projectedTradesAllocations,
-                               intradayEquityBars,
+                               intraDayEquityBars,
                                interDayEquityBars,
+                               intraDayFixedIncomeBars,
+                               interDayFixedIncomeBars,
                                marketOpenClose,
                                includeGenesis,
                                includeEschaton,
@@ -204,10 +210,16 @@
         /// The trades.
         /// </param>
         /// <param name="equityIntradayUpdates">
-        /// The equity intraday updates.
+        /// The equity intra day updates.
         /// </param>
         /// <param name="equityInterDayUpdates">
         /// The equity inter day updates.
+        /// </param>
+        /// <param name="fixedIncomeIntradayUpdates">
+        /// The fixed income intra day updates.
+        /// </param>
+        /// <param name="fixedIncomeInterDayUpdates">
+        /// The fixed income inter day updates.
         /// </param>
         /// <param name="marketEvents">
         /// The market events
@@ -232,6 +244,8 @@
             IReadOnlyCollection<Order> trades,
             IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
             IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates,
+            IReadOnlyCollection<FixedIncomeIntraDayTimeBarCollection> fixedIncomeIntradayUpdates,
+            IReadOnlyCollection<FixedIncomeInterDayTimeBarCollection> fixedIncomeInterDayUpdates,
             IReadOnlyCollection<IUniverseEvent> marketEvents,
             bool includeGenesis,
             bool includeEschaton,
@@ -250,18 +264,26 @@
                 .Where(tr => tr.FilledDate != null).Select(
                     tr => new UniverseEvent(UniverseStateEvent.OrderFilled, tr.FilledDate.Value, tr)).ToArray();
 
-            var intradayEquityEvents = equityIntradayUpdates
-                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch)).ToArray();
+            var intraDayEquityEvents = equityIntradayUpdates
+                .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, exch.Epoch, exch)).ToArray();
 
             var interDayEquityEvents = equityInterDayUpdates
                 .Select(exch => new UniverseEvent(UniverseStateEvent.EquityInterDayTick, exch.Epoch, exch)).ToArray();
+
+            var intraDayFixedIncomeEvents = fixedIncomeIntradayUpdates
+                .Select(exch => new UniverseEvent(UniverseStateEvent.FixedIncomeIntraDayTick, exch.Epoch, exch)).ToArray();
+
+            var interDayFixedIncomeEvents = fixedIncomeInterDayUpdates
+                .Select(exch => new UniverseEvent(UniverseStateEvent.FixedIncomeInterDayTick, exch.Epoch, exch)).ToArray();
 
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
             intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
             intraUniversalHistoryEvents.AddRange(tradeFilledEvents);
-            intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(intraDayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(intraDayFixedIncomeEvents);
             intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(interDayFixedIncomeEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);
             intraUniversalHistoryEvents = this.FilterOutTradesInFutureEpoch(
                 intraUniversalHistoryEvents,

@@ -54,7 +54,9 @@
 
         private ILogger<TradingHistoryStack> _tradingLogger;
 
-        private IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private IUniverseOrderFilter _universeOrderFilter;
 
@@ -68,7 +70,8 @@
                     this._decimalRangeRuleFilter,
                     this._universeOrderFilter,
                     this._ruleRunContext,
-                    this._universeMarketCacheFactory,
+                    this._equityMarketCacheFactory,
+                    this._fixedIncomeMarketCacheFactory,
                     this._ruleRunMode,
                     this._marketTradingHoursService,
                     this._dataRequestSubscriber,
@@ -80,7 +83,8 @@
         [SetUp]
         public void Setup()
         {
-            this._universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._ruleRunContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this._ruleRunMode = RuleRunMode.ValidationRun;
             this._universeOrderFilter = A.Fake<IUniverseOrderFilter>();

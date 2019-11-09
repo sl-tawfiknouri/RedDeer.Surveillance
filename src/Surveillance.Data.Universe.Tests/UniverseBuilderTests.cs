@@ -190,10 +190,10 @@
                 UniverseStateEvent.EpochFutureUniverse);
             Assert.AreEqual(
                 result.UniverseEvents.Skip(4).FirstOrDefault().StateChange,
-                UniverseStateEvent.EquityIntradayTick);
+                UniverseStateEvent.EquityIntraDayTick);
             Assert.AreEqual(
                 result.UniverseEvents.Skip(5).FirstOrDefault().StateChange,
-                UniverseStateEvent.EquityIntradayTick);
+                UniverseStateEvent.EquityIntraDayTick);
             Assert.AreEqual(result.UniverseEvents.Skip(6).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
 

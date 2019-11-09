@@ -111,51 +111,19 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             this.SetDynamoConfig();
 
             var networkConfiguration = new Configuration
-                                           {
-                                               DataImportTradeFileUploadDirectoryPath =
-                                                   Path.Combine(
-                                                       Directory.GetCurrentDirectory(),
-                                                       this.GetSetting(
-                                                           "DataImportTradeFileUploadDirectoryPath",
-                                                           configurationBuilder)),
-                                               DataImportEquityFileUploadDirectoryPath =
-                                                   Path.Combine(
-                                                       Directory.GetCurrentDirectory(),
-                                                       this.GetSetting(
-                                                           "DataImportEquityFileUploadDirectoryPath",
-                                                           configurationBuilder)),
-                                               SurveillanceAuroraConnectionString =
-                                                   this.GetSetting("AuroraConnectionString", configurationBuilder),
-                                               DataImportS3UploadQueueName =
-                                                   this.GetSetting("DataImportS3UploadQueueName", configurationBuilder),
-                                               DataImportTradeFileFtpDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportTradeFileFtpDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportEquityFileFtpDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportEquityFileFtpDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportAllocationFileUploadDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportAllocationFileUploadDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportAllocationFileFtpDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportAllocationFileFtpDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportEtlFileUploadDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportEtlFileUploadDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportEtlFileFtpDirectoryPath =
-                                                   this.GetSetting(
-                                                       "DataImportEtlFileFtpDirectoryPath",
-                                                       configurationBuilder),
-                                               DataImportEtlFailureNotifications = this.GetSetting(
-                                                   "DataImportEtlFailureNotifications",
-                                                   configurationBuilder)
-                                           };
+            {
+                DataImportTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),this.GetSetting("DataImportTradeFileUploadDirectoryPath", configurationBuilder)),
+                DataImportEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), this.GetSetting("DataImportEquityFileUploadDirectoryPath", configurationBuilder)),
+                SurveillanceAuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                DataImportS3UploadQueueName = this.GetSetting("DataImportS3UploadQueueName", configurationBuilder),
+                DataImportTradeFileFtpDirectoryPath = this.GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
+                DataImportEquityFileFtpDirectoryPath = this.GetSetting( "DataImportEquityFileFtpDirectoryPath", configurationBuilder),
+                DataImportAllocationFileUploadDirectoryPath = this.GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
+                DataImportAllocationFileFtpDirectoryPath = this.GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFileUploadDirectoryPath = this.GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
+                DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder)
+            };
 
             return networkConfiguration;
         }
@@ -165,22 +133,22 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             this.SetDynamoConfig();
 
             return new ApiClientConfiguration
-                       {
-                           ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
-                           ScheduleRuleDistributedWorkQueueName =
-                               this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                           CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
-                           ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                           SurveillanceUserApiAccessToken =
-                               this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                           AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
-                           BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                           UploadCoordinatorQueueName =
-                               this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
-                           EmailServiceSendEmailQueueName = this.GetSetting(
-                               "EmailServiceSendEmailQueueName",
-                               configurationBuilder)
-                       };
+                {
+                    ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                    ScheduleRuleDistributedWorkQueueName =
+                        this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                    CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
+                    ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                    SurveillanceUserApiAccessToken =
+                        this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                    AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                    BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName =
+                        this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                    EmailServiceSendEmailQueueName = this.GetSetting(
+                        "EmailServiceSendEmailQueueName",
+                        configurationBuilder)
+                };
         }
 
         public IDataLayerConfiguration BuildData(IConfigurationRoot configurationBuilder)

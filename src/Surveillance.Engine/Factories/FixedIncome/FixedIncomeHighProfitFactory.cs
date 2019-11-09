@@ -39,12 +39,17 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private readonly IUniverseMarketCacheFactory marketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private readonly IUniverseFixedIncomeMarketCacheFactory fixedIncomeCacheFactory;
 
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private readonly IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private readonly IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The cost calculator factory.
@@ -72,7 +77,10 @@
         /// <param name="fixedIncomeOrderFilterService">
         /// The fixed income order filter service.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="marketDataCacheStrategyFactory">
@@ -95,8 +103,9 @@
         /// </param>
         public FixedIncomeHighProfitFactory(
             IUniverseFixedIncomeOrderFilterService fixedIncomeOrderFilterService,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory,
+            IUniverseEquityMarketCacheFactory equityCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeCacheFactory,
+            IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -105,8 +114,10 @@
         {
             this.fixedIncomeOrderFilterService =
                 fixedIncomeOrderFilterService ?? throw new ArgumentNullException(nameof(fixedIncomeOrderFilterService));
-            this.marketCacheFactory =
-                marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            this.equityMarketCacheFactory =
+                equityCacheFactory ?? throw new ArgumentNullException(nameof(equityCacheFactory));
+            this.fixedIncomeCacheFactory =
+                fixedIncomeCacheFactory ?? throw new ArgumentNullException(nameof(fixedIncomeCacheFactory));
             this.marketDataCacheStrategyFactory = marketDataCacheStrategyFactory ?? throw new ArgumentNullException(nameof(marketDataCacheStrategyFactory));
             this.costCalculatorFactory =
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -160,7 +171,8 @@
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
@@ -175,7 +187,8 @@
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,

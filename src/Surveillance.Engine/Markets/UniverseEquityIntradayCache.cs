@@ -23,7 +23,7 @@
     ///     Consider that it is a cache of recent market events
     ///     Before attempting to query for out of range data
     /// </summary>
-    public class UniverseEquityIntradayCache : IUniverseEquityIntradayCache
+    public class UniverseEquityIntraDayCache : IUniverseEquityIntraDayCache
     {
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
 
@@ -33,9 +33,9 @@
 
         private IDictionary<string, EquityIntraDayTimeBarCollection> _latestExchangeFrameBook;
 
-        private ConcurrentDictionary<string, IIntraDayHistoryStack> _marketHistory;
+        private ConcurrentDictionary<string, IEquityIntraDayHistoryStack> _marketHistory;
 
-        public UniverseEquityIntradayCache(
+        public UniverseEquityIntraDayCache(
             TimeSpan windowSize,
             IRuleRunDataRequestRepository dataRequestRepository,
             ILogger logger)
@@ -45,7 +45,7 @@
                 dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._latestExchangeFrameBook = new ConcurrentDictionary<string, EquityIntraDayTimeBarCollection>();
-            this._marketHistory = new ConcurrentDictionary<string, IIntraDayHistoryStack>();
+            this._marketHistory = new ConcurrentDictionary<string, IEquityIntraDayHistoryStack>();
         }
 
         public void Add(EquityIntraDayTimeBarCollection value)
@@ -71,7 +71,7 @@
 
             if (!this._marketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
-                var history = new IntraDayHistoryStack(this._windowSize);
+                var history = new EquityIntraDayHistoryStack(this._windowSize);
                 history.Add(value, value.Epoch);
                 this._marketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
             }
@@ -86,7 +86,7 @@
 
         public object Clone()
         {
-            var clone = this.MemberwiseClone() as UniverseEquityIntradayCache;
+            var clone = this.MemberwiseClone() as UniverseEquityIntraDayCache;
             clone.SetClone();
 
             return clone;
@@ -254,7 +254,7 @@
         {
             this._latestExchangeFrameBook =
                 new Dictionary<string, EquityIntraDayTimeBarCollection>(this._latestExchangeFrameBook);
-            this._marketHistory = new ConcurrentDictionary<string, IIntraDayHistoryStack>(this._marketHistory);
+            this._marketHistory = new ConcurrentDictionary<string, IEquityIntraDayHistoryStack>(this._marketHistory);
         }
     }
 }

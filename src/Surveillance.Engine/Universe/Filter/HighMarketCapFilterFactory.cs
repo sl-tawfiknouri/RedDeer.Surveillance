@@ -15,13 +15,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class HighMarketCapFilterFactory : IHighMarketCapFilterFactory
     {
         private readonly ICurrencyConverterService currencyConverterService;
-        private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory _universeMarketCacheFactory;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILoggerFactory _loggerFactory;
 
         public HighMarketCapFilterFactory(
             ICurrencyConverterService currencyConverterService,
-            IUniverseMarketCacheFactory universeMarketCacheFactory,
+            IUniverseEquityMarketCacheFactory universeMarketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             ILoggerFactory loggerFactory)
         {

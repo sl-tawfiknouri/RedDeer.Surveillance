@@ -16,6 +16,8 @@ namespace RedDeer.Surveillance.App.Configuration
 
     using global::Surveillance.Auditing.DataLayer;
     using global::Surveillance.Auditing.DataLayer.Interfaces;
+    using global::Surveillance.Data.Universe.Refinitiv;
+    using global::Surveillance.Data.Universe.Refinitiv.Interfaces;
     using global::Surveillance.DataLayer.Configuration;
     using global::Surveillance.DataLayer.Configuration.Interfaces;
     using global::Surveillance.Engine.DataCoordinator.Configuration;
@@ -147,6 +149,21 @@ namespace RedDeer.Surveillance.App.Configuration
                                             };
 
                 return ruleConfiguration;
+            }
+        }
+
+        public IRefinitivTickPriceHistoryApiConfig BuildRefinitivTickPriceHistoryApiConfig(IConfigurationRoot configurationBuilder)
+        {
+            lock (this._lock)
+            {
+                this.Ec2Check();
+
+                var config = new RefinitivTickPriceHistoryApiConfig
+                {
+                    Address = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder)
+                };
+
+                return config;
             }
         }
 

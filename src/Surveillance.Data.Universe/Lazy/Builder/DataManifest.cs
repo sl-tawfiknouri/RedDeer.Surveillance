@@ -28,21 +28,26 @@
         /// <param name="factsetTimeBar">
         /// The fact set time bar query
         /// </param>
-        /// <param name="refinitiveTimeBar">
-        /// The thomson reuters time bar query
+        /// <param name="refinitivIntraDayTimeBar">
+        /// The thomson reuters intra day time bar query
+        /// </param>
+        /// <param name="refinitivInterDayTimeBar">
+        /// The thomson reuters inter day time bar query
         /// </param>
         public DataManifest(
             ScheduledExecution execution,
             Stack<UnfilteredOrdersQuery> unfilteredOrders,
             Stack<BmllTimeBarQuery> bmllTimeBar,
             Stack<FactSetTimeBarQuery> factsetTimeBar,
-            Stack<RefinitiveTimeBarQuery> refinitiveTimeBar)
+            Stack<RefinitivIntraDayTimeBarQuery> refinitivIntraDayTimeBar,
+            Stack<RefinitivInterDayTimeBarQuery> refinitivInterDayTimeBar)
         {
             this.Execution = execution ?? throw new ArgumentNullException(nameof(execution));
             this.UnfilteredOrders = unfilteredOrders ?? throw new ArgumentNullException(nameof(unfilteredOrders));
             this.BmllTimeBar = bmllTimeBar ?? throw new ArgumentNullException(nameof(bmllTimeBar));
             this.FactsetTimeBar = factsetTimeBar ?? throw new ArgumentNullException(nameof(factsetTimeBar));
-            this.RefinitiveTimeBar = refinitiveTimeBar ?? throw new ArgumentNullException(nameof(refinitiveTimeBar));
+            this.RefinitivIntraDayTimeBar = refinitivIntraDayTimeBar ?? throw new ArgumentNullException(nameof(refinitivIntraDayTimeBar));
+            this.RefinitivInterDayTimeBar = refinitivInterDayTimeBar ?? throw new ArgumentNullException(nameof(refinitivInterDayTimeBar));
         }
 
         /// <summary>
@@ -66,8 +71,13 @@
         public Stack<FactSetTimeBarQuery> FactsetTimeBar { get; }
 
         /// <summary>
-        /// Gets the thomson reuters time bar.
+        /// Gets the thomson reuters intra day time bar.
         /// </summary>
-        public Stack<RefinitiveTimeBarQuery> RefinitiveTimeBar { get; }
+        public Stack<RefinitivIntraDayTimeBarQuery> RefinitivIntraDayTimeBar { get; }
+
+        /// <summary>
+        /// Gets the thomson reuters inter day time bar.
+        /// </summary>
+        public Stack<RefinitivInterDayTimeBarQuery> RefinitivInterDayTimeBar { get; }
     }
 }

@@ -7,10 +7,10 @@
     /// <summary>
     /// The time bar query.
     /// </summary>
-    public class RefinitiveTimeBarQuery : TimeSegment<RefinitiveTimeBarQuery>
+    public class RefinitivIntraDayTimeBarQuery : TimeSegment<RefinitivIntraDayTimeBarQuery>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RefinitiveTimeBarQuery"/> class.
+        /// Initializes a new instance of the <see cref="RefinitivIntraDayTimeBarQuery"/> class.
         /// </summary>
         /// <param name="startUtc">
         /// The start universe central time.
@@ -21,7 +21,7 @@
         /// <param name="identifiers">
         /// The identifiers.
         /// </param>
-        public RefinitiveTimeBarQuery(
+        public RefinitivIntraDayTimeBarQuery(
             DateTime startUtc,
             DateTime endUtc,
             InstrumentIdentifiers identifiers)
@@ -60,7 +60,7 @@
                 return false;
             }
 
-            var query = obj as RefinitiveTimeBarQuery;
+            var query = obj as RefinitivIntraDayTimeBarQuery;
             if (query == null)
             {
                 return false;
@@ -78,9 +78,9 @@
         /// The right.
         /// </param>
         /// <returns>
-        /// The <see cref="RefinitiveTimeBarQuery"/>.
+        /// The <see cref="RefinitivIntraDayTimeBarQuery"/>.
         /// </returns>
-        public override RefinitiveTimeBarQuery Combine(RefinitiveTimeBarQuery right)
+        public override RefinitivIntraDayTimeBarQuery Combine(RefinitivIntraDayTimeBarQuery right)
         {
             if (right == null)
             {
@@ -90,7 +90,7 @@
             var newStartDate = this.StartUtc < right.StartUtc ? this.StartUtc : right.StartUtc;
             var newEndDate = this.EndUtc > right.EndUtc ? this.EndUtc : right.EndUtc;
 
-            return new RefinitiveTimeBarQuery(newStartDate, newEndDate, this.Identifiers);
+            return new RefinitivIntraDayTimeBarQuery(newStartDate, newEndDate, this.Identifiers);
         }
     }
 }

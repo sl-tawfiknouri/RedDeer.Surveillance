@@ -8,6 +8,8 @@
     using global::Surveillance.Auditing.DataLayer;
     using global::Surveillance.Auditing.DataLayer.Interfaces;
     using global::Surveillance.Auditing.DataLayer.Processes;
+    using global::Surveillance.Data.Universe.Refinitiv;
+    using global::Surveillance.Data.Universe.Refinitiv.Interfaces;
     using global::Surveillance.DataLayer;
     using global::Surveillance.DataLayer.Configuration.Interfaces;
     using global::Surveillance.Engine.DataCoordinator;
@@ -61,6 +63,8 @@
 
             container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
             container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationBuilder));
+
             SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
 
             container.Configure(
@@ -75,6 +79,7 @@
                         config.IncludeRegistry<RuleRegistry>();
                         config.IncludeRegistry<ReddeerApiClientRegistry>();
                         config.IncludeRegistry<AppRegistry>();
+                        config.IncludeRegistry<RefinitivRegistry>();
                         config.Populate(services);
                     });
 

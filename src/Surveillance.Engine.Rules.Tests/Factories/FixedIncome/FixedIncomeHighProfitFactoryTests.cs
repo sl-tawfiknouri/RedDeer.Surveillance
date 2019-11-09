@@ -38,12 +38,17 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private IUniverseMarketCacheFactory marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The cost calculator factory.
@@ -107,8 +112,9 @@
         public void Setup()
         {
             this.fixedIncomeOrderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
-            this.marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            this.marketDataCacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
+            this.equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this.fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
+            this.marketDataCacheStrategyFactory = A.Fake<IFixedIncomeMarketDataCacheStrategyFactory>();
             this.costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             this.revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
             this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
@@ -132,7 +138,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     null,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -152,6 +159,7 @@
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
                     null,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -170,7 +178,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     null,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -189,7 +198,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     null,
                     this.revenueCalculatorFactory,
@@ -208,7 +218,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     null,
@@ -227,7 +238,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -246,7 +258,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -265,7 +278,8 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
@@ -324,7 +338,8 @@
         {
             return new FixedIncomeHighProfitFactory(
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 this.costCalculatorFactory,
                 this.revenueCalculatorFactory,

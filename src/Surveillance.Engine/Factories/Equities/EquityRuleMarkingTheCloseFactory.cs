@@ -18,7 +18,9 @@
 
     public class EquityRuleMarkingTheCloseFactory : IEquityRuleMarkingTheCloseFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<MarkingTheCloseRule> _logger;
 
@@ -30,14 +32,16 @@
 
         public EquityRuleMarkingTheCloseFactory(
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IMarketTradingHoursService tradingHoursService,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._tradingHoursService =
                 tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -59,7 +63,8 @@
                 alertStream,
                 ruleCtx,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._tradingHoursService,
                 dataRequestSubscriber,
                 runMode,

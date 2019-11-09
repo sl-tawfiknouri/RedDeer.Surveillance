@@ -95,7 +95,10 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="factory">
+        /// <param name="equityFactory">
+        /// The factory.
+        /// </param>
+        /// <param name="fixedIncomeFactory">
         /// The factory.
         /// </param>
         /// <param name="orderFilter">
@@ -123,7 +126,8 @@
             IRampingRuleEquitiesParameters rampingParameters,
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
             IRampingAnalyser rampingAnalyzer,
@@ -139,7 +143,8 @@
                 EquityRuleRampingFactory.Version,
                 "Ramping Rule",
                 ruleContext,
-                factory,
+                equityFactory,
+                fixedIncomeFactory,
                 runMode,
                 logger,
                 tradingStackLogger)

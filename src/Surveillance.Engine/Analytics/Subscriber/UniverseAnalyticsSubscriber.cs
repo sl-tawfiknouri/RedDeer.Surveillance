@@ -78,7 +78,7 @@
                 case UniverseStateEvent.ExchangeOpen:
                     this.MarketOpen(value);
                     break;
-                case UniverseStateEvent.EquityIntradayTick:
+                case UniverseStateEvent.EquityIntraDayTick:
                     this.StockTick(value);
                     break;
                 case UniverseStateEvent.Order:

@@ -30,8 +30,13 @@
         Stack<FactSetTimeBarQuery> FactsetTimeBar { get; }
 
         /// <summary>
-        /// Gets the thomson reuters time bar.
+        /// Gets the thomson reuters intra day time bar.
         /// </summary>
-        Stack<RefinitiveTimeBarQuery> RefinitiveTimeBar { get; }
+        Stack<RefinitivIntraDayTimeBarQuery> RefinitivIntraDayTimeBar { get; }
+
+        /// <summary>
+        /// Gets the thomson reuters inter day time bar.
+        /// </summary>
+        Stack<RefinitivInterDayTimeBarQuery> RefinitivInterDayTimeBar { get; }
     }
 }

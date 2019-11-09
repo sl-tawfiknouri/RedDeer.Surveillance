@@ -27,8 +27,8 @@ namespace Surveillance.Data.Universe.Refinitiv
                 {
                     new SecurityTimeBarSubqueryRequest()
                     {
-                        StartUtc = new Timestamp(Timestamp.FromDateTime(startDay)),
-                        EndUtc = new Timestamp(Timestamp.FromDateTime(endDay)),
+                        StartUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(startDay, DateTimeKind.Utc))),
+                        EndUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(endDay, DateTimeKind.Utc))),
                         ReferenceId = Guid.NewGuid().ToString(),
                         //Identifiers = new SecurityIdentifiers { Ric = "BE179329760=RRPS" },
                         PolicyOptions = TimeBarPolicyOptions.EndOfDay

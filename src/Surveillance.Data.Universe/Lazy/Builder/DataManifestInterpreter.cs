@@ -374,41 +374,38 @@
             var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
             var items = new List<FixedIncomeInterDayTimeBarCollection>();
 
-            foreach (var getInterdayTimeBar in getInterdayTimeBars)
+            var groups = getInterdayTimeBars
+                .GroupBy(x => x.TimeBar.EpochUtc.Date) // grouping by Date for end of day prices
+                .OrderBy(x => x.Key);
+
+            foreach (var group in groups)
             {
-                var date = getInterdayTimeBar.TimeBar.EpochUtc;
-                var list = new List<FixedIncomeInstrumentInterDayTimeBar> {
-                        new FixedIncomeInstrumentInterDayTimeBar(
+                var date = group.Key;
+                var list = group.Select(x => new FixedIncomeInstrumentInterDayTimeBar(
                             new FinancialInstrument
                             {
                                 Identifiers = new InstrumentIdentifiers
                                 {
-                                    Cusip = getInterdayTimeBar.SecurityIdentifiers.Cusip,
-                                    //  = getInterdayTimeBar.SecurityIdentifiers.ExternalId,
-                                    Isin = getInterdayTimeBar.SecurityIdentifiers.Isin,
-                                    UnderlyingRic = getInterdayTimeBar.SecurityIdentifiers.Ric,
-                                    Sedol = getInterdayTimeBar.SecurityIdentifiers.Sedol,
-
+                                    Ric = x.SecurityIdentifiers.Ric
                                 }
                             },
                             new DailySummaryTimeBar(
                                 null,
-                                getInterdayTimeBar.TimeBar.CurrencyCode,
+                                x.TimeBar.CurrencyCode,
                                 new IntradayPrices(
-                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.Open), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)),
-                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.CloseAsk), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)), // ??? 
-                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.High), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode)),
-                                    new Money(Convert.ToDecimal(getInterdayTimeBar.TimeBar.Low), new Currency(getInterdayTimeBar.TimeBar.CurrencyCode))
+                                    new Money(Convert.ToDecimal(x.TimeBar.Open), new Currency(x.TimeBar.CurrencyCode)),
+                                    new Money(Convert.ToDecimal(x.TimeBar.CloseAsk), new Currency(x.TimeBar.CurrencyCode)), // ??? 
+                                    new Money(Convert.ToDecimal(x.TimeBar.High), new Currency(x.TimeBar.CurrencyCode)),
+                                    new Money(Convert.ToDecimal(x.TimeBar.Low), new Currency(x.TimeBar.CurrencyCode))
                                     ),
                                 null,
                                 new Volume(),
                                 date
                                 ),
                             date,
-                            market)
-                    };
+                            market)).ToList();
 
-                var fixedIncomeInterDayTimeBarCollection = new FixedIncomeInterDayTimeBarCollection(market, getInterdayTimeBar.TimeBar.EpochUtc, list);
+                var fixedIncomeInterDayTimeBarCollection = new FixedIncomeInterDayTimeBarCollection(market, date, list);
                 items.Add(fixedIncomeInterDayTimeBarCollection);
             }
 

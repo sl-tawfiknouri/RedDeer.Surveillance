@@ -17,6 +17,8 @@ namespace RedDeer.Surveillance.App
     using global::Surveillance.Auditing.DataLayer;
     using global::Surveillance.Auditing.DataLayer.Interfaces;
     using global::Surveillance.Auditing.DataLayer.Processes;
+    using global::Surveillance.Data.Universe.Refinitiv;
+    using global::Surveillance.Data.Universe.Refinitiv.Interfaces;
     using global::Surveillance.DataLayer;
     using global::Surveillance.DataLayer.Configuration.Interfaces;
     using global::Surveillance.Engine.DataCoordinator;
@@ -82,6 +84,9 @@ namespace RedDeer.Surveillance.App
                 Container.Inject(
                     typeof(ISystemDataLayerConfig),
                     configBuilder.BuildDataLayerConfig(configurationBuilder));
+
+                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationBuilder));
+
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
 
                 Container.Configure(
@@ -97,6 +102,7 @@ namespace RedDeer.Surveillance.App
                             config.IncludeRegistry<AppRegistry>();
                             config.IncludeRegistry<ReddeerApiClientRegistry>();
                             config.IncludeRegistry<RuleSchedulerRegistry>();
+                            config.IncludeRegistry<RefinitivRegistry>();
                         });
 
                 Container.GetInstance<IScriptRunner>();

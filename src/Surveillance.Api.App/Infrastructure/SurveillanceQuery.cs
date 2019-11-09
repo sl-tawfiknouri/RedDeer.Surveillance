@@ -326,7 +326,7 @@
                 "tickPriceHistoryTimeBars",
                 "Tick Price History TimeBar",
                 new QueryArguments(
-                    new QueryArgument<ListGraphType<ListGraphType>> { Name = "rics" },
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "rics" },
                     new QueryArgument<DateTimeGraphType> { Name = "startDateTime" },
                     new QueryArgument<DateTimeGraphType> { Name = "endDateTime" }),
                 context =>

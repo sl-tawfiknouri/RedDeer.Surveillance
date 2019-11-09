@@ -23,7 +23,7 @@ namespace Surveillance.Data.Universe.Refinitiv
         public async Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime? startDay, DateTime? endDay, IList<string> rics = null)
         {
             var request = new SecurityTimeBarQueryRequest() { };
-            var requestByRics = rics?.Where(w => string.IsNullOrEmpty(w)).ToList() ?? new List<string>();
+            var requestByRics = rics?.Where(w => !string.IsNullOrEmpty(w)).ToList() ?? new List<string>();
             if (!requestByRics.Any())
             {
                 requestByRics.Add(null);

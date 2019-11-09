@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Firefly.Service.Data.TickPriceHistory.Api.Contracts.Client" Version="1.0.4" />
     <PackageReference Include="Grpc.Auth" Version="2.25.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
     <PackageReference Include="RedDeer.Extensions.Security.Authentication.Jwt" Version="1.0.1" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>

@@ -19,24 +19,29 @@ namespace Surveillance.Data.Universe.Refinitiv
 
     public class TickPriceHistoryServiceClientFactory : ITickPriceHistoryServiceClientFactory
     {
-        private readonly IConfiguration configuration;
-        //private readonly IOptions<TickPriceHistoryServiceClientOptions> options;
-        private readonly IJwtTokenService jwtTokenService;
+        private readonly IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig;
+        // private readonly IConfiguration configuration;
+        // private readonly IOptions<TickPriceHistoryServiceClientOptions> options;
+        // private readonly IJwtTokenService jwtTokenService;
 
         public TickPriceHistoryServiceClientFactory(
-            IConfiguration configuration,
-            //IOptions<TickPriceHistoryServiceClientOptions> options,
-            IJwtTokenService jwtTokenService)
+            IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig
+            // IConfiguration configuration,
+            // IOptions<TickPriceHistoryServiceClientOptions> options,
+            // IJwtTokenService jwtTokenService
+            )
         {
-            this.configuration = configuration;
+            this.refinitivTickPriceHistoryApiConfig = refinitivTickPriceHistoryApiConfig;
+            //this.configuration = configuration;
             //this.options = options;
-            this.jwtTokenService = jwtTokenService;
+            //this.jwtTokenService = jwtTokenService;
         }
 
         public TickPriceHistoryService.TickPriceHistoryServiceClient Create()
         {
-            var address = configuration["TickPriceHistoryServiceAddress"];
+            //var address = configuration["TickPriceHistoryServiceAddress"];
 
+            var address = refinitivTickPriceHistoryApiConfig.Address;
             var channel = new Channel(address, ChannelCredentials.Insecure);
             var client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
             return client;

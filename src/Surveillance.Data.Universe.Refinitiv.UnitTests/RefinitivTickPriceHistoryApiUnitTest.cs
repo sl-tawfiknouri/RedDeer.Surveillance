@@ -35,8 +35,14 @@ namespace Surveillance.Data.Universe.Refinitiv.UnitTests
             //};
 
             //var ioptions = Options.Create(options);
-            
-            var factory = new TickPriceHistoryServiceClientFactory(configuration, jwtTokenService);
+            var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
+            {
+                Address = "localhost:8888"
+            };
+
+            var factory = new TickPriceHistoryServiceClientFactory(refinitivTickPriceHistoryApiConfig);
+
+            //var factory = new TickPriceHistoryServiceClientFactory(configuration, jwtTokenService);
             var refinitivTickPriceHistoryApi = new RefinitivTickPriceHistoryApi(factory);
             
             var response = await refinitivTickPriceHistoryApi.GetInterdayTimeBars(DateTime.UtcNow.Date.AddDays(-2), DateTime.UtcNow.Date);

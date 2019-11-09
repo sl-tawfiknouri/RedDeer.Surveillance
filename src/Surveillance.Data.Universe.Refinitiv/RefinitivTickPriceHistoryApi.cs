@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Firefly.Service.Data.TickPriceHistory.Shared.Protos;
 using Google.Protobuf.WellKnownTypes;
@@ -19,22 +20,40 @@ namespace Surveillance.Data.Universe.Refinitiv
             tickPriceHistoryServiceClient = tickPriceHistoryServiceClientFactory.Create();
         }
 
-        public async Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime startDay, DateTime endDay)
+        public async Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime? startDay, DateTime? endDay, IList<string> rics = null)
         {
-            var request = new SecurityTimeBarQueryRequest()
+            var request = new SecurityTimeBarQueryRequest() { };
+            var requestByRics = rics?.Where(w => string.IsNullOrEmpty(w)).ToList() ?? new List<string>();
+            if (!requestByRics.Any())
             {
-                Subqueries =
+                requestByRics.Add(null);
+            }
+
+            var referenceId = Guid.NewGuid().ToString();
+            Timestamp startUtc = startDay.HasValue ? new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(startDay.Value, DateTimeKind.Utc))) : null;
+            Timestamp endUtc = startDay.HasValue ? new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(endDay.Value, DateTimeKind.Utc))) : null;
+
+            foreach (var item in requestByRics)
+            {
+                var subqueryRequest = new SecurityTimeBarSubqueryRequest()
                 {
-                    new SecurityTimeBarSubqueryRequest()
+                    StartUtc = startUtc,
+                    EndUtc = endUtc,
+                    ReferenceId = referenceId,
+                    PolicyOptions = TimeBarPolicyOptions.EndOfDay
+                };
+
+                if (item != null)
+                {
+                    subqueryRequest.Identifiers = new SecurityIdentifiers
                     {
-                        StartUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(startDay, DateTimeKind.Utc))),
-                        EndUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(endDay, DateTimeKind.Utc))),
-                        ReferenceId = Guid.NewGuid().ToString(),
-                        //Identifiers = new SecurityIdentifiers { Ric = "BE179329760=RRPS" },
-                        PolicyOptions = TimeBarPolicyOptions.EndOfDay
-                    }
+                        Ric = item
+                    };
                 }
-            };
+
+                request.Subqueries.Add(subqueryRequest);
+            }
+
 
             var response = await tickPriceHistoryServiceClient
                 .QuerySecurityTimeBarsAsync(request).ResponseAsync;

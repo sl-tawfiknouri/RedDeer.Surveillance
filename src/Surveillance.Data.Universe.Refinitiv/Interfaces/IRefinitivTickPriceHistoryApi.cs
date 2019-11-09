@@ -6,6 +6,6 @@ namespace Surveillance.Data.Universe.Refinitiv.Interfaces
 {
     public interface IRefinitivTickPriceHistoryApi
     {
-        Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime startDay, DateTime endDay);
+        Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime? startDay, DateTime? endDay, IList<string> rics = null);
     }
 }

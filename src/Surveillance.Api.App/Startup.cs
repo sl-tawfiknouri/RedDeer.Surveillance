@@ -32,12 +32,15 @@
     using Surveillance.Api.App.Infrastructure;
     using Surveillance.Api.App.Logging;
     using Surveillance.Api.App.Middlewares;
+    using Surveillance.Api.App.Services;
     using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
     using Surveillance.Api.DataAccess.Abstractions.Repositories;
     using Surveillance.Api.DataAccess.Abstractions.Services;
     using Surveillance.Api.DataAccess.DbContexts.Factory;
     using Surveillance.Api.DataAccess.Repositories;
     using Surveillance.Api.DataAccess.Services;
+    using Surveillance.Data.Universe.Refinitiv;
+    using Surveillance.Data.Universe.Refinitiv.Interfaces;
 
     public class Startup
     {
@@ -128,6 +131,14 @@
             services.AddScoped<ISystemProcessOperationRepository, SystemProcessOperationRepository>();
             services.AddScoped<ISystemProcessRepository, SystemProcessRepository>();
             services.AddScoped<IFinancialInstrumentRepository, FinancialInstrumentRepository>();
+
+            services.AddTransient<IRefinitivTickPriceHistoryService, RefinitivTickPriceHistoryService>();
+            services.AddRefinitivServices();
+
+            services.AddTransient<IRefinitivTickPriceHistoryApiConfig>((sp) => new RefinitivTickPriceHistoryApiConfig
+            {
+                Address = this.Configuration["RefinitivTickPriceHistoryApiAddress"]
+            });
 
             // Test services should be added at end of list so that they can override defaults
             if (this._startupConfig.IsTest) this._startupConfig.ConfigureTestServices(services);

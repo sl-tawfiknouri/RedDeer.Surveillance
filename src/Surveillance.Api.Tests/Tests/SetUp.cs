@@ -59,7 +59,10 @@
 
             // Backend api service
             var basePathUrl = "https://localhost:18888/";
-            var commandLineArgs = new[] { $"SurveillanceApiUrl={basePathUrl}" };
+            var commandLineArgs = new[] { 
+                $"SurveillanceApiUrl={basePathUrl}",
+                "RefinitivTickPriceHistoryApiAddress=localhost:8889"
+            };
 
             var service = new Service(null) { StartupConfig = startupConfig };
 

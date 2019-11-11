@@ -17,12 +17,15 @@ namespace DataSynchroniser.App.ConfigBuilder
     using DataSynchroniser.Configuration;
 
     using Microsoft.Extensions.Configuration;
+    using NLog;
 
     public class ConfigBuilder
     {
         private readonly object _lock = new object();
 
         private IDictionary<string, string> _dynamoConfig;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ConfigBuilder()
         {
@@ -35,69 +38,89 @@ namespace DataSynchroniser.App.ConfigBuilder
 
         public static Dictionary<string, string> GetDynamoDBAttributes(string dynamoDBName)
         {
-            var client = new AmazonDynamoDBClient(
+            try
+            {
+                var client = new AmazonDynamoDBClient(
                 new AmazonDynamoDBConfig
-                    {
-                        RegionEndpoint = RegionEndpoint.EUWest1, ProxyCredentials = CredentialCache.DefaultCredentials
-                    });
+                {
+                    RegionEndpoint = RegionEndpoint.EUWest1,
+                    ProxyCredentials = CredentialCache.DefaultCredentials
+                });
 
-            var query = new QueryRequest
-                            {
-                                TableName = "reddeer-config",
-                                KeyConditionExpression = "#nameAttribute = :nameValue",
-                                ExpressionAttributeNames =
-                                    new Dictionary<string, string> { { "#nameAttribute", "name" } },
-                                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                var query = new QueryRequest
+                {
+                    TableName = "reddeer-config",
+                    KeyConditionExpression = "#nameAttribute = :nameValue",
+                    ExpressionAttributeNames =
+                                        new Dictionary<string, string> { { "#nameAttribute", "name" } },
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                                                                 {
                                                                     { ":nameValue", new AttributeValue(dynamoDBName) }
                                                                 }
-                            };
+                };
 
-            var attributes = new Dictionary<string, string>();
-            var response = client.QueryAsync(query).Result;
-            if (response.Items.Any())
-                foreach (var item in response.Items.First())
-                    if (!string.IsNullOrWhiteSpace(item.Value.S))
-                        attributes[item.Key] = item.Value.S;
+                var attributes = new Dictionary<string, string>();
+                var response = client.QueryAsync(query).Result;
+                if (response.Items.Any())
+                    foreach (var item in response.Items.First())
+                        if (!string.IsNullOrWhiteSpace(item.Value.S))
+                            attributes[item.Key] = item.Value.S;
 
-            return attributes;
+                return attributes;
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error(ex, "Error while loading dynamo configuration.");
+            }
+
+            return new Dictionary<string, string>();
         }
 
         public static Dictionary<string, string> GetDynamoDbAttributesTable(string dynamoDbName)
         {
-            var client = new AmazonDynamoDBClient(
+            try
+            {
+                var client = new AmazonDynamoDBClient(
                 new AmazonDynamoDBConfig
-                    {
-                        RegionEndpoint = RegionEndpoint.EUWest1, ProxyCredentials = CredentialCache.DefaultCredentials
-                    });
+                {
+                    RegionEndpoint = RegionEndpoint.EUWest1,
+                    ProxyCredentials = CredentialCache.DefaultCredentials
+                });
 
-            var query = new QueryRequest
-                            {
-                                TableName = dynamoDbName,
-                                KeyConditionExpression = "#datetimeAttribute = :datetimeValue",
-                                ExpressionAttributeNames =
-                                    new Dictionary<string, string> { { "#datetimeAttribute", "Datetime" } },
-                                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                var query = new QueryRequest
+                {
+                    TableName = dynamoDbName,
+                    KeyConditionExpression = "#datetimeAttribute = :datetimeValue",
+                    ExpressionAttributeNames =
+                                        new Dictionary<string, string> { { "#datetimeAttribute", "Datetime" } },
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                                                                 {
                                                                     {
                                                                         ":datetimeValue",
                                                                         new AttributeValue(dynamoDbName)
                                                                     }
                                                                 },
-                                ScanIndexForward = false
-                            };
+                    ScanIndexForward = false
+                };
 
-            var attributes = new Dictionary<string, string>();
-            var response = client.QueryAsync(query).Result;
-            if (response.Items.Any())
-                foreach (var item in response.Items.First())
-                    if (!string.IsNullOrWhiteSpace(item.Value.S) && !string.Equals(
-                            item.Key,
-                            "Datetime",
-                            StringComparison.InvariantCultureIgnoreCase))
-                        attributes[item.Key] = item.Value.S;
+                var attributes = new Dictionary<string, string>();
+                var response = client.QueryAsync(query).Result;
+                if (response.Items.Any())
+                    foreach (var item in response.Items.First())
+                        if (!string.IsNullOrWhiteSpace(item.Value.S) && !string.Equals(
+                                item.Key,
+                                "Datetime",
+                                StringComparison.InvariantCultureIgnoreCase))
+                            attributes[item.Key] = item.Value.S;
 
-            return attributes;
+                return attributes;
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error(ex, "Error while loading dynamo configuration.");
+            }
+
+            return new Dictionary<string, string>();
         }
 
         public Config Build(IConfigurationRoot configurationBuilder)

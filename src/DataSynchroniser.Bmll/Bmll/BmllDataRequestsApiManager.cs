@@ -101,7 +101,7 @@
             this._logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} BlockUntilBmllWorkIsDone active");
 
             var policyWrap = this._policyFactory.PolicyTimeoutGeneric<BmllStatusMinuteBarResult>(
-                TimeSpan.FromMinutes(10),
+                TimeSpan.FromMinutes(30),
                 i => i == BmllStatusMinuteBarResult.InProgress,
                 9,
                 TimeSpan.FromMinutes(1));

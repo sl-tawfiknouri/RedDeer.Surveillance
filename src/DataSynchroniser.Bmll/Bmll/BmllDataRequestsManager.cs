@@ -114,7 +114,7 @@
             SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>> requestResult = null;
             var policyWrap =
                 this._policyFactory.PolicyTimeoutGeneric<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>>(
-                    TimeSpan.FromMinutes(15),
+                    TimeSpan.FromMinutes(30),
                     i => !i.Success,
                     3,
                     TimeSpan.FromSeconds(30));

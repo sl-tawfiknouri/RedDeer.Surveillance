@@ -371,42 +371,50 @@
         {
             var getInterdayTimeBars = await this.refinitivTickPriceHistoryApi.GetInterdayTimeBars(startUtc, endUtc);
 
-            var market = new Market("", "OTC", "OTC", MarketTypes.OTC);
+            var markets = new List<Market>
+            {
+                new Market("", "OTC", "OTC", MarketTypes.OTC),
+                new Market("", "RDFI", "RDFI", MarketTypes.OTC)
+            };
+
             var items = new List<FixedIncomeInterDayTimeBarCollection>();
 
-            var groups = getInterdayTimeBars
-                .GroupBy(x => x.TimeBar.EpochUtc.Date) // grouping by Date for end of day prices
-                .OrderBy(x => x.Key);
-
-            foreach (var group in groups)
+            foreach (var market in markets)
             {
-                var date = group.Key;
-                var list = group.Select(x => new FixedIncomeInstrumentInterDayTimeBar(
-                            new FinancialInstrument
-                            {
-                                Identifiers = new InstrumentIdentifiers
-                                {
-                                    Ric = x.SecurityIdentifiers.Ric
-                                }
-                            },
-                            new DailySummaryTimeBar(
-                                null,
-                                x.TimeBar.CurrencyCode,
-                                new IntradayPrices(
-                                    new Money(Convert.ToDecimal(x.TimeBar.Open), new Currency(x.TimeBar.CurrencyCode)),
-                                    new Money(Convert.ToDecimal(x.TimeBar.CloseAsk), new Currency(x.TimeBar.CurrencyCode)), // ??? 
-                                    new Money(Convert.ToDecimal(x.TimeBar.High), new Currency(x.TimeBar.CurrencyCode)),
-                                    new Money(Convert.ToDecimal(x.TimeBar.Low), new Currency(x.TimeBar.CurrencyCode))
-                                    ),
-                                null,
-                                new Volume(),
-                                date
-                                ),
-                            date,
-                            market)).ToList();
+                var groups = getInterdayTimeBars
+                    .GroupBy(x => x.TimeBar.EpochUtc.Date) // grouping by Date for end of day prices
+                    .OrderBy(x => x.Key);
 
-                var fixedIncomeInterDayTimeBarCollection = new FixedIncomeInterDayTimeBarCollection(market, date, list);
-                items.Add(fixedIncomeInterDayTimeBarCollection);
+                foreach (var group in groups)
+                {
+                    var date = group.Key;
+                    var list = group.Select(x => new FixedIncomeInstrumentInterDayTimeBar(
+                                new FinancialInstrument
+                                {
+                                    Identifiers = new InstrumentIdentifiers
+                                    {
+                                        Ric = x.SecurityIdentifiers.Ric
+                                    }
+                                },
+                                new DailySummaryTimeBar(
+                                    null,
+                                    x.TimeBar.CurrencyCode,
+                                    new IntradayPrices(
+                                        new Money(Convert.ToDecimal(x.TimeBar.Open), new Currency(x.TimeBar.CurrencyCode)),
+                                        new Money(Convert.ToDecimal(x.TimeBar.CloseAsk), new Currency(x.TimeBar.CurrencyCode)), // ??? 
+                                        new Money(Convert.ToDecimal(x.TimeBar.High), new Currency(x.TimeBar.CurrencyCode)),
+                                        new Money(Convert.ToDecimal(x.TimeBar.Low), new Currency(x.TimeBar.CurrencyCode))
+                                        ),
+                                    null,
+                                    new Volume(),
+                                    date
+                                    ),
+                                date,
+                                market)).ToList();
+
+                    var fixedIncomeInterDayTimeBarCollection = new FixedIncomeInterDayTimeBarCollection(market, date, list);
+                    items.Add(fixedIncomeInterDayTimeBarCollection);
+                }
             }
 
             return items.AsReadOnly();

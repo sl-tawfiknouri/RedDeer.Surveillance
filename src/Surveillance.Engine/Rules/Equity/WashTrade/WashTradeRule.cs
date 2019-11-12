@@ -358,7 +358,20 @@
         /// </returns>
         public override IRuleDataConstraint DataConstraints()
         {
-            return RuleDataConstraint.Empty().Case;
+            var constraints = new List<RuleDataSubConstraint>();
+
+            var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.NoPrices,
+                    _ => !this.orderFilter.Filter(_));
+
+            constraints.Add(constraint);
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.equitiesParameters.Id,
+                constraints);
         }
 
         /// <summary>

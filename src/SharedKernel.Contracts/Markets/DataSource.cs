@@ -48,6 +48,11 @@
         /// <summary>
         /// The thomson reuters intra day
         /// </summary>
-        RefinitivIntraday = 8
+        RefinitivIntraday = 8,
+
+        /// <summary>
+        /// No prices required, just orders
+        /// </summary>
+        NoPrices = 9
     }
 }

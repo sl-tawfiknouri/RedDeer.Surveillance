@@ -12,7 +12,7 @@
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
-
+    using SharedKernel.Contracts.Markets;
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
@@ -244,7 +244,20 @@
         /// </returns>
         public override IRuleDataConstraint DataConstraints()
         {
-            return RuleDataConstraint.Empty().Case;
+            var constraints = new List<RuleDataSubConstraint>();
+
+            var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.NoPrices,
+                    _ => !this.orderFilterService.Filter(_));
+
+            constraints.Add(constraint);
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.parameters.Id,
+                constraints);
         }
 
         /// <summary>

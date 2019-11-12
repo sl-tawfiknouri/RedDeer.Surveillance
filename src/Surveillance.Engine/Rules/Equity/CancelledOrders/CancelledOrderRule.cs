@@ -187,7 +187,7 @@
             var constraint = new RuleDataSubConstraint(
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
-                DataSource.None,
+                DataSource.NoPrices,
                 _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(

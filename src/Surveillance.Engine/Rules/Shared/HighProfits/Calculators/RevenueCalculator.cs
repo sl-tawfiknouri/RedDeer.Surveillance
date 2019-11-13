@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Logging;
     using SharedKernel.Contracts.Markets;
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
     using Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators.Interfaces;
@@ -30,6 +31,11 @@
         protected readonly IMarketTradingHoursService TradingHoursService;
 
         /// <summary>
+        /// The currency conversion service.
+        /// </summary>
+        private readonly ICurrencyConverterService CurrencyConverterService;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RevenueCalculator"/> class.
         /// </summary>
         /// <param name="tradingHoursService">
@@ -40,10 +46,11 @@
         /// </param>
         public RevenueCalculator(
             IMarketTradingHoursService tradingHoursService,
+            ICurrencyConverterService currencyConverterService,
             ILogger<RevenueCalculator> logger)
         {
-            this.TradingHoursService =
-                tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.TradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            this.CurrencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -133,6 +140,20 @@
                 this.Logger.LogWarning(
                     $"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({money.Currency}) {money.Value}.");
                 return new RevenueMoney(false, money, HighProfitComponents.Virtual);
+            }
+
+            if (!realisedRevenue.Value.DenominatedInCommonCurrency(money))
+            {
+                var convertedMoney = await this.CurrencyConverterService.Convert(new[] { money }, realisedRevenue.Value.Currency, universeDateTime, ruleRunContext);
+
+                if (convertedMoney == null)
+                {
+                    this.Logger.LogError($"CalculateRevenueOfPosition at {universeDateTime} was unable to convert ({money.Currency}) {money.Value} to the realised revenue currency of {realisedRevenue.Value.Currency} due to missing currency conversion data.");
+
+                    return new RevenueMoney(true, realisedRevenue, HighProfitComponents.Realised);
+                }
+
+                money = convertedMoney.Value;
             }
 
             var totalMoneys = realisedRevenue + money;

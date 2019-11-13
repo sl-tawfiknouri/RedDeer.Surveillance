@@ -21,6 +21,7 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -79,6 +80,11 @@
         /// Exchange rate profits service
         /// </summary>
         private readonly IExchangeRateProfitCalculator exchangeRateProfitCalculator;
+
+        /// <summary>
+        /// Currency conversion service
+        /// </summary>
+        private readonly ICurrencyConverterService currencyConverterService;
 
         /// <summary>
         /// Caching strategy - varies over market closure or stream analysis
@@ -158,6 +164,7 @@
             IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IFixedIncomeHighProfitJudgementService judgementService,
+            ICurrencyConverterService currencyService,
             RuleRunMode runMode,
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -199,6 +206,7 @@
                 dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
 
             this.JudgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
+            this.currencyConverterService = currencyService ?? throw new ArgumentNullException(nameof(currencyService));
 
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -410,9 +418,23 @@
 
             if (!revenue.Value.DenominatedInCommonCurrency(cost.Value))
             {
-                this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
+                var convertedCostTask =
+                    this.currencyConverterService.Convert(
+                        new[] { cost.Value },
+                        revenue.Value.Currency,
+                        UniverseDateTime,
+                        this.RuleCtx);
 
-                return;
+                var convertedCost = convertedCostTask.Result;
+
+                if (convertedCost == null)
+                {
+                    this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Could not convert cost to revenue.");
+
+                    return;
+                }
+
+                cost = convertedCost;
             }
 
             var absoluteProfit = revenue.Value - cost.Value;

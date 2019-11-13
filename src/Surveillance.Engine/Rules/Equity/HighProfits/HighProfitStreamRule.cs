@@ -21,6 +21,7 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -84,6 +85,11 @@
         /// The market data cache factory.
         /// </summary>
         private readonly IEquityMarketDataCacheStrategyFactory MarketDataCacheFactory;
+
+        /// <summary>
+        /// The currency conversion service
+        /// </summary>
+        private readonly ICurrencyConverterService currencyConversionService;
 
         /// <summary>
         /// The order filter.
@@ -158,6 +164,7 @@
             IEquityMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitJudgementService judgementService,
+            ICurrencyConverterService currencyConversionService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -189,6 +196,7 @@
             this.OrderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             this.DataRequestSubscriber =
                 dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+            this.currencyConversionService = currencyConversionService ?? throw new ArgumentNullException(nameof(currencyConversionService));
             this.JudgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -407,9 +415,17 @@
 
             if (!revenue.Value.DenominatedInCommonCurrency(cost.Value))
             {
-                this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
+                var convertedCostTask = this.currencyConversionService.Convert(new[] { cost.Value }, targetCurrency, UniverseDateTime, RuleCtx);
+                var convertedCost = convertedCostTask.Result;
 
-                return;
+                if (convertedCost == null)
+                {
+                    this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
+
+                    return;
+                }
+
+                cost = convertedCost.Value;
             }
 
             var absoluteProfit = revenue.Value - cost.Value;

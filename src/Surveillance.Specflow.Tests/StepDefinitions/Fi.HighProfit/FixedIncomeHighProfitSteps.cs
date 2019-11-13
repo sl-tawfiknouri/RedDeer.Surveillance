@@ -333,6 +333,9 @@
                 this.costCalculatorFactory,
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
+                new CurrencyConverterService(
+                    this.exchangeRateSelection.ExchangeRateRepository,
+                    new NullLogger<CurrencyConverterService>()),
                 this.logger,
                 this.stackLogger);
         }

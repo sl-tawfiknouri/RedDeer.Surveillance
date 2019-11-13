@@ -11,6 +11,7 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -96,6 +97,11 @@
         private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
         /// <summary>
+        /// The currency converter service.
+        /// </summary>
+        private ICurrencyConverterService currencyConverterService;
+
+        /// <summary>
         /// The run mode.
         /// </summary>
         private RuleRunMode runMode;
@@ -124,6 +130,7 @@
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this.judgementService = A.Fake<IFixedIncomeHighProfitJudgementService>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            this.currencyConverterService = A.Fake<ICurrencyConverterService>();
             this.runMode = RuleRunMode.ValidationRun;
             this.scheduledExecution = new ScheduledExecution();
         }
@@ -144,6 +151,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -164,6 +172,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -184,6 +193,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -204,6 +214,7 @@
                     null,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -224,6 +235,7 @@
                     this.costCalculatorFactory,
                     null,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -244,6 +256,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     null,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -264,6 +277,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     null,
                     this.stackLogger));
         }
@@ -284,6 +298,7 @@
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     null));
         }
@@ -344,6 +359,7 @@
                 this.costCalculatorFactory,
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
+                this.currencyConverterService,
                 this.logger,
                 this.stackLogger);
         }

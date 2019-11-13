@@ -3,6 +3,7 @@ using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
@@ -11,8 +12,9 @@ namespace Surveillance.Engine.Rules.Rules.Shared.HighProfits.Calculators
     {
         public RevenueMarkingCloseCalculator(
             IMarketTradingHoursService tradingHoursService,
+            ICurrencyConverterService currencyConverterService,
             ILogger<RevenueCalculator> logger)
-            : base(tradingHoursService, logger)
+            : base(tradingHoursService, currencyConverterService, logger)
         {
         }
 

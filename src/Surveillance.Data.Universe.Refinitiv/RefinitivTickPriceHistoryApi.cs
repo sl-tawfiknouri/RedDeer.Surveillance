@@ -20,72 +20,112 @@ namespace Surveillance.Data.Universe.Refinitiv
             tickPriceHistoryServiceClient = tickPriceHistoryServiceClientFactory.Create();
         }
 
+
+
         public async Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime? startDay, DateTime? endDay, IList<string> rics = null)
         {
-            var request = new SecurityTimeBarQueryRequest() { };
-            var requestByRics = rics?.Where(w => !string.IsNullOrEmpty(w)).ToList() ?? new List<string>();
-            if (!requestByRics.Any())
-            {
-                requestByRics.Add(null);
-            }
-
-            var referenceId = Guid.NewGuid().ToString();
-            Timestamp startUtc = startDay.HasValue ? new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(startDay.Value, DateTimeKind.Utc))) : null;
-            Timestamp endUtc = startDay.HasValue ? new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(endDay.Value, DateTimeKind.Utc))) : null;
-
-            foreach (var item in requestByRics)
-            {
-                var subqueryRequest = new SecurityTimeBarSubqueryRequest()
-                {
-                    StartUtc = startUtc,
-                    EndUtc = endUtc,
-                    ReferenceId = referenceId,
-                    PolicyOptions = TimeBarPolicyOptions.EndOfDay
-                };
-
-                if (item != null)
-                {
-                    subqueryRequest.Identifiers = new SecurityIdentifiers
-                    {
-                        Ric = item
-                    };
-                }
-
-                request.Subqueries.Add(subqueryRequest);
-            }
-
-
-            var response = await tickPriceHistoryServiceClient
-                .QuerySecurityTimeBarsAsync(request).ResponseAsync;
-
+            var allDayPeriods = SplitDateRangeByDay(startDay.Value, endDay.Value);
             var result = new List<EndOfDaySecurityTimeBar>();
 
-            foreach (var subResponse in response.SubResponses)
+            foreach (var period in allDayPeriods)
             {
-
-                foreach (var timebar in subResponse.Timebars)
+                var request = new SecurityTimeBarQueryRequest() { };
+                var requestByRics = rics?.Where(w => !string.IsNullOrEmpty(w)).ToList() ?? new List<string>();
+                if (!requestByRics.Any())
                 {
-                    var endOfDaySecurityTimeBar = new EndOfDaySecurityTimeBar
+                    requestByRics.Add(null);
+                }
+
+                var referenceId = Guid.NewGuid().ToString();
+                Timestamp startUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(period.Item1, DateTimeKind.Utc)));
+                Timestamp endUtc = new Timestamp(Timestamp.FromDateTime(DateTime.SpecifyKind(period.Item2, DateTimeKind.Utc)));
+
+                foreach (var item in requestByRics)
+                {
+                    var subqueryRequest = new SecurityTimeBarSubqueryRequest()
                     {
-                        SecurityIdentifiers = new SecurityIdentifier
-                        {
-                            Cusip = subResponse.Identifiers?.Cusip,
-                            ExternalId = subResponse.Identifiers.ExternalIdentifiers,
-                            Isin = subResponse.Identifiers.Isin,
-                            Ric = subResponse.Identifiers.Ric,
-                            Sedol = subResponse.Identifiers.Sedol
-                        },
-                        
-                        TimeBar = MapTimeBar(timebar)
+                        StartUtc = startUtc,
+                        EndUtc = endUtc,
+                        ReferenceId = referenceId,
+                        PolicyOptions = TimeBarPolicyOptions.EndOfDay
                     };
 
-                    result.Add(endOfDaySecurityTimeBar);
+                    if (item != null)
+                    {
+                        subqueryRequest.Identifiers = new SecurityIdentifiers
+                        {
+                            Ric = item
+                        };
+                    }
+
+                    request.Subqueries.Add(subqueryRequest);
                 }
+
+                var response = await tickPriceHistoryServiceClient
+                    .QuerySecurityTimeBarsAsync(request).ResponseAsync;
+
+                foreach (var subResponse in response.SubResponses)
+                {
+                    foreach (var timebar in subResponse.Timebars)
+                    {
+                        var endOfDaySecurityTimeBar = new EndOfDaySecurityTimeBar
+                        {
+                            SecurityIdentifiers = new SecurityIdentifier
+                            {
+                                Cusip = subResponse.Identifiers?.Cusip,
+                                ExternalId = subResponse.Identifiers.ExternalIdentifiers,
+                                Isin = subResponse.Identifiers.Isin,
+                                Ric = subResponse.Identifiers.Ric,
+                                Sedol = subResponse.Identifiers.Sedol
+                            },
+
+                            TimeBar = MapTimeBar(timebar)
+                        };
+
+                        result.Add(endOfDaySecurityTimeBar);
+                    }
+                }
+             
+                var success = response.Success;
             }
 
-            var success = response.Success;
-
             return result;
+        }
+
+        //  https://github.com/red-deer/RedDeer/commit/2baed618
+        private static List<(DateTime, DateTime)> SplitDateRangeByDay(DateTime from, DateTime to)
+        {
+            if (to < from)
+            {
+                throw new ArgumentException($"To time is lower than from. {to} < {from}");
+            }
+
+            var splits = new List<(DateTime, DateTime)>();
+
+            TimeSpan difference = to - from;
+            var currentFrom = from;
+
+            for (var i = 0; i <= difference.Days; i++)
+            {
+                var currentTo = currentFrom.AddDays(1);
+                if (currentTo > to)
+                {
+                    currentTo = to;
+                }
+                else
+                {
+                    currentTo = currentTo.AddMilliseconds(-1);
+                }
+
+                if (currentTo > currentFrom || (splits.Count == 0 && currentTo == currentFrom))
+                {
+                    splits.Add((currentFrom, currentTo));
+                }
+
+                currentFrom = currentFrom.AddDays(1);
+            }
+
+            return splits;
         }
 
         private Timebar MapTimeBar(TimeBar timeBar)

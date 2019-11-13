@@ -260,6 +260,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             this._judgementService = A.Fake<IJudgementService>();
             this._logger = new NullLogger<HighProfitsRule>();
             this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+            this._currencyConverterService = A.Fake<ICurrencyConverterService>();
 
             this._equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
             this._ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();

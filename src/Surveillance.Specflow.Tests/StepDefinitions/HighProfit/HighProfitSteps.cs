@@ -303,6 +303,9 @@
                 this.equityMarketCacheFactory,
                 this.fixedIncomeMarketCacheFactory,
                 this.marketDataCacheStrategyFactory,
+                new CurrencyConverterService(
+                    this.exchangeRateSelection.ExchangeRateRepository,
+                    new NullLogger<CurrencyConverterService>()),
                 this.logger,
                 this.tradingLogger);
 

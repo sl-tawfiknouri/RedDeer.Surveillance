@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
@@ -82,6 +83,7 @@
             IEquityMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitJudgementService judgementService,
+            ICurrencyConverterService currencyConverterService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -97,6 +99,7 @@
                 marketDataCacheFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 logger,
                 tradingHistoryLogger)

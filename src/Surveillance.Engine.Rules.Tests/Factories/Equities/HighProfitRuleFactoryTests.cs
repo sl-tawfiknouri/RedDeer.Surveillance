@@ -15,6 +15,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -54,6 +55,8 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 
         private ISystemProcessOperationRunRuleContext _ruleCtxStream;
 
+        private ICurrencyConverterService _currencyConverterService;
+
         private ScheduledExecution _scheduledExecution;
 
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -69,6 +72,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 this._equityMarketCacheFactory,
                 this._fixedIncomeMarketCacheFactory,
                 this._cacheStrategyFactory,
+                this._currencyConverterService,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -98,6 +102,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         null,
                         this._tradingHistoryLogger));
         }
@@ -117,6 +122,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -136,6 +142,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -155,6 +162,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         null));
         }
@@ -174,6 +182,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         null,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -193,6 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         null,
                         null,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -212,6 +222,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -231,6 +242,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._equityMarketCacheFactory,
                         this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }

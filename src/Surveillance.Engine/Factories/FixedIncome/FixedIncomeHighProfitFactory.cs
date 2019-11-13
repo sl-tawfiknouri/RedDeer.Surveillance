@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -67,6 +68,11 @@
         private readonly IExchangeRateProfitCalculator exchangeRateProfitCalculator;
 
         /// <summary>
+        /// The currency conversion service.
+        /// </summary>
+        private readonly ICurrencyConverterService currencyConverterService;
+
+        /// <summary>
         /// The stack logger.
         /// </summary>
         private readonly ILogger<TradingHistoryStack> stackLogger;
@@ -109,6 +115,7 @@
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            ICurrencyConverterService currencyConverterService,
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> stackLogger)
         {
@@ -123,6 +130,7 @@
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             this.revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
             this.exchangeRateProfitCalculator = exchangeRateProfitCalculator ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            this.currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.stackLogger = stackLogger ?? throw new ArgumentNullException(nameof(stackLogger));
         }
@@ -176,6 +184,7 @@
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 this.logger,
                 this.stackLogger);
@@ -192,6 +201,7 @@
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 this.logger,
                 this.stackLogger);

@@ -10,6 +10,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -40,6 +41,8 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
 
+        private readonly ICurrencyConverterService _currencyConversionService;
+
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleHighProfitFactory(
@@ -50,6 +53,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
             IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IEquityMarketDataCacheStrategyFactory cacheStrategyFactory,
+            ICurrencyConverterService currencyConversionService,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -71,6 +75,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
+            this._currencyConversionService = currencyConversionService ?? throw new ArgumentNullException(nameof(currencyConversionService));
         }
 
         public static string Version => Versioner.Version(3, 0);
@@ -97,6 +102,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 this._cacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                this._currencyConversionService,
                 runMode,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -113,6 +119,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 this._cacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                this._currencyConversionService,
                 runMode,
                 this._logger,
                 this._tradingHistoryLogger);

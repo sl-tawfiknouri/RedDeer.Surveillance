@@ -405,6 +405,13 @@
                 return;
             }
 
+            if (!revenue.Value.DenominatedInCommonCurrency(cost.Value))
+            {
+                this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
+
+                return;
+            }
+
             var absoluteProfit = revenue.Value - cost.Value;
             var profitRatio = revenue.Value.Value / cost.Value.Value - 1;
 

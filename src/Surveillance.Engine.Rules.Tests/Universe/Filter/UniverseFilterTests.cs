@@ -26,6 +26,8 @@
     [TestFixture]
     public class UniverseFilterTests
     {
+        private IUniverseRule _filteredRule;
+
         private IHighMarketCapFilter _highMarketCapFilter;
 
         private ILogger<UniverseFilterService> _logger;
@@ -42,6 +44,7 @@
                 () => new UniverseFilterService(
                     null,
                     this._highMarketCapFilter,
+                    this._filteredRule,
                     new RuleFilter(),
                     new RuleFilter(),
                     new RuleFilter(),
@@ -60,6 +63,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -83,6 +87,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -108,6 +113,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 account,
                 null,
                 null,
@@ -144,6 +150,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -180,6 +187,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -219,6 +227,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -245,6 +254,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -281,6 +291,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 markets,
@@ -333,6 +344,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -369,6 +381,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -405,6 +418,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -441,6 +455,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 traders,
                 null,
@@ -477,6 +492,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 account,
                 null,
                 null,
@@ -513,6 +529,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -549,6 +566,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -585,6 +603,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -621,6 +640,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -657,6 +677,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -693,6 +714,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -727,6 +749,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -752,6 +775,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 account,
                 null,
                 null,
@@ -788,6 +812,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -824,6 +849,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -863,6 +889,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -889,6 +916,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -925,6 +953,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 markets,
@@ -977,6 +1006,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -1013,6 +1043,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -1049,6 +1080,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 null,
                 null,
@@ -1085,6 +1117,7 @@
             var filter = new UniverseFilterService(
                 this._unsubscriber,
                 this._highMarketCapFilter,
+                this._filteredRule,
                 null,
                 traders,
                 null,
@@ -1117,6 +1150,7 @@
         public void Setup()
         {
             this._unsubscriber = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
+            this._filteredRule = A.Fake<IUniverseRule>();
             this._highMarketCapFilter = A.Fake<IHighMarketCapFilter>();
             this._observer = A.Fake<IUniverseCloneableRule>();
             this._logger = A.Fake<ILogger<UniverseFilterService>>();

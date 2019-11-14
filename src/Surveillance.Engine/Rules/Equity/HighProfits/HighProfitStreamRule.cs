@@ -415,7 +415,7 @@
 
             if (!revenue.Value.DenominatedInCommonCurrency(cost.Value))
             {
-                var convertedCostTask = this.currencyConversionService.Convert(new[] { cost.Value }, targetCurrency, UniverseDateTime, RuleCtx);
+                var convertedCostTask = this.currencyConversionService.Convert(new[] { cost.Value }, revenue.Value.Currency, UniverseDateTime, RuleCtx);
                 var convertedCost = convertedCostTask.Result;
 
                 if (convertedCost == null)
@@ -428,9 +428,13 @@
                 cost = convertedCost.Value;
             }
 
+            this.Logger.LogInformation($"Calculating absolute profit Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var absoluteProfit = revenue.Value - cost.Value;
+
+            this.Logger.LogInformation($"Calculating profit ratio Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var profitRatio = revenue.Value.Value / cost.Value.Value - 1;
 
+            this.Logger.LogInformation($"Calculating success profit ratio Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var hasHighProfitAbsolute = this.HasHighProfitAbsolute(absoluteProfit);
             var hasHighProfitPercentage = this.HasHighProfitPercentage(profitRatio);
 

@@ -11,6 +11,7 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -38,12 +39,17 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private IUniverseMarketCacheFactory marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The cost calculator factory.
@@ -91,6 +97,11 @@
         private IUniverseDataRequestsSubscriber dataRequestSubscriber;
 
         /// <summary>
+        /// The currency converter service.
+        /// </summary>
+        private ICurrencyConverterService currencyConverterService;
+
+        /// <summary>
         /// The run mode.
         /// </summary>
         private RuleRunMode runMode;
@@ -107,8 +118,9 @@
         public void Setup()
         {
             this.fixedIncomeOrderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
-            this.marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            this.marketDataCacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
+            this.equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this.fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
+            this.marketDataCacheStrategyFactory = A.Fake<IFixedIncomeMarketDataCacheStrategyFactory>();
             this.costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             this.revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
             this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
@@ -118,6 +130,7 @@
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
             this.judgementService = A.Fake<IFixedIncomeHighProfitJudgementService>();
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
+            this.currencyConverterService = A.Fake<ICurrencyConverterService>();
             this.runMode = RuleRunMode.ValidationRun;
             this.scheduledExecution = new ScheduledExecution();
         }
@@ -132,11 +145,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     null,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -152,10 +167,12 @@
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
                     null,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -170,11 +187,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     null,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -189,11 +208,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     null,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -208,11 +229,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     null,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -227,11 +250,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     null,
+                    this.currencyConverterService,
                     this.logger,
                     this.stackLogger));
         }
@@ -246,11 +271,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     null,
                     this.stackLogger));
         }
@@ -265,11 +292,13 @@
                 // ReSharper disable once ObjectCreationAsStatement
                 () => new FixedIncomeHighProfitFactory(
                     this.fixedIncomeOrderFilterService,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.marketDataCacheStrategyFactory,
                     this.costCalculatorFactory,
                     this.revenueCalculatorFactory,
                     this.exchangeRateProfitCalculator,
+                    this.currencyConverterService,
                     this.logger,
                     null));
         }
@@ -324,11 +353,13 @@
         {
             return new FixedIncomeHighProfitFactory(
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 this.costCalculatorFactory,
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
+                this.currencyConverterService,
                 this.logger,
                 this.stackLogger);
         }

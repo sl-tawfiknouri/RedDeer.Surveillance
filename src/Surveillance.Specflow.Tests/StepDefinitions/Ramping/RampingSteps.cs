@@ -106,15 +106,21 @@
                 new OrderPriceImpactClassifier());
             this._equityOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
 
-            var universeMarketCacheFactory = new UniverseMarketCacheFactory(
+            var equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            var fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             this._equityRuleRampingFactory = new EquityRuleRampingFactory(
                 this._rampingAnalyser,
                 this._equityOrderFilterService,
-                universeMarketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 this._tradingHoursService,
                 new NullLogger<RampingRule>(),
                 new NullLogger<TradingHistoryStack>());

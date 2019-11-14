@@ -20,7 +20,9 @@
     public class
         EquityRulePlacingOrdersWithoutIntentToExecuteFactory : IEquityRulePlacingOrdersWithoutIntentToExecuteFactory
     {
-        private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private readonly ILogger<PlacingOrdersWithNoIntentToExecuteRule> _logger;
 
@@ -32,14 +34,16 @@
 
         public EquityRulePlacingOrdersWithoutIntentToExecuteFactory(
             IUniverseEquityOrderFilterService orderFilterService,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             IMarketTradingHoursService tradingHoursService,
             ILogger<PlacingOrdersWithNoIntentToExecuteRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             this._orderFilterService =
                 orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
-            this._factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this._equityFactory = equityFactory ?? throw new ArgumentNullException(nameof(equityFactory));
+            this._fixedIncomeFactory = fixedIncomeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._tradingHistoryLogger =
                 tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -60,7 +64,8 @@
                 parameters,
                 this._orderFilterService,
                 ruleCtx,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 alertStream,
                 dataRequestSubscriber,
                 this._tradingHoursService,

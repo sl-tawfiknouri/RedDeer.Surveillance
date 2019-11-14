@@ -63,7 +63,7 @@
 
         private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
 
-        private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
         private ILogger<HighVolumeRule> _logger;
 
@@ -138,10 +138,10 @@
                 repository,
                 new NullLogger<MarketTradingHoursService>());
 
-            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this._interdayUniverseMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
 
             this._universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             this._logger = new NullLogger<HighVolumeRule>();
@@ -186,12 +186,18 @@
                     },
                 new UniverseEquityOrderFilterService(new NullLogger<UniverseEquityOrderFilterService>()),
                 this._ruleCtx,
-                new UniverseMarketCacheFactory(
+                new UniverseEquityMarketCacheFactory(
                     new StubRuleRunDataRequestRepository(),
                     new RuleRunDataRequestRepository(
                         A.Fake<IConnectionStringFactory>(),
                         new NullLogger<RuleRunDataRequestRepository>()),
-                    new NullLogger<UniverseMarketCacheFactory>()),
+                    new NullLogger<UniverseEquityMarketCacheFactory>()),
+                new UniverseFixedIncomeMarketCacheFactory(
+                    new StubRuleRunDataRequestRepository(),
+                    new RuleRunDataRequestRepository(
+                        A.Fake<IConnectionStringFactory>(),
+                        new NullLogger<RuleRunDataRequestRepository>()),
+                    new NullLogger<UniverseFixedIncomeMarketCacheFactory>()),
                 RuleRunMode.ValidationRun,
                 this._tradingHoursService,
                 this._universeDataRequestsSubscriber,

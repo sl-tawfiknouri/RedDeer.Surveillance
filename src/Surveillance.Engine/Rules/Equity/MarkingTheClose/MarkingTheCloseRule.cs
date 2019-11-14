@@ -98,7 +98,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="tradingHoursService">
@@ -121,7 +124,8 @@
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleContext,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
@@ -135,7 +139,8 @@
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

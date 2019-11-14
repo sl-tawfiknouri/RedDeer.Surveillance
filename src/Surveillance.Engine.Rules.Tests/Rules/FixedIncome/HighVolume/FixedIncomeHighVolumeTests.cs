@@ -41,7 +41,12 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private IUniverseMarketCacheFactory marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The parameters.
@@ -89,7 +94,8 @@
                     this.parameters,
                     this.fixedIncomeOrderFile,
                     this.ruleContext,
-                    this.marketCacheFactory,
+                    this.equityMarketCacheFactory,
+                    this.fixedIncomeMarketCacheFactory,
                     this.judgementService,
                     this.dataRequestSubscriber,
                     this.marketTradingHoursService,
@@ -107,7 +113,8 @@
             this.parameters = A.Fake<IHighVolumeIssuanceRuleFixedIncomeParameters>();
             this.fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             this.ruleContext = A.Fake<ISystemProcessOperationRunRuleContext>();
-            this.marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this.equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this.fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this.marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
             this.logger = new NullLogger<FixedIncomeHighVolumeRule>();
             this.tradingStackLogger = new NullLogger<TradingHistoryStack>();

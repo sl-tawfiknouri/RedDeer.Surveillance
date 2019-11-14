@@ -185,7 +185,7 @@
                 }
                 catch (Exception ex)
                 {
-                    this._logger?.LogError(ex.ToString());
+                    this._logger?.LogError(ex, $"Failed while processing queue {name} message");
                 }
         }
 

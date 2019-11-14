@@ -34,11 +34,15 @@
     {
         private IUniverseAlertStream _alertStream;
 
-        private IUniverseMarketCacheFactory _cacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityCacheFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeCacheFactory;
 
         private ILogger<CancelledOrderRule> _logger;
 
-        private ILogger<UniverseMarketCacheFactory> _loggerCache;
+        private ILogger<UniverseEquityMarketCacheFactory> _equityLoggerCache;
+
+        private ILogger<UniverseFixedIncomeMarketCacheFactory> _fixedIncomeLoggerCache;
 
         private IUniverseOrderFilter _orderFilter;
 
@@ -77,7 +81,8 @@
                     this._ruleCtx,
                     this._alertStream,
                     this._orderFilter,
-                    this._cacheFactory,
+                    this._equityCacheFactory,
+                    this._fixedIncomeCacheFactory,
                     RuleRunMode.ValidationRun,
                     null,
                     this._tradingHistoryLogger));
@@ -93,7 +98,8 @@
                     this._ruleCtx,
                     this._alertStream,
                     this._orderFilter,
-                    this._cacheFactory,
+                    this._equityCacheFactory,
+                    this._fixedIncomeCacheFactory,
                     RuleRunMode.ValidationRun,
                     this._logger,
                     this._tradingHistoryLogger));
@@ -132,7 +138,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -181,7 +188,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -231,7 +239,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -287,7 +296,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -344,7 +354,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -364,10 +375,12 @@
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             this._parameters = A.Fake<ICancelledOrderRuleEquitiesParameters>();
             this._alertStream = A.Fake<IUniverseAlertStream>();
-            this._cacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
             this._stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
-            this._loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
+            this._equityLoggerCache = A.Fake<ILogger<UniverseEquityMarketCacheFactory>>();
+            this._fixedIncomeLoggerCache = A.Fake<ILogger<UniverseFixedIncomeMarketCacheFactory>>();
             this._logger = A.Fake<ILogger<CancelledOrderRule>>();
             this._tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
@@ -376,12 +389,20 @@
                 .ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
         }
 
-        private UniverseMarketCacheFactory BuildFactory()
+        private UniverseEquityMarketCacheFactory BuildEquityFactory()
         {
-            return new UniverseMarketCacheFactory(
+            return new UniverseEquityMarketCacheFactory(
                 this._stubRuleRunRepository,
                 this._ruleRunRepository,
-                this._loggerCache);
+                this._equityLoggerCache);
+        }
+
+        private UniverseFixedIncomeMarketCacheFactory BuildFixedIncomeFactory()
+        {
+            return new UniverseFixedIncomeMarketCacheFactory(
+                this._stubRuleRunRepository,
+                this._ruleRunRepository,
+                this._fixedIncomeLoggerCache);
         }
 
         private CancelledOrderRule BuildRule(CancelledOrderRuleEquitiesParameters parameters = null)
@@ -403,7 +424,8 @@
                 this._ruleCtx,
                 this._alertStream,
                 this._orderFilter,
-                this.BuildFactory(),
+                this.BuildEquityFactory(),
+                this.BuildFixedIncomeFactory(),
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingHistoryLogger);

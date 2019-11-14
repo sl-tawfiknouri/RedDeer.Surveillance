@@ -6,7 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.1" />
-    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.55.0" />
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.55.0">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
     <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>
 

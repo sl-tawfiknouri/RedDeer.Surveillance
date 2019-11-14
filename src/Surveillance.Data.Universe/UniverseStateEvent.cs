@@ -56,7 +56,7 @@
         /// An equity tick
         /// </summary>
         [Description("Security Data Intra Day Tick (equity)")]
-        EquityIntradayTick,
+        EquityIntraDayTick,
 
         /// <summary>
         /// The equity inter day tick.
@@ -64,6 +64,20 @@
         /// </summary>
         [Description("Security Data Inter Daily Tick (equity)")]
         EquityInterDayTick,
+
+        /// <summary>
+        /// The fixed income intraday tick.
+        /// A fixed income tick
+        /// </summary>
+        [Description("Security Data Intra Day Tick (fixed income)")]
+        FixedIncomeIntraDayTick,
+
+        /// <summary>
+        /// The fixed income inter day tick.
+        /// A fixed income tick
+        /// </summary>
+        [Description("Security Data Inter Daily Tick (fixed income)")]
+        FixedIncomeInterDayTick,
 
         /// <summary>
         /// The exchange open.

@@ -25,7 +25,9 @@
 
         private ILayeringRuleEquitiesParameters _equitiesParameters;
 
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private ILogger<EquityRuleLayeringFactory> _logger;
 
@@ -43,7 +45,8 @@
             var ruleFactory = new EquityRuleLayeringFactory(
                 this._orderFilterService,
                 this._tradingHoursService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._logger,
                 this._tradingLogger);
 
@@ -64,7 +67,8 @@
                 () => new EquityRuleLayeringFactory(
                     this._orderFilterService,
                     this._tradingHoursService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     null,
                     this._tradingLogger));
         }
@@ -77,7 +81,8 @@
                 () => new EquityRuleLayeringFactory(
                     this._orderFilterService,
                     null,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingLogger));
         }
@@ -90,7 +95,8 @@
                 () => new EquityRuleLayeringFactory(
                     null,
                     this._tradingHoursService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingLogger));
         }
@@ -103,7 +109,8 @@
                 () => new EquityRuleLayeringFactory(
                     this._orderFilterService,
                     this._tradingHoursService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     null));
         }
@@ -117,6 +124,7 @@
                     this._orderFilterService,
                     this._tradingHoursService,
                     null,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingLogger));
         }
@@ -125,7 +133,8 @@
         public void Setup()
         {
             this._tradingHoursService = A.Fake<IMarketTradingHoursService>();
-            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             this._logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
             this._tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();

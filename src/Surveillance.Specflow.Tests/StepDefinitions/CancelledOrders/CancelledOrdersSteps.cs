@@ -30,7 +30,9 @@
 
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
 
-        private readonly UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private readonly UniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly UniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
 
@@ -47,10 +49,15 @@
             this._scenarioContext = scenarioContext;
             this._universeSelectionState = universeSelectionState;
 
-            this._interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this._equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            this._fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             this._alertStream = A.Fake<IUniverseAlertStream>();
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -58,7 +65,8 @@
 
             this._equityRuleCancelledOrderFactory = new EquityRuleCancelledOrderFactory(
                 this._universeOrderFilterService,
-                this._interdayUniverseMarketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 new NullLogger<CancelledOrderRule>(),
                 new NullLogger<TradingHistoryStack>());
         }

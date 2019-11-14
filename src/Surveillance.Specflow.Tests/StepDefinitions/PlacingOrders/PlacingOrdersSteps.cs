@@ -98,14 +98,20 @@
                 repository,
                 new NullLogger<MarketTradingHoursService>());
 
-            var universeMarketCacheFactory = new UniverseMarketCacheFactory(
+            var equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            var fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             this._equityRulePlacingOrdersFactory = new EquityRulePlacingOrdersWithoutIntentToExecuteFactory(
                 this._equityOrderFilterService,
-                universeMarketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 this._tradingHoursService,
                 new NullLogger<PlacingOrdersWithNoIntentToExecuteRule>(),
                 new NullLogger<TradingHistoryStack>());

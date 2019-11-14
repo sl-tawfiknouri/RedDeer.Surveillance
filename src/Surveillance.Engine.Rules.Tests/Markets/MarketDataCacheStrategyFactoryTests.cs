@@ -12,7 +12,7 @@
     {
         private IUniverseEquityInterDayCache _interdayCache;
 
-        private IUniverseEquityIntradayCache _intradayCache;
+        private IUniverseEquityIntraDayCache _intradayCache;
 
         [Test]
         public void InterdayStrategy_Returns_A_InterdayMarketCacheStrategy()
@@ -22,7 +22,7 @@
             var result = strategyFactory.InterdayStrategy(this._interdayCache);
 
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<InterdayMarketCacheStrategy>(result);
+            Assert.IsInstanceOf<EquityInterDayMarketCacheStrategy>(result);
         }
 
         [Test]
@@ -33,19 +33,19 @@
             var result = strategyFactory.IntradayStrategy(this._intradayCache);
 
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<IntradayMarketCacheStrategy>(result);
+            Assert.IsInstanceOf<EquityIntraDayMarketCacheStrategy>(result);
         }
 
         [SetUp]
         public void Setup()
         {
             this._interdayCache = A.Fake<IUniverseEquityInterDayCache>();
-            this._intradayCache = A.Fake<IUniverseEquityIntradayCache>();
+            this._intradayCache = A.Fake<IUniverseEquityIntraDayCache>();
         }
 
-        private IMarketDataCacheStrategyFactory Build()
+        private IEquityMarketDataCacheStrategyFactory Build()
         {
-            return new MarketDataCacheStrategyFactory();
+            return new EquityMarketDataCacheStrategyFactory();
         }
     }
 }

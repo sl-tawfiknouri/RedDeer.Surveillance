@@ -15,12 +15,13 @@
     using Microsoft.AspNetCore.Http;
 
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-
+    using Surveillance.Api.App.Services;
     using Surveillance.Api.App.Types;
     using Surveillance.Api.App.Types.Aggregation;
     using Surveillance.Api.App.Types.Engine;
     using Surveillance.Api.App.Types.Organisation;
     using Surveillance.Api.App.Types.Rules;
+    using Surveillance.Api.App.Types.TickPriceHistory;
     using Surveillance.Api.App.Types.Trading;
     using Surveillance.Api.DataAccess.Abstractions.Entities;
     using Surveillance.Api.DataAccess.Abstractions.Repositories;
@@ -29,6 +30,7 @@
     public class SurveillanceQuery : ObjectGraphType
     {
         public SurveillanceQuery(
+            IRefinitivTickPriceHistoryService refinitivTickPriceHistoryService,
             IFinancialInstrumentRepository financialInstrumentRepository,
             IOrderRepository orderRepository,
             IMarketRepository marketRepository,
@@ -319,6 +321,22 @@
                 "instrumentTypes",
                 "A primitive perspective on the asset class. To see further details use the CFI code",
                 resolve: context => InstrumentTypes.None.GetEnumPermutations());
+
+            this.Field<ListGraphType<TickPriceHistoryTimeBarGraphType>>(
+                "tickPriceHistoryTimeBars",
+                "Tick Price History TimeBar",
+                new QueryArguments(
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "rics" },
+                    new QueryArgument<DateTimeGraphType> { Name = "startDateTime" },
+                    new QueryArgument<DateTimeGraphType> { Name = "endDateTime" }),
+                context =>
+                {
+                    var rics = context.GetArgument<List<string>>("rics");
+                    var startDateTime = context.GetArgument<DateTime?>("startDateTime");
+                    var endDateTime = context.GetArgument<DateTime?>("endDateTime");
+
+                    return refinitivTickPriceHistoryService.GetEndOfDayTimeBarsAsync(startDateTime, endDateTime, rics);
+                });
         }
     }
 }

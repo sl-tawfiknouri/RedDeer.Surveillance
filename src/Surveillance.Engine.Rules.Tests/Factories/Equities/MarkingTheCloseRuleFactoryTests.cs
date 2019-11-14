@@ -30,7 +30,9 @@
 
         private IMarkingTheCloseEquitiesParameters _equitiesParameters;
 
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private ILogger<MarkingTheCloseRule> _logger;
 
@@ -47,7 +49,8 @@
         {
             var factory = new EquityRuleMarkingTheCloseFactory(
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._tradingHoursService,
                 this._logger,
                 this._tradingHistoryLogger);
@@ -70,6 +73,7 @@
                 () => new EquityRuleMarkingTheCloseFactory(
                     this._orderFilterService,
                     null,
+                    this._fixedIncomeFactory,
                     this._tradingHoursService,
                     this._logger,
                     this._tradingHistoryLogger));
@@ -82,7 +86,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleMarkingTheCloseFactory(
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._tradingHoursService,
                     null,
                     this._tradingHistoryLogger));
@@ -95,7 +100,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleMarkingTheCloseFactory(
                     null,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._tradingHoursService,
                     this._logger,
                     this._tradingHistoryLogger));
@@ -108,7 +114,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleMarkingTheCloseFactory(
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._tradingHoursService,
                     this._logger,
                     null));
@@ -121,7 +128,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleMarkingTheCloseFactory(
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     null,
                     this._logger,
                     this._tradingHistoryLogger));
@@ -131,7 +139,8 @@
         public void Setup()
         {
             this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._tradingHoursService = A.Fake<IMarketTradingHoursService>();
             this._logger = new NullLogger<MarkingTheCloseRule>();
             this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();

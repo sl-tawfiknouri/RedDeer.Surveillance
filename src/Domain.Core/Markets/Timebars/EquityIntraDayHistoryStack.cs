@@ -7,7 +7,7 @@
     using Domain.Core.Markets.Collections;
     using Domain.Core.Markets.Interfaces;
 
-    public class IntraDayHistoryStack : IIntraDayHistoryStack
+    public class EquityIntraDayHistoryStack : IEquityIntraDayHistoryStack
     {
         private readonly Stack<EquityIntraDayTimeBarCollection> _activeStack;
 
@@ -17,7 +17,7 @@
 
         private Market _market;
 
-        public IntraDayHistoryStack(TimeSpan activeTradeDuration)
+        public EquityIntraDayHistoryStack(TimeSpan activeTradeDuration)
         {
             this._activeStack = new Stack<EquityIntraDayTimeBarCollection>();
             this._activeTradeDuration = activeTradeDuration;

@@ -122,7 +122,7 @@
                 {
                     var json = JsonConvert.SerializeObject(request);
                     var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                        TimeSpan.FromMinutes(3),
+                        TimeSpan.FromMinutes(30),
                         i => !i.IsSuccessStatusCode,
                         1,
                         TimeSpan.FromSeconds(30));
@@ -239,7 +239,7 @@
                 {
                     var json = JsonConvert.SerializeObject(createCommand);
                     var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                        TimeSpan.FromMinutes(3),
+                        TimeSpan.FromMinutes(30),
                         i => !i.IsSuccessStatusCode,
                         10,
                         TimeSpan.FromMinutes(1));
@@ -319,7 +319,7 @@
                 {
                     var json = JsonConvert.SerializeObject(statusCommand);
                     var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                        TimeSpan.FromMinutes(3),
+                        TimeSpan.FromMinutes(30),
                         i => !i.IsSuccessStatusCode,
                         3,
                         TimeSpan.FromMinutes(1));

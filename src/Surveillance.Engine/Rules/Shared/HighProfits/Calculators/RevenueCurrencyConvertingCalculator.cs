@@ -119,6 +119,25 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 return new RevenueMoney(false, realisedRevenue, HighProfitComponents.Realised);
             }
 
+            if (!realisedRevenue.Value.DenominatedInCommonCurrency(convertedVirtualRevenues.Value))
+            {
+                var convertedMoney = 
+                    await this._currencyConverterService.Convert(
+                        new[] { convertedVirtualRevenues.Value },
+                        realisedRevenue.Value.Currency,
+                        universeDateTime,
+                        ctx);
+
+                if (convertedMoney == null)
+                {
+                    this.Logger.LogError($"CalculateRevenueOfPosition at {universeDateTime} was unable to convert ({convertedVirtualRevenues.Value.Currency}) {convertedVirtualRevenues.Value.Value} to the realised revenue currency of {realisedRevenue.Value.Currency} due to missing currency conversion data.");
+
+                    return new RevenueMoney(true, realisedRevenue, HighProfitComponents.Realised);
+                }
+
+                convertedVirtualRevenues = convertedMoney.Value;
+            }
+            
             var totalMoneys = realisedRevenue + convertedVirtualRevenues;
 
             var component =

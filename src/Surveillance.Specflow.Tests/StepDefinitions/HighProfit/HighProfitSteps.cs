@@ -86,9 +86,14 @@
         private HighProfitsRuleEquitiesParameters highProfitRuleEquitiesParameters;
 
         /// <summary>
-        /// The interday universe market cache factory.
+        /// The universe market cache factory.
         /// </summary>
-        private IUniverseMarketCacheFactory interdayUniverseMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The universe market cache factory.
+        /// </summary>
+        private IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory;
 
         /// <summary>
         /// The judgement repository.
@@ -108,7 +113,7 @@
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private IEquityMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The revenue calculator factory.
@@ -256,10 +261,15 @@
                         OpenOffsetInUtc = TimeSpan.FromHours(15)
                     });
 
-            this.interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            this.equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            this.fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             this.universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             this.logger = new NullLogger<HighProfitsRule>();
@@ -268,7 +278,7 @@
             this.dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+            this.marketDataCacheStrategyFactory = new EquityMarketDataCacheStrategyFactory();
 
             this.costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverterService(
@@ -290,8 +300,12 @@
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
                 this.universeOrderFilterService,
-                this.interdayUniverseMarketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeMarketCacheFactory,
                 this.marketDataCacheStrategyFactory,
+                new CurrencyConverterService(
+                    this.exchangeRateSelection.ExchangeRateRepository,
+                    new NullLogger<CurrencyConverterService>()),
                 this.logger,
                 this.tradingLogger);
 
@@ -307,7 +321,7 @@
                 new NullLogger<JudgementService>());
 
             this.exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            this.marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
+            this.marketDataCacheStrategyFactory = new EquityMarketDataCacheStrategyFactory();
         }
     }
 }

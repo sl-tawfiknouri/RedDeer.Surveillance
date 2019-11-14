@@ -21,9 +21,14 @@
         private readonly TimeLineMerger<FactSetTimeBarQuery> FactSetMerger;
 
         /// <summary>
-        /// The refinitive merger.
+        /// The refinitive intra day merger.
         /// </summary>
-        private readonly TimeLineMerger<RefinitiveTimeBarQuery> RefinitiveMerger;
+        private readonly TimeLineMerger<RefinitivIntraDayTimeBarQuery> RefinitivIntraDayMerger;
+
+        /// <summary>
+        /// The refinitive inter day merger.
+        /// </summary>
+        private readonly TimeLineMerger<RefinitivInterDayTimeBarQuery> RefinitivInterDayMerger;
 
         /// <summary>
         /// The unfiltered orders merger.
@@ -37,7 +42,8 @@
         {
             this.BmllMerger = new TimeLineMerger<BmllTimeBarQuery>(); 
             this.FactSetMerger = new TimeLineMerger<FactSetTimeBarQuery>();
-            this.RefinitiveMerger = new TimeLineMerger<RefinitiveTimeBarQuery>();
+            this.RefinitivIntraDayMerger = new TimeLineMerger<RefinitivIntraDayTimeBarQuery>();
+            this.RefinitivInterDayMerger = new TimeLineMerger<RefinitivInterDayTimeBarQuery>();
             this.UnfilteredOrdersMerger = new TimeLineMerger<UnfilteredOrdersQuery>();
         }
 
@@ -86,16 +92,35 @@
         /// The queries.
         /// </param>
         /// <returns>
-        /// The <see cref="RefinitiveTimeBarQuery"/>.
+        /// The <see cref="RefinitivIntraDayTimeBarQuery"/>.
         /// </returns>
-        public IReadOnlyCollection<RefinitiveTimeBarQuery> Merge(IReadOnlyCollection<RefinitiveTimeBarQuery> queries)
+        public IReadOnlyCollection<RefinitivIntraDayTimeBarQuery> Merge(IReadOnlyCollection<RefinitivIntraDayTimeBarQuery> queries)
         {
             if (queries == null || !queries.Any())
             {
-                return new RefinitiveTimeBarQuery[0];
+                return new RefinitivIntraDayTimeBarQuery[0];
             }
 
-            return this.RefinitiveMerger.Merge(queries);
+            return this.RefinitivIntraDayMerger.Merge(queries);
+        }
+
+        /// <summary>
+        /// The merge.
+        /// </summary>
+        /// <param name="queries">
+        /// The queries.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RefinitivInterDayTimeBarQuery"/>.
+        /// </returns>
+        public IReadOnlyCollection<RefinitivInterDayTimeBarQuery> Merge(IReadOnlyCollection<RefinitivInterDayTimeBarQuery> queries)
+        {
+            if (queries == null || !queries.Any())
+            {
+                return new RefinitivInterDayTimeBarQuery[0];
+            }
+
+            return this.RefinitivInterDayMerger.Merge(queries);
         }
 
         /// <summary>

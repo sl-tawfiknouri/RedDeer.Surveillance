@@ -52,6 +52,7 @@
     <ProjectReference Include="..\Infrastructure.Network\Infrastructure.Network.csproj" />
     <ProjectReference Include="..\Surveillance.Api.DataAccess.Abstractions\Surveillance.Api.DataAccess.Abstractions.csproj" />
     <ProjectReference Include="..\Surveillance.Api.DataAccess\Surveillance.Api.DataAccess.csproj" />
+    <ProjectReference Include="..\Surveillance.Data.Universe.Refinitiv\Surveillance.Data.Universe.Refinitiv.csproj" />
   </ItemGroup>
 
   <ItemGroup>

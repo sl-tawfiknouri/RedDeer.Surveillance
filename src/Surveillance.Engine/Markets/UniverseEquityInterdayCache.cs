@@ -31,7 +31,7 @@
 
         private IDictionary<string, EquityInterDayTimeBarCollection> _latestExchangeFrameBook;
 
-        private ConcurrentDictionary<string, IInterDayHistoryStack> _marketHistory;
+        private ConcurrentDictionary<string, IEquityInterDayHistoryStack> _marketHistory;
 
         public UniverseEquityInterDayCache(IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
         {
@@ -39,7 +39,7 @@
                 dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._latestExchangeFrameBook = new ConcurrentDictionary<string, EquityInterDayTimeBarCollection>();
-            this._marketHistory = new ConcurrentDictionary<string, IInterDayHistoryStack>();
+            this._marketHistory = new ConcurrentDictionary<string, IEquityInterDayHistoryStack>();
         }
 
         public void Add(EquityInterDayTimeBarCollection value)
@@ -65,7 +65,7 @@
 
             if (!this._marketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
-                var history = new InterDayHistoryStack();
+                var history = new EquityInterDayHistoryStack();
                 history.Add(value, value.Epoch);
                 this._marketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
             }
@@ -248,7 +248,7 @@
         {
             this._latestExchangeFrameBook =
                 new Dictionary<string, EquityInterDayTimeBarCollection>(this._latestExchangeFrameBook);
-            this._marketHistory = new ConcurrentDictionary<string, IInterDayHistoryStack>(this._marketHistory);
+            this._marketHistory = new ConcurrentDictionary<string, IEquityInterDayHistoryStack>(this._marketHistory);
         }
     }
 }

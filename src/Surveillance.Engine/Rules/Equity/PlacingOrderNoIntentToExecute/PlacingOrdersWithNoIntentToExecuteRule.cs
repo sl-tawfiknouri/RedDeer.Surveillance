@@ -96,7 +96,10 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="alertStream">
@@ -121,7 +124,8 @@
             IPlacingOrderWithNoIntentToExecuteRuleEquitiesParameters parameters,
             IUniverseOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IMarketTradingHoursService tradingHoursService,
@@ -136,7 +140,8 @@
                 EquityRulePlacingOrdersWithoutIntentToExecuteFactory.Version,
                 "Placing Orders With No Intent To Execute Rule",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingStackLogger)

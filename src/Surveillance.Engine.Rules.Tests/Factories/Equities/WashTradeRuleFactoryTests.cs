@@ -32,7 +32,9 @@
 
         private IWashTradeRuleEquitiesParameters _equitiesParameters;
 
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private ILogger<WashTradeRule> _logger;
 
@@ -49,7 +51,8 @@
                 this._currencyConverterService,
                 this._clustering,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -64,7 +67,8 @@
                 this._currencyConverterService,
                 this._clustering,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -85,7 +89,8 @@
                 this._currencyConverterService,
                 this._clustering,
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -102,7 +107,8 @@
                     this._currencyConverterService,
                     null,
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -116,7 +122,8 @@
                     null,
                     this._clustering,
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -131,6 +138,7 @@
                     this._clustering,
                     this._orderFilterService,
                     null,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -144,7 +152,8 @@
                     this._currencyConverterService,
                     this._clustering,
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     null,
                     this._tradingHistoryLogger));
         }
@@ -158,7 +167,8 @@
                     this._currencyConverterService,
                     this._clustering,
                     null,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -172,7 +182,8 @@
                     this._currencyConverterService,
                     this._clustering,
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     null));
         }
@@ -183,7 +194,8 @@
             this._currencyConverterService = A.Fake<ICurrencyConverterService>();
             this._clustering = A.Fake<IClusteringService>();
             this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._logger = new NullLogger<WashTradeRule>();
             this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
 

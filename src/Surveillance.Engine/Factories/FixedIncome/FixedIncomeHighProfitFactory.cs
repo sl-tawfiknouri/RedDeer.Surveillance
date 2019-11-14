@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -39,12 +40,17 @@
         /// <summary>
         /// The market cache factory.
         /// </summary>
-        private readonly IUniverseMarketCacheFactory marketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory equityMarketCacheFactory;
+
+        /// <summary>
+        /// The market cache factory.
+        /// </summary>
+        private readonly IUniverseFixedIncomeMarketCacheFactory fixedIncomeCacheFactory;
 
         /// <summary>
         /// The market data cache strategy factory.
         /// </summary>
-        private readonly IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
+        private readonly IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory;
 
         /// <summary>
         /// The cost calculator factory.
@@ -62,6 +68,11 @@
         private readonly IExchangeRateProfitCalculator exchangeRateProfitCalculator;
 
         /// <summary>
+        /// The currency conversion service.
+        /// </summary>
+        private readonly ICurrencyConverterService currencyConverterService;
+
+        /// <summary>
         /// The stack logger.
         /// </summary>
         private readonly ILogger<TradingHistoryStack> stackLogger;
@@ -72,7 +83,10 @@
         /// <param name="fixedIncomeOrderFilterService">
         /// The fixed income order filter service.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="marketDataCacheStrategyFactory">
@@ -95,23 +109,28 @@
         /// </param>
         public FixedIncomeHighProfitFactory(
             IUniverseFixedIncomeOrderFilterService fixedIncomeOrderFilterService,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheStrategyFactory,
+            IUniverseEquityMarketCacheFactory equityCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeCacheFactory,
+            IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheStrategyFactory,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            ICurrencyConverterService currencyConverterService,
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> stackLogger)
         {
             this.fixedIncomeOrderFilterService =
                 fixedIncomeOrderFilterService ?? throw new ArgumentNullException(nameof(fixedIncomeOrderFilterService));
-            this.marketCacheFactory =
-                marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            this.equityMarketCacheFactory =
+                equityCacheFactory ?? throw new ArgumentNullException(nameof(equityCacheFactory));
+            this.fixedIncomeCacheFactory =
+                fixedIncomeCacheFactory ?? throw new ArgumentNullException(nameof(fixedIncomeCacheFactory));
             this.marketDataCacheStrategyFactory = marketDataCacheStrategyFactory ?? throw new ArgumentNullException(nameof(marketDataCacheStrategyFactory));
             this.costCalculatorFactory =
                 costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             this.revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
             this.exchangeRateProfitCalculator = exchangeRateProfitCalculator ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            this.currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.stackLogger = stackLogger ?? throw new ArgumentNullException(nameof(stackLogger));
         }
@@ -160,10 +179,12 @@
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 this.logger,
                 this.stackLogger);
@@ -175,10 +196,12 @@
                 this.revenueCalculatorFactory,
                 this.exchangeRateProfitCalculator,
                 this.fixedIncomeOrderFilterService,
-                this.marketCacheFactory,
+                this.equityMarketCacheFactory,
+                this.fixedIncomeCacheFactory,
                 this.marketDataCacheStrategyFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 this.logger,
                 this.stackLogger);

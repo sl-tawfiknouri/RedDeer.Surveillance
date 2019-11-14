@@ -24,21 +24,26 @@
 
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly ILogger<HighVolumeVenueFilter> _venueLogger;
 
         public HighVolumeVenueDecoratorFilterFactory(
             IUniverseEquityOrderFilterService equityOrderFilterService,
-            IUniverseMarketCacheFactory universeMarketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IMarketTradingHoursService marketTradingHoursService,
             ILogger<TradingHistoryStack> tradingHistoryLogger,
             ILogger<HighVolumeVenueFilter> venueLogger)
         {
             this._equityOrderFilterService = equityOrderFilterService
                                              ?? throw new ArgumentNullException(nameof(equityOrderFilterService));
-            this._universeMarketCacheFactory = universeMarketCacheFactory
-                                               ?? throw new ArgumentNullException(nameof(universeMarketCacheFactory));
+            this._equityMarketCacheFactory = equityMarketCacheFactory
+                                               ?? throw new ArgumentNullException(nameof(equityMarketCacheFactory));
+            this._fixedIncomeMarketCacheFactory = fixedIncomeMarketCacheFactory
+                                                ?? throw new ArgumentNullException(nameof(fixedIncomeMarketCacheFactory));
             this._marketTradingHoursService = marketTradingHoursService
                                               ?? throw new ArgumentNullException(nameof(marketTradingHoursService));
             this._tradingHistoryLogger =
@@ -60,7 +65,8 @@
                 venueVolumeFilterSetting,
                 this._equityOrderFilterService,
                 ruleRunContext,
-                this._universeMarketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 ruleRunMode,
                 this._marketTradingHoursService,
                 dataRequestSubscriber,

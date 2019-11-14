@@ -92,6 +92,14 @@
                     await this._bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, bmllData);
 
                 // Fixed income handling
+                var refinitivInterdayData = dataRequests.Where(
+                    _ => _.DataSource == DataSource.RefinitivInterday).ToList();
+
+                this._logger.LogInformation(
+                    $"handling request with id {systemProcessOperationId} had {refinitivInterdayData.Count} refinitiv data requests to process");
+                //if (refinitivInterdayData.Any())
+                //    await this._refinitivDataSynchroniser.Handle(systemProcessOperationId, dataRequestContext, refinitivInterdayData);
+
                 var markitData = dataRequests.Where(
                     _ => _.DataSource == DataSource.Markit || _.DataSource == DataSource.Any
                                                            || _.DataSource == DataSource.AnyInterday

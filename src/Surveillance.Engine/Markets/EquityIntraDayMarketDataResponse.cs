@@ -9,11 +9,11 @@
 
     using Surveillance.Engine.Rules.Markets.Interfaces;
 
-    public class IntradayMarketDataResponse : IQueryableMarketDataResponse
+    public class EquityIntraDayMarketDataResponse : IQueryableMarketDataResponse
     {
         private readonly MarketDataResponse<EquityInstrumentIntraDayTimeBar> _response;
 
-        public IntradayMarketDataResponse(MarketDataResponse<EquityInstrumentIntraDayTimeBar> response)
+        public EquityIntraDayMarketDataResponse(MarketDataResponse<EquityInstrumentIntraDayTimeBar> response)
         {
             this._response = response ?? throw new ArgumentNullException(nameof(response));
         }

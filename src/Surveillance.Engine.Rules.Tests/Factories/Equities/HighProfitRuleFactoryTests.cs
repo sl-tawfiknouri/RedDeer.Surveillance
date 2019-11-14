@@ -15,6 +15,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Equities;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -28,7 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class HighProfitRuleFactoryTests
     {
-        private IMarketDataCacheStrategyFactory _cacheStrategyFactory;
+        private IEquityMarketDataCacheStrategyFactory _cacheStrategyFactory;
 
         private ICostCalculatorFactory _costCalculatorFactory;
 
@@ -42,7 +43,9 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 
         private ILogger<HighProfitsRule> _logger;
 
-        private IUniverseMarketCacheFactory _marketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private IUniverseEquityOrderFilterService _orderFilterService;
 
@@ -51,6 +54,8 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
 
         private ISystemProcessOperationRunRuleContext _ruleCtxStream;
+
+        private ICurrencyConverterService _currencyConverterService;
 
         private ScheduledExecution _scheduledExecution;
 
@@ -64,8 +69,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 this._revenueCalculatorFactory,
                 this._exchangeRateProfitCalculator,
                 this._orderFilterService,
-                this._marketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 this._cacheStrategyFactory,
+                this._currencyConverterService,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -92,8 +99,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         null,
                         this._tradingHistoryLogger));
         }
@@ -110,8 +119,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -128,8 +139,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         null,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -146,8 +159,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         null));
         }
@@ -164,8 +179,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         null,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -183,7 +200,9 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
                         null,
+                        null,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -200,8 +219,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         this._revenueCalculatorFactory,
                         this._exchangeRateProfitCalculator,
                         null,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -218,8 +239,10 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                         null,
                         this._exchangeRateProfitCalculator,
                         this._orderFilterService,
-                        this._marketCacheFactory,
+                        this._equityMarketCacheFactory,
+                        this._fixedIncomeMarketCacheFactory,
                         this._cacheStrategyFactory,
+                        this._currencyConverterService,
                         this._logger,
                         this._tradingHistoryLogger));
         }
@@ -231,11 +254,13 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             this._costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             this._revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
             this._exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            this._marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
-            this._cacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
+            this._equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
+            this._cacheStrategyFactory = A.Fake<IEquityMarketDataCacheStrategyFactory>();
             this._judgementService = A.Fake<IJudgementService>();
             this._logger = new NullLogger<HighProfitsRule>();
             this._tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+            this._currencyConverterService = A.Fake<ICurrencyConverterService>();
 
             this._equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
             this._ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();

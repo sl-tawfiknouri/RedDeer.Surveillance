@@ -19,7 +19,7 @@
     {
         private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
 
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+        private readonly IEquityIntraDayHistoryStack _intraDayHistoryStack;
 
         private readonly object _lock = new object();
 
@@ -38,7 +38,7 @@
             this._spoofingTargetSedols = spoofingTargetSedols?.Where(cts => !string.IsNullOrWhiteSpace(cts))?.ToList()
                                          ?? new List<string>();
 
-            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
+            this._intraDayHistoryStack = new EquityIntraDayHistoryStack(TimeSpan.FromHours(1));
         }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)

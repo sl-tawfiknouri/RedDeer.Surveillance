@@ -16,7 +16,7 @@
         [Test]
         public void Add_DoesNotThrow_ForNull()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
 
             Assert.DoesNotThrow(() => stack.Add(null, DateTime.UtcNow));
         }
@@ -24,7 +24,7 @@
         [Test]
         public void ArchiveEmptyCollection_DoesNotThrow()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
 
             Assert.DoesNotThrow(() => stack.ActiveMarketHistory());
         }
@@ -32,7 +32,7 @@
         [Test]
         public void ArchiveEmptyCollection_OneItemToArchive_OneToKeep_ReturnsOne()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
             var date = DateTime.UtcNow;
             var firstBar = date - TimeSpan.FromDays(2);
             var tb = this.GetTimeBar();
@@ -65,13 +65,13 @@
         public void Ctor_DoesNotThrow()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.DoesNotThrow(() => new IntraDayHistoryStack(TimeSpan.Zero));
+            Assert.DoesNotThrow(() => new EquityIntraDayHistoryStack(TimeSpan.Zero));
         }
 
         [Test]
         public void DoesExchange_ReturnNullWhen_NoPush()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
 
             var exch = stack.Exchange();
 
@@ -81,7 +81,7 @@
         [Test]
         public void DoesNotPush_IfDateDoesNotMatch()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
             var date = DateTime.UtcNow;
             var tb = this.GetTimeBar();
             var timeBarCollection = new EquityIntraDayTimeBarCollection(
@@ -99,7 +99,7 @@
         [Test]
         public void DoesPush_IfDateDoesMatch()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
             var date = DateTime.UtcNow;
             var tb = this.GetTimeBar();
             var timeBarCollection = new EquityIntraDayTimeBarCollection(
@@ -118,7 +118,7 @@
         [Test]
         public void DoesPush_IfDateDoesMatch_MultipleTimeBars()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
             var date = DateTime.UtcNow;
             var tb = this.GetTimeBar();
             var tb2 = this.GetTimeBar();
@@ -145,7 +145,7 @@
         [Test]
         public void DoesPush_SetAMarket_OnExchangeCall()
         {
-            var stack = new IntraDayHistoryStack(TimeSpan.Zero);
+            var stack = new EquityIntraDayHistoryStack(TimeSpan.Zero);
             var date = DateTime.UtcNow;
             var tb = this.GetTimeBar();
             var venue = new Market("1", "xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);

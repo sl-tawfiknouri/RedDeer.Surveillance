@@ -144,7 +144,12 @@
 
             if (!realisedRevenue.Value.DenominatedInCommonCurrency(money))
             {
-                var convertedMoney = await this.CurrencyConverterService.Convert(new[] { money }, realisedRevenue.Value.Currency, universeDateTime, ruleRunContext);
+                var convertedMoney = 
+                    await this.CurrencyConverterService.Convert(
+                        new[] { money }, 
+                        realisedRevenue.Value.Currency, 
+                        universeDateTime, 
+                        ruleRunContext);
 
                 if (convertedMoney == null)
                 {

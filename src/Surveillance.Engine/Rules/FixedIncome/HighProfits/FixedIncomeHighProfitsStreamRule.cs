@@ -437,9 +437,13 @@
                 cost = convertedCost;
             }
 
+            this.Logger.LogInformation($"Absolute profit calculating...currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var absoluteProfit = revenue.Value - cost.Value;
+
+            this.Logger.LogInformation($"Profit ratio calculating...currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var profitRatio = (revenue.Value.Value / cost.Value.Value) - 1;
 
+            this.Logger.LogInformation($"Currency conversion success of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var hasHighProfitAbsolute = this.HasHighProfitAbsolute(absoluteProfit);
             var hasHighProfitPercentage = this.HasHighProfitPercentage(profitRatio);
 

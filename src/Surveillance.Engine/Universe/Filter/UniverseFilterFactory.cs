@@ -11,6 +11,7 @@
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
     public class UniverseFilterFactory : IUniverseFilterFactory
@@ -34,6 +35,7 @@
         }
 
         public IUniverseFilterService Build(
+            IUniverseRule filteredRule,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -59,6 +61,7 @@
             return new UniverseFilterService(
                 this._unsubscriberFactory,
                 highMarketCapFilter,
+                filteredRule,
                 accounts,
                 traders,
                 markets,

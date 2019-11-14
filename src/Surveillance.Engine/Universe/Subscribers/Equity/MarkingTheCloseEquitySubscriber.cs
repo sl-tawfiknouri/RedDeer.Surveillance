@@ -196,6 +196,7 @@
                 this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} OpCtx");
 
                 var filteredUniverse = this.universeFilterFactory.Build(
+                    markingTheClose,
                     parameter.Accounts,
                     parameter.Traders,
                     parameter.Markets,

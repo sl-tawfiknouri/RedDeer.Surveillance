@@ -5,15 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TimeZoneConverter" Version="2.5.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
     <ProjectReference Include="..\Surveillance.Data.Universe.Refinitiv\Surveillance.Data.Universe.Refinitiv.csproj" />
     <ProjectReference Include="..\Surveillance.Reddeer.ApiClient\Surveillance.Reddeer.ApiClient.csproj" />
     <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
+    <ProjectReference Include="..\TzConvertFacade\TzConvertFacade.csproj" />
   </ItemGroup>
 
 </Project>

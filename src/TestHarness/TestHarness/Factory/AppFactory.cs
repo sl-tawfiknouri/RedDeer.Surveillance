@@ -7,7 +7,7 @@
     using Infrastructure.Network.Aws.Interfaces;
 
     using Microsoft.Extensions.Logging;
-
+    using Microsoft.Extensions.Logging.Abstractions;
     using SharedKernel.Files.Orders;
 
     using TestHarness.Commands;
@@ -50,8 +50,8 @@
         public AppFactory(INetworkConfiguration networkConfiguration)
         {
             this.DisableNuke = AwsTags.IsLiveEc2Instance();
-
-            this.Logger = new LoggerFactory().CreateLogger("TestHarnessLogger");
+            var loggerFactory = new LoggerFactory();
+            this.Logger = loggerFactory.CreateLogger("TestHarnessLogger");
 
             this.State = new ProgramState();
             this.Console = new Console();
@@ -88,7 +88,7 @@
             this.Configuration = networkConfiguration;
             this.AuroraRepository = new AuroraRepository(networkConfiguration, this.Console);
 
-            this.SecurityApiRepository = new SecurityApiRepository(networkConfiguration);
+            this.SecurityApiRepository = new SecurityApiRepository(networkConfiguration, loggerFactory.CreateLogger<SecurityApiRepository>());
             this.MarketApiRepository = new MarketApiRepository(networkConfiguration);
 
             this.CommandManager = new CommandManager(this, this.State, this.Logger, this.Console);

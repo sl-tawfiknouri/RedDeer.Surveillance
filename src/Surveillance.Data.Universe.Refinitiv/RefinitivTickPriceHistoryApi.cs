@@ -8,19 +8,16 @@ using Surveillance.Data.Universe.Refinitiv.Interfaces;
 
 namespace Surveillance.Data.Universe.Refinitiv
 {
-
     public class RefinitivTickPriceHistoryApi 
         : IRefinitivTickPriceHistoryApi
     {
-        private readonly TickPriceHistoryService.TickPriceHistoryServiceClient tickPriceHistoryServiceClient;
+        private readonly ITickPriceHistoryServiceClientFactory tickPriceHistoryServiceClientFactory;
 
         public RefinitivTickPriceHistoryApi(
             ITickPriceHistoryServiceClientFactory tickPriceHistoryServiceClientFactory)
         {
-            tickPriceHistoryServiceClient = tickPriceHistoryServiceClientFactory.Create();
+            this.tickPriceHistoryServiceClientFactory = tickPriceHistoryServiceClientFactory;
         }
-
-
 
         public async Task<IList<EndOfDaySecurityTimeBar>> GetInterdayTimeBars(DateTime? startDay, DateTime? endDay, IList<string> rics = null)
         {
@@ -60,6 +57,8 @@ namespace Surveillance.Data.Universe.Refinitiv
 
                     request.Subqueries.Add(subqueryRequest);
                 }
+
+                var tickPriceHistoryServiceClient = tickPriceHistoryServiceClientFactory.Create();
 
                 var response = await tickPriceHistoryServiceClient
                     .QuerySecurityTimeBarsAsync(request).ResponseAsync;

@@ -5,6 +5,7 @@ using Grpc.Core;
 //using RedDeer.Extensions.Security.Authentication.Jwt;
 //using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using System;
 //using System;
 //using System.Threading.Tasks;
 
@@ -42,6 +43,11 @@ namespace Surveillance.Data.Universe.Refinitiv
             //var address = configuration["TickPriceHistoryServiceAddress"];
 
             var address = refinitivTickPriceHistoryApiConfig.Address;
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new ArgumentException($"Address '{address}' is null or empty.", "TickPriceHistoryServiceAddress");
+            }
+
             var channel = new Channel(address, ChannelCredentials.Insecure);
             var client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
             return client;

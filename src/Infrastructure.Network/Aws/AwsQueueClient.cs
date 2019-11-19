@@ -72,8 +72,11 @@
 
                 return getQueueUrlResponse?.QueueUrl ?? string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                this._logger?.LogError(ex, $"Exception while getting queue url for {name}");
+
+
                 if (!retry) throw;
 
                 var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));

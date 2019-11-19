@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-
+    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
     using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
@@ -16,9 +16,12 @@
 
         private const string MarketsUrl = "api/security/get/v1?from=frdate&to=tdate&market=mrk";
 
-        public SecurityApiRepository(INetworkConfiguration networkConfiguration)
+        private readonly ILogger<SecurityApiRepository> logger;
+
+        public SecurityApiRepository(INetworkConfiguration networkConfiguration, ILogger<SecurityApiRepository> logger)
             : base(networkConfiguration)
         {
+            this.logger = logger;
         }
 
         public async Task<SecurityPriceResponseDto> Get(DateTime from, DateTime to, string market)
@@ -44,8 +47,10 @@
 
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger?.LogError(ex, "Error while Heartbeating");
+
                 return false;
             }
         }

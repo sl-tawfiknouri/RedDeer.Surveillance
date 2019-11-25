@@ -151,6 +151,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TzConvertFacade", "TzConver
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv.Tests", "DataSynchroniser.Api.Refinitiv.Tests\DataSynchroniser.Api.Refinitiv.Tests.csproj", "{CF9322B9-E40B-4746-B771-9C4B9BBD4287}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -401,6 +403,10 @@ Global
 		{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -467,6 +473,7 @@ Global
 		{B893BDB3-E352-4C41-8264-92A757A9C394} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA} = {5214A434-9675-426D-BD03-A34FE2F963E5}
 		{232C4EED-9881-47EC-A74D-FEDD3BEDDA90} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
+		{CF9322B9-E40B-4746-B771-9C4B9BBD4287} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

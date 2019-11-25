@@ -3,13 +3,16 @@
 option csharp_namespace = "Firefly.Service.Data.TickPriceHistory.Shared.Protos";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+//import "google/protobuf/wrappers.proto";
 
 service TickPriceHistoryService {
 	rpc QuerySecurityTimeBars (SecurityTimeBarQueryRequest) returns (SecurityTimeBarQueryResponse) {}
 	rpc PutSecuritySynchronisation (SecuritySynchronisationRequest) returns (SecuritySynchronisationResponse) {}
 	rpc PutDataSynchronisation (DataSynchronisationRequest) returns (DataSynchronisationResponse) {}
 	rpc DeleteDataSynchronisation (DeleteDataSynchronisationRequest) returns (DeleteDataSynchronisationResponse) {}
+	rpc GetEnrichmentIdentifier (GetEnrichmentIdentifierRequest) returns (GetEnrichmentIdentifierResponse) {}
+	rpc GetEodPricing (GetEodPricingRequest) returns (GetEodPricingResponse) {}
 }
 
 message SecurityIdentifiers {
@@ -30,6 +33,36 @@ enum TimeBarPolicyOptions {
 	TenMinute = 6;
 	FifteenMinute = 7;
 	OneHour = 8;
+	EndOfDay = 9;
+}
+
+/* Request types */
+
+message GetEodPricingRequest{
+	repeated SecurityIdentifiers Identifiers = 1;
+	google.protobuf.Timestamp StartUtc = 2;
+	google.protobuf.Timestamp EndUtc = 3;
+	int32 PollPeriod = 4;
+	google.protobuf.Duration TimeOut = 5;
+}
+
+/* Response types */
+
+message GetEodPricingResponse{
+	bool Success = 1;
+}
+
+/* Request types */
+
+message GetEnrichmentIdentifierRequest{
+	SecurityIdentifiers Identifiers = 1;
+}
+
+/* Response types */
+
+message GetEnrichmentIdentifierResponse{
+	bool Success = 1;
+	repeated SecurityIdentifiers Identifiers = 2;
 }
 
 /* Request types */
@@ -140,6 +173,9 @@ message TimeBar {
 	double OpenYield = 40;
 	double OpenZeroYield = 41;
 	double Volume = 42;
+	string CurrencyCode = 43;
+	double CleanPrice = 44;
+	double DirtyPrice = 45;
 }
 
 message SecurityTimeBarQuerySubResponse {

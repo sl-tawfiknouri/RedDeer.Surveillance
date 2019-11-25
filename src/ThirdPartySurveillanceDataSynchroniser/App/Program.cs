@@ -1,5 +1,8 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
+using Surveillance.Data.Universe.Refinitiv;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
 namespace DataSynchroniser.App
 {
     using System;
@@ -14,6 +17,7 @@ namespace DataSynchroniser.App
     using DataSynchroniser.Api.Bmll;
     using DataSynchroniser.Api.Factset;
     using DataSynchroniser.Api.Markit;
+    using DataSynchroniser.Api.Refinitive;
     using DataSynchroniser.Configuration;
 
     using Infrastructure.Network.Aws.Interfaces;
@@ -66,6 +70,7 @@ namespace DataSynchroniser.App
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
                 Container.Inject(typeof(IApiClientConfiguration), builtConfig);
+                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig); 
 
                 Container.Configure(
                     config =>
@@ -79,6 +84,7 @@ namespace DataSynchroniser.App
                             config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                             config.IncludeRegistry<ReddeerApiClientRegistry>();
                             config.IncludeRegistry<AppRegistry>();
+                            config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                         });
 
                 SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;

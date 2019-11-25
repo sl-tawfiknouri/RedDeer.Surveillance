@@ -158,7 +158,10 @@ namespace DataSynchroniser.App.ConfigBuilder
                                  SurveillanceUserApiAccessToken =
                                      this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
                                  ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                                 BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder)
+                                 BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
+                                 RefinitivTickPriceHistoryApiPollingSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder)),
+                                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder))
                              };
 
             return config;

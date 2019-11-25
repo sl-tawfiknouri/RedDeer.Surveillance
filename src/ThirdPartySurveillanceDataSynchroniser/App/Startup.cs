@@ -1,4 +1,8 @@
-﻿namespace DataSynchroniser.App
+﻿using DataSynchroniser.Api.Refinitive;
+using Surveillance.Data.Universe.Refinitiv;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace DataSynchroniser.App
 {
     using System;
 
@@ -61,6 +65,7 @@
             container.Inject(typeof(IAwsConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig);
 
             container.Configure(
                 config =>
@@ -74,6 +79,7 @@
                         config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                         config.IncludeRegistry<AppRegistry>();
                         config.IncludeRegistry<ReddeerApiClientRegistry>();
+                        config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                         config.Populate(services);
                     });
 

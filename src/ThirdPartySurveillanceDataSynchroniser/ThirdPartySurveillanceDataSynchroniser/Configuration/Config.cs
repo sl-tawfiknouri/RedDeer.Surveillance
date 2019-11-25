@@ -1,4 +1,6 @@
-﻿namespace DataSynchroniser.Configuration
+﻿using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace DataSynchroniser.Configuration
 {
     using Infrastructure.Network.Aws.Interfaces;
 
@@ -6,7 +8,7 @@
     using Surveillance.DataLayer.Configuration.Interfaces;
     using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
-    public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration, IApiClientConfiguration
+    public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration, IApiClientConfiguration, IRefinitivTickPriceHistoryApiConfig
     {
         public string AuroraConnectionString { get; set; }
 
@@ -35,5 +37,11 @@
         public string TestRuleRunUpdateQueueName { get; set; }
 
         public string UploadCoordinatorQueueName { get; set; }
+
+        public string RefinitivTickPriceHistoryApiAddress { get; set; }
+
+        public int RefinitivTickPriceHistoryApiPollingSeconds { get; set; }
+        
+        public int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; }
     }
 }

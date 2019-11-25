@@ -1,4 +1,7 @@
-﻿namespace DataSynchroniser.Tests.Manager
+﻿using DataSynchroniser.Api.Refinitive.Interfaces;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace DataSynchroniser.Tests.Manager
 {
     using System;
     using System.Threading.Tasks;
@@ -30,6 +33,8 @@
         private ILogger<DataRequestManager> _logger;
 
         private IMarkitDataSynchroniser _markitSynchroniser;
+        
+        private IRefinitivDataSynchroniser _refinitivDataSynchroniser;
 
         private IRuleRunDataRequestRepository _repository;
 
@@ -46,6 +51,7 @@
                     this._markitSynchroniser,
                     this._scheduleRulePublisher,
                     this._repository,
+                    this._refinitivDataSynchroniser,
                     null));
         }
 
@@ -60,6 +66,7 @@
                     this._markitSynchroniser,
                     this._scheduleRulePublisher,
                     null,
+                    this._refinitivDataSynchroniser,
                     this._logger));
         }
 
@@ -92,6 +99,7 @@
             this._dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             this._scheduleRulePublisher = A.Fake<IScheduleRulePublisher>();
             this._repository = A.Fake<IRuleRunDataRequestRepository>();
+            this._refinitivDataSynchroniser = A.Fake<IRefinitivDataSynchroniser>();
             this._logger = A.Fake<ILogger<DataRequestManager>>();
         }
 
@@ -103,6 +111,7 @@
                 this._markitSynchroniser,
                 this._scheduleRulePublisher,
                 this._repository,
+                this._refinitivDataSynchroniser,
                 this._logger);
         }
     }

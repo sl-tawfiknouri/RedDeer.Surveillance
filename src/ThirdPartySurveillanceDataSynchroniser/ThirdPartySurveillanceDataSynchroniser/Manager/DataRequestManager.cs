@@ -1,22 +1,21 @@
 ﻿using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DataSynchroniser.Api.Bmll.Interfaces;
+using DataSynchroniser.Api.Factset.Interfaces;
+using DataSynchroniser.Api.Markit.Interfaces;
+using DataSynchroniser.Api.Refinitive.Interfaces;
+using DataSynchroniser.Manager.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
+using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 
 namespace DataSynchroniser.Manager
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using DataSynchroniser.Api.Bmll.Interfaces;
-    using DataSynchroniser.Api.Factset.Interfaces;
-    using DataSynchroniser.Api.Markit.Interfaces;
-    using DataSynchroniser.Api.Refinitive.Interfaces;
-    using DataSynchroniser.Manager.Interfaces;
-    using DataSynchroniser.Queues.Interfaces;
-    using Microsoft.Extensions.Logging;
-    using SharedKernel.Contracts.Markets;
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-
     public class DataRequestManager : IDataRequestManager
     {
         private readonly IBmllDataSynchroniser _bmllSynchroniser;

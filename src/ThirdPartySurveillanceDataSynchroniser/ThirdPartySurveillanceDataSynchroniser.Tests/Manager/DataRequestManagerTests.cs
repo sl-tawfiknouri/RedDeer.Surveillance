@@ -1,26 +1,20 @@
 ﻿using DataSynchroniser.Api.Refinitive.Interfaces;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using System;
+using System.Threading.Tasks;
+using DataSynchroniser.Api.Bmll.Interfaces;
+using DataSynchroniser.Api.Factset.Interfaces;
+using DataSynchroniser.Api.Markit.Interfaces;
+using DataSynchroniser.Manager;
+using DataSynchroniser.Queues.Interfaces;
+using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 
 namespace DataSynchroniser.Tests.Manager
 {
-    using System;
-    using System.Threading.Tasks;
-
-    using DataSynchroniser.Api.Bmll.Interfaces;
-    using DataSynchroniser.Api.Factset.Interfaces;
-    using DataSynchroniser.Api.Markit.Interfaces;
-    using DataSynchroniser.Manager;
-    using DataSynchroniser.Queues.Interfaces;
-
-    using FakeItEasy;
-
-    using Microsoft.Extensions.Logging;
-
-    using NUnit.Framework;
-
-    using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-
     [TestFixture]
     public class DataRequestManagerTests
     {

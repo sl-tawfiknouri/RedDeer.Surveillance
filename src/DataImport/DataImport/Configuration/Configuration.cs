@@ -8,6 +8,8 @@
     {
         public string AuroraConnectionString { get; set; }
 
+        public string OverrideMigrationsFolder { get; set; }
+
         public bool AutoSchedule { get; set; }
 
         public string CaseMessageQueueName { get; set; }

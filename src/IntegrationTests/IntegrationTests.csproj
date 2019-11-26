@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>RedDeer.Surveillance.IntegrationTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="FakeItEasy" Version="5.5.0" />
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataImport\DataImport\DataImport.csproj" />
+    <ProjectReference Include="..\Surveillance\App\Surveillance.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Surveillance\App\Migrations\*" Link="Migrations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

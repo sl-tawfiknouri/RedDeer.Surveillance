@@ -186,6 +186,12 @@
 
         private string MigrationFolders()
         {
+            var overrideMigrationsFolder = this._dbConnectionFactory.OverrideMigrationsFolder();
+            if (!string.IsNullOrWhiteSpace(overrideMigrationsFolder))
+            {
+                return overrideMigrationsFolder;
+            }
+
             return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), MigrationFolder);
         }
 

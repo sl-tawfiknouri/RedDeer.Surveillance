@@ -19,6 +19,7 @@
     using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.Data.Universe.Refinitiv.Interfaces;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
@@ -36,6 +37,11 @@
         /// The orders repository.
         /// </summary>
         private readonly IOrdersRepository ordersRepository;
+
+        /// <summary>
+        /// The allocate orders projector.
+        /// </summary>
+        private readonly IOrdersToAllocatedOrdersProjector allocateOrdersProjector;
 
         /// <summary>
         /// The market open close event service.
@@ -83,6 +89,7 @@
         public DataManifestBuilder(
             IUniverseBuilder universeBuilder,
             IOrdersRepository ordersRepository,
+            IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
             IReddeerMarketRepository marketRepository,
             IMarketOpenCloseEventService marketOpenCloseEventService,
             ITimeLineContinuum timeLineContinuum,
@@ -93,6 +100,8 @@
                 universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
             this.ordersRepository = 
                 ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            this.allocateOrdersProjector =
+                allocateOrdersProjector ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
             this.marketRepository = 
                 marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             this.marketOpenCloseEventService = 
@@ -181,6 +190,7 @@
                     manifest,
                     this.universeBuilder,
                     this.ordersRepository,
+                    this.allocateOrdersProjector,
                     systemProcessOperationContext,
                     this.marketOpenCloseEventService,
                     this.marketRepository,
@@ -218,6 +228,7 @@
                 dataManifest,
                 this.universeBuilder,
                 this.ordersRepository,
+                this.allocateOrdersProjector,
                 systemProcessOperationContext,
                 this.marketOpenCloseEventService,
                 this.marketRepository,

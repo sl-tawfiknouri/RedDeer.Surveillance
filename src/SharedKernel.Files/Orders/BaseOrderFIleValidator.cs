@@ -34,16 +34,16 @@ namespace SharedKernel.Files.Orders
         {
             this.RuleFor(x => x.MarketIdentifierCode)
                 .IsNotEmpty()
-                .When(x => !WhenFixedIncome(x));
+                .When(x => !IsFixedIncome(x));
 
             this.RuleFor(x => x.MarketIdentifierCode)
                 .Equal("RDFI", StringComparer.OrdinalIgnoreCase)
-                .When(WhenFixedIncome)
+                .When(IsFixedIncome)
                 .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.MarketName)
                 .Equal("RDFI", StringComparer.OrdinalIgnoreCase)
-                .When(WhenFixedIncome)
+                .When(IsFixedIncome)
                 .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.MarketType)
@@ -52,7 +52,7 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x.MarketType)
                 .Equal(MarketTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
-                .When(WhenFixedIncome)
+                .When(IsFixedIncome)
                 .WithAdditionalMessage(whenFixedIncomeMessage);
         }
 
@@ -98,7 +98,7 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x.OrderType)
                 .Equal(OrderTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
-                .When(WhenFixedIncome)
+                .When(IsFixedIncome)
                 .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.OrderDirection)
@@ -113,11 +113,11 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x.OrderCleanDirty)
                 .SetValidator(new EnumParseableValidator<OrderCleanDirty>())
-                .When(x => !WhenFixedIncome(x) && !string.IsNullOrWhiteSpace(x.OrderCleanDirty), ApplyConditionTo.CurrentValidator);
+                .When(x => !IsFixedIncome(x) && !string.IsNullOrWhiteSpace(x.OrderCleanDirty), ApplyConditionTo.CurrentValidator);
 
             this.RuleFor(x => x.OrderCleanDirty)
                 .Equal(OrderCleanDirty.CLEAN.ToString(), StringComparer.OrdinalIgnoreCase)
-                .When(WhenFixedIncome, ApplyConditionTo.CurrentValidator)
+                .When(IsFixedIncome, ApplyConditionTo.CurrentValidator)
                 .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.OrderTraderName)
@@ -174,7 +174,7 @@ namespace SharedKernel.Files.Orders
                 .NotEqual(((int)OrderDirections.NONE).ToString());
         }
 
-        protected bool WhenFixedIncome(OrderFileContract orderFileContract)
+        protected bool IsFixedIncome(OrderFileContract orderFileContract)
             => orderFileContract.InstrumentCfi?.StartsWith("D", StringComparison.OrdinalIgnoreCase) ?? false;
 
         protected virtual void RulesForDealerOrderProperties()
@@ -233,6 +233,10 @@ namespace SharedKernel.Files.Orders
             this.RuleFor(x => x.InstrumentFigi)
                 .Length(12)
                 .WhenIsNotNullOrWhitespace();
+
+            this.RuleFor(x => x.InstrumentRic)
+                .Length(1, 30)
+                .When(IsFixedIncome);
         }
 
         protected void RulesForDerivativeIdentificationCodes()
@@ -256,6 +260,10 @@ namespace SharedKernel.Files.Orders
             this.RuleFor(x => x.InstrumentUnderlyingFigi)
                 .Length(12)
                 .WhenIsNotNullOrWhitespace();
+
+            this.RuleFor(x => x.InstrumentUnderlyingRic)
+                .Length(1, 30)
+                .WhenIsNotNullOrWhitespace();
         }
 
         protected void RulesForSufficientInstrumentIdentificationCodes()
@@ -270,6 +278,7 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x)
                 .Must(x => (new string[] { x.InstrumentIsin, x.InstrumentSedol, x.InstrumentCusip, x.InstrumentBloombergTicker }).Where(s => !string.IsNullOrWhiteSpace(s)).Any())
+                .When(o => !IsFixedIncome(o), ApplyConditionTo.CurrentValidator)
                 .WithMessage($"At least one of the '{string.Join("; ", fieldNames)}' instrument must be defined.");
         }
     }

@@ -8,15 +8,18 @@ namespace SharedKernel.Files.Tests.Orders
 {
     public partial class BaseOrderFIleValidatorUnitTests
     {
-        [Test]
-        public void OrderFileValidator_RulesForSufficientInstrumentIdentificationCodes()
+        [TestCase(null, true)]  // Equity
+        [TestCase("E", true)]   // Equity
+        [TestCase("D", false)]  // Fixed Income
+        public void OrderFileValidator_RulesForSufficientInstrumentIdentificationCodes(string instrumentCfi, bool expectedAnyErrors)
         {
             var orderFileContract = new OrderFileContract
             {
                 InstrumentIsin = null,
                 InstrumentSedol = null,
                 InstrumentCusip = null,
-                InstrumentBloombergTicker = null
+                InstrumentBloombergTicker = null,
+                InstrumentCfi = instrumentCfi
             };
 
             var result = validator.Validate(orderFileContract);
@@ -32,7 +35,7 @@ namespace SharedKernel.Files.Tests.Orders
                 .WhereRuleValidator(nameof(PredicateValidator));
 
             var message = FormatMessage(ExpectedMessage, logErrors);
-            Assert.IsTrue(expectedErrors.Any(), message);
+            Assert.AreEqual(expectedAnyErrors, expectedErrors.Any(), message);
         }
 
         [TestCase(nameof(OrderFileContract.MarketName))]

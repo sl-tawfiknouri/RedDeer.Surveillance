@@ -36,6 +36,9 @@ namespace SharedKernel.Files.Tests.Orders
 
             yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingCusip, 6, 9, new OrderFileContract { InstrumentUnderlyingCusip = CreateStringOfLength(6 - 1) });
             yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingCusip, 6, 9, new OrderFileContract { InstrumentUnderlyingCusip = CreateStringOfLength(9 + 1) });
+
+            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentRic, 1, 30, new OrderFileContract { InstrumentRic = CreateStringOfLength(30 + 1), InstrumentCfi = "D" });
+            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingRic, 1, 30, new OrderFileContract { InstrumentUnderlyingRic = CreateStringOfLength(30 + 1), InstrumentCfi = "D" });
         }
 
         public static TestCaseData CreateLengthValidatorValidatorTestCaseData(string testName, Expression<Func<OrderFileContract, string>> expression, int min, int max, OrderFileContract orderFileContract)

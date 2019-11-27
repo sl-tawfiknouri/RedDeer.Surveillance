@@ -7,6 +7,8 @@ using DataImport.Disk_IO.Interfaces;
 using FakeItEasy;
 using FluentAssertions;
 using Infrastructure.Network.Aws.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NLog;
@@ -14,7 +16,6 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Web;
-using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
@@ -22,6 +23,8 @@ using RedDeer.Contracts.SurveillanceService.Rules;
 using RedDeer.Surveillance.App;
 using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
+using Surveillance.Api.DataAccess.Abstractions.DbContexts;
+using Surveillance.Api.DataAccess.DbContexts.Factory;
 using Surveillance.Auditing;
 using Surveillance.Auditing.DataLayer;
 using Surveillance.Auditing.DataLayer.Interfaces;
@@ -43,38 +46,53 @@ using Surveillance.Reddeer.ApiClient.RuleParameter.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace RedDeer.Surveillance.IntegrationTests
+namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
 {
-    public class Tests
+    public class RuleRunner
     {
         static readonly string DatabaseConfig = @"server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=test_surveillance; Allow User Variables=True";
 
-        private ILogger<Tests> _logger;
+        static readonly string CorrelationId = "testCorrelation";
+        static readonly string RuleId = "testRule";
+        static readonly string MessageId = "testMessage";
 
-        [SetUp]
-        public async Task SetUp()
+        public WashTradeRuleParameterDto WashTradeParameters { get; set; }
+
+        public string TradeCsvContent { get; set; }
+        public string AllocationCsvContent { get; set; }
+
+        public int ExpectedOrderCount { get; set; } = 0;
+        public int ExpectedAllocationCount { get; set; } = 0;
+
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
+
+        public List<RuleBreachWithOrders> OriginalRuleBreaches { get; set; }
+        public List<RuleBreachWithOrders> RemainingRuleBreaches { get; set; }
+        public bool HasCheckedForNoBreaches { get; set; }
+
+        private ILogger<RuleRunner> _logger;
+
+        public async Task Run()
         {
             SetupLogger();
             await SetupDatabase();
-        }
+            ImportAllocationsAndTrades();
 
-        [Test]
-        public async Task MyTest()
-        {
-            var trades = @"MarketIdentifierCode,MarketName,MarketType,InstrumentName,InstrumentCfi,InstrumentIssuerIdentifier,InstrumentClientIdentifier,InstrumentSedol,InstrumentIsin,InstrumentFigi,InstrumentCusip,InstrumentLei,InstrumentExchangeSymbol,InstrumentBloombergTicker,InstrumentUnderlyingName,InstrumentUnderlyingCfi,InstrumentUnderlyingIssuerIdentifier,InstrumentUnderlyingClientIdentifier,InstrumentUnderlyingSedol,InstrumentUnderlyingIsin,InstrumentUnderlyingFigi,InstrumentUnderlyingCusip,InstrumentUnderlyingLei,InstrumentUnderlyingExchangeSymbol,InstrumentUnderlyingBloombergTicker,OrderId,OrderVersion,OrderVersionLinkId,OrderGroupId,OrderPlacedDate,OrderBookedDate,OrderAmendedDate,OrderRejectedDate,OrderCancelledDate,OrderFilledDate,OrderType,OrderDirection,OrderCurrency,OrderSettlementCurrency,OrderCleanDirty,OrderAccumulatedInterest,OrderLimitPrice,OrderAverageFillPrice,OrderOrderedVolume,OrderFilledVolume,OrderTraderId,OrderTraderName,OrderClearingAgent,OrderDealingInstructions,OrderOptionStrikePrice,OrderOptionExpirationDate,OrderOptionEuropeanAmerican,DealerOrderId,DealerOrderVersion,DealerOrderVersionLinkId,DealerOrderGroupId,DealerOrderPlacedDate,DealerOrderBookedDate,DealerOrderAmendedDate,DealerOrderRejectedDate,DealerOrderCancelledDate,DealerOrderFilledDate,DealerOrderDealerId,DealerOrderDealerName,DealerOrderNotes,DealerOrderCounterParty,DealerOrderType,DealerOrderDirection,DealerOrderCurrency,DealerOrderSettlementCurrency,DealerOrderCleanDirty,DealerOrderAccumulatedInterest,DealerOrderLimitPrice,DealerOrderAverageFillPrice,DealerOrderOrderedVolume,DealerOrderFilledVolume,DealerOrderOptionStrikePrice,DealerOrderOptionExpirationDate,DealerOrderOptionEuropeanAmerican
-XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH4HKS3,GBOOBH4HKS39,BBG000C3K3G9,G93882192,,VOD,VOD LN Equity,,,,,,,,,,,,420cwashtradelgim,,,ABCD-EFGH,2018-01-02T15:00:00,2018-01-02T15:00:00,2018-01-02T15:00:00,,,2018-01-02T15:00:00,MARKET,BUY,GBP,GBP,CLEAN,,1.5,3,1000,1000,Fahads1-125,Fahads1,ClearingAgent,Trade within 1% of VWAP,0,2018-01-02T15:00:00,EUROPEAN,1111,1,1,2,2018-01-02T15:00:00,2018-01-02T15:00:00,2018-01-02T15:00:00,,,2018-01-02T15:00:00,Fahads1-111,Fahads1 Dealers,some orders,Goldman Sachs,MARKET,BUY,GBP,GBP,CLEAN,0,1.5,2,1000,1000,0,12/12/2018 15:30,EUROPEAN
-XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH4HKS3,GBOOBH4HKS39,BBG000C3K3G9,G93882192,,VOD,VOD LN Equity,,,,,,,,,,,,421cwashtradelgim,,,ABCD-EFGH,2018-01-02T15:00:00,2018-01-02T15:00:00,2018-01-02T15:00:00,,,2018-01-02T15:00:00,MARKET,SELL,GBP,GBP,CLEAN,,1.5,3,1000,1000,Fahads1-125,Fahads1,ClearingAgent,Trade within 1% of VWAP,0,2018-01-02T15:00:00,EUROPEAN,1112,1,1,2,2018-01-02T15:00:00,2018-01-02T15:00:00,2018-01-02T15:00:00,,,2018-01-02T15:00:00,Fahads1-111,Fahads1 Dealers,some orders,Goldman Sachs,MARKET,SELL,GBP,GBP,CLEAN,0,1.5,10,1000,1000,0,12/12/2018 15:30,EUROPEAN";
+            var orderCount = GetOrderCount();
+            orderCount.Should().Be(ExpectedOrderCount);
 
-            var allocations = @"OrderId,Fund,Strategy,ClientAccountId,OrderFilledVolume
-420cwashtradelgim,FundE,JapanE,111,10000000000
-421cwashtradelgim,FundE,JapanE,111,10000000000";
-
-            ImportAllocationsAndTrades(allocations, trades);
+            var allocationCount = GetOrderAllocationCount();
+            allocationCount.Should().Be(ExpectedAllocationCount);
 
             await RunRule();
+
+            OriginalRuleBreaches = GetRuleBreaches();
+            RemainingRuleBreaches = OriginalRuleBreaches.ToList();
 
             true.Should().Be(true);
         }
@@ -85,13 +103,13 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
 
             var nLogConfig = new LoggingConfiguration();
             var logconsole = new ConsoleTarget("logconsole");
-            nLogConfig.AddRule(NLog.LogLevel.Error, NLog.LogLevel.Fatal, logconsole);
+            nLogConfig.AddRule(NLog.LogLevel.Warn, NLog.LogLevel.Fatal, logconsole);
             LogManager.Configuration = nLogConfig; // set config when nlog used from LogManager.GetCurrentClassLogger()
             NLogBuilder.ConfigureNLog(nLogConfig); // set config when nlog used from asp net core
 
             container.Configure(config => config.IncludeRegistry<NLogRegistry>());
 
-            _logger = container.GetInstance<ILogger<Tests>>();
+            _logger = container.GetInstance<ILogger<RuleRunner>>();
         }
 
         private class NLogRegistry : Registry
@@ -158,7 +176,7 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
             }
         }
 
-        private void ImportAllocationsAndTrades(string allocations, string trades)
+        private void ImportAllocationsAndTrades()
         {
             var container = new Container();
 
@@ -199,12 +217,18 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
             container.Inject(typeof(IAwsQueueClient), awsQueueClient);
 
             // upload allocation file
-            var uploadAllocationFileMonitor = container.GetInstance<IUploadAllocationFileMonitor>();
-            WithTempFile(allocations, fileName => uploadAllocationFileMonitor.ProcessFile(fileName));
+            if (AllocationCsvContent != null)
+            {
+                var uploadAllocationFileMonitor = container.GetInstance<IUploadAllocationFileMonitor>();
+                WithTempFile(AllocationCsvContent, fileName => uploadAllocationFileMonitor.ProcessFile(fileName));
+            }
 
             // upload trade file
-            var uploadTradeFileMonitor = container.GetInstance<IUploadTradeFileMonitor>();
-            WithTempFile(trades, fileName => uploadTradeFileMonitor.ProcessFile(fileName));
+            if (TradeCsvContent != null)
+            {
+                var uploadTradeFileMonitor = container.GetInstance<IUploadTradeFileMonitor>();
+                WithTempFile(TradeCsvContent, fileName => uploadTradeFileMonitor.ProcessFile(fileName));
+            }
 
             // enliven orders with data verifier
             var dataVerifier = container.GetInstance<IDataVerifier>();
@@ -283,7 +307,7 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
 
             // replace rule parameter api
             var ruleParameterApi = A.Fake<IRuleParameterApi>();
-            A.CallTo(() => ruleParameterApi.GetAsync("rule123"))
+            A.CallTo(() => ruleParameterApi.GetAsync(RuleId))
                 .ReturnsLazily(() =>
                 {
                     var dto = BlankRuleParameterDto();
@@ -291,7 +315,7 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
                     {
                         new WashTradeRuleParameterDto
                         {
-                            Id = "rule123",
+                            Id = RuleId,
                             WindowSize = TimeSpan.FromDays(1),
                             PerformClusteringPositionAnalysis = true,
                             ClusteringPercentageValueDifferenceThreshold = 0.010M,
@@ -310,16 +334,16 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
             // execution message
             var execution = new ScheduledExecution
             {
-                TimeSeriesInitiation = new DateTimeOffset(new DateTime(2018, 01, 01, 00, 00, 00)),
-                TimeSeriesTermination = new DateTimeOffset(new DateTime(2018, 01, 03, 00, 00, 00)),
-                CorrelationId = "correlation123",
+                TimeSeriesInitiation = new DateTimeOffset(From),
+                TimeSeriesTermination = new DateTimeOffset(To),
+                CorrelationId = CorrelationId,
                 IsBackTest = true,
                 Rules = new List<RuleIdentifier>
                 {
                     new RuleIdentifier
                     {
                         Rule = Rules.WashTrade,
-                        Ids = new[] { "rule123" }
+                        Ids = new[] { RuleId }
                     }
                 }
             };
@@ -327,7 +351,7 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
 
             // run rule
             var queueRuleSubscriber = container.GetInstance<IQueueRuleSubscriber>();
-            await queueRuleSubscriber.ExecuteDistributedMessage("message123", message);
+            await queueRuleSubscriber.ExecuteDistributedMessage(MessageId, message);
         }
 
         private RuleParameterDto BlankRuleParameterDto()
@@ -347,6 +371,99 @@ XLON,London Stock Exchange,STOCKEXCHANGE,VODAFONE,entpsb,Vodafone Corp,VOD LN,BH
                 FixedIncomeHighProfits = new FixedIncomeHighProfitRuleParameterDto[0],
                 FixedIncomeWashTrades = new FixedIncomeWashTradeRuleParameterDto[0]
             };
+        }
+
+        private int GetOrderCount()
+        {
+            using (var dbContext = BuildDbContext())
+            {
+                return dbContext
+                    .Orders
+                    .Count();
+            }
+        }
+
+        private int GetOrderAllocationCount()
+        {
+            using (var dbContext = BuildDbContext())
+            {
+                return dbContext
+                    .OrdersAllocation
+                    .Count();
+            }
+        }
+
+        private List<RuleBreachWithOrders> GetRuleBreaches()
+        {
+            using (var dbContext = BuildDbContext())
+            {
+                var ruleBreaches = dbContext
+                    .RuleBreach
+                    .Where(x => x.CorrelationId == CorrelationId)
+                    .AsNoTracking()
+                    .ToList();
+
+                var breachIds = ruleBreaches
+                    .Select(x => x.Id);
+
+                var ruleBreachOrders = dbContext
+                    .RuleBreachOrders
+                    .Where(x => breachIds.Contains(x.RuleBreachId))
+                    .AsNoTracking()
+                    .ToList();
+
+                var orderIds = ruleBreachOrders
+                    .Select(x => x.OrderId);
+
+                var orders = dbContext
+                    .Orders
+                    .Where(x => orderIds.Contains(x.Id))
+                    .AsNoTracking()
+                    .ToList();
+
+                var mappedBreaches = ruleBreaches
+                    .Select(x => new RuleBreachWithOrders
+                    {
+                        RuleBreach = x,
+                        Orders = ruleBreachOrders
+                            .Where(y => y.RuleBreachId == x.Id)
+                            .Select(y => orders.Single(z => z.Id == y.OrderId))
+                            .ToList()
+                    })
+                    .ToList();
+
+                return mappedBreaches;
+            }
+        }
+
+        private IGraphQlDbContext BuildDbContext()
+        {
+            var builder = new ConfigurationBuilder();
+            builder.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["SurveillanceApiConnectionString"] = DatabaseConfig
+            });
+            var configuration = builder.Build();
+
+            var factory = new GraphQlDbContextFactory(configuration, new NLogLoggerFactory());
+
+            return factory.Build();
+        }
+
+        public void ErrorOnUnaccountedRuleBreaches()
+        {
+            if (RemainingRuleBreaches?.Any() ?? false)
+            {
+                throw new Exception($"There are {RemainingRuleBreaches.Count} unaccounted for rule breaches remaining");
+            }
+        }
+
+        public void ErrorIfUncheckedForNoBreaches()
+        {
+            if (OriginalRuleBreaches != null && OriginalRuleBreaches.Count == 0 && !HasCheckedForNoBreaches)
+            {
+                throw new Exception($"There was no specific assertion that 0 rules breaches were found");
+            }
         }
     }
 }

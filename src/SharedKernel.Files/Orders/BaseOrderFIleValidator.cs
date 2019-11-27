@@ -33,7 +33,18 @@ namespace SharedKernel.Files.Orders
         protected virtual void RulesForMarket()
         {
             this.RuleFor(x => x.MarketIdentifierCode)
-                .IsNotEmpty();
+                .IsNotEmpty()
+                .When(x => !WhenFixedIncome(x));
+
+            this.RuleFor(x => x.MarketIdentifierCode)
+                .Equal("RDFI", StringComparer.OrdinalIgnoreCase)
+                .When(WhenFixedIncome)
+                .WithAdditionalMessage(whenFixedIncomeMessage);
+
+            this.RuleFor(x => x.MarketName)
+                .Equal("RDFI", StringComparer.OrdinalIgnoreCase)
+                .When(WhenFixedIncome)
+                .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.MarketType)
                 .IsNotEmpty()

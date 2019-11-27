@@ -1,4 +1,5 @@
 using FluentAssertions;
+using FluentValidation.Validators;
 using NUnit.Framework;
 using SharedKernel.Files.Orders;
 using System.Linq;
@@ -28,9 +29,37 @@ namespace SharedKernel.Files.Tests.Orders
             var logErrors = errors.ToList();
             var expectedErrors = errors
                 .WhereErrorMessage(ExpectedMessage)
-                .WhereRuleValidator("PredicateValidator");
+                .WhereRuleValidator(nameof(PredicateValidator));
 
             var message = FormatMessage(ExpectedMessage, logErrors);
+            Assert.IsTrue(expectedErrors.Any(), message);
+        }
+
+        [TestCase(nameof(OrderFileContract.MarketName))]
+        [TestCase(nameof(OrderFileContract.MarketIdentifierCode))]
+        public void OrderFileValidator_RulesForSufficientInstrumentIdentificationCodess(string propertyName)
+        {
+            var expected = "RDFI";
+            var orderFileContract = new OrderFileContract
+            {
+                InstrumentCfi = "D",
+                MarketIdentifierCode = null,
+                MarketName = null
+            };
+
+            var result = validator.Validate(orderFileContract);
+
+            result.IsValid.Should().BeFalse();
+
+            var expectedMessage = $"'{FluentValidation.Internal.Extensions.SplitPascalCase(propertyName)}' must be equal to '{expected}'. When fixed income.";
+
+            var errors = result.Errors.WherePropertyName(propertyName);
+            var logErrors = errors.ToList();
+            var expectedErrors = errors
+                .WhereErrorMessage(expectedMessage)
+                .WhereRuleValidator(nameof(EqualValidator));
+
+            var message = FormatMessage(expectedMessage, logErrors);
             Assert.IsTrue(expectedErrors.Any(), message);
         }
     }

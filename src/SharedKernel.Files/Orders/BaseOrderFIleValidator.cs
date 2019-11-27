@@ -10,6 +10,8 @@ namespace SharedKernel.Files.Orders
     public class BaseOrderFIleValidator
         : AbstractValidator<OrderFileContract>
     {
+        private const string whenFixedIncomeMessage = "When fixed income.";
+
         public BaseOrderFIleValidator()
             : base()
         {
@@ -36,6 +38,11 @@ namespace SharedKernel.Files.Orders
             this.RuleFor(x => x.MarketType)
                 .IsNotEmpty()
                 .SetValidator(new EnumParseableValidator<MarketTypes>());
+
+            this.RuleFor(x => x.MarketType)
+                .Equal(MarketTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
+                .When(WhenFixedIncome)
+                .WithAdditionalMessage(whenFixedIncomeMessage);
         }
 
         protected virtual void RulesForOrderProperties()
@@ -78,6 +85,11 @@ namespace SharedKernel.Files.Orders
                 .IsNotEmpty()
                 .SetValidator(new EnumParseableValidator<OrderTypes>());
 
+            this.RuleFor(x => x.OrderType)
+                .Equal(OrderTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
+                .When(WhenFixedIncome)
+                .WithAdditionalMessage(whenFixedIncomeMessage);
+
             this.RuleFor(x => x.OrderDirection)
                 .IsNotEmpty()
                 .SetValidator(new EnumParseableValidator<OrderDirections>());
@@ -90,7 +102,12 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x.OrderCleanDirty)
                 .SetValidator(new EnumParseableValidator<OrderCleanDirty>())
-                .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty));
+                .When(x => !WhenFixedIncome(x) && !string.IsNullOrWhiteSpace(x.OrderCleanDirty), ApplyConditionTo.CurrentValidator);
+
+            this.RuleFor(x => x.OrderCleanDirty)
+                .Equal(OrderCleanDirty.CLEAN.ToString(), StringComparer.OrdinalIgnoreCase)
+                .When(WhenFixedIncome, ApplyConditionTo.CurrentValidator)
+                .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.OrderTraderName)
                 .MaximumLength(255);
@@ -145,6 +162,9 @@ namespace SharedKernel.Files.Orders
             this.RuleFor(x => x.OrderDirection)
                 .NotEqual(((int)OrderDirections.NONE).ToString());
         }
+
+        protected bool WhenFixedIncome(OrderFileContract orderFileContract)
+            => orderFileContract.InstrumentCfi?.StartsWith("D", StringComparison.OrdinalIgnoreCase) ?? false;
 
         protected virtual void RulesForDealerOrderProperties()
         {

@@ -67,16 +67,16 @@ namespace SharedKernel.Files.Tests.Orders
         public static IEnumerable ValidEnumParseableValidatorTestCases(string testName)
         {
             foreach (var enumValue in GetEnumValidValues<MarketTypes>())
-                yield return CreateEnumParseableValidatorTestCaseData<MarketTypes>(testName, o => o.MarketType, new OrderFileContract { MarketType = enumValue });
+                yield return CreateValidEnumParseableValidatorTestCaseData<MarketTypes>(testName, o => o.MarketType, new OrderFileContract { MarketType = enumValue });
 
             foreach (var enumValue in GetEnumValidValues<OrderTypes>())
-                yield return CreateEnumParseableValidatorTestCaseData<OrderTypes>(testName, o => o.OrderType, new OrderFileContract { OrderType = enumValue });
+                yield return CreateValidEnumParseableValidatorTestCaseData<OrderTypes>(testName, o => o.OrderType, new OrderFileContract { OrderType = enumValue });
             
             foreach (var enumValue in GetEnumValidValues<OrderDirections>().Where(w =>!new string[] { ((int)OrderDirections.NONE).ToString(), OrderDirections.NONE.ToString() }.Contains(w)))
-                yield return CreateEnumParseableValidatorTestCaseData<OrderDirections>(testName, o => o.OrderDirection, new OrderFileContract { OrderDirection = enumValue });
+                yield return CreateValidEnumParseableValidatorTestCaseData<OrderDirections>(testName, o => o.OrderDirection, new OrderFileContract { OrderDirection = enumValue });
 
             foreach (var enumValue in GetEnumValidValues<OrderCleanDirty>())
-                yield return CreateEnumParseableValidatorTestCaseData<OrderCleanDirty>(testName, o => o.OrderCleanDirty, new OrderFileContract { OrderCleanDirty = enumValue });
+                yield return CreateValidEnumParseableValidatorTestCaseData<OrderCleanDirty>(testName, o => o.OrderCleanDirty, new OrderFileContract { OrderCleanDirty = enumValue });
         }
 
         public static TestCaseData CreateValidEnumParseableValidatorTestCaseData<TEnum>(string testName, Expression<Func<OrderFileContract, string>> expression, OrderFileContract orderFileContract)
@@ -125,6 +125,49 @@ namespace SharedKernel.Files.Tests.Orders
                 PropertyName = property.PropertyName,
                 OrderFileContract = orderFileContract,
                 ExpectedMessage = $"'{property.PropertyDisplayName}' must not be equal to '{property.PropertyValue}'."
+            };
+
+            return new TestCaseData(testData)
+                .SetName($"{testName} when property '{property.PropertyName}' value '{property.PropertyValue ?? "NULL" }' must not be equal to '{property.PropertyValue}'");
+        }
+
+        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(WhenFixedIncomeEnumsMustBeTestCases), new object[] { nameof(OrderFileValidator_WhenFixedIncome_EnumsMustBe) })]
+        public void OrderFileValidator_WhenFixedIncome_EnumsMustBe(OrderFileValidatorTestData testData)
+        {
+            var result = validator.Validate(testData.OrderFileContract);
+
+            var errors = result.Errors.WherePropertyName(testData.PropertyName);
+            var logErrors = errors.ToList();
+            var expectedErrors = errors
+                .WhereErrorMessage(testData.ExpectedMessage)
+                .WhereRuleValidator(testData.RuleValidator);
+
+            var message = FormatMessage(testData.ExpectedMessage, logErrors);
+            Assert.IsTrue(expectedErrors.Any(), message);
+        }
+
+        public static IEnumerable WhenFixedIncomeEnumsMustBeTestCases(string testName)
+        {
+            foreach (var enumValue in GetEnumValidValues<OrderCleanDirty>().Where(w => !new string[] { ((int)OrderCleanDirty.CLEAN).ToString(), OrderCleanDirty.CLEAN.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
+                yield return CreateWhenFixedIncomeEnumsMustBeTestCases<OrderCleanDirty>(testName, o => o.OrderCleanDirty, new OrderFileContract { OrderCleanDirty = enumValue, InstrumentCfi = "D" }, OrderCleanDirty.CLEAN.ToString());
+
+            foreach (var enumValue in GetEnumValidValues<MarketTypes>().Where(w => !new string[] { ((int)MarketTypes.NONE).ToString(), MarketTypes.NONE.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
+                yield return CreateWhenFixedIncomeEnumsMustBeTestCases<MarketTypes>(testName, o => o.MarketType, new OrderFileContract { MarketType = enumValue, InstrumentCfi = "D" }, MarketTypes.NONE.ToString());
+
+            foreach (var enumValue in GetEnumValidValues<OrderTypes>().Where(w => !new string[] { ((int)OrderTypes.NONE).ToString(), OrderTypes.NONE.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
+                yield return CreateWhenFixedIncomeEnumsMustBeTestCases<OrderTypes>(testName, o => o.OrderType, new OrderFileContract { OrderType = enumValue, InstrumentCfi = "D" }, OrderTypes.NONE.ToString());
+        }
+
+        public static TestCaseData CreateWhenFixedIncomeEnumsMustBeTestCases<TEnum>(string testName, Expression<Func<OrderFileContract, string>> expression, OrderFileContract orderFileContract, string validValue)
+            where TEnum : struct, IConvertible
+        {
+            var property = GetProperty(expression, orderFileContract);
+            var testData = new OrderFileValidatorTestData
+            {
+                RuleValidator = nameof(EqualValidator),
+                ExpectedMessage = $"'{property.PropertyDisplayName}' must be equal to '{validValue}'. When fixed income.",
+                PropertyName = property.PropertyName,
+                OrderFileContract = orderFileContract
             };
 
             return new TestCaseData(testData)

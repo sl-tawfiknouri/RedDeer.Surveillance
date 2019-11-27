@@ -172,6 +172,12 @@ namespace SharedKernel.Files.Orders
 
             this.RuleFor(x => x.OrderDirection)
                 .NotEqual(((int)OrderDirections.NONE).ToString());
+
+            this.RuleFor(x => x.InstrumentExchangeSymbol)
+                .MaximumLength(100);
+
+            this.RuleFor(x => x.InstrumentUnderlyingExchangeSymbol)
+                .MaximumLength(100);
         }
 
         protected bool IsFixedIncome(OrderFileContract orderFileContract)

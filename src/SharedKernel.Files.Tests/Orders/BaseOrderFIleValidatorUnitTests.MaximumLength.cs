@@ -40,6 +40,9 @@ namespace SharedKernel.Files.Tests.Orders
 
             yield return CreateMaximumLengthValidatorTestCaseData(testName, o => o.InstrumentCfi, new OrderFileContract { InstrumentCfi = CreateStringOfLength(6 + 1) });
 
+            yield return CreateMaximumLengthValidatorTestCaseData(testName, o => o.InstrumentExchangeSymbol, new OrderFileContract { InstrumentExchangeSymbol = CreateStringOfLength(100 + 1) });
+            yield return CreateMaximumLengthValidatorTestCaseData(testName, o => o.InstrumentUnderlyingExchangeSymbol, new OrderFileContract { InstrumentUnderlyingExchangeSymbol = CreateStringOfLength(100 + 1) });
+
         }
 
         public static TestCaseData CreateMaximumLengthValidatorTestCaseData(string testName, Expression<Func<OrderFileContract, string>> expression, OrderFileContract orderFileContract)

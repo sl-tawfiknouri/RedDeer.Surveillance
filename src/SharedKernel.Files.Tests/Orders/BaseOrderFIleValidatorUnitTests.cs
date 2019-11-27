@@ -3,7 +3,7 @@ using NUnit.Framework;
 using SharedKernel.Files.Orders;
 using System.Linq;
 
-namespace SharedKernel.Files.Tests
+namespace SharedKernel.Files.Tests.Orders
 {
     public partial class BaseOrderFIleValidatorUnitTests
     {

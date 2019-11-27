@@ -1,7 +1,7 @@
 ﻿using Domain.Core.Trading.Orders;
 using NUnit.Framework;
 using SharedKernel.Files.Orders;
-using SharedKernel.Files.PropertyValidators;
+using SharedKernel.Files.ExtendedValidators;
 using System;
 using System.Collections;
 using System.Linq;

@@ -2,7 +2,7 @@
 using FluentValidation.Validators;
 using System;
 
-namespace SharedKernel.Files.PropertyValidators
+namespace SharedKernel.Files.ExtendedValidators
 {
     public class StringDecimalGreaterThanValidator
         : GreaterThanValidator

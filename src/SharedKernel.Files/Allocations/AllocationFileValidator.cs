@@ -3,7 +3,7 @@
     using FluentValidation;
 
     using SharedKernel.Files.Allocations.Interfaces;
-    using SharedKernel.Files.PropertyValidators;
+    using SharedKernel.Files.ExtendedValidators;
 
     public class AllocationFileValidator : AbstractValidator<AllocationFileContract>, IAllocationFileValidator
     {

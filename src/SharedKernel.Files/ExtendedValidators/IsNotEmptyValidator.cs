@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Resources;
 using FluentValidation.Validators;
 
-namespace SharedKernel.Files.PropertyValidators
+namespace SharedKernel.Files.ExtendedValidators
 {
     public class IsNotEmptyValidator
         : NotEmptyValidator

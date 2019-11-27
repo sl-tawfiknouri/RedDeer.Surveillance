@@ -6,7 +6,7 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace SharedKernel.Files.Tests
+namespace SharedKernel.Files.Tests.Orders
 {
     public partial class BaseOrderFIleValidatorUnitTests
     {

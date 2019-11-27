@@ -8,7 +8,7 @@ using System.Text;
 using FluentValidation.Internal;
 using System.Linq.Expressions;
 
-namespace SharedKernel.Files.Tests
+namespace SharedKernel.Files.Tests.Orders
 {
     public partial class BaseOrderFIleValidatorUnitTests
     {

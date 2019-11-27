@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FluentValidation;
 using NUnit.Framework;
-using SharedKernel.Files.PropertyValidators;
+using SharedKernel.Files.ExtendedValidators;
 using System.Linq;
 
 namespace SharedKernel.Files.Tests.GenericValidators

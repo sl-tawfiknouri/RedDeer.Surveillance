@@ -1,7 +1,7 @@
 ﻿using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using FluentValidation;
-using SharedKernel.Files.PropertyValidators;
+using SharedKernel.Files.ExtendedValidators;
 using System;
 using System.Linq;
 

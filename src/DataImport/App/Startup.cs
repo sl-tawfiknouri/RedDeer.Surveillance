@@ -1,4 +1,6 @@
-﻿namespace RedDeer.DataImport.DataImport.App
+﻿using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace RedDeer.DataImport.DataImport.App
 {
     using System;
 
@@ -62,6 +64,8 @@
 
             var builtClientApiConfig = BuildApiClientConfiguration();
             container.Inject(typeof(IApiClientConfiguration), builtClientApiConfig);
+            
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig);
 
             container.Configure(
                 config =>

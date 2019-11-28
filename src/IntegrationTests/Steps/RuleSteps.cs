@@ -30,8 +30,28 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
         }
 
         [Then(@"there should be a breach with order ids ""(.*)""")]
-        public void ThenThereShouldBeABreachWithClientOrderIds(string ids)
+        public void ThenThereShouldBeABreachWithOrderIds(string idString)
         {
+            if (!_ruleRunner.RemainingRuleBreaches?.Any() ?? true)
+            {
+                throw new Exception($"Trying to check for rule breach with ids \"{idString}\" but there are no rule breaches remaining");
+            }
+
+            var orderIds = idString
+                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+
+            var breach = _ruleRunner.RemainingRuleBreaches
+                .Where(x => x.Orders.Count == orderIds.Count)
+                .FirstOrDefault(x => orderIds.All(y => x.Orders.Any(z => z.ClientOrderId == y)));
+
+            if (breach == null)
+            {
+                throw new Exception($"No rule breach exists with matching ids \"{idString}\"");
+            }
+
+            _ruleRunner.RemainingRuleBreaches.Remove(breach);
         }
 
     }

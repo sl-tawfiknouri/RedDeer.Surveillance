@@ -54,11 +54,11 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
 {
     public class RuleRunner
     {
-        static readonly string DatabaseConfig = @"server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=test_surveillance; Allow User Variables=True";
+        public static readonly string DatabaseConfig = @"server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=test_surveillance; Allow User Variables=True";
 
-        static readonly string CorrelationId = "testCorrelation";
-        static readonly string RuleId = "testRule";
-        static readonly string MessageId = "testMessage";
+        public static readonly string CorrelationId = "testCorrelation";
+        public static readonly string RuleId = "testRule";
+        public static readonly string MessageId = "testMessage";
 
         public WashTradeRuleParameterDto WashTradeParameters { get; set; }
 
@@ -83,16 +83,19 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
             await SetupDatabase();
             ImportAllocationsAndTrades();
 
-            var orderCount = GetOrderCount();
-            orderCount.Should().Be(ExpectedOrderCount);
+            using (var dbContext = BuildDbContext())
+            {
+                var orderCount = GetOrderCount(dbContext);
+                orderCount.Should().Be(ExpectedOrderCount);
 
-            var allocationCount = GetOrderAllocationCount();
-            allocationCount.Should().Be(ExpectedAllocationCount);
+                var allocationCount = GetOrderAllocationCount(dbContext);
+                allocationCount.Should().Be(ExpectedAllocationCount);
 
-            await RunRule();
+                await RunRule();
 
-            OriginalRuleBreaches = GetRuleBreaches();
-            RemainingRuleBreaches = OriginalRuleBreaches.ToList();
+                OriginalRuleBreaches = GetRuleBreaches(dbContext);
+                RemainingRuleBreaches = OriginalRuleBreaches.ToList();
+            }
 
             true.Should().Be(true);
         }
@@ -310,18 +313,20 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
             A.CallTo(() => ruleParameterApi.GetAsync(RuleId))
                 .ReturnsLazily(() =>
                 {
-                    var dto = BlankRuleParameterDto();
-                    dto.WashTrades = new WashTradeRuleParameterDto[]
+                    var dto = new RuleParameterDto
                     {
-                        new WashTradeRuleParameterDto
-                        {
-                            Id = RuleId,
-                            WindowSize = TimeSpan.FromDays(1),
-                            PerformClusteringPositionAnalysis = true,
-                            ClusteringPercentageValueDifferenceThreshold = 0.010M,
-                            ClusteringPositionMinimumNumberOfTrades = 2,
-                            OrganisationalFactors = new[] { OrganisationalFactors.None }
-                        }
+                        CancelledOrders = new CancelledOrderRuleParameterDto[0],
+                        HighProfits = new HighProfitsRuleParameterDto[0],
+                        MarkingTheCloses = new MarkingTheCloseRuleParameterDto[0],
+                        Spoofings = new SpoofingRuleParameterDto[0],
+                        Layerings = new LayeringRuleParameterDto[0],
+                        HighVolumes = new HighVolumeRuleParameterDto[0],
+                        WashTrades = WashTradeParameters.CreateArray(),
+                        Rampings = new RampingRuleParameterDto[0],
+                        PlacingOrders = new PlacingOrdersWithNoIntentToExecuteRuleParameterDto[0],
+                        FixedIncomeHighVolumeIssuance = new FixedIncomeHighVolumeRuleParameterDto[0],
+                        FixedIncomeHighProfits = new FixedIncomeHighProfitRuleParameterDto[0],
+                        FixedIncomeWashTrades = new FixedIncomeWashTradeRuleParameterDto[0]
                     };
                     return Task.FromResult(dto);
                 });
@@ -342,7 +347,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
                 {
                     new RuleIdentifier
                     {
-                        Rule = Rules.WashTrade,
+                        Rule = GetRuleType(),
                         Ids = new[] { RuleId }
                     }
                 }
@@ -354,86 +359,68 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
             await queueRuleSubscriber.ExecuteDistributedMessage(MessageId, message);
         }
 
-        private RuleParameterDto BlankRuleParameterDto()
+        private Rules GetRuleType()
         {
-            return new RuleParameterDto
+            if (WashTradeParameters != null)
             {
-                CancelledOrders = new CancelledOrderRuleParameterDto[0],
-                HighProfits = new HighProfitsRuleParameterDto[0],
-                MarkingTheCloses = new MarkingTheCloseRuleParameterDto[0],
-                Spoofings = new SpoofingRuleParameterDto[0],
-                Layerings = new LayeringRuleParameterDto[0],
-                HighVolumes = new HighVolumeRuleParameterDto[0],
-                WashTrades = new WashTradeRuleParameterDto[0],
-                Rampings = new RampingRuleParameterDto[0],
-                PlacingOrders = new PlacingOrdersWithNoIntentToExecuteRuleParameterDto[0],
-                FixedIncomeHighVolumeIssuance = new FixedIncomeHighVolumeRuleParameterDto[0],
-                FixedIncomeHighProfits = new FixedIncomeHighProfitRuleParameterDto[0],
-                FixedIncomeWashTrades = new FixedIncomeWashTradeRuleParameterDto[0]
-            };
+                return Rules.WashTrade;
+            }
+
+            return Rules.Spoofing;
         }
 
-        private int GetOrderCount()
+        private int GetOrderCount(IGraphQlDbContext dbContext)
         {
-            using (var dbContext = BuildDbContext())
-            {
-                return dbContext
-                    .Orders
-                    .Count();
-            }
+            return dbContext
+                .Orders
+                .Count();
         }
 
-        private int GetOrderAllocationCount()
+        private int GetOrderAllocationCount(IGraphQlDbContext dbContext)
         {
-            using (var dbContext = BuildDbContext())
-            {
-                return dbContext
-                    .OrdersAllocation
-                    .Count();
-            }
+            return dbContext
+                .OrdersAllocation
+                .Count();
         }
 
-        private List<RuleBreachWithOrders> GetRuleBreaches()
+        private List<RuleBreachWithOrders> GetRuleBreaches(IGraphQlDbContext dbContext)
         {
-            using (var dbContext = BuildDbContext())
-            {
-                var ruleBreaches = dbContext
-                    .RuleBreach
-                    .Where(x => x.CorrelationId == CorrelationId)
-                    .AsNoTracking()
-                    .ToList();
+            var ruleBreaches = dbContext
+                .RuleBreach
+                .Where(x => x.CorrelationId == CorrelationId)
+                .AsNoTracking()
+                .ToList();
 
-                var breachIds = ruleBreaches
-                    .Select(x => x.Id);
+            var breachIds = ruleBreaches
+                .Select(x => x.Id);
 
-                var ruleBreachOrders = dbContext
-                    .RuleBreachOrders
-                    .Where(x => breachIds.Contains(x.RuleBreachId))
-                    .AsNoTracking()
-                    .ToList();
+            var ruleBreachOrders = dbContext
+                .RuleBreachOrders
+                .Where(x => breachIds.Contains(x.RuleBreachId))
+                .AsNoTracking()
+                .ToList();
 
-                var orderIds = ruleBreachOrders
-                    .Select(x => x.OrderId);
+            var orderIds = ruleBreachOrders
+                .Select(x => x.OrderId);
 
-                var orders = dbContext
-                    .Orders
-                    .Where(x => orderIds.Contains(x.Id))
-                    .AsNoTracking()
-                    .ToList();
+            var orders = dbContext
+                .Orders
+                .Where(x => orderIds.Contains(x.Id))
+                .AsNoTracking()
+                .ToList();
 
-                var mappedBreaches = ruleBreaches
-                    .Select(x => new RuleBreachWithOrders
-                    {
-                        RuleBreach = x,
-                        Orders = ruleBreachOrders
-                            .Where(y => y.RuleBreachId == x.Id)
-                            .Select(y => orders.Single(z => z.Id == y.OrderId))
-                            .ToList()
-                    })
-                    .ToList();
+            var mappedBreaches = ruleBreaches
+                .Select(x => new RuleBreachWithOrders
+                {
+                    RuleBreach = x,
+                    Orders = ruleBreachOrders
+                        .Where(y => y.RuleBreachId == x.Id)
+                        .Select(y => orders.Single(z => z.Id == y.OrderId))
+                        .ToList()
+                })
+                .ToList();
 
-                return mappedBreaches;
-            }
+            return mappedBreaches;
         }
 
         private IGraphQlDbContext BuildDbContext()

@@ -30,9 +30,8 @@ namespace DataImport.Services
         private readonly ITickPriceHistoryServiceClientFactory _tickPriceHistoryServiceClientFactory;
         private readonly ICfiInstrumentTypeMapper _cfiInstrumentTypeMapper;
         private Timer _timer;
-        
-        private static readonly SemaphoreSlim SemaphoreSlimScanLock = new SemaphoreSlim(1, 1);
-        
+        private readonly SemaphoreSlim _semaphoreSlimScanLock = new SemaphoreSlim(1, 1);
+
         public EnrichmentService(
             IReddeerMarketRepository marketRepository,
             IOrderBrokerRepository orderBrokerRepository,
@@ -76,10 +75,10 @@ namespace DataImport.Services
             timer.Start();
             this._timer = timer;
         }
-        
+
         public async Task<bool> Scan()
         {
-            await SemaphoreSlimScanLock.WaitAsync();
+            await _semaphoreSlimScanLock.WaitAsync();
             {
                 try
                 {
@@ -99,13 +98,8 @@ namespace DataImport.Services
 
                     if (securities != null && securities.Any())
                     {
-                        await EnrichBondWithRicFromTr(securities);
-
-                        var message = new SecurityEnrichmentMessage {Securities = securities?.ToArray()};
-                        var enrichmentResponse = await this._api.PostAsync(message);
-
+                        var enrichmentResponse = await Enrich(securities);
                         await this._marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
-
                         response = enrichmentResponse?.Securities?.Any() ?? false;
                     }
 
@@ -140,18 +134,38 @@ namespace DataImport.Services
                 }
                 finally
                 {
-                    SemaphoreSlimScanLock.Release();
+                    _semaphoreSlimScanLock.Release();
                 }
             }
         }
 
-        private async Task EnrichBondWithRicFromTr(IEnumerable<SecurityEnrichmentDto> securities)
+        private async Task<SecurityEnrichmentMessage> Enrich(IReadOnlyCollection<SecurityEnrichmentDto> securities)
+        {
+            var enrichedSecurities = new List<SecurityEnrichmentDto>();
+
+            var bondsWithoutRrpsRic = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) == InstrumentTypes.Bond && (string.IsNullOrEmpty(w.Ric) || !w.Ric.EndsWith("RRPS"))).ToList();
+            if (bondsWithoutRrpsRic.Any())
+            {
+                await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);
+                enrichedSecurities.AddRange(bondsWithoutRrpsRic);
+            }
+
+            var nonFixedIncomeSecurities = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) != InstrumentTypes.Bond).ToList();
+            if (nonFixedIncomeSecurities.Any())
+            {
+                var clientServiceMessage = new SecurityEnrichmentMessage {Securities = nonFixedIncomeSecurities?.ToArray()};
+                var clientServiceResponse = await this._api.PostAsync(clientServiceMessage);
+                enrichedSecurities.AddRange(clientServiceResponse.Securities);
+            }
+
+            var securityEnrichmentMessage = new SecurityEnrichmentMessage {Securities = enrichedSecurities.ToArray()};
+            return securityEnrichmentMessage;
+        }
+
+        private async Task EnrichBondWithRicFromTr(IEnumerable<SecurityEnrichmentDto> bondsWithoutRrpsRic)
         {
             try
             {
-                var bondsWithoutRrpsRic = securities.Where(a => _cfiInstrumentTypeMapper.MapCfi(a.Cfi) == InstrumentTypes.Bond
-                                                                && (string.IsNullOrEmpty(a.Ric) || !a.Ric.EndsWith("RRPS"))).ToList();
-
                 if (!bondsWithoutRrpsRic.Any()) return;
 
                 foreach (var bond in bondsWithoutRrpsRic)

@@ -143,7 +143,7 @@ namespace DataImport.Services
         {
             var enrichedSecurities = new List<SecurityEnrichmentDto>();
 
-            var bondsWithoutRrpsRic = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) == InstrumentTypes.Bond && (string.IsNullOrEmpty(w.Ric) || !w.Ric.EndsWith("RRPS"))).ToList();
+            var bondsWithoutRrpsRic = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) == InstrumentTypes.Bond && string.IsNullOrEmpty(w.Ric)).ToList();
             if (bondsWithoutRrpsRic.Any())
             {
                 await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);

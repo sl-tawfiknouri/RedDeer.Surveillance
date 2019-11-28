@@ -70,7 +70,7 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Migrations\47 - FinancialInstruments ExchangeCodes update.sql">
+    <None Update="Migrations\47 - FinancialInstruments ExchangeSymbol update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">

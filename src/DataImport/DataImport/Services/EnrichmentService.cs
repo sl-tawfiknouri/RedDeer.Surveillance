@@ -29,9 +29,10 @@ namespace DataImport.Services
         private readonly IOrderBrokerRepository _orderBrokerRepository;
         private readonly ITickPriceHistoryServiceClientFactory _tickPriceHistoryServiceClientFactory;
         private readonly ICfiInstrumentTypeMapper _cfiInstrumentTypeMapper;
-
         private Timer _timer;
-
+        
+        private static readonly SemaphoreSlim SemaphoreSlimScanLock = new SemaphoreSlim(1, 1);
+        
         public EnrichmentService(
             IReddeerMarketRepository marketRepository,
             IOrderBrokerRepository orderBrokerRepository,
@@ -75,57 +76,73 @@ namespace DataImport.Services
             timer.Start();
             this._timer = timer;
         }
-
+        
         public async Task<bool> Scan()
         {
-            var securities = await this._marketRepository.GetUnEnrichedSecurities();
-            var brokers = await this._orderBrokerRepository.GetUnEnrichedBrokers();
-
-            var scanTokenSource = new CancellationTokenSource(10000);
-            var apiCheck = await this._api.HeartBeatingAsync(scanTokenSource.Token);
-            if (!apiCheck)
+            await SemaphoreSlimScanLock.WaitAsync();
             {
-                this._logger.LogError(
-                    "Enrichment Service was about to enrich a scan but found the enrichment api to be unresponsive.");
-                return false;
-            }
-
-            var response = false;
-
-            if (securities != null && securities.Any())
-            {
-                var message = new SecurityEnrichmentMessage {Securities = securities?.ToArray()};
-
-                await EnrichBondWithRicFromTr(securities);
-                var enrichmentResponse = await this._api.PostAsync(message);
-                await this._marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
-
-                response = enrichmentResponse?.Securities?.Any() ?? false;
-            }
-
-            if (brokers != null && brokers.Any())
-            {
-                var message = new BrokerEnrichmentMessage
+                try
                 {
-                    Brokers = brokers?.Select(
-                        _ => new BrokerEnrichmentDto
+                    var securities = await this._marketRepository.GetUnEnrichedSecurities();
+                    var brokers = await this._orderBrokerRepository.GetUnEnrichedBrokers();
+
+                    var scanTokenSource = new CancellationTokenSource(10000);
+                    var apiCheck = await this._api.HeartBeatingAsync(scanTokenSource.Token);
+                    if (!apiCheck)
+                    {
+                        this._logger.LogError(
+                            "Enrichment Service was about to enrich a scan but found the enrichment api to be unresponsive.");
+                        return false;
+                    }
+
+                    var response = false;
+
+                    if (securities != null && securities.Any())
+                    {
+                        await EnrichBondWithRicFromTr(securities);
+
+                        var message = new SecurityEnrichmentMessage {Securities = securities?.ToArray()};
+                        var enrichmentResponse = await this._api.PostAsync(message);
+
+                        await this._marketRepository.UpdateUnEnrichedSecurities(enrichmentResponse?.Securities);
+
+                        response = enrichmentResponse?.Securities?.Any() ?? false;
+                    }
+
+                    if (brokers != null && brokers.Any())
+                    {
+                        var message = new BrokerEnrichmentMessage
                         {
-                            CreatedOn = _.CreatedOn,
-                            ExternalId = _.ReddeerId,
-                            Id = _.Id,
-                            Live = _.Live,
-                            Name = _.Name
-                        }).ToArray()
-                };
+                            Brokers = brokers?.Select(
+                                _ => new BrokerEnrichmentDto
+                                {
+                                    CreatedOn = _.CreatedOn,
+                                    ExternalId = _.ReddeerId,
+                                    Id = _.Id,
+                                    Live = _.Live,
+                                    Name = _.Name
+                                }).ToArray()
+                        };
 
-                this._logger.LogInformation("We need to add enrichment for brokers");
+                        this._logger.LogInformation("We need to add enrichment for brokers");
 
-                var enrichmentResponse = await this._brokerApi.PostAsync(message);
-                await this._orderBrokerRepository.UpdateEnrichedBroker(enrichmentResponse.Brokers);
-                response = true;
+                        var enrichmentResponse = await this._brokerApi.PostAsync(message);
+                        await this._orderBrokerRepository.UpdateEnrichedBroker(enrichmentResponse.Brokers);
+                        response = true;
+                    }
+
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    this._logger.LogError(ex, $"Error while Scan {nameof(Scan)} ");
+                    return false;
+                }
+                finally
+                {
+                    SemaphoreSlimScanLock.Release();
+                }
             }
-
-            return response;
         }
 
         private async Task EnrichBondWithRicFromTr(IEnumerable<SecurityEnrichmentDto> securities)
@@ -137,8 +154,6 @@ namespace DataImport.Services
 
                 if (!bondsWithoutRrpsRic.Any()) return;
 
-                var tickPriceHistoryServiceClient = _tickPriceHistoryServiceClientFactory.Create();
-
                 foreach (var bond in bondsWithoutRrpsRic)
                 {
                     var request = new GetEnrichmentIdentifierRequest
@@ -148,6 +163,7 @@ namespace DataImport.Services
 
                     this._logger.LogInformation($"EnrichBondWithRicFromTr requesting Ric for Isin {bond.Isin}.");
 
+                    var tickPriceHistoryServiceClient = _tickPriceHistoryServiceClientFactory.Create();
                     var result = await tickPriceHistoryServiceClient.GetEnrichmentIdentifierAsync(request);
                     bond.Ric = result.Identifiers.Select(s => s.Ric).FirstOrDefault();
 

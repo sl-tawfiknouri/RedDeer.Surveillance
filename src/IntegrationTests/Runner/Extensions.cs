@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
+namespace RedDeer.Surveillance.IntegrationTests.Runner
 {
     public static class Extensions
     {

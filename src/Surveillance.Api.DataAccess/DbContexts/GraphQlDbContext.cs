@@ -43,6 +43,8 @@ namespace Surveillance.Api.DataAccess.DbContexts
 
         public IQueryable<ISystemProcessOperationUploadFile> UploadFile => this._uploadFile;
 
+        public IQueryable<IRuleDataRequest> RuleDataRequest => this._ruleDataRequest;
+
         protected virtual DbSet<Broker> _broker { get; set; }
 
         protected virtual DbSet<SystemProcessOperationDataSynchroniser> _dataSynchroniser { get; set; }
@@ -69,6 +71,8 @@ namespace Surveillance.Api.DataAccess.DbContexts
 
         protected virtual DbSet<SystemProcessOperationUploadFile> _uploadFile { get; set; }
 
+        protected virtual DbSet<RuleDataRequest> _ruleDataRequest { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Market>().ToTable("Market");
@@ -86,6 +90,7 @@ namespace Surveillance.Api.DataAccess.DbContexts
                 .ToTable("SystemProcessOperationDataSynchroniserRequest");
             modelBuilder.Entity<SystemProcessOperationDistributeRule>().ToTable("SystemProcessOperationDistributeRule");
             modelBuilder.Entity<FinancialInstrument>().ToTable("FinancialInstruments");
+            modelBuilder.Entity<RuleDataRequest>().ToTable("RuleDataRequest");
         }
     }
 }

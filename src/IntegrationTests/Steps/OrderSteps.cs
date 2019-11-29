@@ -1,4 +1,5 @@
-﻿using RedDeer.Surveillance.IntegrationTests.Infrastructure;
+﻿using RedDeer.Surveillance.IntegrationTests.Runner;
+using RedDeer.Surveillance.IntegrationTests.Steps.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
         [Given(@"the orders")]
         public void GivenTheOrders(Table table)
         {
-            var rows = TableToEnumerableDictionary(table);
+            var rows = TableHelpers.ToEnumerableDictionary(table);
 
             // expand special columns
             foreach (var row in rows)
@@ -46,12 +47,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                 if (row.ContainsKey("_EquitySecurity"))
                 {
                     var value = row["_EquitySecurity"];
-
-                    var isin = value;
-                    while (isin.Length < 12)
-                    {
-                        isin += "x";
-                    }
+                    var isin = IdentifierHelpers.ToIsinOrFigi(value);
 
                     row.AddIfNotExists("MarketIdentifierCode", "XLON");
                     row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
@@ -59,6 +55,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                     row.AddIfNotExists("OrderCurrency", "GBP");
                     row.AddIfNotExists("OrderType", "MARKET");
                     row.AddIfNotExists("InstrumentIsin", isin);
+                    row.AddIfNotExists("InstrumentFigi", isin);
                 }
             }
 
@@ -77,11 +74,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
 
             _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
             _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
-        }
-
-        private IEnumerable<IDictionary<string, string>> TableToEnumerableDictionary(Table table)
-        {
-            return table.Rows.Select(x => x.ToDictionary(y => y.Key, y => y.Value)).ToList();
         }
 
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)

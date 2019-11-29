@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using TechTalk.SpecFlow;
 
-namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
+namespace RedDeer.Surveillance.IntegrationTests.Runner
 {
     [Binding]
     public sealed class Hooks

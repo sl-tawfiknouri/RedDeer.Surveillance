@@ -1,4 +1,4 @@
-﻿using RedDeer.Surveillance.IntegrationTests.Infrastructure;
+﻿using RedDeer.Surveillance.IntegrationTests.Runner;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

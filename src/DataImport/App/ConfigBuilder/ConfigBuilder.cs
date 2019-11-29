@@ -147,8 +147,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder),
                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
-                RefinitivTickPriceHistoryApiPollingSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder)),
-                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder))
+                RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
             };
 
             return networkConfiguration;
@@ -222,6 +222,14 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             return tags?.FirstOrDefault()?.Value;
         }
 
+        private int GetSettingOrDefault(string name, IConfigurationRoot config, int defaultValue)
+        {
+            var value = GetSetting(name, config);
+            return !int.TryParse(value, out var parsed) 
+                ? defaultValue 
+                : parsed;
+        }
+        
         private string GetSetting(string name, IConfigurationRoot config)
         {
             if (this.TryGetSetting(name, out var setting, config)) return setting;

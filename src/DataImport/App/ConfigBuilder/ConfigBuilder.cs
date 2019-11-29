@@ -145,7 +145,10 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportAllocationFileFtpDirectoryPath = this.GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFileUploadDirectoryPath = this.GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
                 DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
-                DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder)
+                DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder),
+                RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
+                RefinitivTickPriceHistoryApiPollingSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder)),
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder))
             };
 
             return networkConfiguration;

@@ -312,7 +312,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
         private async Task RunRule(bool isForceRun)
         {
-            Console.WriteLine("Running rule engine");
+            Console.WriteLine($"Running rule engine (isForceRun = {isForceRun})");
 
             var container = new Container();
 

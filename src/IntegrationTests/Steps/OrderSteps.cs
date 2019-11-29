@@ -69,7 +69,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                 ["Fund"] = "",
                 ["Strategy"] = "",
                 ["ClientAccountId"] = "",
-                ["OrderFilledVolume"] = x["OrderFilledVolume"]
+                ["OrderFilledVolume"] = x.ValueOrNull("OrderFilledVolume")
             });
 
             _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);

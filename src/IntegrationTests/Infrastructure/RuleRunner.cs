@@ -4,6 +4,7 @@ using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using FluentAssertions;
 using Infrastructure.Network.Aws.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NLog;
 using NLog.Config;
 using NLog.Extensions.Logging;
@@ -95,6 +97,8 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
 
                 OriginalRuleBreaches = GetRuleBreaches(dbContext);
                 RemainingRuleBreaches = OriginalRuleBreaches.ToList();
+
+                PrintBreaches();
             }
 
             true.Should().Be(true);
@@ -435,6 +439,30 @@ namespace RedDeer.Surveillance.IntegrationTests.Infrastructure
             var factory = new GraphQlDbContextFactory(configuration, new NLogLoggerFactory());
 
             return factory.Build();
+        }
+
+        private void PrintBreaches()
+        {
+            var breaches = OriginalRuleBreaches
+                .Select(x => new
+                {
+                    Id = x.RuleBreach.Id,
+                    Description = x.RuleBreach.Description,
+                    Orders = x.Orders.Select(y => new
+                    {
+                        ClientOrderId = y.ClientOrderId,
+                        Direction = ((OrderDirections)y.Direction).ToString(),
+                        AverageFillPrice = y.AverageFillPrice
+                    })
+                });
+
+            var json = JsonConvert.SerializeObject(breaches); 
+            var jsonFormatted = JValue.Parse(json).ToString(Formatting.Indented);
+
+            Console.WriteLine("");
+            Console.WriteLine("Breaches:");
+            Console.WriteLine(jsonFormatted);
+            Console.WriteLine("");
         }
 
         public void ErrorOnUnaccountedRuleBreaches()

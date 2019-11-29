@@ -146,7 +146,7 @@ namespace DataImport.Services
             var bondsWithoutRrpsRic = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) == InstrumentTypes.Bond && string.IsNullOrEmpty(w.Ric)).ToList();
             if (bondsWithoutRrpsRic.Any())
             {
-                await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);
+               await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);
                 enrichedSecurities.AddRange(bondsWithoutRrpsRic);
             }
 

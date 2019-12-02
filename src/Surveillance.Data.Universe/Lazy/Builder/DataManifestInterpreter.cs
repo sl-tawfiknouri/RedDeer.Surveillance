@@ -17,6 +17,7 @@
     using Surveillance.Data.Universe.Lazy.Builder.Interfaces;
     using Surveillance.Data.Universe.MarketEvents.Interfaces;
     using Surveillance.Data.Universe.Refinitiv.Interfaces;
+    using Surveillance.Data.Universe.Trades.Interfaces;
     using Surveillance.DataLayer.Aurora.Market.Interfaces;
     using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
@@ -34,6 +35,11 @@
         /// The aurora orders repository.
         /// </summary>
         private readonly IOrdersRepository ordersRepository;
+
+        /// <summary>
+        /// The allocate orders projector.
+        /// </summary>
+        private readonly IOrdersToAllocatedOrdersProjector allocateOrdersProjector;
 
         /// <summary>
         /// The aurora market repository.
@@ -82,6 +88,7 @@
             IDataManifest dataManifest,
             IUniverseBuilder universeBuilder,
             IOrdersRepository ordersRepository,
+            IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
             ISystemProcessOperationContext systemProcessOperationContext,
             IMarketOpenCloseEventService marketService,
             IReddeerMarketRepository marketRepository,
@@ -90,6 +97,7 @@
             this.DataManifest = dataManifest ?? throw new ArgumentNullException(nameof(dataManifest));
             this.universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
             this.ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            this.allocateOrdersProjector = allocateOrdersProjector ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
             this.systemProcessOperationContext = systemProcessOperationContext ?? throw new ArgumentNullException(nameof(systemProcessOperationContext));
             this.marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
             this.marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
@@ -124,6 +132,7 @@
             }
 
             var orders = await this.ScanOrders(span);
+            var projectedOrderAllocations = await this.allocateOrdersProjector.DecorateOrders(orders);
             var equityIntradayTimeBars = await this.ScanEquityIntraDayTimeBars(span);
             var equityInterdayTimeBars = await this.ScanEquityInterDayTimeBars(span);
             var fixedIncomeIntradayTimeBars = await this.ScanFixedIncomeIntraDayTimeBars(span);
@@ -136,7 +145,7 @@
 
             var universe = this.universeBuilder.PackageUniverse(
                 this.DataManifest.Execution,
-                orders,
+                projectedOrderAllocations,
                 equityIntradayTimeBars,
                 equityInterdayTimeBars,
                 fixedIncomeIntradayTimeBars,

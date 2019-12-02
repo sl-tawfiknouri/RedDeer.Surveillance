@@ -61,12 +61,12 @@
         /// <summary>
         /// The judgement service.
         /// </summary>
-        private IFixedIncomeHighVolumeJudgementService judgementService;
+        private IFixedIncomeHighVolumeJudgementService judgementService = null;
 
         /// <summary>
         /// The data request subscriber.
         /// </summary>
-        private IUniverseDataRequestsSubscriber dataRequestSubscriber;
+        private IUniverseDataRequestsSubscriber dataRequestSubscriber = null;
 
         /// <summary>
         /// The market trading hours service.

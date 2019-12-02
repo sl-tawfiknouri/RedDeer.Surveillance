@@ -405,11 +405,11 @@
         /// The judgement_ null cancelled order judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullCancelledOrderJudgementNullDoesNotThrowException()
+        public void JudgementNullCancelledOrderJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((ICancelledOrderJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((ICancelledOrderJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -419,11 +419,11 @@
         /// The judgement_ null high profit judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullHighProfitJudgementNullDoesNotThrowException()
+        public void JudgementNullHighProfitJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((IHighProfitJudgementContext)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((IHighProfitJudgementContext)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
@@ -435,11 +435,11 @@
         /// The judgement_ null high volume judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullHighVolumeJudgementNullDoesNotThrowException()
+        public void JudgementNullHighVolumeJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((IHighVolumeJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((IHighVolumeJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -449,11 +449,11 @@
         /// The judgement_ null layering judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullLayeringJudgementNullDoesNotThrowException()
+        public void JudgementNullLayeringJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((ILayeringJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((ILayeringJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -463,11 +463,11 @@
         /// The judgement_ null marking the close judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullMarkingTheCloseJudgementNullDoesNotThrowException()
+        public void JudgementNullMarkingTheCloseJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((IMarkingTheCloseJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((IMarkingTheCloseJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -477,11 +477,11 @@
         /// The judgement null placing orders with no intent judgement null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullPlacingOrdersWithNoIntentJudgementNullDoesNotThrowException()
+        public void JudgementNullPlacingOrdersWithNoIntentJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((IPlacingOrdersWithNoIntentToExecuteJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((IPlacingOrdersWithNoIntentToExecuteJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustNotHaveHappened();
@@ -492,11 +492,11 @@
         /// The judgement null ramping judgement null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullRampingJudgementNullDoesNotThrowException()
+        public void JudgementNullRampingJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((IRampingJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((IRampingJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -506,11 +506,11 @@
         /// The judgement_ null spoofing judgement_ null does not throw exception.
         /// </summary>
         [Test]
-        public async Task JudgementNullSpoofingJudgementNullDoesNotThrowException()
+        public void JudgementNullSpoofingJudgementNullDoesNotThrowException()
         {
             var service = this.BuildService();
 
-            Assert.DoesNotThrow(() => service.Judgement((ISpoofingJudgement)null));
+            Assert.DoesNotThrowAsync(() => service.Judgement((ISpoofingJudgement)null));
 
             A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();

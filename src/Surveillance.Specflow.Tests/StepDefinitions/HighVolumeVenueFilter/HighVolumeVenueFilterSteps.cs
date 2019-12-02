@@ -57,12 +57,6 @@
 
         private HighVolumeVenueFilter _filter;
 
-        private decimal? _filterMax;
-
-        private decimal? _filterMin;
-
-        private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
-
         private IUniverseEquityMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
         private ILogger<HighVolumeRule> _logger;

@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(PropertyMaximumLengthTestCases), new object[] { nameof(OrderFileValidator_MaximumLengthValidator) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(PropertyMaximumLengthTestCases), new object[] { nameof(OrderFileValidator_MaximumLengthValidator) })]
         public void OrderFileValidator_MaximumLengthValidator(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);

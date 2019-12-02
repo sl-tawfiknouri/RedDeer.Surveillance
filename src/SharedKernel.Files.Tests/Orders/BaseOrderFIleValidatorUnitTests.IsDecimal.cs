@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(IsDecimalStringValidatorTestCases), new object[] { nameof(OrderFileValidator_IsDecimalStringValidator) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(IsDecimalStringValidatorTestCases), new object[] { nameof(OrderFileValidator_IsDecimalStringValidator) })]
         public void OrderFileValidator_IsDecimalStringValidator(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);

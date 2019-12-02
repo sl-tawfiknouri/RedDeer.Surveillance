@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(ExactLengthValidatorTestCases), new object[] { nameof(OrderFileValidator_ExactLengthValidator) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(ExactLengthValidatorTestCases), new object[] { nameof(OrderFileValidator_ExactLengthValidator) })]
         public void OrderFileValidator_ExactLengthValidator(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);

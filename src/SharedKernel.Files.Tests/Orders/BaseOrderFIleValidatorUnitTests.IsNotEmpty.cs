@@ -9,9 +9,9 @@ using System.Linq.Expressions;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(PropertyIsNotEmptyTestCases), new object[] { nameof(OrderFileValidator_IsNotEmptyValidator) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(PropertyIsNotEmptyTestCases), new object[] { nameof(OrderFileValidator_IsNotEmptyValidator) })]
         public void OrderFileValidator_IsNotEmptyValidator(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);

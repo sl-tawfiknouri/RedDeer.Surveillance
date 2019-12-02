@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
         [TestCase(null, null, null, null, null, true, "At least 'InstrumentSedol' or 'InstrumentIsin' with 'MarketIdentifierCode' must be definded for instrument when not fixed income.")]  // Equity
         [TestCase("E", null, null, null, null, true, "At least 'InstrumentSedol' or 'InstrumentIsin' with 'MarketIdentifierCode' must be definded for instrument when not fixed income.")]  // Equity

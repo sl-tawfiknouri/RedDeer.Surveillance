@@ -11,9 +11,9 @@ using System.Linq.Expressions;
 
 namespace SharedKernel.Files.Tests.Orders
 {
-    public partial class BaseOrderFIleValidatorUnitTests
+    public partial class BaseOrderFileValidatorUnitTests
     {
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(EnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(EnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator) })]
         public void OrderFileValidator_EnumParseableValidator(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);
@@ -52,7 +52,7 @@ namespace SharedKernel.Files.Tests.Orders
                 .SetName($"{testName} when property '{property.PropertyName}' value '{property.PropertyValue ?? "NULL" }' must return '{testData.ExpectedMessage}'");
         }
 
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(ValidEnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator_WhenValid) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(ValidEnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator_WhenValid) })]
         public void OrderFileValidator_EnumParseableValidator_WhenValid(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);
@@ -94,7 +94,7 @@ namespace SharedKernel.Files.Tests.Orders
                 .SetName($"{testName} when property '{property.PropertyName}' value '{property.PropertyValue ?? "NULL" }' must be valid'");
         }
 
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(NonValidEnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator_WhenNonValid) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(NonValidEnumParseableValidatorTestCases), new object[] { nameof(OrderFileValidator_EnumParseableValidator_WhenNonValid) })]
         public void OrderFileValidator_EnumParseableValidator_WhenNonValid(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);
@@ -131,7 +131,7 @@ namespace SharedKernel.Files.Tests.Orders
                 .SetName($"{testName} when property '{property.PropertyName}' value '{property.PropertyValue ?? "NULL" }' must not be equal to '{property.PropertyValue}'");
         }
 
-        [TestCaseSource(typeof(BaseOrderFIleValidatorUnitTests), nameof(WhenFixedIncomeEnumsMustBeTestCases), new object[] { nameof(OrderFileValidator_WhenFixedIncome_EnumsMustBe) })]
+        [TestCaseSource(typeof(BaseOrderFileValidatorUnitTests), nameof(WhenFixedIncomeEnumsMustBeTestCases), new object[] { nameof(OrderFileValidator_WhenFixedIncome_EnumsMustBe) })]
         public void OrderFileValidator_WhenFixedIncome_EnumsMustBe(OrderFileValidatorTestData testData)
         {
             var result = validator.Validate(testData.OrderFileContract);

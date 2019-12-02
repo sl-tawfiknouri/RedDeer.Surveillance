@@ -10,6 +10,12 @@
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>1701;1702;NU1701;</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="app.config" />
     <Content Remove="appsettings.config" />

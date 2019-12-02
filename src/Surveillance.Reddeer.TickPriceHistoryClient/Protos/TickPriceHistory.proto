@@ -50,6 +50,7 @@ message GetEodPricingRequest{
 
 message GetEodPricingResponse{
 	bool Success = 1;
+	string Notes = 2;
 }
 
 /* Request types */
@@ -133,10 +134,10 @@ message SecurityTimeBarQueryRequest {
 message TimeBar {
 	google.protobuf.Timestamp EpochUtc = 1;
 	double CloseAsk = 2;
-	double CloseAskYield = 3; 
+	double CloseAskYield = 3;
 	double CloseBid = 4;
-	double CloseBidYield = 5; 
-	double CloseDiscountFactor = 6; 
+	double CloseBidYield = 5;
+	double CloseDiscountFactor = 6;
 	double CloseYield = 7;
 	double CloseZeroYield = 8;
 	double High = 9;
@@ -144,7 +145,7 @@ message TimeBar {
 	double HighAskYield = 11;
 	double HighBid = 12;
 	double HighBidYield = 13;
-	double HighDiscountFactor = 14; 
+	double HighDiscountFactor = 14;
 	double HighYield = 15;
 	double HighZeroYield = 16;
 	double Last = 17;
@@ -153,14 +154,14 @@ message TimeBar {
 	double LowAskYield = 20;
 	double LowBid = 21;
 	double LowBidYield = 22;
-	double LowDiscountFactor = 23; 
+	double LowDiscountFactor = 23;
 	double LowYield = 24;
 	double LowZeroYield = 25;
 	double NoAsks = 26;
 	double NoAskYields = 27;
 	double NoBids = 28;
 	double NoBidYields = 29;
-	double NoDiscountFactors = 30; 
+	double NoDiscountFactors = 30;
 	double NoTrades = 31;
 	double NoYields = 32;
 	double NoZeroYields = 33;

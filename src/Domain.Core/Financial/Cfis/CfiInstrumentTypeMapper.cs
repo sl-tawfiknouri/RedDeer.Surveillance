@@ -15,7 +15,7 @@
 
             if (new string(cfi.Take(1).ToArray()) == "e") return InstrumentTypes.Equity;
 
-            if (new string(cfi.Take(2).ToArray()) == "db") return InstrumentTypes.Bond;
+            if (new string(cfi.Take(1).ToArray()) == "d") return InstrumentTypes.Bond;
 
             if (new string(cfi.Take(2).ToArray()) == "oc") return InstrumentTypes.OptionCall;
 

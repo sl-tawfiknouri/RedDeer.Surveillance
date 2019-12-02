@@ -160,8 +160,8 @@ namespace DataSynchroniser.App.ConfigBuilder
                                  ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
                                  BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
                                  RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
-                                 RefinitivTickPriceHistoryApiPollingSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder)),
-                                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = int.Parse(this.GetSetting("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder))
+                                 RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
+                                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
                              };
 
             return config;
@@ -214,6 +214,14 @@ namespace DataSynchroniser.App.ConfigBuilder
 
             setting = string.Empty;
             return false;
+        }
+        
+        private int GetSettingOrDefault(string name, IConfigurationRoot config, int defaultValue)
+        {
+            var value = GetSetting(name, config);
+            return !int.TryParse(value, out var parsed) 
+                ? defaultValue 
+                : parsed;
         }
     }
 }

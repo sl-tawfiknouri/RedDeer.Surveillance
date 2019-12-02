@@ -274,18 +274,15 @@ namespace SharedKernel.Files.Orders
 
         protected void RulesForSufficientInstrumentIdentificationCodes()
         {
-            var fieldNames = new string[]
-            {
-                nameof(OrderFileContract.InstrumentIsin),
-                nameof(OrderFileContract.InstrumentSedol),
-                nameof(OrderFileContract.InstrumentCusip),
-                nameof(OrderFileContract.InstrumentBloombergTicker),
-            };
+            this.RuleFor(x => x)
+                .Must(x => ((string.IsNullOrWhiteSpace(x.InstrumentSedol) && (string.IsNullOrWhiteSpace(x.InstrumentIsin) || string.IsNullOrWhiteSpace(x.MarketIdentifierCode)))) == false)
+                .When(o => !IsFixedIncome(o), ApplyConditionTo.CurrentValidator)
+                .WithMessage($"At least '{nameof(OrderFileContract.InstrumentSedol)}' or '{nameof(OrderFileContract.InstrumentIsin)}' with '{nameof(OrderFileContract.MarketIdentifierCode)}' must be definded for instrument when not fixed income.");
 
             this.RuleFor(x => x)
-                .Must(x => (new string[] { x.InstrumentIsin, x.InstrumentSedol, x.InstrumentCusip, x.InstrumentBloombergTicker }).Where(s => !string.IsNullOrWhiteSpace(s)).Any())
-                .When(o => !IsFixedIncome(o), ApplyConditionTo.CurrentValidator)
-                .WithMessage($"At least one of the '{string.Join("; ", fieldNames)}' instrument must be defined.");
+                .Must(x => ((string.IsNullOrWhiteSpace(x.InstrumentRic) && (string.IsNullOrWhiteSpace(x.InstrumentIsin) || string.IsNullOrWhiteSpace(x.MarketIdentifierCode)))) == false)
+                .When(o => IsFixedIncome(o), ApplyConditionTo.CurrentValidator)
+                .WithMessage($"At least '{nameof(OrderFileContract.InstrumentRic)}' or '{nameof(OrderFileContract.InstrumentIsin)}' with '{nameof(OrderFileContract.MarketIdentifierCode)}' must be definded for instrument when fixed income.");
         }
     }
 }

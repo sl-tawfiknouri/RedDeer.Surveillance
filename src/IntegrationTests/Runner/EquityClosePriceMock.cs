@@ -1,21 +1,22 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RedDeer.Surveillance.IntegrationTests.Runner
 {
     public class EquityClosePriceMock
     {
-        private Dictionary<string, Dictionary<DateTime, FactsetSecurityDailyResponseItem>> _data = new Dictionary<string, Dictionary<DateTime, FactsetSecurityDailyResponseItem>>();
+        private Dictionary<string, List<FactsetSecurityDailyResponseItem>> _data = new Dictionary<string, List<FactsetSecurityDailyResponseItem>>();
 
         public void Add(FactsetSecurityDailyResponseItem item)
         {
             if (!_data.ContainsKey(item.Figi))
             {
-                _data[item.Figi] = new Dictionary<DateTime, FactsetSecurityDailyResponseItem>();
+                _data[item.Figi] = new List<FactsetSecurityDailyResponseItem>();
             }
-            _data[item.Figi][item.Epoch] = item;
+            _data[item.Figi].Add(item);
         }
 
         public FactsetSecurityResponseDto GetPrices(FactsetSecurityDailyRequest requests)
@@ -26,21 +27,13 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             {
                 if (_data.ContainsKey(request.Figi))
                 {
-                    var instrumentDates = _data[request.Figi];
+                    var instrumentItems = _data[request.Figi];
 
-                    var min = request.From.Date;
-                    var max = request.To.Date;
+                    var items = instrumentItems
+                        .Where(x => x.Epoch >= request.From)
+                        .Where(x => x.Epoch <= request.To);
 
-                    var iter = min;
-                    while (iter <= max)
-                    {
-                        if (instrumentDates.ContainsKey(iter))
-                        {
-                            results.Add(instrumentDates[iter]);
-                        }
-
-                        iter = iter.AddDays(1);
-                    }
+                    results.AddRange(items);
                 }
             }
 

@@ -28,13 +28,4 @@
     <None Include="..\Surveillance\App\Migrations\*" Link="Migrations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Steps\HighProfitSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\PriceSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
 </Project>

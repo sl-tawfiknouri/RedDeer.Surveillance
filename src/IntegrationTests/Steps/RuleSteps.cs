@@ -29,6 +29,23 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.Run().Wait();
         }
 
+        [Then(@"there should be no breaches")]
+        public void ThenThereShouldBeNoBreaches()
+        {
+            if (_ruleRunner.OriginalRuleBreaches == null)
+            {
+                throw new Exception("Checking for no rule breaches, but the data has not been fetched");
+            }
+
+            if (_ruleRunner.OriginalRuleBreaches.Count > 0)
+            {
+                throw new Exception($"Expecting no rule breaches, but {_ruleRunner.OriginalRuleBreaches?.Count} breaches were found");
+            }
+
+            _ruleRunner.HasCheckedForNoBreaches = true;
+        }
+
+
         [Then(@"there should be a breach with order ids ""(.*)""")]
         public void ThenThereShouldBeABreachWithOrderIds(string idString)
         {

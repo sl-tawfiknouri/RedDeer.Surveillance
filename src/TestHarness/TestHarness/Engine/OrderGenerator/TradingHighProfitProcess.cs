@@ -17,7 +17,7 @@
 
     public class TradingHighProfitProcess : BaseTradingProcess
     {
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+        private readonly IEquityIntraDayHistoryStack _intraDayHistoryStack;
 
         private readonly object _lock = new object();
 
@@ -29,7 +29,7 @@
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
+            this._intraDayHistoryStack = new EquityIntraDayHistoryStack(TimeSpan.FromHours(1));
             this._plan = plan ?? new DataGenerationPlan[0];
         }
 

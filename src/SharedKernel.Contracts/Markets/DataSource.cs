@@ -41,8 +41,18 @@
         Markit = 6,
 
         /// <summary>
-        /// The thomson reuters.
+        /// The thomson reuters inter day
         /// </summary>
-        Refinitive = 7
+        RefinitivInterday = 7,
+
+        /// <summary>
+        /// The thomson reuters intra day
+        /// </summary>
+        RefinitivIntraday = 8,
+
+        /// <summary>
+        /// No prices required, just orders
+        /// </summary>
+        NoPrices = 9
     }
 }

@@ -24,7 +24,7 @@
 
         private readonly IReadOnlyCollection<string> _highVolumeTargetSedols;
 
-        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
+        private readonly IEquityIntraDayHistoryStack _intraDayHistoryStack;
 
         private readonly object _lock = new object();
 
@@ -40,7 +40,7 @@
         {
             this._highVolumeTargetSedols = cancelTargetSedols?.Where(cts => !string.IsNullOrWhiteSpace(cts))?.ToList()
                                            ?? new List<string>();
-            this._intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(2));
+            this._intraDayHistoryStack = new EquityIntraDayHistoryStack(TimeSpan.FromHours(2));
         }
 
         public override void OnNext(EquityIntraDayTimeBarCollection value)

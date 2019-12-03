@@ -39,7 +39,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private UniverseSelectionState _universeSelectionState;
 
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
-        private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
+        private IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
         private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ICurrencyConverterService currencyConverterService;
@@ -130,10 +131,15 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
             _tradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());          
 
-            _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+            _equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            _fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             var currencyLogger = new NullLogger<CurrencyConverterService>();
             currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
@@ -145,7 +151,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _equityRuleHighVolumeFactory = new EquityRuleHighVolumeFactory(
                 _universeOrderFilterService,
-                _interdayUniverseMarketCacheFactory,
+                _equityMarketCacheFactory,
+                _fixedIncomeMarketCacheFactory,
                 _tradingHoursService,
                 this.currencyConverterService,
                 _logger,

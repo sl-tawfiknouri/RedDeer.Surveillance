@@ -5,10 +5,10 @@
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.Rules;
 
-    public interface IUniverseMarketCacheFactory
+    public interface IUniverseEquityMarketCacheFactory
     {
         IUniverseEquityInterDayCache BuildInterday(RuleRunMode runMode);
 
-        IUniverseEquityIntradayCache BuildIntraday(TimeSpan window, RuleRunMode runMode);
+        IUniverseEquityIntraDayCache BuildIntraday(TimeSpan window, RuleRunMode runMode);
     }
 }

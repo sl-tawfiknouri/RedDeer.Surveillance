@@ -183,6 +183,7 @@
                 this.logger.LogInformation($"parameters had filters. Inserting filtered universe in {operationContext.Id} operation context");
 
                 var filteredUniverse = this.universeFilterFactory.Build(
+                    highVolume,
                     parameters.Accounts,
                     parameters.Traders,
                     parameters.Markets,

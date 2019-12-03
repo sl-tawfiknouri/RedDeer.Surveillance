@@ -85,7 +85,10 @@
         /// <param name="logger">
         /// The logger.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="tradingHoursService">
@@ -105,7 +108,8 @@
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             ILogger logger,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             ISystemProcessOperationRunRuleContext operationContext,
             RuleRunMode runMode,
@@ -118,7 +122,8 @@
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
                 operationContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

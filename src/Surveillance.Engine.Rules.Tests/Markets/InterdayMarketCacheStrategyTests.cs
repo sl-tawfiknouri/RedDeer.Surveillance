@@ -20,13 +20,13 @@
         public void Constructor_Cache_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new InterdayMarketCacheStrategy(null));
+            Assert.Throws<ArgumentNullException>(() => new EquityInterDayMarketCacheStrategy(null));
         }
 
         [Test]
         public void Query_Calls_Cache()
         {
-            var cacheStrategy = new InterdayMarketCacheStrategy(this._cache);
+            var cacheStrategy = new EquityInterDayMarketCacheStrategy(this._cache);
             var dataRequest = MarketDataRequest.Null();
 
             cacheStrategy.Query(dataRequest);
@@ -37,13 +37,13 @@
         [Test]
         public void Query_Returns_Interday_Market_Data_Response()
         {
-            var cacheStrategy = new InterdayMarketCacheStrategy(this._cache);
+            var cacheStrategy = new EquityInterDayMarketCacheStrategy(this._cache);
             var dataRequest = MarketDataRequest.Null();
 
             var response = cacheStrategy.Query(dataRequest);
 
             Assert.IsNotNull(response);
-            Assert.IsInstanceOf<InterdayMarketDataResponse>(response);
+            Assert.IsInstanceOf<EquityInterDayMarketDataResponse>(response);
         }
 
         [SetUp]

@@ -40,11 +40,15 @@
 
         private IWashTradeRuleEquitiesParameters _equitiesParameters;
 
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private ILogger _logger;
 
-        private ILogger<UniverseMarketCacheFactory> _loggerCache;
+        private ILogger<UniverseEquityMarketCacheFactory> _loggerEquityCache;
+
+        private ILogger<UniverseFixedIncomeMarketCacheFactory> _loggerFixedIncomeCache;
 
         private IUniverseOrderFilter _orderFilter;
 
@@ -83,7 +87,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -107,7 +112,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -180,7 +186,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -242,7 +249,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -264,7 +272,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -287,7 +296,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -320,7 +330,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -354,7 +365,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -398,7 +410,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);
@@ -437,14 +450,19 @@
             this._logger = A.Fake<ILogger>();
             this._ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
             this._stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
-            this._loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
+            this._loggerEquityCache = A.Fake<ILogger<UniverseEquityMarketCacheFactory>>();
+            this._loggerFixedIncomeCache = A.Fake<ILogger<UniverseFixedIncomeMarketCacheFactory>>();
             this._tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             this._orderFilter = A.Fake<IUniverseOrderFilter>();
-            this._factory = new UniverseMarketCacheFactory(
+            this._equityFactory = new UniverseEquityMarketCacheFactory(
                 this._stubRuleRunRepository,
                 this._ruleRunRepository,
-                this._loggerCache);
+                this._loggerEquityCache);
+            this._fixedIncomeFactory = new UniverseFixedIncomeMarketCacheFactory(
+                this._stubRuleRunRepository,
+                this._ruleRunRepository,
+                this._loggerFixedIncomeCache);
             A.CallTo(() => this._orderFilter.Filter(A<IUniverseEvent>.Ignored))
                 .ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
 
@@ -461,7 +479,8 @@
                 this._alertStream,
                 this._currencyConverterService,
                 this._orderFilter,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 RuleRunMode.ValidationRun,
                 this._logger,
                 this._tradingLogger);

@@ -17,6 +17,7 @@
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.Filter;
     using Surveillance.Engine.Rules.Rules;
+    using Surveillance.Engine.Rules.Rules.Interfaces;
     using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
     /// <summary>
@@ -33,6 +34,11 @@
         /// The countries.
         /// </summary>
         private readonly RuleFilter countries;
+
+        /// <summary>
+        /// The rule that is being filtered by this service
+        /// </summary>
+        private readonly IUniverseRule filteredRule;
 
         /// <summary>
         /// The funds.
@@ -131,6 +137,7 @@
         public UniverseFilterService(
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
             IHighMarketCapFilter highMarketCapFilter,
+            IUniverseRule filteredRule,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -146,6 +153,7 @@
                 universeUnsubscriberFactory ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
             this.highMarketCapFilter = 
                 highMarketCapFilter ?? throw new ArgumentNullException(nameof(highMarketCapFilter));
+            this.filteredRule = filteredRule;
             this.accounts = accounts;
             this.traders = traders;
             this.markets = markets;
@@ -177,7 +185,7 @@
         /// </returns>
         public IRuleDataConstraint DataConstraints()
         {
-            return RuleDataConstraint.Empty().Case;
+            return this.filteredRule.DataConstraints();
         }
 
         /// <summary>
@@ -381,9 +389,9 @@
 
             if (value.StateChange != UniverseStateEvent.Order && value.StateChange != UniverseStateEvent.OrderPlaced
                                                               && value.StateChange
-                                                              != UniverseStateEvent.EquityIntradayTick) return false;
+                                                              != UniverseStateEvent.EquityIntraDayTick) return false;
 
-            if (value.StateChange == UniverseStateEvent.EquityIntradayTick)
+            if (value.StateChange == UniverseStateEvent.EquityIntraDayTick)
                 return this.FilterOnMarketIntradayTick(value);
 
             if (value.StateChange == UniverseStateEvent.Order || value.StateChange == UniverseStateEvent.OrderPlaced)

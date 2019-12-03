@@ -16,6 +16,8 @@ namespace RedDeer.Surveillance.App.Configuration
 
     using global::Surveillance.Auditing.DataLayer;
     using global::Surveillance.Auditing.DataLayer.Interfaces;
+    using global::Surveillance.Data.Universe.Refinitiv;
+    using global::Surveillance.Data.Universe.Refinitiv.Interfaces;
     using global::Surveillance.DataLayer.Configuration;
     using global::Surveillance.DataLayer.Configuration.Interfaces;
     using global::Surveillance.Engine.DataCoordinator.Configuration;
@@ -24,6 +26,7 @@ namespace RedDeer.Surveillance.App.Configuration
     using global::Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
     using Microsoft.Extensions.Configuration;
+    using NLog;
 
     public class Configuration
     {
@@ -34,6 +37,8 @@ namespace RedDeer.Surveillance.App.Configuration
         private IDictionary<string, string> _dynamoConfig;
 
         private bool _hasFetchedEc2Data;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Configuration()
         {
@@ -150,6 +155,21 @@ namespace RedDeer.Surveillance.App.Configuration
             }
         }
 
+        public IRefinitivTickPriceHistoryApiConfig BuildRefinitivTickPriceHistoryApiConfig(IConfigurationRoot configurationBuilder)
+        {
+            lock (this._lock)
+            {
+                this.Ec2Check();
+
+                var config = new RefinitivTickPriceHistoryApiConfig
+                {
+                    Address = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder)
+                };
+
+                return config;
+            }
+        }
+
         public IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
         {
             lock (this._lock)
@@ -230,8 +250,9 @@ namespace RedDeer.Surveillance.App.Configuration
 
                 return casedAttributes;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger?.Error(ex, "Error while loading dynamo configuration."); 
                 this._hasFetchedEc2Data = true;
             }
 

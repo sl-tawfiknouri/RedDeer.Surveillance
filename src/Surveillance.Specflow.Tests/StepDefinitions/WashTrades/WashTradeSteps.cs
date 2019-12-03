@@ -49,7 +49,9 @@
 
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
 
-        private readonly IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
 
@@ -86,7 +88,8 @@
 
             this._washTradeClustering = new ClusteringService();
             this._universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            this._universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._logger = new NullLogger<WashTradeRule>();
             this._tradingLogger = new NullLogger<TradingHistoryStack>();
 
@@ -94,7 +97,8 @@
                 this._currencyConverterService,
                 this._washTradeClustering,
                 this._universeOrderFilterService,
-                this._universeMarketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 this._logger,
                 this._tradingLogger);
 

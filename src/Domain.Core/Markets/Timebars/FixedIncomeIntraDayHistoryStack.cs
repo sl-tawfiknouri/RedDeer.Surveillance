@@ -1,49 +1,51 @@
-﻿namespace Domain.Core.Markets.Timebars
+﻿using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Domain.Core.Markets.Timebars
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Domain.Core.Markets.Collections;
-    using Domain.Core.Markets.Interfaces;
-
-    public class InterDayHistoryStack : IInterDayHistoryStack
+    public class FixedIncomeIntraDayHistoryStack : IFixedIncomeIntraDayHistoryStack
     {
-        private readonly Stack<EquityInterDayTimeBarCollection> _activeStack;
+        private readonly Stack<FixedIncomeIntraDayTimeBarCollection> _activeStack;
+
+        private readonly TimeSpan _activeTradeDuration;
 
         private readonly object _lock = new object();
 
         private Market _market;
 
-        public InterDayHistoryStack()
+        public FixedIncomeIntraDayHistoryStack(TimeSpan activeTradeDuration)
         {
-            this._activeStack = new Stack<EquityInterDayTimeBarCollection>();
+            this._activeStack = new Stack<FixedIncomeIntraDayTimeBarCollection>();
+            this._activeTradeDuration = activeTradeDuration;
         }
 
         /// <summary>
         ///     Does not provide access to the underlying collection via reference
         ///     Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<EquityInterDayTimeBarCollection> ActiveMarketHistory()
+        public Stack<FixedIncomeIntraDayTimeBarCollection> ActiveMarketHistory()
         {
             lock (this._lock)
             {
-                var tradeStackCopy = new Stack<EquityInterDayTimeBarCollection>(this._activeStack);
-                var reverseCopyOfTradeStack = new Stack<EquityInterDayTimeBarCollection>(tradeStackCopy);
+                var tradeStackCopy = new Stack<FixedIncomeIntraDayTimeBarCollection>(this._activeStack);
+                var reverseCopyOfTradeStack = new Stack<FixedIncomeIntraDayTimeBarCollection>(tradeStackCopy);
 
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;
             }
         }
 
-        public void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime)
+        public void Add(FixedIncomeIntraDayTimeBarCollection frame, DateTime currentTime)
         {
             if (frame == null) return;
 
             lock (this._lock)
             {
-                // Ensure all contents have the same date (may not work well in pacific zone with the international date line ++ trading hours - should be OK for Japan/Tokyo and USA/SanFran) - RT
-                if (currentTime.Date == frame.Epoch.Date) this._activeStack.Push(frame);
+                if (currentTime.Subtract(frame.Epoch) <= this._activeTradeDuration) this._activeStack.Push(frame);
             }
         }
 
@@ -52,12 +54,13 @@
             lock (this._lock)
             {
                 var initialActiveStackCount = this._activeStack.Count;
-                var counterPartyStack = new Stack<EquityInterDayTimeBarCollection>();
+                var counterPartyStack = new Stack<FixedIncomeIntraDayTimeBarCollection>();
 
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = this._activeStack.Pop();
-                    if (currentTime.Date == poppedItem.Epoch.Date) counterPartyStack.Push(poppedItem);
+                    if (currentTime.Subtract(poppedItem.Epoch) <= this._activeTradeDuration)
+                        counterPartyStack.Push(poppedItem);
 
                     initialActiveStackCount--;
                 }

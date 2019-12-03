@@ -40,7 +40,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         private IUniverseAlertStream _alertStream;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _operationCtx;
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
         private ILayeringRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
 
@@ -48,7 +49,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         private IMarketTradingHoursService _tradingHoursService;
         private IRuleRunDataRequestRepository _ruleRunRepository;
         private IStubRuleRunDataRequestRepository _stubRuleRunRepository;
-        private ILogger<UniverseMarketCacheFactory> _factoryLogger;
+        private ILogger<UniverseEquityMarketCacheFactory> _equityFactoryLogger;
+        private ILogger<UniverseFixedIncomeMarketCacheFactory> _fixedIncomeFactoryLogger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
@@ -66,8 +68,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 
             _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
             _stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
-            _factoryLogger = A.Fake<ILogger<UniverseMarketCacheFactory>>();
-            _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _factoryLogger);
+            _equityFactoryLogger = A.Fake<ILogger<UniverseEquityMarketCacheFactory>>();
+            _equityFactory = new UniverseEquityMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _equityFactoryLogger);
+            _fixedIncomeFactoryLogger = A.Fake<ILogger<UniverseFixedIncomeMarketCacheFactory>>();
+            _fixedIncomeFactory = new UniverseFixedIncomeMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _fixedIncomeFactoryLogger);
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
             _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecorator>();
@@ -97,27 +101,27 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void Constructor_NullParametersConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullLoggerConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, null, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, null, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullRuleContextConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, null, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, null, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void EndOfUniverse_RecordUpdateAlertAndEndEvent()
         {
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             rule.OnNext(eschaton);
@@ -130,7 +134,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, null, null, false, true);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -155,7 +159,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_NoRaisedAlertInEschaton_WhenBidirectionalTradeAndExceedsDailyThreshold_ButNoMarketData()
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -180,7 +184,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -205,7 +209,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.PlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
@@ -257,7 +261,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -294,7 +298,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
@@ -313,7 +317,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false, true);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -349,7 +353,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
@@ -369,7 +373,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false, true);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -419,7 +423,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false, true);
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -454,7 +458,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, tradeBuy.PlacedDate.Value.AddSeconds(-55), marketData);
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
@@ -475,7 +479,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false, true);
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
 
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -503,18 +507,18 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData1.Epoch,  marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData2.Epoch, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData1.Epoch,  marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData3.Epoch, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData4.Epoch, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData5.Epoch, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData6.Epoch, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
 
@@ -539,7 +543,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false, true);
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -567,18 +571,18 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData1.Epoch, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData2.Epoch, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData3.Epoch, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData4.Epoch, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData5.Epoch, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData6.Epoch, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
 
@@ -603,7 +607,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false, true);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -631,18 +635,18 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.PlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData1.Epoch, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData2.Epoch, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData3.Epoch, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData4.Epoch, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData5.Epoch, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData6.Epoch, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
 
@@ -667,7 +671,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false, true);
             _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _equityFactory, _fixedIncomeFactory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -691,8 +695,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
             var buyEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeBuy.PlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.OrderPlaced, tradeSell.PlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData5.Epoch, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketData6.Epoch, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.EquityIntraDayTick, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.PlacedDate.Value.AddMinutes(1), new object());
 
@@ -735,7 +739,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 _alertStream,
                 _orderFilter,
                 _logger,
-                _factory,
+                _equityFactory,
+                _fixedIncomeFactory,
                 _tradingHoursService,
                 _ruleCtx,
                 RuleRunMode.ValidationRun,

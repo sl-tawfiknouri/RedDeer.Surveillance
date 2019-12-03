@@ -121,7 +121,7 @@ Scenario: Buy just buy orders within time window yields two alerts
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          | Clean |
 	| UKGovtBondSecondaryMarket     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | BUY      | GBX      |            | 12               | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 101   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -132,7 +132,7 @@ Scenario: Cover just cover orders within time window yields two alerts
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |  CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | COVER       | GBX      |            | 10               | 100           | 100          | Clean |
 	| UKGovtBondSecondaryMarket     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | COVER      | GBX      |            | 12               | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 101   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -143,7 +143,7 @@ Scenario: Sell just sell orders within time window yields zero alerts
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL       | GBX      |            | 10               | 100           | 100          | Clean |
 	| UKGovtBondSecondaryMarket     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 101   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -154,7 +154,7 @@ Scenario: Short just short orders within time window yields zero alerts
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SHORT       | GBX      |            | 10               | 100           | 100          | Clean |
 	| UKGovtBondSecondaryMarket     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | SHORT      | GBX      |            | 12               | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 101   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -204,7 +204,7 @@ Scenario: Buy order with increase in market price (bmll) yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 120 | 120 | 120   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -214,7 +214,7 @@ Scenario: Buy order with increase in market price to exact percentage (bmll) yie
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 120 | 120 | 120   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -224,7 +224,7 @@ Scenario: Buy order with substantial increase in market price (bmll) yields one 
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
 	When I run the fixed income high profit rule
@@ -234,7 +234,7 @@ Scenario: Buy order with decrease in market price (bmll) yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume | CleanOrDirty |
 	| UKGovtBondSecondaryMarket     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100           | 100          | Clean |
-	And With the intraday market data :
+	And With the fixed income intraday market data :
 	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
 	| UKGovtBondSecondaryMarket     | 01/01/2018 09:30:00 | 101 | 101 | 98    | GBX      | 10000		  |
 	When I run the fixed income high profit rule

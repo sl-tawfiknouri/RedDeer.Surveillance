@@ -5,11 +5,11 @@
 
     using Domain.Core.Markets.Collections;
 
-    public interface IInterDayHistoryStack
+    public interface IEquityIntraDayHistoryStack
     {
-        Stack<EquityInterDayTimeBarCollection> ActiveMarketHistory();
+        Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory();
 
-        void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime);
+        void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime);
 
         void ArchiveExpiredActiveItems(DateTime currentTime);
 

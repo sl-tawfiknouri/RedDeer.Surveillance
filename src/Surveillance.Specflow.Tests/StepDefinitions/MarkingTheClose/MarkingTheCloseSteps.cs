@@ -44,7 +44,9 @@
 
         private readonly IMarketTradingHoursService _tradingHoursService;
 
-        private readonly UniverseMarketCacheFactory _universeMarketCacheFactory;
+        private readonly UniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly UniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly IUniverseEquityOrderFilterService _universeOrderFilterService;
 
@@ -57,10 +59,15 @@
             this._scenarioContext = scenarioContext;
             this._universeSelectionState = universeSelectionState;
 
-            this._universeMarketCacheFactory = new UniverseMarketCacheFactory(
+            this._equityMarketCacheFactory = new UniverseEquityMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
-                new NullLogger<UniverseMarketCacheFactory>());
+                new NullLogger<UniverseEquityMarketCacheFactory>());
+
+            this._fixedIncomeMarketCacheFactory = new UniverseFixedIncomeMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseFixedIncomeMarketCacheFactory>());
 
             this._alertStream = A.Fake<IUniverseAlertStream>();
             this._ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -106,7 +113,8 @@
 
             this._equityRuleMarkingTheCloseFactory = new EquityRuleMarkingTheCloseFactory(
                 this._universeOrderFilterService,
-                this._universeMarketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 this._tradingHoursService,
                 new NullLogger<MarkingTheCloseRule>(),
                 new NullLogger<TradingHistoryStack>());

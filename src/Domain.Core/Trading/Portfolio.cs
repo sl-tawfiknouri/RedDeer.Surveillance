@@ -65,10 +65,14 @@
             var ordersByCurrency = orders.GroupBy(i => i.OrderCurrency);
 
             var profitAndLossAccounts =
-                ordersByCurrency.Select(i => this.ProfitAndLossStatement(i.ToList(), i.Key)).ToList();
+                ordersByCurrency
+                .Select(i => this.ProfitAndLossStatement(i.ToList(), i.Key))
+                .ToList();
 
             if (profitAndLossAccounts == null || !profitAndLossAccounts.Any())
+            {
                 profitAndLossAccounts?.Add(Accounts.ProfitAndLossStatement.Empty());
+            }
 
             return profitAndLossAccounts;
         }
@@ -97,7 +101,9 @@
             Currency denominatedCurrency)
         {
             if (orders == null || !orders.Any() || directions == null || !directions.Any())
+            {
                 return new Money(0, denominatedCurrency);
+            }
 
             var order = orders.Where(i => directions.Contains(i.OrderDirection)).ToList();
 

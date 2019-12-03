@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Logging;
 
     using Surveillance.Auditing.Context.Interfaces;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
     using Surveillance.Engine.Rules.Judgements.Interfaces;
@@ -46,7 +47,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="marketDataCacheFactory">
@@ -74,10 +78,12 @@
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
+            IEquityMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitJudgementService judgementService,
+            ICurrencyConverterService currencyConverterService,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -88,10 +94,12 @@
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
                 orderFilter,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 marketDataCacheFactory,
                 dataRequestSubscriber,
                 judgementService,
+                currencyConverterService,
                 runMode,
                 logger,
                 tradingHistoryLogger)

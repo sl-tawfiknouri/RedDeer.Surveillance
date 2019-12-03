@@ -12,7 +12,7 @@
     using Domain.Surveillance.Scheduling;
 
     using Microsoft.Extensions.Logging;
-
+    using SharedKernel.Contracts.Markets;
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
@@ -75,7 +75,10 @@
         /// <param name="ruleContext">
         /// The rule context.
         /// </param>
-        /// <param name="factory">
+        /// <param name="equityFactory">
+        /// The factory.
+        /// </param>
+        /// <param name="fixedIncomeFactory">
         /// The factory.
         /// </param>
         /// <param name="runMode">
@@ -100,7 +103,8 @@
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleContext,
-            IUniverseMarketCacheFactory factory,
+            IUniverseEquityMarketCacheFactory equityFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeFactory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             IClusteringService clusteringService,
@@ -115,7 +119,8 @@
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleContext,
-                factory,
+                equityFactory,
+                fixedIncomeFactory,
                 runMode,
                 logger,
                 tradingStackLogger)
@@ -239,7 +244,20 @@
         /// </returns>
         public override IRuleDataConstraint DataConstraints()
         {
-            return RuleDataConstraint.Empty().Case;
+            var constraints = new List<RuleDataSubConstraint>();
+
+            var constraint = new RuleDataSubConstraint(
+                    this.ForwardWindowSize,
+                    this.TradeBackwardWindowSize,
+                    DataSource.NoPrices,
+                    _ => !this.orderFilterService.Filter(_));
+
+            constraints.Add(constraint);
+
+            return new RuleDataConstraint(
+                this.Rule,
+                this.parameters.Id,
+                constraints);
         }
 
         /// <summary>

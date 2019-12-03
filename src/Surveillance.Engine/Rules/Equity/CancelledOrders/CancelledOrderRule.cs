@@ -72,7 +72,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="runMode">
@@ -89,7 +92,8 @@
             ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             RuleRunMode runMode,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -101,7 +105,8 @@
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 operationContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -182,7 +187,7 @@
             var constraint = new RuleDataSubConstraint(
                 this.ForwardWindowSize,
                 this.TradeBackwardWindowSize,
-                DataSource.None,
+                DataSource.NoPrices,
                 _ => !this.orderFilter.Filter(_));
 
             return new RuleDataConstraint(

@@ -6,21 +6,21 @@
 
     using Surveillance.Engine.Rules.Markets.Interfaces;
 
-    public class IntradayMarketCacheStrategy : IMarketDataCacheStrategy
+    public class EquityIntraDayMarketCacheStrategy : IMarketDataCacheStrategy
     {
-        private readonly IUniverseEquityIntradayCache _cache;
+        private readonly IUniverseEquityIntraDayCache _cache;
 
-        public IntradayMarketCacheStrategy(IUniverseEquityIntradayCache cache)
+        public EquityIntraDayMarketCacheStrategy(IUniverseEquityIntraDayCache cache)
         {
             this._cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public DataSource DataSource { get; } = DataSource.AnyIntraday;
+        public DataSource DataSource => DataSource.AnyIntraday;
 
         public IQueryableMarketDataResponse Query(MarketDataRequest request)
         {
             var rawResponse = this._cache.GetForLatestDayOnly(request);
-            return new IntradayMarketDataResponse(rawResponse);
+            return new EquityIntraDayMarketDataResponse(rawResponse);
         }
     }
 }

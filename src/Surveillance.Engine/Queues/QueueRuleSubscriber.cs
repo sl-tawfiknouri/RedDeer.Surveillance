@@ -91,7 +91,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"caught exception in execute distributed message for {messageBody}", e);
+                this._logger.LogError(e, $"caught exception in execute distributed message for {messageBody}");
                 opCtx.EndEventWithError(e.Message);
             }
         }

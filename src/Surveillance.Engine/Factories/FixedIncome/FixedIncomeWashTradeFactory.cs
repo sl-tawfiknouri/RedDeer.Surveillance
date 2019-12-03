@@ -26,7 +26,9 @@
 
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
 
-        private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IUniverseEquityMarketCacheFactory _equityMarketCacheFactory;
+
+        private readonly IUniverseFixedIncomeMarketCacheFactory _fixedIncomeMarketCacheFactory;
 
         private readonly IPortfolioFactory _portfolioFactory;
 
@@ -34,15 +36,18 @@
 
         public FixedIncomeWashTradeFactory(
             IUniverseFixedIncomeOrderFilterService filterService,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IClusteringService clusteringService,
             IPortfolioFactory portfolioFactory,
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
             this._filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
-            this._marketCacheFactory =
-                marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            this._equityMarketCacheFactory =
+                equityMarketCacheFactory ?? throw new ArgumentNullException(nameof(equityMarketCacheFactory));
+            this._fixedIncomeMarketCacheFactory =
+                fixedIncomeMarketCacheFactory ?? throw new ArgumentNullException(nameof(fixedIncomeMarketCacheFactory));
             this._clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
             this._portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -61,7 +66,8 @@
                 parameters,
                 this._filterService,
                 ruleCtx,
-                this._marketCacheFactory,
+                this._equityMarketCacheFactory,
+                this._fixedIncomeMarketCacheFactory,
                 runMode,
                 alertStream,
                 this._clusteringService,

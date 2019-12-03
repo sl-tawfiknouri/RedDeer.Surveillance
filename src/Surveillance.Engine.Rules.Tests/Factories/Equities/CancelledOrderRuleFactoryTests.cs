@@ -23,7 +23,9 @@
     {
         private IUniverseAlertStream _alertStream;
 
-        private IUniverseMarketCacheFactory _factory;
+        private IUniverseEquityMarketCacheFactory _equityFactory;
+
+        private IUniverseFixedIncomeMarketCacheFactory _fixedIncomeFactory;
 
         private ILogger<CancelledOrderRule> _logger;
 
@@ -40,7 +42,8 @@
         {
             var factory = new EquityRuleCancelledOrderFactory(
                 this._orderFilterService,
-                this._factory,
+                this._equityFactory,
+                this._fixedIncomeFactory,
                 this._logger,
                 this._tradingHistoryLogger);
 
@@ -57,6 +60,7 @@
                 () => new EquityRuleCancelledOrderFactory(
                     this._orderFilterService,
                     null,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -68,7 +72,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleCancelledOrderFactory(
                     this._orderFilterService,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     null,
                     this._tradingHistoryLogger));
         }
@@ -80,7 +85,8 @@
             Assert.Throws<ArgumentNullException>(
                 () => new EquityRuleCancelledOrderFactory(
                     null,
-                    this._factory,
+                    this._equityFactory,
+                    this._fixedIncomeFactory,
                     this._logger,
                     this._tradingHistoryLogger));
         }
@@ -89,7 +95,8 @@
         public void Setup()
         {
             this._orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
-            this._factory = A.Fake<IUniverseMarketCacheFactory>();
+            this._equityFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
+            this._fixedIncomeFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this._logger = A.Fake<ILogger<CancelledOrderRule>>();
             this._tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 

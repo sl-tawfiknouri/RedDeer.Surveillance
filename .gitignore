@@ -25,4 +25,7 @@ src/Surveillance.Api.App/appsettings.json
 src/Surveillance/App/appsettings.json
 
 src/.sonarqube/
+
+src/DataImport/App/PlayAllocationFiles/
+src/DataImport/App/PlayTradeFiles/
 /src

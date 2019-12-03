@@ -21,13 +21,13 @@
         public void Constructor_Response_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new InterdayMarketDataResponse(null));
+            Assert.Throws<ArgumentNullException>(() => new EquityInterDayMarketDataResponse(null));
         }
 
         [Test]
         public void HadMissingData_Passes_Through_Response_Value_Missing()
         {
-            var response = new InterdayMarketDataResponse(_responseMissingData);
+            var response = new EquityInterDayMarketDataResponse(_responseMissingData);
 
             var missing = response.HadMissingData();
 
@@ -37,7 +37,7 @@
         [Test]
         public void HadMissingData_Passes_Through_Response_Value_Not_Missing()
         {
-            var response = new InterdayMarketDataResponse(_responseNoMissingData);
+            var response = new EquityInterDayMarketDataResponse(_responseNoMissingData);
 
             var missing = response.HadMissingData();
 

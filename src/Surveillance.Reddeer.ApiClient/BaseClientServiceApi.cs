@@ -85,7 +85,7 @@
             this.logger.LogInformation($"get request initiating for {route}");
 
             var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                TimeSpan.FromMinutes(2),
+                TimeSpan.FromMinutes(30),
                 i => !i.IsSuccessStatusCode,
                 3,
                 TimeSpan.FromSeconds(15));
@@ -237,7 +237,7 @@
             where T : new()
         {
             var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                TimeSpan.FromMinutes(2),
+                TimeSpan.FromMinutes(30),
                 i => !i.IsSuccessStatusCode,
                 3,
                 TimeSpan.FromSeconds(15));

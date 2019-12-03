@@ -182,7 +182,7 @@
             {
                 var json = JsonConvert.SerializeObject(request);
                 var policy = this.policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(
-                    TimeSpan.FromMinutes(3),
+                    TimeSpan.FromMinutes(30),
                     i => !i.IsSuccessStatusCode,
                     5,
                     TimeSpan.FromMinutes(1));

@@ -21,6 +21,7 @@
     using Surveillance.Auditing.Context.Interfaces;
     using Surveillance.Data.Universe.Interfaces;
     using Surveillance.Data.Universe.MarketEvents;
+    using Surveillance.Engine.Rules.Currency.Interfaces;
     using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.FixedIncome;
     using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -81,9 +82,14 @@
         private readonly IExchangeRateProfitCalculator exchangeRateProfitCalculator;
 
         /// <summary>
+        /// Currency conversion service
+        /// </summary>
+        private readonly ICurrencyConverterService currencyConverterService;
+
+        /// <summary>
         /// Caching strategy - varies over market closure or stream analysis
         /// </summary>
-        private readonly IMarketDataCacheStrategyFactory marketDataCacheFactory;
+        private readonly IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheFactory;
 
         /// <summary>
         /// Filters out trades with incorrect CFI
@@ -122,7 +128,10 @@
         /// <param name="orderFilter">
         /// classification financial instruments filtering service
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// time bar cache factory
+        /// </param>
+        /// /// <param name="fixedIncomeMarketCacheFactory">
         /// time bar cache factory
         /// </param>
         /// <param name="marketDataCacheFactory">
@@ -150,10 +159,12 @@
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseFixedIncomeOrderFilterService orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
-            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
+            IFixedIncomeMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IFixedIncomeHighProfitJudgementService judgementService,
+            ICurrencyConverterService currencyService,
             RuleRunMode runMode,
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -165,7 +176,8 @@
                 FixedIncomeHighProfitFactory.Version,
                 "Fixed Income High Profit Rule",
                 ruleContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)
@@ -194,6 +206,7 @@
                 dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
 
             this.JudgementService = judgementService ?? throw new ArgumentNullException(nameof(judgementService));
+            this.currencyConverterService = currencyService ?? throw new ArgumentNullException(nameof(currencyService));
 
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -274,7 +287,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AnyInterday,
+                    DataSource.RefinitivInterday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -285,7 +298,7 @@
                 var constraint = new RuleDataSubConstraint(
                     this.ForwardWindowSize,
                     this.TradeBackwardWindowSize,
-                    DataSource.AnyIntraday,
+                    DataSource.RefinitivIntraday,
                     _ => !this.orderFilter.Filter(_));
 
                 constraints.Add(constraint);
@@ -328,7 +341,7 @@
         /// </summary>
         /// <param name="history">Trading history qualified for high profit analysis</param>
         /// <param name="intradayCache">Market data for analysis</param>
-        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseEquityIntradayCache intradayCache)
+        protected void EvaluateHighProfits(ITradingHistoryStack history, IUniverseFixedIncomeIntraDayCache intradayCache)
         {
             if (!this.RunRuleGuard(history))
             {
@@ -366,7 +379,7 @@
 
             var marketCache = 
                 this.MarketClosureRule
-                    ? this.marketDataCacheFactory.InterdayStrategy(this.UniverseEquityInterdayCache)
+                    ? this.marketDataCacheFactory.InterdayStrategy(this.UniverseFixedIncomeInterdayCache)
                     : this.marketDataCacheFactory.IntradayStrategy(intradayCache);
 
             var costTask = costCalculator.CalculateCostOfPosition(cleanTrades, this.UniverseDateTime, this.RuleCtx);
@@ -403,9 +416,34 @@
                 return;
             }
 
+            if (!revenue.Value.DenominatedInCommonCurrency(cost.Value))
+            {
+                var convertedCostTask =
+                    this.currencyConverterService.Convert(
+                        new[] { cost.Value },
+                        revenue.Value.Currency,
+                        UniverseDateTime,
+                        this.RuleCtx);
+
+                var convertedCost = convertedCostTask.Result;
+
+                if (convertedCost == null)
+                {
+                    this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Could not convert cost to revenue.");
+
+                    return;
+                }
+
+                cost = convertedCost;
+            }
+
+            this.Logger.LogInformation($"Absolute profit calculating...currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var absoluteProfit = revenue.Value - cost.Value;
+
+            this.Logger.LogInformation($"Profit ratio calculating...currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var profitRatio = (revenue.Value.Value / cost.Value.Value) - 1;
 
+            this.Logger.LogInformation($"Currency conversion success of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
             var hasHighProfitAbsolute = this.HasHighProfitAbsolute(absoluteProfit);
             var hasHighProfitPercentage = this.HasHighProfitPercentage(profitRatio);
 
@@ -527,7 +565,7 @@
         /// </param>
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            this.EvaluateHighProfits(history, this.UniverseEquityIntradayCache);
+            this.EvaluateHighProfits(history, this.UniverseFixedIncomeIntradayCache);
         }
 
         /// <summary>
@@ -538,7 +576,7 @@
         /// </param>
         protected override void RunPostOrderEventDelayed(ITradingHistoryStack history)
         {
-            this.EvaluateHighProfits(history, this.FutureUniverseEquityIntradayCache);
+            this.EvaluateHighProfits(history, this.FutureUniverseFixedIncomeIntradayCache);
         }
 
         /// <summary>

@@ -44,6 +44,7 @@
                  fi.ExchangeSymbol as InstrumentExchangeSymbol,
                  fi.Lei as InstrumentLei,
                  fi.BloombergTicker as InstrumentBloombergTicker,
+                 fi.Ric as InstrumentRic,
                  fi.UnderlyingSedol as InstrumentUnderlyingSedol,
                  fi.UnderlyingIsin as InstrumentUnderlyingIsin,
                  fi.UnderlyingFigi as InstrumentUnderlyingFigi,
@@ -52,6 +53,7 @@
                  fi.UnderlyingExchangeSymbol as InstrumentUnderlyingExchangeSymbol,
                  fi.UnderlyingBloombergTicker as InstrumentUnderlyingBloombergTicker,
                  fi.UnderlyingClientIdentifier as InstrumentUnderlyingClientIdentifier,
+                 fi.UnderlyingRic as InstrumentUnderlyingRic,
                  fi.Cfi as InstrumentCfi
              FROM RuleDataRequest as rdr
              LEFT OUTER JOIN FinancialInstruments as fi

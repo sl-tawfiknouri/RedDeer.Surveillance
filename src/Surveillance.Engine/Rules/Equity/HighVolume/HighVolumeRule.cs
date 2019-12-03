@@ -91,7 +91,10 @@
         /// <param name="orderFilter">
         /// The order filter.
         /// </param>
-        /// <param name="marketCacheFactory">
+        /// <param name="equityMarketCacheFactory">
+        /// The market cache factory.
+        /// </param>
+        /// <param name="fixedIncomeMarketCacheFactory">
         /// The market cache factory.
         /// </param>
         /// <param name="tradingHoursService">
@@ -117,7 +120,8 @@
             ISystemProcessOperationRunRuleContext operationContext,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseEquityMarketCacheFactory equityMarketCacheFactory,
+            IUniverseFixedIncomeMarketCacheFactory fixedIncomeMarketCacheFactory,
             IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ICurrencyConverterService currencyConverterService,
@@ -132,7 +136,8 @@
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
                 operationContext,
-                marketCacheFactory,
+                equityMarketCacheFactory,
+                fixedIncomeMarketCacheFactory,
                 runMode,
                 logger,
                 tradingHistoryLogger)

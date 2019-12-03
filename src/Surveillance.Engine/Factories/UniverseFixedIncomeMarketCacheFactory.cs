@@ -1,27 +1,27 @@
-﻿namespace Surveillance.Engine.Rules.Factories
+﻿using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Surveillance.Engine.Rules.Factories
 {
-    using System;
-
-    using Microsoft.Extensions.Logging;
-
-    using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-    using Surveillance.Engine.Rules.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Markets;
-    using Surveillance.Engine.Rules.Markets.Interfaces;
-    using Surveillance.Engine.Rules.Rules;
-
-    public class UniverseMarketCacheFactory : IUniverseMarketCacheFactory
+    public class UniverseFixedIncomeMarketCacheFactory : IUniverseFixedIncomeMarketCacheFactory
     {
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
 
-        private readonly ILogger<UniverseMarketCacheFactory> _logger;
+        private readonly ILogger<UniverseFixedIncomeMarketCacheFactory> _logger;
 
         private readonly IStubRuleRunDataRequestRepository _stubDataRequestRepository;
 
-        public UniverseMarketCacheFactory(
+        public UniverseFixedIncomeMarketCacheFactory(
             IStubRuleRunDataRequestRepository stubDataRequestRepository,
             IRuleRunDataRequestRepository dataRequestRepository,
-            ILogger<UniverseMarketCacheFactory> logger)
+            ILogger<UniverseFixedIncomeMarketCacheFactory> logger)
         {
             this._stubDataRequestRepository = stubDataRequestRepository
                                               ?? throw new ArgumentNullException(nameof(stubDataRequestRepository));
@@ -30,22 +30,22 @@
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseEquityInterDayCache BuildInterday(RuleRunMode runMode)
+        public IUniverseFixedIncomeInterDayCache BuildInterday(RuleRunMode runMode)
         {
             var repo = runMode == RuleRunMode.ValidationRun
                            ? this._dataRequestRepository
                            : this._stubDataRequestRepository;
 
-            return new UniverseEquityInterDayCache(repo, this._logger);
+            return new UniverseFixedIncomeInterDayCache(repo, this._logger);
         }
 
-        public IUniverseEquityIntradayCache BuildIntraday(TimeSpan window, RuleRunMode runMode)
+        public IUniverseFixedIncomeIntraDayCache BuildIntraday(TimeSpan window, RuleRunMode runMode)
         {
             var repo = runMode == RuleRunMode.ValidationRun
                            ? this._dataRequestRepository
                            : this._stubDataRequestRepository;
 
-            return new UniverseEquityIntradayCache(window, repo, this._logger);
+            return new UniverseFixedIncomeIntraDayCache(window, repo, this._logger);
         }
     }
 }

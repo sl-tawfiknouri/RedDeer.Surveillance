@@ -69,7 +69,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        public async Task Save(IHighProfitJudgement highProfit)
+        public async Task SaveAsync(IHighProfitJudgement highProfit)
         {
             this.logger?.LogInformation($"High profit judgement saving for rule run {highProfit.RuleRunId}");
 
@@ -103,12 +103,14 @@
         /// <param name="cancelledOrder">
         /// The cancelled order.
         /// </param>
-        public void Save(ICancelledOrderJudgement cancelledOrder)
+        public async Task SaveAsync(ICancelledOrderJudgement cancelledOrder)
         {
             if (cancelledOrder == null)
             {
                 this.logger?.LogError("Cancelled Order Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -117,12 +119,14 @@
         /// <param name="highVolume">
         /// The high volume.
         /// </param>
-        public void Save(IHighVolumeJudgement highVolume)
+        public async Task SaveAsync(IHighVolumeJudgement highVolume)
         {
             if (highVolume == null)
             {
                 this.logger?.LogError("High Volume Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -131,12 +135,14 @@
         /// <param name="layering">
         /// The layering.
         /// </param>
-        public void Save(ILayeringJudgement layering)
+        public async Task SaveAsync(ILayeringJudgement layering)
         {
             if (layering == null)
             {
                 this.logger?.LogError("Layering Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -145,12 +151,14 @@
         /// <param name="markingTheClose">
         /// The marking the close.
         /// </param>
-        public void Save(IMarkingTheCloseJudgement markingTheClose)
+        public async Task SaveAsync(IMarkingTheCloseJudgement markingTheClose)
         {
             if (markingTheClose == null)
             {
                 this.logger?.LogError("Marking The Close Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -159,12 +167,14 @@
         /// <param name="placingOrders">
         /// The placing orders.
         /// </param>
-        public void Save(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
+        public async Task SaveAsync(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders)
         {
             if (placingOrders == null)
             {
                 this.logger?.LogError("Placing Orders Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -173,12 +183,14 @@
         /// <param name="ramping">
         /// The ramping.
         /// </param>
-        public void Save(IRampingJudgement ramping)
+        public async Task SaveAsync(IRampingJudgement ramping)
         {
             if (ramping == null)
             {
                 this.logger?.LogError("Ramping Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -187,12 +199,14 @@
         /// <param name="spoofing">
         /// The spoofing.
         /// </param>
-        public void Save(ISpoofingJudgement spoofing)
+        public async Task SaveAsync(ISpoofingJudgement spoofing)
         {
             if (spoofing == null)
             {
                 this.logger?.LogError("Spoofing Judgement was null");
             }
+
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -204,7 +218,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        public async Task Save(IFixedIncomeHighProfitJudgement highProfit)
+        public async Task SaveAsync(IFixedIncomeHighProfitJudgement highProfit)
         {
             this.logger?.LogInformation($"Fixed Income High profit judgement saving for rule run {highProfit.RuleRunId}");
 
@@ -219,9 +233,8 @@
             try
             {
                 using (var databaseConnection = this.databaseConnectionFactory.BuildConn())
-                using (var connection = databaseConnection.ExecuteAsync(SaveHighProfit, dto))
                 {
-                    await connection;
+                    var result = await databaseConnection.ExecuteAsync(SaveHighProfit, dto);
                 }
             }
             catch (Exception e)
@@ -239,7 +252,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        public async Task Save(IFixedIncomeHighVolumeJudgement highVolume)
+        public async Task SaveAsync(IFixedIncomeHighVolumeJudgement highVolume)
         {
             this.logger?.LogInformation($"Fixed Income High Volume judgement saving for rule run {highVolume.RuleRunId}");
 
@@ -255,9 +268,8 @@
             try
             {
                 using (var databaseConnection = this.databaseConnectionFactory.BuildConn())
-                using (var conn = databaseConnection.ExecuteAsync(SaveHighVolume, dto))
                 {
-                    await conn;
+                    var result = await databaseConnection.ExecuteAsync(SaveHighVolume, dto);
                 }
             }
             catch (Exception e)

@@ -634,26 +634,22 @@
                 dbConnection.Open();
                 _logger.LogInformation("Reddeer Market Repository CreateAndOrGetSecurityId opened connection to database");
 
-                var marketId = string.Empty;
-                var securityId = string.Empty;
 
                 var marketUpdate = new MarketUpdateDto(pair.Exchange);
 
                 _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
-                using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
-                {
-                    marketId = await conn;
-                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
-                }
+                
+                var marketId = await dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate);
+                
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
 
                 var securityUpdate = new InsertSecurityDto(pair.Security, marketId, _cfiMapper);
 
                 _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match security or insert sql for {pair.Security?.Name}");
-                using (var conn = dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate))
-                {
-                    securityId = await conn;
-                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId completed match security or insert sql for {pair.Security?.Name}");
-                }
+                
+                var securityId = await dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate);
+                
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId completed match security or insert sql for {pair.Security?.Name}");
 
                 return new MarketSecurityIds {MarketId = marketId, SecurityId = securityId};
             }

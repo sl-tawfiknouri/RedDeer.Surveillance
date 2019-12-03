@@ -136,10 +136,8 @@
                         "OrderAllocationRepository Create method opened db connection and about to write record");
 
                     using (var dbConn = this._connectionFactory.BuildConn())
-                    using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
+                        var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto).ConfigureAwait(false).GetAwaiter().GetResult();
                         this._logger.LogInformation("OrderAllocationRepository Create method completed writing record");
                     }
                 }

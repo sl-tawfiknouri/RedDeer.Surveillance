@@ -1,102 +1,29 @@
-﻿namespace Surveillance.DataLayer.Aurora.Judgements.Interfaces
+﻿using System.Threading.Tasks;
+using Domain.Surveillance.Judgement.Equity.Interfaces;
+using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
+
+namespace Surveillance.DataLayer.Aurora.Judgements.Interfaces
 {
-    using System.Threading.Tasks;
-
-    using Domain.Surveillance.Judgement.Equity.Interfaces;
-    using Domain.Surveillance.Judgement.FixedIncome.Interfaces;
-
-    /// <summary>
-    /// The JudgementRepository interface.
-    /// </summary>
     public interface IJudgementRepository
     {
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="highProfit">
-        /// The high profit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
-        Task Save(IHighProfitJudgement highProfit);
+        Task SaveAsync(IHighProfitJudgement highProfit);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="cancelledOrder">
-        /// The cancelled order.
-        /// </param>
-        void Save(ICancelledOrderJudgement cancelledOrder);
+        Task SaveAsync(ICancelledOrderJudgement cancelledOrder);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="highVolume">
-        /// The high volume.
-        /// </param>
-        void Save(IHighVolumeJudgement highVolume);
+        Task SaveAsync(IHighVolumeJudgement highVolume);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="layering">
-        /// The layering.
-        /// </param>
-        void Save(ILayeringJudgement layering);
+        Task SaveAsync(ILayeringJudgement layering);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="markingTheClose">
-        /// The marking the close.
-        /// </param>
-        void Save(IMarkingTheCloseJudgement markingTheClose);
+        Task SaveAsync(IMarkingTheCloseJudgement markingTheClose);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="placingOrders">
-        /// The placing orders.
-        /// </param>
-        void Save(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders);
+        Task SaveAsync(IPlacingOrdersWithNoIntentToExecuteJudgement placingOrders);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="ramping">
-        /// The ramping.
-        /// </param>
-        void Save(IRampingJudgement ramping);
+        Task SaveAsync(IRampingJudgement ramping);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="spoofing">
-        /// The spoofing.
-        /// </param>
-        void Save(ISpoofingJudgement spoofing);
+        Task SaveAsync(ISpoofingJudgement spoofing);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="highProfit">
-        /// The high profit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
-        Task Save(IFixedIncomeHighProfitJudgement highProfit);
+        Task SaveAsync(IFixedIncomeHighProfitJudgement highProfit);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="highVolume">
-        /// The high volume.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
-        Task Save(IFixedIncomeHighVolumeJudgement highVolume);
+        Task SaveAsync(IFixedIncomeHighVolumeJudgement highVolume);
     }
 }

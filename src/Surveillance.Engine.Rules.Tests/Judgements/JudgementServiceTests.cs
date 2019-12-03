@@ -226,7 +226,7 @@
 
             await service.Judgement(this.cancelledOrderJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ICancelledOrderJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -242,7 +242,7 @@
 
             await service.Judgement(this.cancelledOrderJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ICancelledOrderJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -260,7 +260,7 @@
 
             await service.Judgement(this.highProfitJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -279,7 +279,7 @@
 
             await service.Judgement(this.highProfitJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighProfitJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -300,7 +300,7 @@
 
             await service.Judgement(this.highProfitJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighProfitJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
@@ -317,7 +317,7 @@
 
             await service.Judgement(this.highVolumeJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -333,7 +333,7 @@
 
             await service.Judgement(this.highVolumeJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -349,7 +349,7 @@
 
             await service.Judgement(this.layeringJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -364,7 +364,7 @@
 
             await service.Judgement(this.layeringJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ILayeringJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -379,7 +379,7 @@
 
             await service.Judgement(this.markingTheCloseJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IMarkingTheCloseJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -395,7 +395,7 @@
 
             await service.Judgement(this.markingTheCloseJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IMarkingTheCloseJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IMarkingTheCloseJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -411,7 +411,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((ICancelledOrderJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ICancelledOrderJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -425,7 +425,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((IHighProfitJudgementContext)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighProfitJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.highProfitJudgementMapper.Map(A<IHighProfitJudgementContext>.Ignored))
                 .MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
@@ -441,7 +441,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((IHighVolumeJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<IHighVolumeJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IHighVolumeJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -455,7 +455,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((ILayeringJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -469,7 +469,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((IMarkingTheCloseJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ILayeringJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -483,7 +483,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((IPlacingOrdersWithNoIntentToExecuteJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
@@ -498,7 +498,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((IRampingJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IRampingJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -512,7 +512,7 @@
 
             Assert.DoesNotThrowAsync(() => service.Judgement((ISpoofingJudgement)null));
 
-            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ISpoofingJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
 
@@ -526,7 +526,7 @@
 
             await service.Judgement(this.placingOrdersWithNoIntentJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -542,7 +542,7 @@
 
             await service.Judgement(this.placingOrdersWithNoIntentJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IPlacingOrdersWithNoIntentToExecuteJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -558,7 +558,7 @@
 
             await service.Judgement(this.rampingJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -573,7 +573,7 @@
 
             await service.Judgement(this.rampingJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IRampingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -588,7 +588,7 @@
 
             await service.Judgement(this.spoofingJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -603,7 +603,7 @@
 
             await service.Judgement(this.spoofingJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<ISpoofingJudgement>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
@@ -620,7 +620,7 @@
 
             await service.Judgement(this.fixedIncomeProfitJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.fixedIncomeProfitJudgementMapper.Map(A<IFixedIncomeHighProfitJudgementContext>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
@@ -638,7 +638,7 @@
 
             await service.Judgement(this.fixedIncomeProfitJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IFixedIncomeHighProfitJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.fixedIncomeProfitJudgementMapper.Map(A<IFixedIncomeHighProfitJudgementContext>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -661,7 +661,7 @@
 
             await service.Judgement(this.fixedIncomeHighVolumeJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IFixedIncomeHighProfitJudgement>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.MapContextToBreach(A<IFixedIncomeHighVolumeJudgementContext>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => this.ruleViolationService.AddRuleViolation(A<IRuleBreach>.Ignored)).MustNotHaveHappened();
         }
@@ -682,7 +682,7 @@
 
             await service.Judgement(this.fixedIncomeHighVolumeJudgementContext);
 
-            A.CallTo(() => this.judgementRepository.Save(A<IFixedIncomeHighVolumeJudgement>.Ignored))
+            A.CallTo(() => this.judgementRepository.SaveAsync(A<IFixedIncomeHighVolumeJudgement>.Ignored))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => this.fixedIncomeHighVolumeJudgementMapper.MapContextToBreach(A<IFixedIncomeHighVolumeJudgementContext>.Ignored))
                 .MustHaveHappenedOnceExactly();

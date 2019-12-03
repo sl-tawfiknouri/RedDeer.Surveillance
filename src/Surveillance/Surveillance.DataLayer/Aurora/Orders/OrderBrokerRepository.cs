@@ -66,7 +66,7 @@
             }
         }
 
-        public async Task<string> InsertOrUpdateBroker(IOrderBroker broker)
+        public async Task<string> InsertOrUpdateBrokerAsync(IOrderBroker broker)
         {
             this._logger?.LogInformation($"{broker?.Name} about to insert or update broker");
 
@@ -75,9 +75,8 @@
             try
             {
                 using (var dbConn = this._dbConnectionFactory.BuildConn())
-                using (var conn = dbConn.ExecuteScalarAsync<string>(InsertBrokerSql, broker))
                 {
-                    var id = await conn;
+                    var id = await dbConn.ExecuteScalarAsync<string>(InsertBrokerSql, broker);
                     return id;
                 }
             }

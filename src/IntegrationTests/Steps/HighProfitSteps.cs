@@ -1,5 +1,6 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
+using RedDeer.Contracts.SurveillanceService.Rules;
 using RedDeer.Surveillance.IntegrationTests.Runner;
 using RedDeer.Surveillance.IntegrationTests.Steps.Common;
 using System;
@@ -49,6 +50,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             dto.ForwardWindow = RuleParameterHelpers.ToWindowSize(config.ValueOrNull("BackwardWindow"));
 
             _ruleRunner.RuleParameterDto.HighProfits = dto.CreateArray();
+            _ruleRunner.RuleType = Rules.HighProfits;
         }
 
     }

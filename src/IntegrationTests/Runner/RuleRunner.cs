@@ -87,6 +87,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             FixedIncomeHighProfits = new FixedIncomeHighProfitRuleParameterDto[0],
             FixedIncomeWashTrades = new FixedIncomeWashTradeRuleParameterDto[0]
         };
+        public Rules RuleType = Rules.Spoofing;
 
         public string TradeCsvContent { get; set; }
         public string AllocationCsvContent { get; set; }
@@ -412,7 +413,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                 {
                     new RuleIdentifier
                     {
-                        Rule = GetRuleType(),
+                        Rule = RuleType,
                         Ids = new[] { RuleId }
                     }
                 }
@@ -422,20 +423,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             // run rule
             var queueRuleSubscriber = container.GetInstance<IQueueRuleSubscriber>();
             await queueRuleSubscriber.ExecuteDistributedMessage(MessageId, message);
-        }
-
-        private Rules GetRuleType()
-        {
-            if (RuleParameterDto.WashTrades.Length > 0)
-            {
-                return Rules.WashTrade;
-            }
-            if (RuleParameterDto.HighProfits.Length > 0)
-            {
-                return Rules.HighProfits;
-            }
-
-            return Rules.Spoofing;
         }
 
         private int GetOrderCount(IGraphQlDbContext dbContext)

@@ -1,5 +1,6 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
+using RedDeer.Contracts.SurveillanceService.Rules;
 using RedDeer.Surveillance.IntegrationTests.Runner;
 using RedDeer.Surveillance.IntegrationTests.Steps.Common;
 using System;
@@ -44,6 +45,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             }
 
             _ruleRunner.RuleParameterDto.WashTrades = dto.CreateArray();
+            _ruleRunner.RuleType = Rules.WashTrade;
         }
     }
 }

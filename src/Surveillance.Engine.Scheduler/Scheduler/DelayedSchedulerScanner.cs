@@ -83,7 +83,7 @@
             }
             catch (Exception a)
             {
-                this.logger.LogError($"encountered an exception {a.Message} {a?.InnerException?.Message}", a);
+                this.logger.LogError(a, $"encountered an exception");
             }
         }
     }

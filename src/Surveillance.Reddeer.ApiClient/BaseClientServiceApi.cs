@@ -148,7 +148,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError($"exception on get request to {route} {e.Message} {e.InnerException?.Message}");
+                this.logger.LogError(e, $"exception on get request to");
             }
 
             return null;
@@ -212,7 +212,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError($"heartbeat for {route} was negative {e.Message} {e.InnerException?.Message}");
+                this.logger.LogError(e, $"heartbeat for {route} was negative");
             }
 
             return false;
@@ -315,8 +315,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError(
-                    $"Exception in {nameof(BaseClientServiceApi)} {e.Message} {e.InnerException?.Message}");
+                this.logger.LogError(e, $"Exception in {nameof(BaseClientServiceApi)}");
             }
 
             return new T();

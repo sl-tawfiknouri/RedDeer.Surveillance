@@ -344,7 +344,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository GetUnEnrichedSecurities method for {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository GetUnEnrichedSecurities method for {e.Message}");
             }
             finally
             {
@@ -385,7 +385,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository UpdateUnEnrichedSecurities method for {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository UpdateUnEnrichedSecurities method for {e.Message}");
             }
             finally
             {
@@ -436,7 +436,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message})");
+                _logger.LogError(e, $"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message})");
             }
             finally
             {
@@ -509,7 +509,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Get Method For {start} {end} {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository Get Method For {start} {end} {e.Message}");
                 opCtx.EventError(e);
             }
             finally
@@ -586,7 +586,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
                 opCtx.EventError(e);
             }
             finally
@@ -655,7 +655,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message} {e.InnerException?.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository CreateAndOrGetSecurityId");
             }
             finally
             {

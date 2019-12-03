@@ -61,7 +61,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
                 return new IOrderBroker[0];
             }
         }
@@ -82,7 +82,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
                 return string.Empty;
             }
         }
@@ -117,7 +117,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
             }
         }
 

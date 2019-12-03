@@ -130,7 +130,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                    this._logger.LogError(e, $"error for Create");
                 }
 
                 
@@ -165,7 +165,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return null;
@@ -190,7 +190,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return false;
@@ -217,7 +217,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return false;

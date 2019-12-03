@@ -57,9 +57,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"Exception sending message '{caseMessage}' to bus on queue {this._awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}",
-                    e);
+                this._logger.LogError(e, $"Exception sending message '{caseMessage}' to bus on queue {this._awsConfiguration.CaseMessageQueueName}.");
             }
         }
     }

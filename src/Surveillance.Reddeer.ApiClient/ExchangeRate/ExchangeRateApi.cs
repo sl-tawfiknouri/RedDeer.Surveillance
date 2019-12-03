@@ -138,7 +138,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError("ExchangeRateApiRepository: " + e.Message);
+                this.logger.LogError(e, "ExchangeRateApiRepository");
             }
 
             return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();

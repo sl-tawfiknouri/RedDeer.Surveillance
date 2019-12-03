@@ -53,8 +53,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"exception in save tasks for tuning runs {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"exception in save tasks for tuning runs");
             }
 
             this._logger?.LogInformation("Completed saving a parameter tuning run");

@@ -91,9 +91,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(
-                    e,
-                    $"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
+                this.logger?.LogError(e, $"Error in save insert for high profit");
             }
         }
 
@@ -239,7 +237,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(e, $"Error in save insert for high profit {e.Message} {e?.InnerException?.Message}");
+                this.logger?.LogError(e, $"Error in save insert for high profit");
             }
         }
 
@@ -274,7 +272,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(e, $"Error in save insert for high volume {e.Message} {e?.InnerException?.Message}");
+                this.logger?.LogError(e, $"Error in save insert for high volume");
             }
         }
 

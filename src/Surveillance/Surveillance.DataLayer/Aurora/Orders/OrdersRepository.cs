@@ -797,8 +797,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
+                this._logger.LogError(e, $"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()}");
                 opCtx?.EventError(e);
             }
             finally
@@ -826,7 +825,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
+                this._logger?.LogError(e, $"OrdersRepository liven completed order sets exception {e.Message}");
             }
         }
 
@@ -849,9 +848,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}",
-                    e);
+                this._logger?.LogError(e, $"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}");
             }
 
             return new List<Order>();
@@ -877,9 +874,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"OrdersRepository set orders as scheduled encountered an exception {e.Message}",
-                    e);
+                this._logger?.LogError(e, $"OrdersRepository set orders as scheduled encountered an exception {e.Message}");
             }
         }
 
@@ -905,7 +900,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"OrdersRepository fetch stale orders exception {e.Message}", e);
+                this._logger?.LogError(e, $"OrdersRepository fetch stale orders exception {e.Message}");
             }
 
             return new List<Order>();

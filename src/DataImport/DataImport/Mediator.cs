@@ -74,7 +74,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"Mediator exception {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"Mediator exception");
             }
         }
     }

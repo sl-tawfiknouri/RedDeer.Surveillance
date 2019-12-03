@@ -76,7 +76,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"S3FileUploadMonitoringProcess - {e.Message} - {e.InnerException?.Message}");
+                this._logger.LogError(e, $"S3FileUploadMonitoringProcess");
             }
         }
 
@@ -149,8 +149,7 @@
 
             if (retries <= 0)
             {
-                this._logger.LogError(
-                    $"S3 Processor ran out of retries trying to fetch file ({dto}) to {destinationFileName}");
+                this._logger.LogError($"S3 Processor ran out of retries trying to fetch file ({dto}) to {destinationFileName}");
                 return;
             }
 
@@ -190,8 +189,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"S3 File Upload Monitoring Process moving process trade file {file} to {uploadDirectoryPath} {e.Message}");
+                    this._logger.LogError(e, $"S3 File Upload Monitoring Process moving process trade file {file} to {uploadDirectoryPath}");
                 }
 
             this._logger.LogInformation($"Moved all {fileCount}.");
@@ -268,7 +266,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
+                this._logger.LogError(e, "S3FileUploadMonitoringProcess");
             }
         }
     }

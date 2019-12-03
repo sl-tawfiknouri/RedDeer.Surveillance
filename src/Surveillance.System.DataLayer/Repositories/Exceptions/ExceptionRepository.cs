@@ -44,7 +44,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"Exception in the Exception Repository {e.Message}");
+                this._logger.LogError(e, $"Exception in the Exception Repository");
             }
 
             return new ExceptionDto[0];
@@ -66,7 +66,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"Exception in the Exception Repository {e.Message}");
+                this._logger.LogError(e, $"Exception in the Exception Repository");
             }
         }
     }

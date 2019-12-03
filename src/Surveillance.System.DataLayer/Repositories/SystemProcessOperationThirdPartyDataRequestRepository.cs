@@ -49,8 +49,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                    this._logger.LogError(e, $"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}.");
                 }
             }
         }

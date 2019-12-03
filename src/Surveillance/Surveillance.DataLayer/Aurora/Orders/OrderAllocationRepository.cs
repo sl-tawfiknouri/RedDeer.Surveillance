@@ -107,7 +107,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError("OrderAllocationRepository Create bulk method had an exception. ", e);
+                    this._logger.LogError(e, "OrderAllocationRepository Create bulk method had an exception.");
                 }
 
                 this._logger.LogInformation("OrderAllocationRepository Create bulk method completed");
@@ -143,7 +143,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError("OrderAllocationRepository Create method had an exception. ", e);
+                    this._logger.LogError(e, "OrderAllocationRepository Create method had an exception. ");
                 }
 
                 this._logger.LogInformation("OrderAllocationRepository Create method completed");
@@ -177,7 +177,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError("OrderAllocationRepository Get encountered an error", e);
+                this._logger?.LogError(e, "OrderAllocationRepository Get encountered an error");
             }
 
             this._logger.LogInformation("OrderAllocationRepository Get method completed");
@@ -206,7 +206,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError("OrderAllocationRepository GetStaleOrderAllocations encountered an error", e);
+                this._logger?.LogError(e, "OrderAllocationRepository GetStaleOrderAllocations encountered an error");
             }
 
             this._logger.LogInformation("OrderAllocationRepository GetStaleOrderAllocations method completed");

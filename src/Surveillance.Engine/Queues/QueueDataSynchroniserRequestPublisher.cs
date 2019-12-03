@@ -56,9 +56,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.",
-                    e);
+                this._logger.LogError(e, $"encountered an error when sending rule run id {ruleRunId} to the data requests queue.");
             }
         }
     }

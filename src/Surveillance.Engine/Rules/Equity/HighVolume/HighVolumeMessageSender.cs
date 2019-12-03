@@ -88,7 +88,6 @@
                 var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdMoney.Value, 2, MidpointRounding.AwayFromZero);
 
                 marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage.ToString("0.##")}% was exceeded by trading {marketCapBreachPercentage.ToString("0.##")}% of market capitalisation.  {currencyCode} {tradedAmount.ToString("0.##")} was traded against a breach threshold value of {currencyCode} {thresholdAmount.ToString("0.##")}.";
-                var x = "0";
             }
 
             description = $"{description}{dailyDescription}{windowDescription}{marketCapDescription}";

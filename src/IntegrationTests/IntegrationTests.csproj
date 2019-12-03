@@ -28,4 +28,10 @@
     <None Include="..\Surveillance\App\Migrations\*" Link="Migrations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Features\FixedIncomeHighProfit.feature" />
+    <None Include="Features\HighProfit.feature" />
+    <None Include="Features\WashTrade.feature" />
+  </ItemGroup>
+
 </Project>

@@ -75,6 +75,62 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
             _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
         }
+        
+        [Given(@"the fixed income orders")]
+        public void GivenTheFixedIncomeOrders(Table table)
+        {
+            var rows = TableHelpers.ToEnumerableDictionary(table);
+
+            // expand special columns
+            foreach (var row in rows)
+            {
+                if (row.ContainsKey("_Date"))
+                {
+                    var value = row["_Date"];
+                    row.AddIfNotExists("OrderPlacedDate", value);
+                    row.AddIfNotExists("OrderBookedDate", value);
+                    row.AddIfNotExists("OrderAmendedDate", value);
+                    row.AddIfNotExists("OrderFilledDate", value);
+                }
+
+                if (row.ContainsKey("_Volume"))
+                {
+                    var value = row["_Volume"];
+                    row.AddIfNotExists("OrderOrderedVolume", value);
+                    row.AddIfNotExists("OrderFilledVolume", value);
+                }
+
+                if (row.ContainsKey("_EquitySecurity"))
+                {
+                    var value = row["_EquitySecurity"];
+                    var isin = IdentifierHelpers.ToIsinOrFigi(value);
+
+                    row.AddIfNotExists("MarketIdentifierCode", "RDFI");
+                    row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
+                    row.AddIfNotExists("InstrumentCfi", "d");
+                    row.AddIfNotExists("OrderCurrency", "GBP");
+                    row.AddIfNotExists("OrderType", "MARKET");
+                    row.AddIfNotExists("InstrumentIsin", isin);
+                    row.AddIfNotExists("InstrumentRic", "ABC");
+                }
+            }
+
+            _ruleRunner.TradeCsvContent = MakeCsv(rows);
+            _ruleRunner.ExpectedOrderCount = rows.Count();
+
+            // default allocations
+            var allocationRows = rows.Select(x => new Dictionary<string, string>
+            {
+                ["OrderId"] = x["OrderId"],
+                ["Fund"] = "",
+                ["Strategy"] = "",
+                ["ClientAccountId"] = "",
+                ["OrderFilledVolume"] = x.ValueOrNull("OrderFilledVolume")
+            });
+
+            _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
+            _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
+        }
 
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)
         {

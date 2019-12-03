@@ -141,25 +141,16 @@ namespace DataImport.Services
 
         private async Task<SecurityEnrichmentMessage> Enrich(IReadOnlyCollection<SecurityEnrichmentDto> securities)
         {
-            var enrichedSecurities = new List<SecurityEnrichmentDto>();
-
             var bondsWithoutRrpsRic = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) == InstrumentTypes.Bond && string.IsNullOrEmpty(w.Ric)).ToList();
             if (bondsWithoutRrpsRic.Any())
             {
-               await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);
-                enrichedSecurities.AddRange(bondsWithoutRrpsRic);
+                await EnrichBondWithRicFromTr(bondsWithoutRrpsRic);
             }
 
-            var nonFixedIncomeSecurities = securities.Where(w => _cfiInstrumentTypeMapper.MapCfi(w.Cfi) != InstrumentTypes.Bond).ToList();
-            if (nonFixedIncomeSecurities.Any())
-            {
-                var clientServiceMessage = new SecurityEnrichmentMessage {Securities = nonFixedIncomeSecurities?.ToArray()};
-                var clientServiceResponse = await this._api.PostAsync(clientServiceMessage);
-                enrichedSecurities.AddRange(clientServiceResponse.Securities);
-            }
+            var clientServiceMessage = new SecurityEnrichmentMessage { Securities = securities.ToArray() };
+            var clientServiceResponse = await this._api.PostAsync(clientServiceMessage);
 
-            var securityEnrichmentMessage = new SecurityEnrichmentMessage {Securities = enrichedSecurities.ToArray()};
-            return securityEnrichmentMessage;
+            return clientServiceResponse;
         }
 
         private async Task EnrichBondWithRicFromTr(IEnumerable<SecurityEnrichmentDto> bondsWithoutRrpsRic)

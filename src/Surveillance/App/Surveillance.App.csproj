@@ -11,21 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="app.config" />
-    <Content Remove="appsettings.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="app.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="appsettings.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -14,11 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="app.config" />
-    <Content Remove="appsettings.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="nlog.config" />
   </ItemGroup>
@@ -29,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="appsettings.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="nlog.Release.config" />
   </ItemGroup>
 

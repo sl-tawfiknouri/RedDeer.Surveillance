@@ -12,7 +12,6 @@
     <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.55.0">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

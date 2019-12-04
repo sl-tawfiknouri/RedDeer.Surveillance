@@ -8,8 +8,8 @@
     <PackageReference Include="Accord" Version="3.8.0" />
     <PackageReference Include="Accord.MachineLearning" Version="3.8.0" />
     <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
-    <PackageReference Include="NLog" Version="4.6.4" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
+    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.6.1" />
     <PackageReference Include="RedDeer.Common.Logging" Version="1.0.0" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />

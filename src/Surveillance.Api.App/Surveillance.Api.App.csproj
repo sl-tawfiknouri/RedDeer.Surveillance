@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <AssemblyName>Surveillance.Api.App</AssemblyName>
     <RootNamespace>Surveillance.Api.App</RootNamespace>
@@ -10,14 +10,6 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Remove="nlog.Release.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="nlog.Release.config" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="3.0.3" />
@@ -35,13 +27,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.20">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.1" />
+    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
     <PackageReference Include="RedDeer.Security.Core" Version="1.1.0" />
     <PackageReference Include="RedDeer.Security.Core.Abstractions" Version="1.1.0" />
   </ItemGroup>
@@ -63,9 +55,10 @@
       <TransformOnBuild Condition="'$(Configuration)' == 'Release'">true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Update="nlog.Release.config">
+    <Content Update="nlog.Release.config">
       <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

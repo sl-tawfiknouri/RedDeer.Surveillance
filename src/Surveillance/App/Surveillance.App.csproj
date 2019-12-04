@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>RedDeer.Surveillance.App</AssemblyName>
     <RootNamespace>RedDeer.Surveillance.App</RootNamespace>
   </PropertyGroup>
@@ -13,7 +13,6 @@
   <ItemGroup>
     <Content Remove="app.config" />
     <Content Remove="appsettings.config" />
-    <Content Remove="nlog.Release.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,15 +26,18 @@
     <None Include="appsettings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="nlog.Release.config" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.SecurityToken" Version="3.3.4.28" />
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.6" />
+    <PackageReference Include="Microsoft.AspNet.Razor" Version="3.2.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
-    <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
+    <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.20">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -185,9 +187,10 @@
     <None Update="Migrations\9 - Exception Auditing File Upload.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="nlog.Release.config">
+    <Content Update="nlog.Release.config">
       <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

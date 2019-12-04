@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject
@@ -147,7 +147,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.Refinitiv.UnitTests", "Surveillance.Data.Universe.Refinitiv.UnitTests\Surveillance.Data.Universe.Refinitiv.UnitTests.csproj", "{B893BDB3-E352-4C41-8264-92A757A9C394}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TzConvertFacade", "TzConvertFacade\TzConvertFacade.csproj", "{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TzConvertFacade", "TzConvertFacade\TzConvertFacade.csproj", "{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

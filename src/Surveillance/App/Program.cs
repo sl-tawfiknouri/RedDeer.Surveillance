@@ -67,24 +67,19 @@ namespace RedDeer.Surveillance.App
                 SetSystemLoggingOffIfService(args);
 
                 Container = new Container();
-                var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
+                var configurationBuilder = new ConfigurationBuilder()
+                    .AddEnvironmentVariables()
                     .AddJsonFile("appsettings.json", true, true).Build();
 
                 var configBuilder = new Configuration.Configuration();
                 var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
+                var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
+
                 Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
-
-                var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
                 Container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
-
-                Container.Inject(
-                    typeof(IRuleConfiguration),
-                    configBuilder.BuildRuleConfiguration(configurationBuilder));
-                Container.Inject(
-                    typeof(ISystemDataLayerConfig),
-                    configBuilder.BuildDataLayerConfig(configurationBuilder));
-
+                Container.Inject(typeof(IRuleConfiguration),configBuilder.BuildRuleConfiguration(configurationBuilder));
+                Container.Inject(typeof(ISystemDataLayerConfig),configBuilder.BuildDataLayerConfig(configurationBuilder));
                 Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationBuilder));
 
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;

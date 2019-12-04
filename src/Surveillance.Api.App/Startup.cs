@@ -20,6 +20,7 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
 
@@ -44,7 +45,7 @@
 
     public class Startup
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IHostEnvironment _environment;
 
         private readonly ILogger _logger;
 
@@ -52,7 +53,7 @@
 
         public Startup(
             IConfiguration configuration,
-            IHostingEnvironment environment,
+            IHostEnvironment environment,
             ILogger<Startup> logger,
             IStartupConfig startupConfig)
         {
@@ -65,7 +66,7 @@
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             else app.UseHsts();

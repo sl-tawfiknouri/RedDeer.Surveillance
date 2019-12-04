@@ -19,9 +19,11 @@ namespace DataSynchroniser.App
     using Infrastructure.Network.Aws.Interfaces;
 
     using Microsoft.Extensions.Configuration;
-
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging.Abstractions;
     using NLog;
-
+    using NLog.Extensions.Logging;
+    using NLog.Web;
     using StructureMap;
 
     using Surveillance.Auditing;
@@ -97,8 +99,10 @@ namespace DataSynchroniser.App
 
         private static Config BuildConfiguration()
         {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
 
             var builder = new ConfigBuilder.ConfigBuilder();
 
@@ -153,8 +157,10 @@ namespace DataSynchroniser.App
             Logger.Log(LogLevel.Info, "Program registering as service");
 
             // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
-            var remainingArgs = Environment.GetCommandLineArgs().Where(arg => arg != RegisterServiceFlag)
-                .Select(EscapeCommandLineArgument).Append(RunAsServiceFlag);
+            var remainingArgs = Environment.GetCommandLineArgs()
+                .Where(arg => arg != RegisterServiceFlag)
+                .Select(EscapeCommandLineArgument)
+                .Append(RunAsServiceFlag);
 
             var host = Process.GetCurrentProcess().MainModule.FileName;
 
@@ -205,6 +211,7 @@ namespace DataSynchroniser.App
         private static void RunInteractive(string[] args)
         {
             var service = Container.GetInstance<Service>();
+
             service.Start(new string[0], () => { });
             Console.WriteLine("Running interactively, press enter to stop.");
             Console.ReadLine();
@@ -221,8 +228,7 @@ namespace DataSynchroniser.App
         {
             new Win32ServiceManager().DeleteService(ServiceName);
 
-            Console.WriteLine(
-                $@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
+            Console.WriteLine($@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
     }
 }

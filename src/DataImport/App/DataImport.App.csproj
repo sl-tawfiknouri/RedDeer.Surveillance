@@ -12,6 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json" />
     <Content Include="nlog.config" />
     <Content Include="nlog.Release.config">
       <DependentUpon>nlog.config</DependentUpon>

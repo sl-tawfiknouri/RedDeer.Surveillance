@@ -107,11 +107,11 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
 
                     row.AddIfNotExists("MarketIdentifierCode", "RDFI");
                     row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
-                    row.AddIfNotExists("InstrumentCfi", "d");
+                    row.AddIfNotExists("InstrumentCfi", "dc");
                     row.AddIfNotExists("OrderCurrency", "GBP");
                     row.AddIfNotExists("OrderType", "MARKET");
                     row.AddIfNotExists("InstrumentIsin", isin);
-                    row.AddIfNotExists("InstrumentRic", "ABC");
+                    row.AddIfNotExists("InstrumentRic", "GB10YT=RR");
                 }
             }
 

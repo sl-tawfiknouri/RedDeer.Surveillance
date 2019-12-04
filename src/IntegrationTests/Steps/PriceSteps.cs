@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Surveillance.Data.Universe.Lazy.Builder;
+using Surveillance.Data.Universe.Refinitiv;
 using TechTalk.SpecFlow;
 
 namespace RedDeer.Surveillance.IntegrationTests.Steps
@@ -47,8 +49,12 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             var rows = TableHelpers.ToEnumerableDictionary(table);
 
             foreach (var row in rows)
-            {  
-                var item = new FactsetSecurityDailyResponseItem
+            {
+                
+                //EndOfDaySecurityTimeBar t = new EndOfDaySecurityTimeBar();
+                //RefinitivInterDayTimeBarQuery b = new RefinitivInterDayTimeBarQuery();
+
+               var item = new FactsetSecurityDailyResponseItem
                 {
                     Epoch = DateTime.Parse(row["Date"], null, DateTimeStyles.AssumeUniversal),
                     ClosePrice = Convert.ToDecimal(row["ClosePrice"]),

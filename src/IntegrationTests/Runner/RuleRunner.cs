@@ -61,6 +61,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Refinitive;
 
 namespace RedDeer.Surveillance.IntegrationTests.Runner
 {
@@ -257,6 +258,14 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             container.Inject(typeof(IApiClientConfiguration), apiClientConfiguration);
             container.Inject(typeof(IAwsConfiguration), apiClientConfiguration);
 
+            var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
+                {
+                    RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889",
+                    RefinitivTickPriceHistoryApiPollingSeconds = 60, 
+                    RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
+                };
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), refinitivTickPriceHistoryApiConfig);  
+            
             var systemDataLayerConfig = new SystemDataLayerConfig
             {
                 SurveillanceAuroraConnectionString = DatabaseConfig
@@ -327,6 +336,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                         config.IncludeRegistry<RefinitivRegistry>();
                         config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                         config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                        config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                     });
 
             // configuration
@@ -339,8 +349,13 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             var apiClientConfiguration = new ApiClientConfiguration();
             container.Inject(typeof(IApiClientConfiguration), apiClientConfiguration);
             container.Inject(typeof(IAwsConfiguration), apiClientConfiguration);
-
-            var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig();
+            
+            var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
+            {
+                RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889", 
+                RefinitivTickPriceHistoryApiPollingSeconds = 60, 
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
+            };
             container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), refinitivTickPriceHistoryApiConfig);
 
             var systemDataLayerConfig = new SystemDataLayerConfig
@@ -563,6 +578,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                         config.IncludeRegistry<DataLayerRegistry>();
                         config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
                         config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
+                        config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                     });
 
             // data synchroniser config
@@ -575,7 +591,15 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             container.Inject(typeof(ISystemDataLayerConfig), dataSynchroniserConfig);
             container.Inject(typeof(IApiClientConfiguration), dataSynchroniserConfig);
             container.Inject(typeof(IDataLayerConfiguration), dataSynchroniserConfig);
-
+            
+            var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
+            {
+                RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889", 
+                RefinitivTickPriceHistoryApiPollingSeconds = 60, 
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
+            };
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), refinitivTickPriceHistoryApiConfig);
+            
             // replace aws queue client with fake
             var awsQueueClient = A.Fake<IAwsQueueClient>();
             container.Inject(typeof(IAwsQueueClient), awsQueueClient);

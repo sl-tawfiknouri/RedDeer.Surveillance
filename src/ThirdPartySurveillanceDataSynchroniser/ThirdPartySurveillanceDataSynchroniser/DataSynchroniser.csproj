@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj" />
     <ProjectReference Include="..\..\DataSynchroniser.Bmll\DataSynchroniser.Api.Bmll.csproj" />
     <ProjectReference Include="..\..\DataSynchroniser.Factset\DataSynchroniser.Api.Factset.csproj" />
     <ProjectReference Include="..\..\DataSynchroniser.Markit\DataSynchroniser.Api.Markit.csproj" />

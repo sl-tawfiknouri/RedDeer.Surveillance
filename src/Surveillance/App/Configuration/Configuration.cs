@@ -163,7 +163,7 @@ namespace RedDeer.Surveillance.App.Configuration
 
                 var config = new RefinitivTickPriceHistoryApiConfig
                 {
-                    Address = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder)
+                    RefinitivTickPriceHistoryApiAddress = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder)
                 };
 
                 return config;

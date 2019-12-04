@@ -38,7 +38,7 @@ namespace Surveillance.Data.Universe.Refinitiv.UnitTests
             //var ioptions = Options.Create(options);
             var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
             {
-                Address = "localhost:8888"
+                RefinitivTickPriceHistoryApiAddress = "localhost:8888"
             };
 
             var factory = new TickPriceHistoryServiceClientFactory(refinitivTickPriceHistoryApiConfig);

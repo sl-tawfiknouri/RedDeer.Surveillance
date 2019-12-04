@@ -3,6 +3,8 @@ namespace Surveillance.Data.Universe.Refinitiv.Interfaces
 {
     public interface IRefinitivTickPriceHistoryApiConfig
     {
-        string Address { get; set; }
+        string RefinitivTickPriceHistoryApiAddress { get; set; }
+        int RefinitivTickPriceHistoryApiPollingSeconds { get; set; }
+        int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; }
     }
 }

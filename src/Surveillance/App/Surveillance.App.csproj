@@ -24,7 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.20">
+    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

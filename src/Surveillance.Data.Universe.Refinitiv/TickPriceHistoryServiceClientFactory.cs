@@ -42,7 +42,7 @@ namespace Surveillance.Data.Universe.Refinitiv
         {
             //var address = configuration["TickPriceHistoryServiceAddress"];
 
-            var address = refinitivTickPriceHistoryApiConfig.Address;
+            var address = refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiAddress;
             if (string.IsNullOrWhiteSpace(address))
             {
                 throw new ArgumentException($"Address '{address}' is null or empty.", "TickPriceHistoryServiceAddress");

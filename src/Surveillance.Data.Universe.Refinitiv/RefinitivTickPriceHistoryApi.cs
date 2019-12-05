@@ -59,7 +59,6 @@ namespace Surveillance.Data.Universe.Refinitiv
                 }
 
                 var tickPriceHistoryServiceClient = tickPriceHistoryServiceClientFactory.Create();
-
                 var response = await tickPriceHistoryServiceClient
                     .QuerySecurityTimeBarsAsync(request).ResponseAsync;
 

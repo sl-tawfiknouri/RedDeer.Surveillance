@@ -1,5 +1,7 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
 namespace RedDeer.DataImport.DataImport.App
 {
     using System;
@@ -70,6 +72,8 @@ namespace RedDeer.DataImport.DataImport.App
 
                 var builtApiClientConfig = BuildApiClientConfiguration();
                 Container.Inject(typeof(IApiClientConfiguration), builtApiClientConfig);
+                
+                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig); 
 
                 Container.Configure(
                     config =>

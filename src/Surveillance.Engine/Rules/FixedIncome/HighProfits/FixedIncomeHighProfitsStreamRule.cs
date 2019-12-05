@@ -396,9 +396,9 @@
 
                 return;
             }
-
+     
             var revenue = revenueResponse.Money;
-
+            
             if (revenue == null || revenue.Value.Value <= 0)
             {
                 this.Logger.LogInformation($"rule had null for revenues for {cleanTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Returning.");

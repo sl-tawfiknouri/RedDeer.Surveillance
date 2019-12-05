@@ -1,8 +1,6 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RedDeer.Surveillance.IntegrationTests.Runner
 {

@@ -2,12 +2,9 @@
 using RedDeer.Surveillance.IntegrationTests.Runner;
 using RedDeer.Surveillance.IntegrationTests.Steps.Common;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using Surveillance.Data.Universe.Lazy.Builder;
-using Surveillance.Data.Universe.Refinitiv;
+using Firefly.Service.Data.TickPriceHistory.Shared.Protos;
+using Google.Protobuf.WellKnownTypes;
 using TechTalk.SpecFlow;
 
 namespace RedDeer.Surveillance.IntegrationTests.Steps
@@ -42,7 +39,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                 _ruleRunner.EquityClosePriceMock.Add(item);
             }
         }
-        
+
         [Given(@"the fixed income close prices")]
         public void GivenTheFixedIncomeClosePrices(Table table)
         {
@@ -50,21 +47,29 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
 
             foreach (var row in rows)
             {
-                
-                //EndOfDaySecurityTimeBar t = new EndOfDaySecurityTimeBar();
-                //RefinitivInterDayTimeBarQuery b = new RefinitivInterDayTimeBarQuery();
-
-               var item = new FactsetSecurityDailyResponseItem
+                var item = new SecurityTimeBarQuerySubResponse
                 {
-                    Epoch = DateTime.Parse(row["Date"], null, DateTimeStyles.AssumeUniversal),
-                    ClosePrice = Convert.ToDecimal(row["ClosePrice"]),
-                    Figi = IdentifierHelpers.ToIsinOrFigi(row["_EquitySecurity"]),
-                    Currency = "GBP"
+                    Identifiers = new SecurityIdentifiers
+                    {
+                        Ric = row["_FixedIncomeSecurity"],
+                        Isin = row["_FixedIncomeSecurity"],
+                        Sedol = row["_FixedIncomeSecurity"],
+                        ExternalIdentifiers = row["_FixedIncomeSecurity"]
+                    },
+                    Timebars =
+                    {
+                        new TimeBar
+                        {
+                            CloseAsk = double.Parse(row["ClosePrice"]),
+                            CloseBid = double.Parse(row["ClosePrice"]),
+                            CurrencyCode = "GBP",
+                            EpochUtc = DateTime.Parse(row["Date"]).ToUniversalTime().ToTimestamp()
+                        }
+                    }
                 };
-
-                _ruleRunner.EquityClosePriceMock.Add(item);
+                
+                _ruleRunner.FixedIncomeClosePriceMock.Add(item);
             }
         }
-
     }
 }

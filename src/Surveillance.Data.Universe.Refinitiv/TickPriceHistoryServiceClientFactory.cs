@@ -21,6 +21,7 @@ namespace Surveillance.Data.Universe.Refinitiv
     public class TickPriceHistoryServiceClientFactory : ITickPriceHistoryServiceClientFactory
     {
         private readonly IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig;
+
         // private readonly IConfiguration configuration;
         // private readonly IOptions<TickPriceHistoryServiceClientOptions> options;
         // private readonly IJwtTokenService jwtTokenService;
@@ -49,7 +50,7 @@ namespace Surveillance.Data.Universe.Refinitiv
             }
 
             var channel = new Channel(address, ChannelCredentials.Insecure);
-            var client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
+            var client = new TickPriceHistoryServiceClientWrapper(channel).Client; 
             return client;
         }
 

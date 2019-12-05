@@ -47,71 +47,41 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                 if (row.ContainsKey("_EquitySecurity"))
                 {
                     var value = row["_EquitySecurity"];
-                    var isin = IdentifierHelpers.ToIsinOrFigi(value);
-
+                    var identifier = IdentifierHelpers.ToIsinOrFigi(value);
+                    
+                    row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
+                    row.AddIfNotExists("OrderCurrency", "GBP");
+                    row.AddIfNotExists("OrderType", "MARKET");
+                    row.AddIfNotExists("InstrumentIsin", identifier);
+                    row.AddIfNotExists("InstrumentFigi", identifier);
                     row.AddIfNotExists("MarketIdentifierCode", "XLON");
-                    row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
                     row.AddIfNotExists("InstrumentCfi", "e");
-                    row.AddIfNotExists("OrderCurrency", "GBP");
-                    row.AddIfNotExists("OrderType", "MARKET");
-                    row.AddIfNotExists("InstrumentIsin", isin);
-                    row.AddIfNotExists("InstrumentFigi", isin);
-                }
-            }
 
-            _ruleRunner.TradeCsvContent = MakeCsv(rows);
-            _ruleRunner.ExpectedOrderCount = rows.Count();
+//                    var marketIdentifierCode = row["MarketIdentifierCode"]; 
+ //                   row.AddIfNotExists("MarketIdentifierCode", marketIdentifierCode);
 
-            // default allocations
-            var allocationRows = rows.Select(x => new Dictionary<string, string>
-            {
-                ["OrderId"] = x["OrderId"],
-                ["Fund"] = "",
-                ["Strategy"] = "",
-                ["ClientAccountId"] = "",
-                ["OrderFilledVolume"] = x.ValueOrNull("OrderFilledVolume")
-            });
+//                    var instrumentCfi = row["InstrumentCfi"]; 
+//                    row.AddIfNotExists("InstrumentCfi", instrumentCfi);
 
-            _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
-            _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
-        }
-        
-        [Given(@"the fixed income orders")]
-        public void GivenTheFixedIncomeOrders(Table table)
-        {
-            var rows = TableHelpers.ToEnumerableDictionary(table);
-
-            // expand special columns
-            foreach (var row in rows)
-            {
-                if (row.ContainsKey("_Date"))
-                {
-                    var value = row["_Date"];
-                    row.AddIfNotExists("OrderPlacedDate", value);
-                    row.AddIfNotExists("OrderBookedDate", value);
-                    row.AddIfNotExists("OrderAmendedDate", value);
-                    row.AddIfNotExists("OrderFilledDate", value);
+//                    var ric = row["Ric"];
+//                    row.AddIfNotExists("InstrumentRic", ric);
+                    
+//                    var orderCleanDirty = row["OrderCleanDirty"];
+//                    row.AddIfNotExists("OrderCleanDirty", orderCleanDirty);
                 }
 
-                if (row.ContainsKey("_Volume"))
+                if (row.ContainsKey("_FixedIncomeSecurity"))
                 {
-                    var value = row["_Volume"];
-                    row.AddIfNotExists("OrderOrderedVolume", value);
-                    row.AddIfNotExists("OrderFilledVolume", value);
-                }
-
-                if (row.ContainsKey("_EquitySecurity"))
-                {
-                    var value = row["_EquitySecurity"];
-                    var isin = IdentifierHelpers.ToIsinOrFigi(value);
-
-                    row.AddIfNotExists("MarketIdentifierCode", "RDFI");
+                    var value = row["_FixedIncomeSecurity"];
+                    
                     row.AddIfNotExists("MarketType", "STOCKEXCHANGE");
-                    row.AddIfNotExists("InstrumentCfi", "dc");
                     row.AddIfNotExists("OrderCurrency", "GBP");
                     row.AddIfNotExists("OrderType", "MARKET");
-                    row.AddIfNotExists("InstrumentIsin", isin);
-                    row.AddIfNotExists("InstrumentRic", "GB10YT=RR");
+                    row.AddIfNotExists("InstrumentRic", value);
+                    row.AddIfNotExists("MarketIdentifierCode", "RDFI");
+                    row.AddIfNotExists("InstrumentCfi", "d");
+                    
+                    row.AddIfNotExists("InstrumentIsin", "123456789012");
                 }
             }
 
@@ -131,7 +101,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
             _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
         }
-
+   
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)
         {
             var keys = new HashSet<string>();

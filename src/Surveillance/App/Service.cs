@@ -10,7 +10,6 @@
     using Microsoft.Extensions.Logging;
 
     using NLog.Web;
-    using StructureMap;
 
     public class Service : IWin32Service
     {
@@ -35,7 +34,7 @@
         {
             this._logger.LogInformation("Service Starting.");
 
-            this._structureMapServiceProviderFactory = new StructureMapServiceProviderFactory();
+            this._structureMapServiceProviderFactory = new StructureMapServiceProviderFactory(StructureMapContainer.Instance);
             this._host = Host.CreateDefaultBuilder(startupArguments)
                 .UseServiceProviderFactory(this._structureMapServiceProviderFactory)
                 .ConfigureWebHostDefaults(webBuilder => 

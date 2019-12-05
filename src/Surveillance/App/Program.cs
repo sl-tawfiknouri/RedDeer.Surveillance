@@ -66,41 +66,10 @@ namespace RedDeer.Surveillance.App
             {
                 SetSystemLoggingOffIfService(args);
 
-                Container = new Container();
-                var configurationBuilder = new ConfigurationBuilder()
-                    .AddEnvironmentVariables()
-                    .AddJsonFile("appsettings.json", true, true).Build();
-
-                var configBuilder = new Configuration.Configuration();
-                var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
-                var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
-
-                Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
-                Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
-                Container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
-                Container.Inject(typeof(IRuleConfiguration),configBuilder.BuildRuleConfiguration(configurationBuilder));
-                Container.Inject(typeof(ISystemDataLayerConfig),configBuilder.BuildDataLayerConfig(configurationBuilder));
-                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationBuilder));
-
                 SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
+                Container = StructureMapContainer.Instance;
 
-                Container.Configure(
-                    config =>
-                        {
-                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                            config.IncludeRegistry<DataLayerRegistry>();
-                            config.IncludeRegistry<RuleDistributorRegistry>();
-                            config.IncludeRegistry<RuleRegistry>();
-                            config.IncludeRegistry<DataCoordinatorRegistry>();
-                            config.IncludeRegistry<SurveillanceRegistry>();
-                            config.IncludeRegistry<AppRegistry>();
-                            config.IncludeRegistry<ReddeerApiClientRegistry>();
-                            config.IncludeRegistry<RuleSchedulerRegistry>();
-                            config.IncludeRegistry<RefinitivRegistry>();
-                        });
-
-                Container.GetInstance<IScriptRunner>();
+                Container.GetInstance<IScriptRunner>(); // Runs sripts in constructor :/ 
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();

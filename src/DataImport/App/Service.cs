@@ -36,7 +36,7 @@ namespace RedDeer.DataImport.DataImport.App
         {
             this._logger.LogInformation("Service Starting.");
 
-            this._structureMapServiceProviderFactory = new StructureMapServiceProviderFactory();
+            this._structureMapServiceProviderFactory = new StructureMapServiceProviderFactory(StructureMapContainer.Instance);
             this._host = Host.CreateDefaultBuilder(startupArguments)
                 .UseServiceProviderFactory(_structureMapServiceProviderFactory)
                 .ConfigureLogging(logging =>

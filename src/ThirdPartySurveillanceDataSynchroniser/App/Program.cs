@@ -11,30 +11,11 @@ namespace DataSynchroniser.App
 
     using DasMulli.Win32.ServiceUtils;
 
-    using DataSynchroniser.Api.Bmll;
-    using DataSynchroniser.Api.Factset;
-    using DataSynchroniser.Api.Markit;
-    using DataSynchroniser.Configuration;
-
-    using Infrastructure.Network.Aws.Interfaces;
-
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging.Abstractions;
     using NLog;
-    using NLog.Extensions.Logging;
-    using NLog.Web;
     using StructureMap;
 
-    using Surveillance.Auditing;
     using Surveillance.Auditing.Context;
-    using Surveillance.Auditing.DataLayer;
-    using Surveillance.Auditing.DataLayer.Interfaces;
     using Surveillance.Auditing.DataLayer.Processes;
-    using Surveillance.DataLayer;
-    using Surveillance.DataLayer.Configuration.Interfaces;
-    using Surveillance.Reddeer.ApiClient;
-    using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
     public class Program
     {
@@ -62,28 +43,8 @@ namespace DataSynchroniser.App
             {
                 SetSysLogOffIfService(args);
 
-                Container = new Container();
-                var builtConfig = BuildConfiguration();
-                Container.Inject(typeof(IAwsConfiguration), builtConfig);
-                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
-                Container.Inject(typeof(IApiClientConfiguration), builtConfig);
-
-                Container.Configure(
-                    config =>
-                        {
-                            config.IncludeRegistry<DataLayerRegistry>();
-                            config.IncludeRegistry<DataSynchroniserRegistry>();
-                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                            config.IncludeRegistry<BmllDataSynchroniserRegistry>();
-                            config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
-                            config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
-                            config.IncludeRegistry<ReddeerApiClientRegistry>();
-                            config.IncludeRegistry<AppRegistry>();
-                        });
-
                 SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
+                Container = StructureMapContainer.Instance;
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run();
@@ -95,18 +56,6 @@ namespace DataSynchroniser.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
-
-        private static Config BuildConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.Build(configurationBuilder);
         }
 
         private static void DisableConsoleLog()

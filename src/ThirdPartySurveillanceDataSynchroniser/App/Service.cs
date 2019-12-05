@@ -22,7 +22,7 @@ namespace DataSynchroniser.App
         {
             this._logger.LogInformation("Service Starting.");
 
-            _structureMapServiceProviderFactory = new StructureMapServiceProviderFactory();
+            _structureMapServiceProviderFactory = new StructureMapServiceProviderFactory(StructureMapContainer.Instance);
             this._host = Host.CreateDefaultBuilder(startupArguments)
                 .UseServiceProviderFactory(_structureMapServiceProviderFactory)
                 .ConfigureLogging(logging =>

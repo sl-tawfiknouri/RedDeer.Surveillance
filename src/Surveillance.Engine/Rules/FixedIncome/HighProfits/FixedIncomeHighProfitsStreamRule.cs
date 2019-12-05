@@ -427,10 +427,9 @@
 
                 var convertedCost = convertedCostTask.Result;
 
-                if (convertedCost == null)
+                if (convertedCost == null || !revenue.Value.DenominatedInCommonCurrency(convertedCost.Value))
                 {
-                    this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Could not convert cost to revenue.");
-
+                    this.Logger.LogError($"Could not convert cost to revenue currency. Expected currency '{revenue.Value.Currency}' but received currency '{convertedCost.Value.Currency}'. For trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
                     return;
                 }
 

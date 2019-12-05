@@ -12,17 +12,5 @@ namespace Surveillance.Data.Universe.Refinitiv
         {
             Client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
         }
-        
-        public AsyncUnaryCall<GetEodPricingResponse> GetEodPricingAsync(GetEodPricingRequest request)
-        {
-            var response = Client.GetEodPricingAsync(request);
-            return response;
-        }
-
-        public AsyncUnaryCall<SecurityTimeBarQueryResponse> QuerySecurityTimeBars(SecurityTimeBarQueryRequest request)
-        {
-            var response = Client.QuerySecurityTimeBarsAsync(request);
-            return response;
-        }
     }
 }

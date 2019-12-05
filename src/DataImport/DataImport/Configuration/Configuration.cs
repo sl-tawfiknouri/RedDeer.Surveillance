@@ -1,10 +1,12 @@
-﻿namespace DataImport.Configuration
+﻿using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace DataImport.Configuration
 {
     using DataImport.Configuration.Interfaces;
 
     using Surveillance.Auditing.DataLayer.Interfaces;
 
-    public class Configuration : ISystemDataLayerConfig, IUploadConfiguration
+    public class Configuration : ISystemDataLayerConfig, IUploadConfiguration, IRefinitivTickPriceHistoryApiConfig
     {
         public string AuroraConnectionString { get; set; }
 
@@ -42,5 +44,11 @@
         public string SurveillanceAuroraConnectionString { get; set; }
 
         public string SurveillanceUserApiAccessToken { get; set; }
+        
+        public string RefinitivTickPriceHistoryApiAddress { get; set; }
+
+        public int RefinitivTickPriceHistoryApiPollingSeconds { get; set; }
+        
+        public int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; }
     }
 }

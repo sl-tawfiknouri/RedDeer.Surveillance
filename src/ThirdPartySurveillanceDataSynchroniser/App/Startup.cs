@@ -1,33 +1,30 @@
-﻿namespace DataSynchroniser.App
+﻿using DataSynchroniser.Api.Refinitive;
+using Surveillance.Data.Universe.Refinitiv;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using System;
+using DataSynchroniser.Api.Bmll;
+using DataSynchroniser.Api.Factset;
+using DataSynchroniser.Api.Markit;
+using DataSynchroniser.Configuration;
+using Infrastructure.Network.Aws.Interfaces;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NLog;
+using StructureMap;
+using Surveillance.Auditing;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
+
+namespace DataSynchroniser.App
 {
-    using System;
-
-    using DataSynchroniser.Api.Bmll;
-    using DataSynchroniser.Api.Factset;
-    using DataSynchroniser.Api.Markit;
-    using DataSynchroniser.Configuration;
-
-    using Infrastructure.Network.Aws.Interfaces;
-
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-
-    using NLog;
-
-    using StructureMap;
-
-    using Surveillance.Auditing;
-    using Surveillance.Auditing.Context;
-    using Surveillance.Auditing.DataLayer;
-    using Surveillance.Auditing.DataLayer.Interfaces;
-    using Surveillance.Auditing.DataLayer.Processes;
-    using Surveillance.DataLayer;
-    using Surveillance.DataLayer.Configuration.Interfaces;
-    using Surveillance.Reddeer.ApiClient;
-
     public class Startup
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -61,6 +58,7 @@
             container.Inject(typeof(IAwsConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig);
 
             container.Configure(
                 config =>
@@ -74,6 +72,7 @@
                         config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                         config.IncludeRegistry<AppRegistry>();
                         config.IncludeRegistry<ReddeerApiClientRegistry>();
+                        config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                         config.Populate(services);
                     });
 

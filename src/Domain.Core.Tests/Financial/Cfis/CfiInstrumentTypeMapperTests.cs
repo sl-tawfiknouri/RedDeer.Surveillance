@@ -83,7 +83,6 @@
         }
 
         [TestCase("aergeag")]
-        [TestCase("drn")]
         [TestCase("249tjh")]
         [TestCase("£2p4oi24jh")]
         public void MapCfi_StartsWithWhatever_IsUnknown(string unknownStr)

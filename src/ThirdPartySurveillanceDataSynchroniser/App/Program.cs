@@ -1,22 +1,22 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Loader;
+using System.Text.RegularExpressions;
+using System.Threading;
+
+using DasMulli.Win32.ServiceUtils;
+
+using NLog;
+using StructureMap;
+
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer.Processes;
+
 namespace DataSynchroniser.App
 {
-    using System;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Runtime.Loader;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-
-    using DasMulli.Win32.ServiceUtils;
-
-    using NLog;
-    using StructureMap;
-
-    using Surveillance.Auditing.Context;
-    using Surveillance.Auditing.DataLayer.Processes;
-
     public class Program
     {
         internal const string ServiceName = "RedDeer.ThirdPartySurveillanceDataSynchroniserService";

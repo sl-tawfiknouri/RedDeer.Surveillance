@@ -1,6 +1,7 @@
 ﻿using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
+using DataSynchroniser.Api.Refinitive;
 using DataSynchroniser.Configuration;
 using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using Surveillance.Auditing.Context;
 using Surveillance.Auditing.DataLayer;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Reddeer.ApiClient;
@@ -53,6 +55,7 @@ namespace DataSynchroniser.App
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
             container.Inject(typeof(IApiClientConfiguration), builtConfig);
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig);
 
             container.Configure(config =>
             {
@@ -65,6 +68,7 @@ namespace DataSynchroniser.App
                 config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.IncludeRegistry<ReddeerApiClientRegistry>();
+                config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                 // config.Populate(services);
             });
 

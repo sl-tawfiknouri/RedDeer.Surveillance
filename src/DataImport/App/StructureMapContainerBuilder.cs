@@ -12,6 +12,7 @@ using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Reddeer.ApiClient;
 using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {
@@ -60,6 +61,7 @@ namespace RedDeer.DataImport.DataImport.App
             container.Inject(typeof(IAwsConfiguration), builtDataConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtDataConfig);
             container.Inject(typeof(IApiClientConfiguration), builtClientApiConfig);
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig);
 
             container.Configure(config =>
             {

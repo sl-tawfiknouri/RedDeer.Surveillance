@@ -157,7 +157,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
                 table3.AddRow(new string[] {
                             "2018-01-01",
                             "BOND123",
-                            "110"});
+                            "130"});
                 table3.AddRow(new string[] {
                             "2019-01-01",
                             "BOND123",

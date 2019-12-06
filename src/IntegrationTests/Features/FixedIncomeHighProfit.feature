@@ -11,6 +11,7 @@
     And the fixed income close prices
       | Date       | _FixedIncomeSecurity | ClosePrice |
       | 2018-01-01 | BOND123              | 130        |
+      | 2019-01-01 | BOND123              | 140        |
     When the rule is run between "2018-01-01" and "2018-01-01"
     Then there should be a breach with order ids "0"
 

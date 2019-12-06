@@ -56,18 +56,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                     row.AddIfNotExists("InstrumentFigi", identifier);
                     row.AddIfNotExists("MarketIdentifierCode", "XLON");
                     row.AddIfNotExists("InstrumentCfi", "e");
-
-//                    var marketIdentifierCode = row["MarketIdentifierCode"]; 
- //                   row.AddIfNotExists("MarketIdentifierCode", marketIdentifierCode);
-
-//                    var instrumentCfi = row["InstrumentCfi"]; 
-//                    row.AddIfNotExists("InstrumentCfi", instrumentCfi);
-
-//                    var ric = row["Ric"];
-//                    row.AddIfNotExists("InstrumentRic", ric);
-                    
-//                    var orderCleanDirty = row["OrderCleanDirty"];
-//                    row.AddIfNotExists("OrderCleanDirty", orderCleanDirty);
                 }
 
                 if (row.ContainsKey("_FixedIncomeSecurity"))
@@ -81,7 +69,8 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                     row.AddIfNotExists("MarketIdentifierCode", "RDFI");
                     row.AddIfNotExists("InstrumentCfi", "d");
                     
-                    row.AddIfNotExists("InstrumentIsin", "123456789012");
+                    var identifier = IdentifierHelpers.ToIsinOrFigi(value);
+                    row.AddIfNotExists("InstrumentIsin", identifier);
                 }
             }
 

@@ -158,13 +158,17 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
                             "2018-01-01",
                             "BOND123",
                             "130"});
+                table3.AddRow(new string[] {
+                            "2019-01-01",
+                            "BOND123",
+                            "140"});
 #line 11
     testRunner.And("the fixed income close prices", ((string)(null)), table3, "And ");
 #line hidden
-#line 14
+#line 15
     testRunner.When("the rule is run between \"2018-01-01\" and \"2018-01-01\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 15
+#line 16
     testRunner.Then("there should be a breach with order ids \"0\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -178,7 +182,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
         {
             string[] tagsOfScenario = ((string[])(null));
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Fixed income high profit rule run without a breach", null, ((string[])(null)));
-#line 17
+#line 18
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -208,7 +212,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
                             "Close",
                             "1 day",
                             "1 day"});
-#line 18
+#line 19
     testRunner.Given("the fixed income high profit core settings", ((string)(null)), table4, "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
@@ -227,7 +231,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
                             "100",
                             "100",
                             "CLEAN"});
-#line 21
+#line 22
     testRunner.And("the orders", ((string)(null)), table5, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
@@ -238,13 +242,13 @@ namespace RedDeer.Surveillance.IntegrationTests.Features
                             "2018-01-01",
                             "BOND123",
                             "119"});
-#line 24
+#line 25
     testRunner.And("the fixed income close prices", ((string)(null)), table6, "And ");
 #line hidden
-#line 27
+#line 28
     testRunner.When("the rule is run between \"2018-01-01\" and \"2018-01-01\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 28
+#line 29
     testRunner.Then("there should be no breaches", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

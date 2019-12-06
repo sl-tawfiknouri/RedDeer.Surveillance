@@ -264,7 +264,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
             var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
                 {
-                    RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889",
+                    RefinitivTickPriceHistoryApiAddress = "RefinitivTickPriceHistoryApiAddress",
                     RefinitivTickPriceHistoryApiPollingSeconds = 60, 
                     RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
                 };
@@ -356,7 +356,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             
             var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
             {
-                RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889", 
+                RefinitivTickPriceHistoryApiAddress = "RefinitivTickPriceHistoryApiAddress", 
                 RefinitivTickPriceHistoryApiPollingSeconds = 60, 
                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
             };
@@ -452,9 +452,9 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             //replace tickPriceHistoryService
             var tickPriceHistoryServiceClientWrapper = A.Fake<ITickPriceHistoryServiceClientWrapper>();
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.GetEodPricingAsync(A<GetEodPricingRequest>._, null,null,CancellationToken.None))
-                .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync());
+                .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync((GetEodPricingRequest) input.Arguments.First()));
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.QuerySecurityTimeBarsAsync(A<SecurityTimeBarQueryRequest>._, null, null, CancellationToken.None))
-                .ReturnsLazily(input => FixedIncomeClosePriceMock.QuerySecurityTimeBarsAsync());
+                .ReturnsLazily(input => FixedIncomeClosePriceMock.QuerySecurityTimeBarsAsync((SecurityTimeBarQueryRequest) input.Arguments.First()));
             container.Inject(typeof(ITickPriceHistoryServiceClientWrapper), tickPriceHistoryServiceClientWrapper);
 
             var tickPriceHistoryServiceClientFactory = A.Fake<ITickPriceHistoryServiceClientFactory>();
@@ -640,7 +640,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             
             var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
             {
-                RefinitivTickPriceHistoryApiAddress = "127.0.0.1:8889", 
+                RefinitivTickPriceHistoryApiAddress = "RefinitivTickPriceHistoryApiAddress", 
                 RefinitivTickPriceHistoryApiPollingSeconds = 60, 
                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
             };
@@ -659,9 +659,9 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             //replace tickPriceHistoryService
             var tickPriceHistoryServiceClientWrapper = A.Fake<ITickPriceHistoryServiceClientWrapper>();
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.GetEodPricingAsync(A<GetEodPricingRequest>._, null,null,CancellationToken.None))
-                .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync());
+                .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync((GetEodPricingRequest) input.Arguments.First()));
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.QuerySecurityTimeBarsAsync(A<SecurityTimeBarQueryRequest>._, null, null, CancellationToken.None))
-                .ReturnsLazily(input => FixedIncomeClosePriceMock.QuerySecurityTimeBarsAsync());
+                .ReturnsLazily(input => FixedIncomeClosePriceMock.QuerySecurityTimeBarsAsync((SecurityTimeBarQueryRequest) input.Arguments.First()));
             container.Inject(typeof(ITickPriceHistoryServiceClientWrapper), tickPriceHistoryServiceClientWrapper);
 
             var tickPriceHistoryServiceClientFactory = A.Fake<ITickPriceHistoryServiceClientFactory>();

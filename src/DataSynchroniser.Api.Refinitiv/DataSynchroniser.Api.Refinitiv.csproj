@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>DataSynchroniser.Api.Refinitive</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
+      <ProjectReference Include="..\Surveillance.Data.Universe.Refinitiv\Surveillance.Data.Universe.Refinitiv.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.6.4" />
+      <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
+    </ItemGroup>
+
+</Project>

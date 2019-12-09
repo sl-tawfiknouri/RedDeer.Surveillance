@@ -137,7 +137,7 @@
 
             services.AddTransient<IRefinitivTickPriceHistoryApiConfig>((sp) => new RefinitivTickPriceHistoryApiConfig
             {
-                Address = this.Configuration["RefinitivTickPriceHistoryApiAddress"]
+                RefinitivTickPriceHistoryApiAddress = this.Configuration["RefinitivTickPriceHistoryApiAddress"]
             });
 
             // Test services should be added at end of list so that they can override defaults

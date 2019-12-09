@@ -1,4 +1,9 @@
-﻿namespace DataImport
+﻿using Domain.Core.Financial.Cfis;
+using Domain.Core.Financial.Cfis.Interfaces;
+using Surveillance.Data.Universe.Refinitiv;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+
+namespace DataImport
 {
     using DataImport.Disk_IO.AllocationFile;
     using DataImport.Disk_IO.AllocationFile.Interfaces;
@@ -97,6 +102,9 @@
 
             this.For<IOmsOrderFieldCompression>().Use<OmsOrderFieldCompression>();
             this.For<IOmsVersioner>().Use<OmsVersioner>();
+            
+            this.For<ITickPriceHistoryServiceClientFactory>().Use<TickPriceHistoryServiceClientFactory>();
+            this.For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
         }
     }
 }

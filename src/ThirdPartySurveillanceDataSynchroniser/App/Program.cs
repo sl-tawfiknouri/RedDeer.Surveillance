@@ -1,39 +1,35 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
+using Surveillance.Data.Universe.Refinitiv;
+using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Loader;
+using System.Text.RegularExpressions;
+using System.Threading;
+using DasMulli.Win32.ServiceUtils;
+using DataSynchroniser.Api.Bmll;
+using DataSynchroniser.Api.Factset;
+using DataSynchroniser.Api.Markit;
+using DataSynchroniser.Api.Refinitive;
+using DataSynchroniser.Configuration;
+using Infrastructure.Network.Aws.Interfaces;
+using Microsoft.Extensions.Configuration;
+using NLog;
+using StructureMap;
+using Surveillance.Auditing;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Reddeer.ApiClient;
+using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
+
 namespace DataSynchroniser.App
 {
-    using System;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Runtime.Loader;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-
-    using DasMulli.Win32.ServiceUtils;
-
-    using DataSynchroniser.Api.Bmll;
-    using DataSynchroniser.Api.Factset;
-    using DataSynchroniser.Api.Markit;
-    using DataSynchroniser.Configuration;
-
-    using Infrastructure.Network.Aws.Interfaces;
-
-    using Microsoft.Extensions.Configuration;
-
-    using NLog;
-
-    using StructureMap;
-
-    using Surveillance.Auditing;
-    using Surveillance.Auditing.Context;
-    using Surveillance.Auditing.DataLayer;
-    using Surveillance.Auditing.DataLayer.Interfaces;
-    using Surveillance.Auditing.DataLayer.Processes;
-    using Surveillance.DataLayer;
-    using Surveillance.DataLayer.Configuration.Interfaces;
-    using Surveillance.Reddeer.ApiClient;
-    using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
-
     public class Program
     {
         internal const string ServiceName = "RedDeer.ThirdPartySurveillanceDataSynchroniserService";
@@ -66,6 +62,7 @@ namespace DataSynchroniser.App
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
                 Container.Inject(typeof(IApiClientConfiguration), builtConfig);
+                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig); 
 
                 Container.Configure(
                     config =>
@@ -79,6 +76,7 @@ namespace DataSynchroniser.App
                             config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                             config.IncludeRegistry<ReddeerApiClientRegistry>();
                             config.IncludeRegistry<AppRegistry>();
+                            config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
                         });
 
                 SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;

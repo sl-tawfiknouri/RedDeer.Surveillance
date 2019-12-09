@@ -2,9 +2,10 @@
 
 namespace Surveillance.Data.Universe.Refinitiv
 {
-    public class RefinitivTickPriceHistoryApiConfig 
-        : IRefinitivTickPriceHistoryApiConfig
+    public class RefinitivTickPriceHistoryApiConfig : IRefinitivTickPriceHistoryApiConfig
     {
-        public string Address { get; set; }
+        public string RefinitivTickPriceHistoryApiAddress { get; set; }
+        public int RefinitivTickPriceHistoryApiPollingSeconds { get; set; } = 60;
+        public int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; } = 600;
     }
 }

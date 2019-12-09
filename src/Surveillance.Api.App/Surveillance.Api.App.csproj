@@ -34,7 +34,7 @@
     </PackageReference>
     <PackageReference Include="NLog" Version="4.6.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
-    <PackageReference Include="RedDeer.Extensions.Configuration.EC2Tags" Version="3.0.9" />
+    <PackageReference Include="RedDeer.Extensions.Configuration.EC2Tags" Version="3.0.10" />
     <PackageReference Include="RedDeer.Security.Core" Version="1.1.0" />
     <PackageReference Include="RedDeer.Security.Core.Abstractions" Version="1.1.0" />
   </ItemGroup>

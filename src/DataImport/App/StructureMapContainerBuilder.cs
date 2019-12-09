@@ -13,6 +13,7 @@ using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Reddeer.ApiClient;
 using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
+using RedDeer.Extensions.Configuration.EC2Tags;
 
 namespace RedDeer.DataImport.DataImport.App
 {
@@ -46,6 +47,7 @@ namespace RedDeer.DataImport.DataImport.App
 
             var configurationRoot = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
                 .AddEnvironmentVariables()
                 .Build();
 

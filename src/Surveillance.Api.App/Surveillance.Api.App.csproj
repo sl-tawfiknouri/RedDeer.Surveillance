@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="3.0.5" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.101.33" />
-    <PackageReference Include="AWSSDK.EC2" Version="3.3.120" />
+    <PackageReference Include="AWSSDK.EC2" Version="3.3.142" />
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.2.0" />
     <PackageReference Include="Dazinator.AspNet.Extensions.FileProviders" Version="1.4.0" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
@@ -34,6 +34,7 @@
     </PackageReference>
     <PackageReference Include="NLog" Version="4.6.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
+    <PackageReference Include="RedDeer.Extensions.Configuration.EC2Tags" Version="3.0.9" />
     <PackageReference Include="RedDeer.Security.Core" Version="1.1.0" />
     <PackageReference Include="RedDeer.Security.Core.Abstractions" Version="1.1.0" />
   </ItemGroup>

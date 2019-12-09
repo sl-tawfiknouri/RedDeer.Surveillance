@@ -5,6 +5,7 @@ using DataSynchroniser.Api.Refinitive;
 using DataSynchroniser.Configuration;
 using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Configuration;
+using RedDeer.Extensions.Configuration.EC2Tags;
 using StructureMap;
 using Surveillance.Auditing;
 using Surveillance.Auditing.Context;
@@ -79,6 +80,7 @@ namespace DataSynchroniser.App
         {
             var configurationRoot = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
                 .AddEnvironmentVariables()
                 .Build();
 

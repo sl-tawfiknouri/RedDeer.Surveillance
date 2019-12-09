@@ -7,6 +7,7 @@ using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using System;
 using System.Threading.Tasks;
+using RedDeer.Extensions.Configuration.EC2Tags.Extensions;
 
 namespace Surveillance.Data.Universe.Refinitiv
 {
@@ -47,8 +48,10 @@ namespace Surveillance.Data.Universe.Refinitiv
 
         private ChannelBase CreateSecureChannel()
         {
-            var environmentTag = configuration["EC2TagsEnvironment"] ;
-            var customerTag = configuration["EC2TagsCustomer"];
+            var getEC2TagOption = configuration.GetEC2TagOptionFromEC2TagsSection();
+            var environmentTag = getEC2TagOption.Environment;
+            var customerTag = getEC2TagOption.Customer;
+
             var jwtBearerTokenSymetricSecurityKey = refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey;
 
             var credentials = CallCredentials.FromInterceptor((context, metadata) =>

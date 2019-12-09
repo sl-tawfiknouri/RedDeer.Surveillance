@@ -18,6 +18,7 @@ using Surveillance.Data.Universe.Refinitiv;
 using Surveillance.Engine.Scheduler;
 using Surveillance.Auditing.Context;
 using Surveillance.Auditing.DataLayer.Processes;
+using RedDeer.Extensions.Configuration.EC2Tags;
 
 namespace RedDeer.Surveillance.App
 {
@@ -53,6 +54,7 @@ namespace RedDeer.Surveillance.App
             
             var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
                 .AddEnvironmentVariables()
                 .Build();
 

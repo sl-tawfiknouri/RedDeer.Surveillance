@@ -19,6 +19,7 @@
     using Surveillance.Api.App.Configuration;
 
     using LogLevel = NLog.LogLevel;
+    using RedDeer.Extensions.Configuration.EC2Tags;
 
     public class Service : IWin32Service
     {
@@ -119,6 +120,9 @@
             provider.Directory.AddFile("/", new StringFileInfo(json, "appsettings.dynamodb.json"));
 
             configurationBuilder.AddJsonFile(provider, "appsettings.dynamodb.json", false, true);
+
+            configurationBuilder
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath);
         }
 
         private static void ConfigureLogging(WebHostBuilderContext context, ILoggingBuilder logging)

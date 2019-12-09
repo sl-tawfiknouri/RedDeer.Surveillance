@@ -12,15 +12,15 @@ namespace Surveillance.Data.Universe.Refinitiv.UnitTests
     public class RefinitivTickPriceHistoryApiUnitTest
     {
         [Test]
-        //[Ignore("ManualTest")]
+        [Ignore("ManualTest")]
         public async Task ManualTest()
         {
             var jwtTokenService = new JwtTokenService();
 
             var config = new Dictionary<string, string>
             {
-                { "EC2TagsEnvironment", "dev" },
-                { "EC2TagsCustomer", "reddeer" },
+                { "EC2Tags:Environment", "dev" },
+                { "EC2Tags:Customer", "reddeer" },
                 { "RefinitivTickPriceHistoryApiAddress", "https://localhost:8890" }
             };
 

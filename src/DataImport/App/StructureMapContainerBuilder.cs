@@ -14,6 +14,7 @@ using Surveillance.Reddeer.ApiClient;
 using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using RedDeer.Extensions.Configuration.EC2Tags;
+using Surveillance.Data.Universe.Refinitiv;
 
 namespace RedDeer.DataImport.DataImport.App
 {
@@ -58,6 +59,7 @@ namespace RedDeer.DataImport.DataImport.App
             var builtClientApiConfig = builder.BuildApi(configurationRoot);
 
             var container = new Container();
+            container.Inject<IConfiguration>(configurationRoot);
             container.Inject(typeof(IUploadConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);            
             container.Inject(typeof(IAwsConfiguration), builtDataConfig);
@@ -73,6 +75,7 @@ namespace RedDeer.DataImport.DataImport.App
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.IncludeRegistry<DataLayerRegistry>();
                 config.IncludeRegistry<ReddeerApiClientRegistry>();
+                config.IncludeRegistry<RefinitivRegistry>();
                 // config.Populate(services);
             });
 

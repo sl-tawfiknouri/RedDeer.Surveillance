@@ -52,22 +52,23 @@ namespace RedDeer.Surveillance.App
 
             var container = new Container();
             
-            var configurationBuilder = new ConfigurationBuilder()
+            var configurationRoot = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
                 .AddEnvironmentVariables()
                 .Build();
 
             var configBuilder = new Configuration.Configuration();
-            var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
-            var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationBuilder);
+            var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationRoot);
+            var apiConfiguration = configBuilder.BuildApiClientConfiguration(configurationRoot);
 
+            container.Inject<IConfiguration>(configurationRoot);
             container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
             container.Inject(typeof(IApiClientConfiguration), apiConfiguration);
-            container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
-            container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
-            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationBuilder));
+            container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationRoot));
+            container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationRoot));
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), configBuilder.BuildRefinitivTickPriceHistoryApiConfig(configurationRoot));
 
             container.Configure(config =>
             {

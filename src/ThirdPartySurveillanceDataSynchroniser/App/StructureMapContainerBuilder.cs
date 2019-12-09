@@ -12,6 +12,7 @@ using Surveillance.Auditing.Context;
 using Surveillance.Auditing.DataLayer;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Data.Universe.Refinitiv;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
@@ -48,9 +49,17 @@ namespace DataSynchroniser.App
         {
             SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
 
-            var builtConfig = BuildConfiguration();
+            var configurationRoot = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
+                .AddEnvironmentVariables()
+                .Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+            var builtConfig = builder.Build(configurationRoot);
             
             var container = new Container();
+            container.Inject<IConfiguration>(configurationRoot);
             container.Inject(typeof(IAwsConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
@@ -70,22 +79,11 @@ namespace DataSynchroniser.App
                 config.IncludeRegistry<AppRegistry>();
                 config.IncludeRegistry<ReddeerApiClientRegistry>();
                 config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
+                config.IncludeRegistry<RefinitivRegistry>();
                 // config.Populate(services);
             });
 
             return container;
-        }
-
-        private static Config BuildConfiguration()
-        {
-            var configurationRoot = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
-                .AddEC2Tags(EC2TagsConstants.NestedSectionPath)
-                .AddEnvironmentVariables()
-                .Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-            return builder.Build(configurationRoot);
         }
     }
 }

@@ -18,12 +18,13 @@
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-
+    using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
     using RedDeer.Security.Core;
     using RedDeer.Security.Core.Abstractions;
     using RedDeer.Security.Core.Services;
@@ -94,6 +95,12 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IJwtTokenService, RedDeer.Extensions.Security.Authentication.Jwt.JwtTokenService>();
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             services.AddRequestResponseLoggingMiddleware();
 
             services.AddResponseCompression();

@@ -141,28 +141,21 @@ namespace DataSynchroniser.App.ConfigBuilder
             }
 
             var config = new Config
-                             {
-                                 DataSynchroniserRequestQueueName =
-                                     this.GetSetting(
-                                         "DataSynchronizerQueueName",
-                                         configurationBuilder), // american english for dev ops
-                                 ScheduledRuleQueueName =
-                                     this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
-                                 ScheduleRuleDistributedWorkQueueName =
-                                     this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                                 CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
-                                 AuroraConnectionString =
-                                     this.GetSetting("AuroraConnectionString", configurationBuilder),
-                                 SurveillanceAuroraConnectionString =
-                                     this.GetSetting("AuroraConnectionString", configurationBuilder),
-                                 SurveillanceUserApiAccessToken =
-                                     this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                                 ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                                 BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
-                                 RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
-                                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
-                             };
+            {
+                DataSynchroniserRequestQueueName =this.GetSetting("DataSynchronizerQueueName", configurationBuilder), // american english for dev ops
+                ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
+                AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceAuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceUserApiAccessToken = this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
+                RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.GetSetting("RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey", configurationBuilder),
+                RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
+            };
 
             return config;
         }

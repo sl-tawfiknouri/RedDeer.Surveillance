@@ -138,7 +138,10 @@
 
             services.AddTransient<IRefinitivTickPriceHistoryApiConfig>((sp) => new RefinitivTickPriceHistoryApiConfig
             {
-                RefinitivTickPriceHistoryApiAddress = this.Configuration["RefinitivTickPriceHistoryApiAddress"]
+                RefinitivTickPriceHistoryApiAddress = this.Configuration["RefinitivTickPriceHistoryApiAddress"],
+                RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.Configuration["RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey"],
+                RefinitivTickPriceHistoryApiPollingSeconds = this.Configuration.GetValue("RefinitivTickPriceHistoryApiPollingSeconds", 60),
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.Configuration.GetValue("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", 600)
             });
 
             // Test services should be added at end of list so that they can override defaults

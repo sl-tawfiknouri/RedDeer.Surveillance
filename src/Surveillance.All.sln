@@ -145,9 +145,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TzConvertFacade", "TzConvertFacade\TzConvertFacade.csproj", "{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv.Tests", "DataSynchroniser.Api.Refinitiv.Tests\DataSynchroniser.Api.Refinitiv.Tests.csproj", "{CF9322B9-E40B-4746-B771-9C4B9BBD4287}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Refinitiv.Tests", "DataSynchroniser.Api.Refinitiv.Tests\DataSynchroniser.Api.Refinitiv.Tests.csproj", "{CF9322B9-E40B-4746-B771-9C4B9BBD4287}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

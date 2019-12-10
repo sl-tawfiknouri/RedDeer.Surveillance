@@ -66,10 +66,10 @@ namespace SharedKernel.Files.Tests.Orders
 
         public static IEnumerable ValidEnumParseableValidatorTestCases(string testName)
         {
-            foreach (var enumValue in GetEnumValidValues<MarketTypes>())
+            foreach (var enumValue in GetEnumValidValues<MarketTypes>().Concat(new string[] { null, "", "  " }))
                 yield return CreateValidEnumParseableValidatorTestCaseData<MarketTypes>(testName, o => o.MarketType, new OrderFileContract { MarketType = enumValue });
 
-            foreach (var enumValue in GetEnumValidValues<OrderTypes>())
+            foreach (var enumValue in GetEnumValidValues<OrderTypes>().Concat(new string[] { null, "", "  " }))
                 yield return CreateValidEnumParseableValidatorTestCaseData<OrderTypes>(testName, o => o.OrderType, new OrderFileContract { OrderType = enumValue });
             
             foreach (var enumValue in GetEnumValidValues<OrderDirections>().Where(w =>!new string[] { ((int)OrderDirections.NONE).ToString(), OrderDirections.NONE.ToString() }.Contains(w)))
@@ -150,12 +150,6 @@ namespace SharedKernel.Files.Tests.Orders
         {
             foreach (var enumValue in GetEnumValidValues<OrderCleanDirty>().Where(w => !new string[] { ((int)OrderCleanDirty.CLEAN).ToString(), OrderCleanDirty.CLEAN.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
                 yield return CreateWhenFixedIncomeEnumsMustBeTestCases<OrderCleanDirty>(testName, o => o.OrderCleanDirty, new OrderFileContract { OrderCleanDirty = enumValue, InstrumentCfi = "D" }, OrderCleanDirty.CLEAN.ToString());
-
-            foreach (var enumValue in GetEnumValidValues<MarketTypes>().Where(w => !new string[] { ((int)MarketTypes.NONE).ToString(), MarketTypes.NONE.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
-                yield return CreateWhenFixedIncomeEnumsMustBeTestCases<MarketTypes>(testName, o => o.MarketType, new OrderFileContract { MarketType = enumValue, InstrumentCfi = "D" }, MarketTypes.NONE.ToString());
-
-            foreach (var enumValue in GetEnumValidValues<OrderTypes>().Where(w => !new string[] { ((int)OrderTypes.NONE).ToString(), OrderTypes.NONE.ToString() }.Contains(w)).Append("NON-EXISTING-ENUM"))
-                yield return CreateWhenFixedIncomeEnumsMustBeTestCases<OrderTypes>(testName, o => o.OrderType, new OrderFileContract { OrderType = enumValue, InstrumentCfi = "D" }, OrderTypes.NONE.ToString());
         }
 
         public static TestCaseData CreateWhenFixedIncomeEnumsMustBeTestCases<TEnum>(string testName, Expression<Func<OrderFileContract, string>> expression, OrderFileContract orderFileContract, string validValue)

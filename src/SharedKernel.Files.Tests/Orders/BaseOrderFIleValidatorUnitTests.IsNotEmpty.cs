@@ -31,13 +31,11 @@ namespace SharedKernel.Files.Tests.Orders
             foreach (var value in new string[] { null, "", "  "})
             {
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.MarketIdentifierCode, new OrderFileContract { MarketIdentifierCode = value });
-                yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.MarketType, new OrderFileContract { MarketType = value });
 
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderOrderedVolume, new OrderFileContract { OrderOrderedVolume = value });
 
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderId, new OrderFileContract { OrderId = value });
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderCurrency, new OrderFileContract { OrderCurrency = value });
-                yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderType, new OrderFileContract { OrderType = value });
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderDirection, new OrderFileContract { OrderDirection = value });
 
                 yield return CreateIsNotEmptyValidatorTestCaseData(testName, o => o.OrderLimitPrice, new OrderFileContract { OrderLimitPrice = value, OrderType = OrderTypes.LIMIT.ToString() }, " When 'OrderType' value is 'LIMIT'"); 

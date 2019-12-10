@@ -37,8 +37,8 @@ namespace SharedKernel.Files.Tests.Orders
             yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingCusip, 6, 9, new OrderFileContract { InstrumentUnderlyingCusip = CreateStringOfLength(6 - 1) });
             yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingCusip, 6, 9, new OrderFileContract { InstrumentUnderlyingCusip = CreateStringOfLength(9 + 1) });
 
-            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentRic, 1, 30, new OrderFileContract { InstrumentRic = CreateStringOfLength(30 + 1), InstrumentCfi = "D" });
-            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingRic, 1, 30, new OrderFileContract { InstrumentUnderlyingRic = CreateStringOfLength(30 + 1), InstrumentCfi = "D" });
+            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentRic, 0, 30, new OrderFileContract { InstrumentRic = CreateStringOfLength(30 + 5), InstrumentCfi = "eD" });
+            yield return CreateLengthValidatorValidatorTestCaseData(testName, o => o.InstrumentUnderlyingRic, 1, 30, new OrderFileContract { InstrumentUnderlyingRic = CreateStringOfLength(30 + 1) });
         }
 
         public static TestCaseData CreateLengthValidatorValidatorTestCaseData(string testName, Expression<Func<OrderFileContract, string>> expression, int min, int max, OrderFileContract orderFileContract)
@@ -47,7 +47,7 @@ namespace SharedKernel.Files.Tests.Orders
             var testData = new OrderFileValidatorTestData
             {
                 RuleValidator = nameof(LengthValidator),
-                ExpectedMessage = $"'{property.PropertyDisplayName}' must be between {min} and {max} characters. You entered {property.PropertyValue.Length} characters.",
+                ExpectedMessage = $"'{property.PropertyDisplayName}' must be between {min} and {max} characters. You entered {property.PropertyValue?.Length ?? 0} characters.",
                 PropertyName = property.PropertyName,
                 OrderFileContract = orderFileContract
             };

@@ -3,7 +3,6 @@ using Domain.Core.Trading.Orders;
 using FluentValidation;
 using SharedKernel.Files.ExtendedValidators;
 using System;
-using System.Linq;
 
 namespace SharedKernel.Files.Orders
 {
@@ -47,13 +46,8 @@ namespace SharedKernel.Files.Orders
                 .WithAdditionalMessage(whenFixedIncomeMessage);
 
             this.RuleFor(x => x.MarketType)
-                .IsNotEmpty()
-                .SetValidator(new EnumParseableValidator<MarketTypes>());
-
-            this.RuleFor(x => x.MarketType)
-                .Equal(MarketTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
-                .When(IsFixedIncome)
-                .WithAdditionalMessage(whenFixedIncomeMessage);
+                .SetValidator(new EnumParseableValidator<MarketTypes>())
+                .WhenIsNotNullOrWhitespace();
         }
 
         protected virtual void RulesForOrderProperties()
@@ -93,13 +87,8 @@ namespace SharedKernel.Files.Orders
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency));
 
             this.RuleFor(x => x.OrderType)
-                .IsNotEmpty()
-                .SetValidator(new EnumParseableValidator<OrderTypes>());
-
-            this.RuleFor(x => x.OrderType)
-                .Equal(OrderTypes.NONE.ToString(), StringComparer.OrdinalIgnoreCase)
-                .When(IsFixedIncome)
-                .WithAdditionalMessage(whenFixedIncomeMessage);
+                .SetValidator(new EnumParseableValidator<OrderTypes>())
+                .WhenIsNotNullOrWhitespace();
 
             this.RuleFor(x => x.OrderDirection)
                 .IsNotEmpty()
@@ -241,8 +230,8 @@ namespace SharedKernel.Files.Orders
                 .WhenIsNotNullOrWhitespace();
 
             this.RuleFor(x => x.InstrumentRic)
-                .Length(1, 30)
-                .When(IsFixedIncome);
+                .Length(0, 30)
+                .WhenIsNotNullOrWhitespace();
         }
 
         protected void RulesForDerivativeIdentificationCodes()

@@ -83,11 +83,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"ReddeerMarketTimeBarRepository Save method exception {e.Message}", e);
-                if (e.InnerException != null)
-                    this._logger?.LogError(
-                        $"ReddeerMarketTimeBarRepository Save method exception {e.InnerException?.Message}",
-                        e);
+                this._logger?.LogError(e, $"ReddeerMarketTimeBarRepository Save method exception {e.Message}");
             }
             finally
             {
@@ -115,8 +111,7 @@
                 }
                 else
                 {
-                    this._logger?.LogError(
-                        $"ReddeerMarketTimeBarRepository Save method asked to save a bar with a figi of {bar.Figi} but couldn't find the security lookup!");
+                    this._logger?.LogError($"ReddeerMarketTimeBarRepository Save method asked to save a bar with a figi of {bar.Figi} but couldn't find the security lookup!");
                     continue;
                 }
 

@@ -237,13 +237,23 @@
             WHERE NOT EXISTS(
 	            SELECT 1
 	            FROM FinancialInstruments
-	            WHERE (Sedol = @Sedol AND Sedol <> '' AND Sedol Is Not Null)
-                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null))
+	            WHERE 
+                    (Sedol = @Sedol AND Sedol <> '' AND Sedol Is Not Null)
+                    OR
+                    (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null)
+                    OR 
+                    (Ric = @Ric AND  Ric <> '' AND Ric Is Not Null)
+                )
             LIMIT 1;
 
-            SELECT Id FROM FinancialInstruments WHERE Sedol = @sedol AND Sedol <> '' AND Sedol IS NOT NULL
-            UNION
-            SELECT Id FROM FinancialInstruments WHERE (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin IS NOT NULL);";
+            SELECT Id 
+            FROM FinancialInstruments 
+            WHERE 
+                (Sedol = @sedol AND Sedol <> '' AND Sedol IS NOT NULL)
+                OR 
+                (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin IS NOT NULL)
+                OR
+                (Ric = @Ric AND  Ric <> '' AND Ric Is Not Null);";
 
         private const string SecurityMatchOrInsertSqlv2 = @"
             INSERT INTO FinancialInstruments(
@@ -281,16 +291,23 @@
             SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @Ric, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
                 @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @UnderlyingRic, @SectorCode, @IndustryCode, @RegionCode, @CountryCode
             FROM DUAL
-            WHERE NOT EXISTS(
+            WHERE NOT EXISTS
+            (
 	            SELECT 1
 	            FROM FinancialInstruments
 	            WHERE Sedol = @Sedol
-                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey))
+                    Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey)
+                    OR Ric = @Ric
+            )
             LIMIT 1;
 
-            (SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol AND Sedol <> '' AND Sedol Is Not Null
-            UNION
-            SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null))
+            (
+                SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol AND Sedol <> '' AND Sedol Is Not Null
+                UNION
+                SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE (Isin = @Isin and MarketId = @MarketIdPrimaryKey AND Isin <> '' AND Isin Is Not Null)
+                UNION
+                SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE (Ric = @Ric AND Ric <> '' AND Ric Is Not Null)
+            )
             LIMIT 1;
 
              INSERT IGNORE INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded);
@@ -327,7 +344,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository GetUnEnrichedSecurities method for {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository GetUnEnrichedSecurities method for {e.Message}");
             }
             finally
             {
@@ -368,7 +385,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository UpdateUnEnrichedSecurities method for {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository UpdateUnEnrichedSecurities method for {e.Message}");
             }
             finally
             {
@@ -419,7 +436,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message})");
+                _logger.LogError(e, $"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message})");
             }
             finally
             {
@@ -492,7 +509,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Get Method For {start} {end} {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository Get Method For {start} {end} {e.Message}");
                 opCtx.EventError(e);
             }
             finally
@@ -569,7 +586,7 @@
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
                 opCtx.EventError(e);
             }
             finally
@@ -617,32 +634,28 @@
                 dbConnection.Open();
                 _logger.LogInformation("Reddeer Market Repository CreateAndOrGetSecurityId opened connection to database");
 
-                var marketId = string.Empty;
-                var securityId = string.Empty;
 
                 var marketUpdate = new MarketUpdateDto(pair.Exchange);
 
                 _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
-                using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
-                {
-                    marketId = await conn;
-                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
-                }
+                
+                var marketId = await dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate);
+                
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
 
                 var securityUpdate = new InsertSecurityDto(pair.Security, marketId, _cfiMapper);
 
                 _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match security or insert sql for {pair.Security?.Name}");
-                using (var conn = dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate))
-                {
-                    securityId = await conn;
-                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId completed match security or insert sql for {pair.Security?.Name}");
-                }
+                
+                var securityId = await dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate);
+                
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId completed match security or insert sql for {pair.Security?.Name}");
 
                 return new MarketSecurityIds {MarketId = marketId, SecurityId = securityId};
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message} {e.InnerException?.Message}");
+                _logger.LogError(e, $"ReddeerMarketRepository CreateAndOrGetSecurityId");
             }
             finally
             {

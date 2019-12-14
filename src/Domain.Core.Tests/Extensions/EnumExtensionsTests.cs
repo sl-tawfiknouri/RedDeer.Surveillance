@@ -1,12 +1,10 @@
-﻿namespace Domain.Core.Tests.Extensions
+﻿using System;
+using System.Linq;
+using Domain.Core.Extensions;
+using NUnit.Framework;
+
+namespace Domain.Core.Tests.Extensions
 {
-    using System;
-    using System.Linq;
-
-    using Domain.Core.Extensions;
-
-    using NUnit.Framework;
-
     [TestFixture]
     public class EnumExtensionsTests
     {
@@ -85,6 +83,28 @@
 
             Assert.IsTrue(success);
             Assert.AreEqual(result, TestEnum.Test1);
+        }
+
+        [Test]
+        public void TryParseEnumPermutation_WhenNonExisting_Fails()
+        {
+            var parsePermutation = "NON-EXISTING";
+
+            var success = EnumExtensions.TryParsePermutations(parsePermutation, out TestEnum result);
+
+            Assert.IsFalse(success);
+            Assert.AreEqual(result, default(TestEnum));
+        }
+
+        [Test]
+        public void TryParseEnumPermutation_InExactMatchOther_Fail()
+        {
+            var parsePermutation = "12345678";
+
+            var success = EnumExtensions.TryParsePermutations(parsePermutation, out TestEnum result);
+
+            Assert.IsFalse(success);
+            Assert.AreEqual(Enum.Parse(typeof(TestEnum), parsePermutation), result);
         }
 
         private struct TestStruct

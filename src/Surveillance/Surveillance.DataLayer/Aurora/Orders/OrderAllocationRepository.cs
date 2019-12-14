@@ -107,7 +107,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError("OrderAllocationRepository Create bulk method had an exception. ", e);
+                    this._logger.LogError(e, "OrderAllocationRepository Create bulk method had an exception.");
                 }
 
                 this._logger.LogInformation("OrderAllocationRepository Create bulk method completed");
@@ -136,16 +136,14 @@
                         "OrderAllocationRepository Create method opened db connection and about to write record");
 
                     using (var dbConn = this._connectionFactory.BuildConn())
-                    using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto))
                     {
-                        var connTask = conn;
-                        connTask.Wait();
+                        var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto).ConfigureAwait(false).GetAwaiter().GetResult();
                         this._logger.LogInformation("OrderAllocationRepository Create method completed writing record");
                     }
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError("OrderAllocationRepository Create method had an exception. ", e);
+                    this._logger.LogError(e, "OrderAllocationRepository Create method had an exception. ");
                 }
 
                 this._logger.LogInformation("OrderAllocationRepository Create method completed");
@@ -179,7 +177,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError("OrderAllocationRepository Get encountered an error", e);
+                this._logger?.LogError(e, "OrderAllocationRepository Get encountered an error");
             }
 
             this._logger.LogInformation("OrderAllocationRepository Get method completed");
@@ -208,7 +206,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError("OrderAllocationRepository GetStaleOrderAllocations encountered an error", e);
+                this._logger?.LogError(e, "OrderAllocationRepository GetStaleOrderAllocations encountered an error");
             }
 
             this._logger.LogInformation("OrderAllocationRepository GetStaleOrderAllocations method completed");

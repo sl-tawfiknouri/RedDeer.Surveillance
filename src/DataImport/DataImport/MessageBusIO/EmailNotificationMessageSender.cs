@@ -57,8 +57,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"Exception sending message '{serialisedMessage}' to bus on queue {this._awsConfiguration.EmailServiceSendEmailQueueName}. Error was {e.Message}");
+                this._logger.LogError(e, $"Exception sending message '{serialisedMessage}' to bus on queue {this._awsConfiguration.EmailServiceSendEmailQueueName}.");
             }
         }
     }

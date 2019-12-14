@@ -168,7 +168,7 @@
 
             Assert.DoesNotThrowAsync(() => repo.Create(frame));
 
-            A.CallTo(() => this._orderBrokerRepository.InsertOrUpdateBroker(A<IOrderBroker>.Ignored))
+            A.CallTo(() => this._orderBrokerRepository.InsertOrUpdateBrokerAsync(A<IOrderBroker>.Ignored))
                 .MustNotHaveHappened();
         }
 

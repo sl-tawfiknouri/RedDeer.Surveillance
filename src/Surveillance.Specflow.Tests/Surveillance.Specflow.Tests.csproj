@@ -29,5 +29,11 @@
     <Pickles_DocumentationFormat>dhtml</Pickles_DocumentationFormat>
     <Pickles_OutputDirectory>../PicklesDocumentation</Pickles_OutputDirectory>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NoWarn>1701;1702;NU1701;</NoWarn>
+  </PropertyGroup>
   
 </Project>

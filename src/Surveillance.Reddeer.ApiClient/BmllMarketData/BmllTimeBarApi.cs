@@ -163,13 +163,10 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(
-                    "BmllTimeBarApiRepository Get encountered an exception: " + e.Message + " "
-                    + e.InnerException?.Message);
+                this.logger?.LogError(e, "BmllTimeBarApiRepository Get encountered an exception");
             }
 
-            this.logger?.LogInformation(
-                "BmllTimeBarApiRepository Get received a response from the client. Returning result.");
+            this.logger?.LogInformation("BmllTimeBarApiRepository Get received a response from the client. Returning result.");
 
             return new GetMinuteBarsResponse();
         }
@@ -206,7 +203,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError("HEARTBEAT FOR TIME BAR API REPOSITORY NEGATIVE", e);
+                this.logger.LogError(e, "HEARTBEAT FOR TIME BAR API REPOSITORY NEGATIVE");
             }
 
             return false;
@@ -282,9 +279,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(
-                    "BmllTimeBarApiRepository RequestMinuteBars encountered an exception: " + e.Message + " "
-                    + e.InnerException?.Message);
+                this.logger?.LogError(e, "BmllTimeBarApiRepository RequestMinuteBars encountered an exception");
             }
 
             this.logger.LogInformation(
@@ -382,9 +377,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError(
-                    "BmllTimeBarApiRepository StatusMinuteBars encountered an exception: " + e.Message + " "
-                    + e.InnerException?.Message);
+                this.logger?.LogError(e, "BmllTimeBarApiRepository StatusMinuteBars encountered an exception");
             }
 
             this.logger.LogInformation(

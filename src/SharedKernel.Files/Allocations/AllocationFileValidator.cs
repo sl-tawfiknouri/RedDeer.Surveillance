@@ -3,7 +3,7 @@
     using FluentValidation;
 
     using SharedKernel.Files.Allocations.Interfaces;
-    using SharedKernel.Files.PropertyValidators;
+    using SharedKernel.Files.ExtendedValidators;
 
     public class AllocationFileValidator : AbstractValidator<AllocationFileContract>, IAllocationFileValidator
     {
@@ -13,8 +13,9 @@
             this.RuleFor(x => x.Fund).MaximumLength(255);
             this.RuleFor(x => x.Strategy).MaximumLength(255);
             this.RuleFor(x => x.ClientAccountId).MaximumLength(255);
-            this.RuleFor(x => x.OrderFilledVolume).NotEmpty()
-                .SetValidator(new DecimalParseableValidator("OrderFilledVolume"));
+            this.RuleFor(x => x.OrderFilledVolume)
+                .NotEmpty()
+                .IsDecimal();
         }
     }
 }

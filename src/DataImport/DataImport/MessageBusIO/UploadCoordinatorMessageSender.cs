@@ -61,8 +61,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"Exception in UploadCoordinatorMessageSender sending message '{message}' to bus on queue {this._awsConfiguration.UploadCoordinatorQueueName}. Error was {e.Message}");
+                this._logger.LogError(e, $"Exception in UploadCoordinatorMessageSender sending message '{message}' to bus on queue {this._awsConfiguration.UploadCoordinatorQueueName}.");
             }
         }
     }

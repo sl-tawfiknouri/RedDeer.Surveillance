@@ -107,8 +107,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"repository error for CreateDataRequest");
             }
         }
 
@@ -144,8 +143,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"Bmll data request repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"Bmll data request repository error for DataRequestsForRuleRun");
             }
 
             return new MarketDataRequest[0];
@@ -175,8 +173,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"repository error for CreateDataRequest");
             }
 
             return false;
@@ -207,8 +204,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"repository error for DataRequestsForRuleRun");
             }
         }
 

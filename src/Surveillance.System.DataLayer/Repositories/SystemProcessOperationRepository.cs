@@ -96,8 +96,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Repository Update Method For {entity.Id} {entity.OperationEnd}. {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Repository Update Method For {entity.Id} {entity.OperationEnd}.");
             }
         }
     }

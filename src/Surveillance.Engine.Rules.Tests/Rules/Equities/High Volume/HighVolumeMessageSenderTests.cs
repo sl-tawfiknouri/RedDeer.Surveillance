@@ -53,7 +53,7 @@
         }
 
         [Test]
-        public async Task MessageSender_ConstructsExpectedString_FromDailyRuleBreach()
+        public void MessageSender_ConstructsExpectedString_FromDailyRuleBreach()
         {
             // arrange
             var messageSender = new HighVolumeMessageSender(
@@ -84,7 +84,7 @@
         }
 
         [Test]
-        public async Task MessageSender_ConstructsExpectedString_FromWindowRuleBreach()
+        public void MessageSender_ConstructsExpectedString_FromWindowRuleBreach()
         {
             // arrange
             var messageSender = new HighVolumeMessageSender(
@@ -116,7 +116,7 @@
         }
 
         [Test]
-        public async Task MessageSender_ConstructsExpectedString_FromMarketCapRuleBreach()
+        public void MessageSender_ConstructsExpectedString_FromMarketCapRuleBreach()
         {
             // arrange
             var messageSender = new HighVolumeMessageSender(

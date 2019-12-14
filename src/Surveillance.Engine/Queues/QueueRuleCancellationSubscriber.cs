@@ -72,9 +72,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"caught exception in execute cancellation message {e.Message} {e.InnerException}",
-                    e);
+                this._logger.LogError(e, $"caught exception in execute cancellation message");
                 opCtx.EndEventWithError(e.Message);
             }
         }

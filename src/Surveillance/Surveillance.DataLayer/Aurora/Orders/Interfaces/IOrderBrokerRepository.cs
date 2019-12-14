@@ -11,7 +11,7 @@
     {
         Task<IReadOnlyCollection<IOrderBroker>> GetUnEnrichedBrokers();
 
-        Task<string> InsertOrUpdateBroker(IOrderBroker broker);
+        Task<string> InsertOrUpdateBrokerAsync(IOrderBroker broker);
 
         Task UpdateEnrichedBroker(IReadOnlyCollection<BrokerEnrichmentDto> brokers);
     }

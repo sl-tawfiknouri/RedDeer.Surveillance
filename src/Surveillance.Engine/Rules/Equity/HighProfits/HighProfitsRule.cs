@@ -149,7 +149,7 @@
         /// </param>
         public void OnError(Exception error)
         {
-            this.logger.LogError("OnCompleted() event received", error);
+            this.logger.LogError(error, "OnCompleted() event received");
             this.streamRule.OnError(error);
             this.marketClosureRule.OnError(error);
         }

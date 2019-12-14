@@ -124,7 +124,7 @@
                 return;
             }
 
-            await this.judgementRepository.Save(judgementContext.Judgement);
+            await this.judgementRepository.SaveAsync(judgementContext.Judgement);
 
             if (!judgementContext.RaiseRuleViolation)
             {
@@ -159,7 +159,7 @@
                 return;
             }
 
-            await this.judgementRepository.Save(judgementContext.Judgement);
+            await this.judgementRepository.SaveAsync(judgementContext.Judgement);
 
             if (!judgementContext.RaiseRuleViolation)
             {
@@ -184,7 +184,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(highVolume);
+            await this.judgementRepository.SaveAsync(highVolume);
 
             // judgement is also a rule breach
             var projectedBreach = (IHighVolumeRuleBreach)null;
@@ -216,7 +216,7 @@
                 return;
             }
 
-            await this.judgementRepository.Save(highVolumeJudgementContext.Judgement);
+            await this.judgementRepository.SaveAsync(highVolumeJudgementContext.Judgement);
 
             if (!highVolumeJudgementContext.RaiseRuleViolation)
             {
@@ -241,7 +241,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(cancelledOrder);
+            await this.judgementRepository.SaveAsync(cancelledOrder);
 
             // judgement is also a rule breach
             var projectedBreach = (ICancelledOrderRuleBreach)null;
@@ -262,7 +262,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(layering);
+            await this.judgementRepository.SaveAsync(layering);
 
             // judgement is also a rule breach
             var projectedBreach = (ILayeringRuleBreach)null;
@@ -283,7 +283,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(markingTheClose);
+            await this.judgementRepository.SaveAsync(markingTheClose);
 
             // judgement is also a rule breach
             var projectedBreach = (IMarkingTheCloseBreach)null;
@@ -304,7 +304,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(placingOrders);
+            await this.judgementRepository.SaveAsync(placingOrders);
 
             // judgement is also a rule breach
             var projectedBreach = (IPlacingOrdersWithNoIntentToExecuteRuleBreach)null;
@@ -325,7 +325,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(ramping);
+            await this.judgementRepository.SaveAsync(ramping);
 
             // judgement is also a rule breach
             var projectedBreach = (IRampingRuleBreach)null;
@@ -349,7 +349,7 @@
                 return;
             }
 
-            this.judgementRepository.Save(spoofing);
+            await this.judgementRepository.SaveAsync(spoofing);
 
             // judgement is also a rule breach
             var projectedBreach = (ISpoofingRuleBreach)null;

@@ -49,9 +49,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    e,
-                    $"send encountered an exception when posting to the factset daily bar api {e.Message} {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"send encountered an exception when posting to the factset daily bar api");
             }
 
             return new FactsetSecurityResponseDto

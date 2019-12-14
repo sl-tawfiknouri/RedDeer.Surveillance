@@ -57,8 +57,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                    this._logger.LogError(e, $"System Process Operation Distribute Rule Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}.");
                 }
             }
         }
@@ -76,8 +75,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Distribute Rule Repository Get Dashboard Method {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Distribute Rule Repository Get Dashboard Method");
             }
 
             return new ISystemProcessOperationDistributeRule[0];
@@ -97,8 +95,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Distribute Rule Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Distribute Rule Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}.");
             }
         }
     }

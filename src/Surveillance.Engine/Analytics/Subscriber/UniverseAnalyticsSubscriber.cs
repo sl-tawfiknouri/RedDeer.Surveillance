@@ -50,7 +50,7 @@
 
         public void OnError(Exception error)
         {
-            this._logger.LogError("received the OnError() event from the analytics stream", error);
+            this._logger.LogError(error, "received the OnError() event from the analytics stream");
         }
 
         public void OnNext(IUniverseEvent value)

@@ -83,7 +83,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public void OnError(Exception error)
         {
-            this.Logger.LogError(error?.Message);
+            this.Logger.LogError(error, "Exception");
         }
 
         public abstract void OnNext(EquityIntraDayTimeBarCollection value);

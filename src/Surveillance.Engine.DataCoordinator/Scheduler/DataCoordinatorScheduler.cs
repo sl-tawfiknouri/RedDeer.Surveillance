@@ -66,7 +66,10 @@
         /// </summary>
         public void Initialise()
         {
-            this.TimerOnElapsed(null, null);
+            this.TimerOnElapsed(null, null)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
 
             this.timer = 
                 new Timer(HeartbeatFrequency)
@@ -75,7 +78,7 @@
                         Interval = HeartbeatFrequency
                     };
 
-            this.timer.Elapsed += (_, __) => this.TimerOnElapsed(_, __);
+            this.timer.Elapsed += async (sender, elapsedEventArgs) => await this.TimerOnElapsed(sender, elapsedEventArgs);
             this.timer.Start();
         }
 
@@ -99,7 +102,7 @@
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        private async Task TimerOnElapsed(object sender, ElapsedEventArgs e)
+        private async Task TimerOnElapsed(object sender, ElapsedEventArgs args)
         {
             try
             {
@@ -108,9 +111,9 @@
                 await this.autoScheduler.Scan();
                 this.logger.LogInformation("heart beat complete");
             }
-            catch (Exception a)
+            catch (Exception e)
             {
-                this.logger.LogError($"encountered an exception {a.Message}");
+                this.logger.LogError(e, $"encountered an exception");
             }
         }
     }

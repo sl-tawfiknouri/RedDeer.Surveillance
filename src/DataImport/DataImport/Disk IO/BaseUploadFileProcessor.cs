@@ -68,7 +68,7 @@
             }
             catch (Exception e)
             {
-                this.Logger.LogError("BaseUploadFileProcessor: " + e.Message);
+                this.Logger.LogError(e, "BaseUploadFileProcessor");
             }
 
             this.Logger.LogInformation($"BaseUploadFileProcessor processed {path}. Data in memory.");

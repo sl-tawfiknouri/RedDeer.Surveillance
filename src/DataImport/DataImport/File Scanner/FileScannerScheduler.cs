@@ -49,7 +49,7 @@
             }
             catch (Exception a)
             {
-                this._logger.LogError($"FileScannerScheduler encountered an exception {a.Message}");
+                this._logger.LogError(a, $"FileScannerScheduler encountered an exception");
             }
         }
     }

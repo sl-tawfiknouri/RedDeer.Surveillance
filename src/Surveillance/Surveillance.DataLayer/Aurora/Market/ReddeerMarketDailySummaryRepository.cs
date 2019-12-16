@@ -65,13 +65,10 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    "ReddeerMarketDailySummaryRepository encountered an exception on saving response items",
-                    e);
+                this._logger?.LogError(e, "ReddeerMarketDailySummaryRepository encountered an exception on saving response items");
             }
 
-            this._logger?.LogInformation(
-                $"ReddeerMarketDailySummaryRepository Save method completed for {responseItems?.Count ?? 0} items");
+            this._logger?.LogInformation($"ReddeerMarketDailySummaryRepository Save method completed for {responseItems?.Count ?? 0} items");
         }
 
         private class DailySummaryDto

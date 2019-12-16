@@ -45,37 +45,43 @@
         public static bool TryParsePermutations<T>(string value, out T result)
             where T : struct
         {
-            var propertyValue = value?.ToUpper() ?? string.Empty;
+            var propertyValue = value ?? string.Empty;
 
-            var success = Enum.TryParse(propertyValue, out T result1);
-
-            if (success)
+            if (TryParseEnum<T>(propertyValue, out var enumValue))
             {
-                result = result1;
-                return true;
-            }
-
-            success = Enum.TryParse(propertyValue.ToLower(), out T result2);
-
-            if (success)
-            {
-                result = result2;
-                return true;
-            }
-
-            success = Enum.TryParse(propertyValue.ToUpper(), out T result3);
-
-            if (success)
-            {
-                result = result3;
+                result = enumValue;
                 return true;
             }
 
             var textInfo = new CultureInfo(CultureInfoConstants.DefaultCultureInfo, false).TextInfo;
-            success = Enum.TryParse(textInfo.ToTitleCase(propertyValue.ToLower()), out T result4);
-            result = result4;
 
-            return success;
+            if (TryParseEnum<T>(textInfo.ToTitleCase(propertyValue.ToLower()), out var enumValue2))
+            {
+                result = enumValue2;
+                return true;
+            }
+
+            result = enumValue2;
+
+            return false;
+        }
+
+        public static bool TryParseEnum<T>(string value, out T result) where T : struct
+        {
+            if (!Enum.TryParse<T>(value, true, out T enumVal))
+            {
+                result = enumVal;
+                return false;
+            }
+
+            if (!Enum.IsDefined(typeof(T), enumVal))
+            {
+                result = enumVal;
+                return false;
+            }
+
+            result = enumVal;
+            return true;
         }
     }
 }

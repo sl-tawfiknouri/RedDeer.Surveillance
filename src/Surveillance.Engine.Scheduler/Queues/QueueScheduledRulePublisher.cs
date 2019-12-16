@@ -88,9 +88,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError(
-                    $"exception sending message '{request.JsonSqsMessage}' to queue '{this.awsConfiguration.ScheduledRuleQueueName}'. Error was {e.Message} {e.InnerException?.Message}",
-                    e);
+                this.logger.LogError(e, $"exception sending message '{request.JsonSqsMessage}' to queue '{this.awsConfiguration.ScheduledRuleQueueName}'.");
             }
         }
     }

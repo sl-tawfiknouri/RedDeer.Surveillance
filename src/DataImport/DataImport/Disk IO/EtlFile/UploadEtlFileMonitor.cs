@@ -111,7 +111,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError($"Encountered an exception in process file for {path}", e);
+                    this._logger.LogError(e, $"Encountered an exception in process file for {path}");
                     fileUpload.EndEvent().EndEventWithError(e.Message);
 
                     return false;

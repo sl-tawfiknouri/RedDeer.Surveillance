@@ -639,9 +639,11 @@
                     if (entity.OrderBroker != null && !string.IsNullOrWhiteSpace(entity.OrderBroker?.Name)
                                                    && string.IsNullOrWhiteSpace(entity.OrderBroker?.Id))
                     {
-                        var brokerTask = this._orderBrokerRepository.InsertOrUpdateBroker(entity.OrderBroker);
-                        brokerTask.Wait();
-                        var broker = brokerTask.Result;
+                        var broker = this._orderBrokerRepository.InsertOrUpdateBrokerAsync(entity.OrderBroker)
+                            .ConfigureAwait(false)
+                            .GetAwaiter()
+                            .GetResult();
+
                         entity.OrderBroker.Id = broker;
                     }
 
@@ -653,28 +655,27 @@
                     {
                         var marketDataPair =
                             new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
-                        var marketSecurityIdTask = this._marketRepository.CreateAndOrGetSecurityId(marketDataPair);
-                        marketSecurityIdTask.Wait();
-                        var marketSecurityId = marketSecurityIdTask.Result;
+                        
+                        var marketSecurityId = this._marketRepository.CreateAndOrGetSecurityId(marketDataPair)
+                            .ConfigureAwait(false)
+                            .GetAwaiter()
+                            .GetResult();
+                        
                         dto.SecurityReddeerId = marketSecurityId.SecurityId;
                         dto.MarketId = marketSecurityId.MarketId;
                     }
 
                     this._logger.LogInformation("ReddeerTradeRepository Create about to insert a new order");
-                    using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto))
-                    {
-                        var orderIdTask = conn;
-                        orderIdTask.Wait();
-                        var orderId = orderIdTask.Result;
-
-                        entity.ReddeerOrderId = orderId;
-                        this._logger.LogInformation(
-                            $"ReddeerTradeRepository Create completed for the new order {orderId}");
-                    }
+                    var orderId = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto)
+                        .ConfigureAwait(false)
+                        .GetAwaiter()
+                        .GetResult();
+                    
+                    entity.ReddeerOrderId = orderId;
+                    this._logger.LogInformation($"ReddeerTradeRepository Create completed for the new order {orderId}");
 
                     if (entity.ReddeerOrderId == null)
-                        this._logger.LogError(
-                            $"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
+                        this._logger.LogError($"Attempted to save order {entity.OrderId} from client but did not get a reddeer order id (primary key) value.");
 
                     if (entity.DealerOrders == null || !entity.DealerOrders.Any())
                     {
@@ -705,8 +706,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
+                    this._logger.LogError(e, $"ReddeerTradeRepository Create Method For {entity.Instrument?.Name}");
                 }
                 finally
                 {
@@ -797,8 +797,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
+                this._logger.LogError(e, $"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()}");
                 opCtx?.EventError(e);
             }
             finally
@@ -826,7 +825,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
+                this._logger?.LogError(e, $"OrdersRepository liven completed order sets exception {e.Message}");
             }
         }
 
@@ -849,9 +848,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}",
-                    e);
+                this._logger?.LogError(e, $"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}");
             }
 
             return new List<Order>();
@@ -877,9 +874,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"OrdersRepository set orders as scheduled encountered an exception {e.Message}",
-                    e);
+                this._logger?.LogError(e, $"OrdersRepository set orders as scheduled encountered an exception {e.Message}");
             }
         }
 
@@ -905,7 +900,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"OrdersRepository fetch stale orders exception {e.Message}", e);
+                this._logger?.LogError(e, $"OrdersRepository fetch stale orders exception {e.Message}");
             }
 
             return new List<Order>();

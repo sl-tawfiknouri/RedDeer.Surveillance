@@ -107,7 +107,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError("DashboardModel caught and swallowed an exception", e);
+                this._logger.LogError(e, "DashboardModel caught and swallowed an exception");
             }
         }
     }

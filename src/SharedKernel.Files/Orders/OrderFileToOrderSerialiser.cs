@@ -54,9 +54,11 @@
         /// </summary>
         private string AdjustTruncatedSedols(string sedol)
         {
-            if (string.IsNullOrWhiteSpace(sedol)) return sedol;
+            if (string.IsNullOrWhiteSpace(sedol)) 
+                return sedol;
 
-            while (sedol.Length < 7) sedol = $"0{sedol}";
+            while (sedol.Length < 7) 
+                sedol = $"0{sedol}";
 
             return sedol;
         }
@@ -80,26 +82,22 @@
 
         private DateTime? MapDate(string date)
         {
-            if (string.IsNullOrWhiteSpace(date)) return null;
+            if (!DateTime.TryParse(date, out var result))
+            {
+                return null;
+            }
 
-            var success = DateTime.TryParse(date, out var result);
-
-            if (success)
-                return result;
-
-            return null;
+            return result;
         }
 
         private decimal? MapDecimal(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (!decimal.TryParse(value, out var result))
+            {
+                return null;
+            }
 
-            var success = decimal.TryParse(value, out var result);
-
-            if (success)
-                return result;
-
-            return null;
+            return result;
         }
 
         private FinancialInstrument MapInstrument(OrderFileContract contract)
@@ -143,32 +141,6 @@
                 string.Empty);
         }
 
-        private long? MapLong(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value)) return null;
-
-            var success = long.TryParse(value, out var result);
-
-            if (success)
-                return result;
-
-            return null;
-        }
-
-        private long? MapLongWithRounding(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value)) return null;
-
-            var success = decimal.TryParse(value, out var result);
-
-            if (!success)
-                return null;
-
-            var adjustedToIntegerValue = Math.Round(result, 0, MidpointRounding.AwayFromZero);
-
-            return this.MapLong(adjustedToIntegerValue.ToString());
-        }
-
         private Market MapMarket(OrderFileContract contract)
         {
             Enum.TryParse(contract.MarketType, out MarketTypes marketType);
@@ -194,8 +166,8 @@
             var orderDirection = this.MapToEnum<OrderDirections>(contract.OrderDirection);
             var orderCurrency = new Currency(contract.OrderCurrency);
             var orderSettlementCurrency = !string.IsNullOrWhiteSpace(contract.OrderSettlementCurrency)
-                                              ? (Currency?)new Currency(contract.OrderSettlementCurrency)
-                                              : null;
+                                              ? new Currency(contract.OrderSettlementCurrency)
+                                              : (Currency?)null;
 
             var orderCleanDirty = this.MapToEnum<OrderCleanDirty>(contract.OrderCleanDirty);
 
@@ -209,8 +181,8 @@
             var orderOptionEuropeanAmerican =
                 this.MapToEnum<OptionEuropeanAmerican>(contract.OrderOptionEuropeanAmerican);
 
-            var orderedVolume = this.MapLongWithRounding(contract.OrderOrderedVolume);
-            var filledVolume = this.MapLongWithRounding(contract.OrderFilledVolume);
+            var orderedVolume = this.MapDecimal(contract.OrderOrderedVolume);
+            var filledVolume = this.MapDecimal(contract.OrderFilledVolume);
 
             var accInterest = this.MapDecimal(contract.OrderAccumulatedInterest);
 
@@ -305,10 +277,7 @@
         private T MapToEnum<T>(string propertyValue)
             where T : struct
         {
-            propertyValue = propertyValue?.ToUpper() ?? string.Empty;
-
             EnumExtensions.TryParsePermutations(propertyValue, out T result);
-
             return result;
         }
 
@@ -338,8 +307,8 @@
             var cleanDirty = this.MapToEnum<OrderCleanDirty>(contract.DealerOrderCleanDirty);
             var euroAmerican = this.MapToEnum<OptionEuropeanAmerican>(contract.DealerOrderOptionEuropeanAmerican);
 
-            var orderedVolume = this.MapLongWithRounding(contract.DealerOrderOrderedVolume);
-            var filledVolume = this.MapLongWithRounding(contract.DealerOrderFilledVolume);
+            var orderedVolume = this.MapDecimal(contract.DealerOrderOrderedVolume);
+            var filledVolume = this.MapDecimal(contract.DealerOrderFilledVolume);
 
             var accumulatedInterest = this.MapDecimal(contract.DealerOrderAccumulatedInterest);
             var optionStrikePrice = this.MapDecimal(contract.DealerOrderOptionStrikePrice);

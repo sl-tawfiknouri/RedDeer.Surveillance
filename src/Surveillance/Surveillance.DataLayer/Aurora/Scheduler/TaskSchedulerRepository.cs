@@ -58,9 +58,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"MarkTasksProcessed failed with exception {e.Message} {e?.InnerException?.Message}",
-                    e);
+                this._logger?.LogError(e, $"MarkTasksProcessed failed with exception");
             }
         }
 
@@ -86,8 +84,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError(
-                    $"ReadUnprocessedTasks encountered an error for date {dueBy} {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"ReadUnprocessedTasks encountered an error for date {dueBy}");
             }
 
             return tasks;
@@ -116,7 +113,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"SaveTask encountered error {e.Message} {e.InnerException?.Message}", e);
+                this._logger.LogError(e, $"SaveTask encountered error");
             }
         }
 

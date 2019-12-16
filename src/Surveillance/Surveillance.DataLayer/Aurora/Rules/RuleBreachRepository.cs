@@ -122,21 +122,21 @@
                     var dto = new RuleBreachDto(message);
 
                     using (var dbConnection = this._dbConnectionFactory.BuildConn())
-                    using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                     {
-                        var result = conn.Result;
+                        var result = dbConnection.QueryFirstOrDefault<long?>(SaveRuleBreachSql, dto);
                         this._logger.LogInformation("completed saving rule breach to repository");
-
                         return result;
                     }
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                    this._logger.LogError(e, $"error for Create");
                 }
 
-                return null;
+                
             }
+
+            return await Task.FromResult<long?>(null);
         }
 
         public async Task<RuleBreach> Get(string id)
@@ -165,7 +165,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return null;
@@ -190,7 +190,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return false;
@@ -217,7 +217,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
+                this._logger.LogError(e, $"error for Create");
             }
 
             return false;

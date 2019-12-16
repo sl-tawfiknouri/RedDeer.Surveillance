@@ -114,9 +114,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"Upload Trade File Monitor encountered an exception in process file for {path}",
-                        e);
+                    this._logger.LogError(e, $"Upload Trade File Monitor encountered an exception in process file for {path}");
                     fileUpload.EndEvent().EndEventWithError(e.Message);
 
                     return false;

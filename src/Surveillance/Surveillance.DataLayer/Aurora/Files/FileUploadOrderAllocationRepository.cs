@@ -57,8 +57,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"FileUploadOrderAllocationRepository upload of {orderAllocationIds.Count} orders for file upload {uploadId} failed to insert because of {e.Message}");
+                this._logger.LogError(e, $"FileUploadOrderAllocationRepository upload of {orderAllocationIds.Count} orders for file upload {uploadId} failed to insert because of {e.Message}");
             }
         }
 

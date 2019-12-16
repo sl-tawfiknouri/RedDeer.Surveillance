@@ -11,6 +11,7 @@
     using Surveillance.DataLayer.Aurora.Judgements;
     using Surveillance.DataLayer.Configuration.Interfaces;
     using Surveillance.DataLayer.Tests.Helpers;
+    using System.Threading.Tasks;
 
     [TestFixture]
     public class JudgementRepositoryTests
@@ -21,7 +22,7 @@
 
         [Test]
         [Explicit("db integration")]
-        public void SaveHighProfit_SavesHighProfit_ToDb()
+        public async Task SaveHighProfit_SavesHighProfit_ToDb()
         {
             var connectionStringFactory = new ConnectionStringFactory(this._configuration);
             var repo = new JudgementRepository(connectionStringFactory, this._logger);
@@ -38,7 +39,7 @@
                 false,
                 false);
 
-            repo.Save(hpJudgement).Wait();
+            await repo.SaveAsync(hpJudgement);
 
             Assert.IsTrue(true);
         }

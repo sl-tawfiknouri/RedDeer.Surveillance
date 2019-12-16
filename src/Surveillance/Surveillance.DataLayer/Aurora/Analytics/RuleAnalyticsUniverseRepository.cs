@@ -56,7 +56,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError("RuleAnalyticsUniverseRepository Create method encountered an error!", e);
+                this._logger.LogError(e, "RuleAnalyticsUniverseRepository Create method encountered an error!");
             }
             finally
             {

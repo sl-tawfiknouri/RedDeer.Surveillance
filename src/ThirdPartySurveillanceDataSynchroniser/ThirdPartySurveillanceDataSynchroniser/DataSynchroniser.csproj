@@ -10,9 +10,9 @@
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningsAsErrors></WarningsAsErrors>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputPath></OutputPath>
+    <NoWarn>1701;1702;NU1701;</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Firefly.MessageBus.Core" Version="1.0.0" />

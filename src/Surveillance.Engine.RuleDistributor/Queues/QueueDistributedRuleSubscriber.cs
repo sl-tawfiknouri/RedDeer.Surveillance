@@ -136,9 +136,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError(
-                    $"execute non distributed message encountered a top level exception. {e.Message} {e.InnerException?.Message}",
-                    e);
+                this.logger.LogError(e, $"execute non distributed message encountered a top level exception.");
             }
         }
 

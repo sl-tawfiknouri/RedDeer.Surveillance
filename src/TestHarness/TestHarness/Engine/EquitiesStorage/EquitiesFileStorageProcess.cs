@@ -73,7 +73,7 @@
 
         public void OnError(Exception error)
         {
-            this._logger.LogError(error.Message);
+            this._logger.LogError(error, "Exception");
         }
 
         public void OnNext(EquityIntraDayTimeBarCollection value)

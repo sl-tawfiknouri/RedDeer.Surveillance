@@ -61,12 +61,12 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
                 return new IOrderBroker[0];
             }
         }
 
-        public async Task<string> InsertOrUpdateBroker(IOrderBroker broker)
+        public async Task<string> InsertOrUpdateBrokerAsync(IOrderBroker broker)
         {
             this._logger?.LogInformation($"{broker?.Name} about to insert or update broker");
 
@@ -75,15 +75,14 @@
             try
             {
                 using (var dbConn = this._dbConnectionFactory.BuildConn())
-                using (var conn = dbConn.ExecuteScalarAsync<string>(InsertBrokerSql, broker))
                 {
-                    var id = await conn;
+                    var id = await dbConn.ExecuteScalarAsync<string>(InsertBrokerSql, broker);
                     return id;
                 }
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
                 return string.Empty;
             }
         }
@@ -118,7 +117,7 @@
             }
             catch (Exception e)
             {
-                this._logger?.LogError($"Error in broker insert or update {e.Message} {e?.InnerException?.Message}");
+                this._logger?.LogError(e, $"Error in broker insert or update");
             }
         }
 

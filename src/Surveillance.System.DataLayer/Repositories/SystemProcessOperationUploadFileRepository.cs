@@ -62,8 +62,7 @@
                 }
                 catch (Exception e)
                 {
-                    this._logger.LogError(
-                        $"System Process Operation Upload File Repository Create Method For {entity.Id} {entity.SystemProcessId}. {e.Message}");
+                    this._logger.LogError(e, $"System Process Operation Upload File Repository Create Method For {entity.Id} {entity.SystemProcessId}.");
                 }
             }
         }
@@ -81,8 +80,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Upload File Repository Get Dashboard method {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Upload File Repository Get Dashboard method");
             }
 
             return new ISystemProcessOperationUploadFile[0];
@@ -106,8 +104,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Upload File Repository Get On Date method {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Upload File Repository Get On Date method");
             }
 
             return new ISystemProcessOperationUploadFile[0];

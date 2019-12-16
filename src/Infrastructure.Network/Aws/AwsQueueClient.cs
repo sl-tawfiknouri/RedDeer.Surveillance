@@ -123,7 +123,7 @@
                 }
                 catch (Exception ex)
                 {
-                    this._logger?.LogError("AwsQueueClient: " + ex?.Message + " " + ex?.InnerException?.Message);
+                    this._logger?.LogError(ex, "AwsQueueClient");
                 }
 
             return 0;

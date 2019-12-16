@@ -95,7 +95,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError($"{e.Message} - {e?.InnerException?.Message}");
+                this.logger.LogError(e, "Exception");
 
                 return false;
             }

@@ -55,17 +55,17 @@
         {
             this.logger?.LogInformation("initiating delayed scheduler");
 
-            this.Scan(null, null);
+            this.Scan(null, null)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
 
             this.timer = new Timer(HeartbeatFrequency) { AutoReset = true, Interval = HeartbeatFrequency };
 
-            this.timer.Elapsed += async (_, __) => await this.Scan(_, __);
+            this.timer.Elapsed += async (sender, elapsedEventArgs) => await this.Scan(sender, elapsedEventArgs);
             this.timer.Start();
         }
 
-        /// <summary>
-        /// The terminate.
-        /// </summary>
         public void Terminate()
         {
             this.logger?.LogInformation("terminating delayed scheduler");
@@ -73,18 +73,6 @@
             this.timer = null;
         }
 
-        /// <summary>
-        /// The scan.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
         private async Task Scan(object sender, ElapsedEventArgs e)
         {
             try
@@ -95,7 +83,7 @@
             }
             catch (Exception a)
             {
-                this.logger.LogError($"encountered an exception {a.Message} {a?.InnerException?.Message}", a);
+                this.logger.LogError(a, $"encountered an exception");
             }
         }
     }

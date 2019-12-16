@@ -156,7 +156,7 @@
         /// </param>
         public void OnError(Exception error)
         {
-            this.logger.LogError("received OnError() event from the universe stream");
+            this.logger.LogError(error, "received OnError() event from the universe stream");
             this.cloneSource.OnError(error);
         }
 

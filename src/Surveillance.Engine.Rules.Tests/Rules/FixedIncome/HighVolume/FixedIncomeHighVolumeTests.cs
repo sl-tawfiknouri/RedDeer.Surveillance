@@ -57,6 +57,16 @@
         private ISystemProcessOperationRunRuleContext ruleContext;
 
         /// <summary>
+        /// The judgement service.
+        /// </summary>
+        private IFixedIncomeHighVolumeJudgementService judgementService;
+
+        /// <summary>
+        /// The data request subscriber.
+        /// </summary>
+        private IUniverseDataRequestsSubscriber dataRequestSubscriber;
+
+        /// <summary>
         /// The market trading hours service.
         /// </summary>
         private IMarketTradingHoursService marketTradingHoursService;

@@ -4,9 +4,9 @@
 
     using DasMulli.Win32.ServiceUtils;
 
-    using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using NLog.Web;
@@ -19,7 +19,8 @@
 
         private bool _stopRequestedByWindows;
 
-        private IWebHost _webHost;
+        private IHost _host;
+        private StructureMapServiceProviderFactory _structureMapServiceProviderFactory;
 
         public Service(ILogger<Service> logger)
         {
@@ -32,25 +33,38 @@
         public void Start(string[] startupArguments, ServiceStoppedCallback serviceStoppedCallback)
         {
             this._logger.LogInformation("Service Starting.");
-            this._webHost = WebHost.CreateDefaultBuilder(startupArguments).UseStartup<Startup>()
-                .UseDefaultServiceProvider(options => options.ValidateScopes = false).UseUrls("http://*:9065/")
-                .ConfigureLogging(
-                    logging =>
-                        {
-                            logging.ClearProviders();
-                            logging.SetMinimumLevel(LogLevel.Trace);
-                        }).UseNLog().Build();
+
+            this._structureMapServiceProviderFactory = new StructureMapServiceProviderFactory(StructureMapContainer.Instance);
+            this._host = Host.CreateDefaultBuilder(startupArguments)
+                .UseServiceProviderFactory(this._structureMapServiceProviderFactory)
+                .ConfigureWebHostDefaults(webBuilder => 
+                { 
+                    webBuilder
+                        .UseStartup<Startup>()
+                        .UseUrls("http://*:9065/"); 
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                })
+                .UseNLog()
+                .Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
-            this._webHost.Services.GetRequiredService<IApplicationLifetime>().ApplicationStopped.Register(
-                () =>
-                    {
-                        if (this._stopRequestedByWindows == false) serviceStoppedCallback();
-                    });
+            this._host
+                .Services
+                .GetRequiredService<IHostApplicationLifetime>()
+                .ApplicationStopped
+                .Register(() =>
+                {
+                    if (this._stopRequestedByWindows == false) 
+                        serviceStoppedCallback();
+                });
 
             this._logger.LogInformation("WebHost Starting.");
-            this._webHost.Start();
+            this._host.Start();
             this._logger.LogInformation("WebHost Started.");
 
             this._logger.LogInformation("Service Started.");
@@ -61,7 +75,8 @@
             this._logger.LogInformation("Service Stopping.");
 
             this._stopRequestedByWindows = true;
-            this._webHost.Dispose();
+            this._host.Dispose();
+            this._structureMapServiceProviderFactory?.Dispose();
             this._cts.Cancel();
 
             this._logger.LogInformation("Service Stop.");

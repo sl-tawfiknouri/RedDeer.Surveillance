@@ -18,11 +18,13 @@
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
-
+    using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
     using RedDeer.Security.Core;
     using RedDeer.Security.Core.Abstractions;
     using RedDeer.Security.Core.Services;
@@ -44,7 +46,7 @@
 
     public class Startup
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IHostEnvironment _environment;
 
         private readonly ILogger _logger;
 
@@ -52,7 +54,7 @@
 
         public Startup(
             IConfiguration configuration,
-            IHostingEnvironment environment,
+            IHostEnvironment environment,
             ILogger<Startup> logger,
             IStartupConfig startupConfig)
         {
@@ -65,7 +67,7 @@
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             else app.UseHsts();
@@ -93,6 +95,12 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IJwtTokenService, RedDeer.Extensions.Security.Authentication.Jwt.JwtTokenService>();
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             services.AddRequestResponseLoggingMiddleware();
 
             services.AddResponseCompression();
@@ -137,7 +145,10 @@
 
             services.AddTransient<IRefinitivTickPriceHistoryApiConfig>((sp) => new RefinitivTickPriceHistoryApiConfig
             {
-                RefinitivTickPriceHistoryApiAddress = this.Configuration["RefinitivTickPriceHistoryApiAddress"]
+                RefinitivTickPriceHistoryApiAddress = this.Configuration["RefinitivTickPriceHistoryApiAddress"],
+                RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.Configuration["RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey"],
+                RefinitivTickPriceHistoryApiPollingSeconds = this.Configuration.GetValue("RefinitivTickPriceHistoryApiPollingSeconds", 60),
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.Configuration.GetValue("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", 600)
             });
 
             // Test services should be added at end of list so that they can override defaults
@@ -198,14 +209,14 @@
 
         private void AddJwtAuth(IServiceCollection services)
         {
-            services.AddAuthentication(
-                options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    }).AddJwtBearer(
-                JwtBearerDefaults.AuthenticationScheme,
-                options =>
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+                    options =>
                     {
                         options.RequireHttpsMetadata = true;
 
@@ -238,44 +249,40 @@
                         }
 
                         options.TokenValidationParameters = new TokenValidationParameters
-                                                                {
-                                                                    ClockSkew = TimeSpan.FromMinutes(1),
-                                                                    RequireExpirationTime = true,
-                                                                    ValidateLifetime = true,
-                                                                    ValidateIssuer = true,
-                                                                    ValidIssuers = validIssuers,
-                                                                    ValidateAudience = true,
-                                                                    ValidAudiences = validAudiences,
-                                                                    ValidateIssuerSigningKey = true,
-                                                                    IssuerSigningKeys = issuerSigningKeys
-                                                                };
+                        {
+                            ClockSkew = TimeSpan.FromMinutes(1),
+                            RequireExpirationTime = true,
+                            ValidateLifetime = true,
+                            ValidateIssuer = true,
+                            ValidIssuers = validIssuers,
+                            ValidateAudience = true,
+                            ValidAudiences = validAudiences,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKeys = issuerSigningKeys
+                        };
 
                         options.Events = new JwtBearerEvents
-                                             {
-                                                 OnAuthenticationFailed = context =>
-                                                     {
-                                                         this._logger.LogWarning(
-                                                             context.Exception,
-                                                             $"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
+                        {
+                            OnAuthenticationFailed = context =>
+                            {
+                                this._logger.LogWarning(context.Exception,$"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
 
-                                                         context.Response.StatusCode = 401;
-                                                         context.Fail("Invalid JWT token");
+                                context.Response.StatusCode = 401;
+                                context.Fail("Invalid JWT token");
 
-                                                         return Task.CompletedTask;
-                                                     },
-                                                 OnMessageReceived = context =>
-                                                     {
-                                                         this._logger.LogDebug(
-                                                             $"Authentication Message Received for Identity: {context.Principal?.Identity?.Name}");
-                                                         return Task.CompletedTask;
-                                                     },
-                                                 OnTokenValidated = context =>
-                                                     {
-                                                         this._logger.LogDebug(
-                                                             $"Authentication Token Validated for Identity: {context.Principal?.Identity?.Name}");
-                                                         return Task.CompletedTask;
-                                                     }
-                                             };
+                                return Task.CompletedTask;
+                            },
+                            OnMessageReceived = context =>
+                            {
+                                this._logger.LogDebug($"Authentication Message Received for Identity: {context.Principal?.Identity?.Name}");
+                                return Task.CompletedTask;
+                            },
+                            OnTokenValidated = context =>
+                            {
+                                this._logger.LogDebug($"Authentication Token Validated for Identity: {context.Principal?.Identity?.Name}");
+                                return Task.CompletedTask;
+                            }
+                        };
                     });
         }
 

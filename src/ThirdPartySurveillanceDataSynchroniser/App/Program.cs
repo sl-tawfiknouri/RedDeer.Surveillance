@@ -1,32 +1,19 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
-using Surveillance.Data.Universe.Refinitiv;
-using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 using DasMulli.Win32.ServiceUtils;
-using DataSynchroniser.Api.Bmll;
-using DataSynchroniser.Api.Factset;
-using DataSynchroniser.Api.Markit;
-using DataSynchroniser.Api.Refinitive;
-using DataSynchroniser.Configuration;
-using Infrastructure.Network.Aws.Interfaces;
-using Microsoft.Extensions.Configuration;
+
 using NLog;
 using StructureMap;
-using Surveillance.Auditing;
+
 using Surveillance.Auditing.Context;
-using Surveillance.Auditing.DataLayer;
-using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.DataLayer;
-using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Reddeer.ApiClient;
-using Surveillance.Reddeer.ApiClient.Configuration.Interfaces;
 
 namespace DataSynchroniser.App
 {
@@ -56,30 +43,8 @@ namespace DataSynchroniser.App
             {
                 SetSysLogOffIfService(args);
 
-                Container = new Container();
-                var builtConfig = BuildConfiguration();
-                Container.Inject(typeof(IAwsConfiguration), builtConfig);
-                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
-                Container.Inject(typeof(IApiClientConfiguration), builtConfig);
-                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig); 
-
-                Container.Configure(
-                    config =>
-                        {
-                            config.IncludeRegistry<DataLayerRegistry>();
-                            config.IncludeRegistry<DataSynchroniserRegistry>();
-                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                            config.IncludeRegistry<BmllDataSynchroniserRegistry>();
-                            config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
-                            config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
-                            config.IncludeRegistry<ReddeerApiClientRegistry>();
-                            config.IncludeRegistry<AppRegistry>();
-                            config.IncludeRegistry<RefinitivDataSynchroniserRegistry>();
-                        });
-
                 SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
+                Container = StructureMapContainer.Instance;
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run();
@@ -91,16 +56,6 @@ namespace DataSynchroniser.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
-
-        private static Config BuildConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.Build(configurationBuilder);
         }
 
         private static void DisableConsoleLog()
@@ -151,8 +106,10 @@ namespace DataSynchroniser.App
             Logger.Log(LogLevel.Info, "Program registering as service");
 
             // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
-            var remainingArgs = Environment.GetCommandLineArgs().Where(arg => arg != RegisterServiceFlag)
-                .Select(EscapeCommandLineArgument).Append(RunAsServiceFlag);
+            var remainingArgs = Environment.GetCommandLineArgs()
+                .Where(arg => arg != RegisterServiceFlag)
+                .Select(EscapeCommandLineArgument)
+                .Append(RunAsServiceFlag);
 
             var host = Process.GetCurrentProcess().MainModule.FileName;
 
@@ -203,6 +160,7 @@ namespace DataSynchroniser.App
         private static void RunInteractive(string[] args)
         {
             var service = Container.GetInstance<Service>();
+
             service.Start(new string[0], () => { });
             Console.WriteLine("Running interactively, press enter to stop.");
             Console.ReadLine();
@@ -219,8 +177,7 @@ namespace DataSynchroniser.App
         {
             new Win32ServiceManager().DeleteService(ServiceName);
 
-            Console.WriteLine(
-                $@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
+            Console.WriteLine($@"Successfully unregistered service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
     }
 }

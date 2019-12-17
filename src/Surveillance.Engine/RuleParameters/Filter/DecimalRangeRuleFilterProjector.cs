@@ -5,6 +5,7 @@
     using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
     using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
+    using Range = RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Range;
 
     /// <summary>
     /// The decimal range rule filter projector.

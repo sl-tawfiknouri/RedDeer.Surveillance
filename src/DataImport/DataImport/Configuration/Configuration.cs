@@ -47,6 +47,8 @@ namespace DataImport.Configuration
         
         public string RefinitivTickPriceHistoryApiAddress { get; set; }
 
+        public string RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey { get; set; }
+
         public int RefinitivTickPriceHistoryApiPollingSeconds { get; set; }
         
         public int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; }

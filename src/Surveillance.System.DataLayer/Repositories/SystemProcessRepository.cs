@@ -33,11 +33,11 @@
 
         private readonly IConnectionStringFactory _dbConnectionFactory;
 
-        private readonly ILogger _logger;
+        private readonly ILogger<SystemProcessRepository> _logger;
 
         public SystemProcessRepository(
             IConnectionStringFactory connectionStringFactory,
-            ILogger<ISystemProcessRepository> logger)
+            ILogger<SystemProcessRepository> logger)
         {
             this._dbConnectionFactory = connectionStringFactory
                                         ?? throw new ArgumentNullException(nameof(connectionStringFactory));

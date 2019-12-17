@@ -26,7 +26,7 @@
 
         private ILogger<ISystemProcessOperationRepository> _operationLogger;
 
-        private ILogger<ISystemProcessRepository> _processLogger;
+        private ILogger<SystemProcessRepository> _processLogger;
 
         [Test]
         [Explicit]
@@ -126,7 +126,7 @@
         public void Setup()
         {
             this._config = A.Fake<ISystemDataLayerConfig>();
-            this._processLogger = A.Fake<ILogger<ISystemProcessRepository>>();
+            this._processLogger = A.Fake<ILogger<SystemProcessRepository>>();
             this._operationLogger = A.Fake<ILogger<ISystemProcessOperationRepository>>();
             this._logger = A.Fake<ILogger<ISystemProcessOperationRuleRunRepository>>();
 

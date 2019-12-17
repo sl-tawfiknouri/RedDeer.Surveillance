@@ -11,6 +11,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Hosting;
 
     using NLog;
     using NLog.Web;
@@ -18,6 +19,7 @@
     using Surveillance.Api.App.Configuration;
 
     using LogLevel = NLog.LogLevel;
+    using RedDeer.Extensions.Configuration.EC2Tags;
 
     public class Service : IWin32Service
     {
@@ -86,7 +88,7 @@
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
-            this._webHost.Services.GetRequiredService<IApplicationLifetime>().ApplicationStopped.Register(
+            this._webHost.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopped.Register(
                 () =>
                     {
                         if (this._stopRequestedByWindows == false) serviceStoppedCallback();
@@ -118,6 +120,9 @@
             provider.Directory.AddFile("/", new StringFileInfo(json, "appsettings.dynamodb.json"));
 
             configurationBuilder.AddJsonFile(provider, "appsettings.dynamodb.json", false, true);
+
+            configurationBuilder
+                .AddEC2Tags(EC2TagsConstants.NestedSectionPath);
         }
 
         private static void ConfigureLogging(WebHostBuilderContext context, ILoggingBuilder logging)

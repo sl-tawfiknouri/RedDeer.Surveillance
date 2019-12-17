@@ -56,33 +56,21 @@ namespace RedDeer.Surveillance.App.Configuration
                 this.Ec2Check();
 
                 var apiClient = new ApiClientConfiguration
-                                    {
-                                        IsEc2Instance = EC2InstanceMetadata.InstanceId != null,
-                                        ScheduledRuleQueueName =
-                                            this.GetValue("ScheduledRuleQueueName", configurationBuilder),
-                                        ScheduleRuleDistributedWorkQueueName =
-                                            this.GetValue("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                                        CaseMessageQueueName =
-                                            this.GetValue("CaseMessageQueueName", configurationBuilder),
-                                        DataSynchroniserRequestQueueName =
-                                            this.GetValue("DataSynchronizerQueueName", configurationBuilder),
-                                        ClientServiceUrl =
-                                            this.GetValue("ClientServiceUrlAndPort", configurationBuilder),
-                                        TestRuleRunUpdateQueueName =
-                                            this.GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
-                                        SurveillanceUserApiAccessToken =
-                                            this.GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
-                                        AuroraConnectionString =
-                                            this.GetValue("AuroraConnectionString", configurationBuilder),
-                                        BmllServiceUrl = this.GetValue("BmllServiceUrlAndPort", configurationBuilder),
-                                        UploadCoordinatorQueueName =
-                                            this.GetValue("UploadCoordinatorQueueName", configurationBuilder),
-                                        ScheduleRuleCancellationQueueName =
-                                            this.GetValue("ScheduleRuleCancellationQueueName", configurationBuilder),
-                                        ScheduleDelayedRuleRunQueueName = this.GetValue(
-                                            "ScheduleDelayedRuleRunQueueName",
-                                            configurationBuilder)
-                                    };
+                {
+                    IsEc2Instance = EC2InstanceMetadata.InstanceId != null,
+                    ScheduledRuleQueueName = this.GetValue("ScheduledRuleQueueName", configurationBuilder),
+                    ScheduleRuleDistributedWorkQueueName = this.GetValue("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                    CaseMessageQueueName = this.GetValue("CaseMessageQueueName", configurationBuilder),
+                    DataSynchroniserRequestQueueName = this.GetValue("DataSynchronizerQueueName", configurationBuilder),
+                    ClientServiceUrl = this.GetValue("ClientServiceUrlAndPort", configurationBuilder),
+                    TestRuleRunUpdateQueueName = this.GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
+                    SurveillanceUserApiAccessToken = this.GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
+                    AuroraConnectionString =this.GetValue("AuroraConnectionString", configurationBuilder),
+                    BmllServiceUrl = this.GetValue("BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName = this.GetValue("UploadCoordinatorQueueName", configurationBuilder),
+                    ScheduleRuleCancellationQueueName = this.GetValue("ScheduleRuleCancellationQueueName", configurationBuilder),
+                    ScheduleDelayedRuleRunQueueName = this.GetValue("ScheduleDelayedRuleRunQueueName", configurationBuilder)
+                };
 
                 return apiClient;
             }
@@ -95,44 +83,21 @@ namespace RedDeer.Surveillance.App.Configuration
                 this.Ec2Check();
 
                 var networkConfiguration = new DataLayerConfiguration
-                                               {
-                                                   IsEc2Instance = EC2InstanceMetadata.InstanceId != null,
-                                                   ScheduledRuleQueueName =
-                                                       this.GetValue("ScheduledRuleQueueName", configurationBuilder),
-                                                   ScheduleRuleDistributedWorkQueueName =
-                                                       this.GetValue(
-                                                           "ScheduleRuleDistributedWorkQueueName",
-                                                           configurationBuilder),
-                                                   CaseMessageQueueName =
-                                                       this.GetValue("CaseMessageQueueName", configurationBuilder),
-                                                   DataSynchroniserRequestQueueName =
-                                                       this.GetValue("DataSynchronizerQueueName", configurationBuilder),
-                                                   ClientServiceUrl =
-                                                       this.GetValue("ClientServiceUrlAndPort", configurationBuilder),
-                                                   TestRuleRunUpdateQueueName =
-                                                       this.GetValue(
-                                                           "TestRuleRunUpdateQueueName",
-                                                           configurationBuilder),
-                                                   SurveillanceUserApiAccessToken =
-                                                       this.GetValue(
-                                                           "SurveillanceUserApiAccessToken",
-                                                           configurationBuilder),
-                                                   AuroraConnectionString =
-                                                       this.GetValue("AuroraConnectionString", configurationBuilder),
-                                                   BmllServiceUrl =
-                                                       this.GetValue("BmllServiceUrlAndPort", configurationBuilder),
-                                                   UploadCoordinatorQueueName =
-                                                       this.GetValue(
-                                                           "UploadCoordinatorQueueName",
-                                                           configurationBuilder),
-                                                   ScheduleRuleCancellationQueueName =
-                                                       this.GetValue(
-                                                           "ScheduleRuleCancellationQueueName",
-                                                           configurationBuilder),
-                                                   ScheduleDelayedRuleRunQueueName = this.GetValue(
-                                                       "ScheduleDelayedRuleRunQueueName",
-                                                       configurationBuilder)
-                                               };
+                {
+                    IsEc2Instance = EC2InstanceMetadata.InstanceId != null,
+                    ScheduledRuleQueueName = this.GetValue("ScheduledRuleQueueName", configurationBuilder),
+                    ScheduleRuleDistributedWorkQueueName = this.GetValue("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                    CaseMessageQueueName = this.GetValue("CaseMessageQueueName", configurationBuilder),
+                    DataSynchroniserRequestQueueName = this.GetValue("DataSynchronizerQueueName", configurationBuilder),
+                    ClientServiceUrl = this.GetValue("ClientServiceUrlAndPort", configurationBuilder),
+                    TestRuleRunUpdateQueueName = this.GetValue("TestRuleRunUpdateQueueName",configurationBuilder),
+                    SurveillanceUserApiAccessToken = this.GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
+                    AuroraConnectionString = this.GetValue("AuroraConnectionString", configurationBuilder),
+                    BmllServiceUrl = this.GetValue("BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName = this.GetValue("UploadCoordinatorQueueName", configurationBuilder),
+                    ScheduleRuleCancellationQueueName = this.GetValue("ScheduleRuleCancellationQueueName", configurationBuilder),
+                    ScheduleDelayedRuleRunQueueName = this.GetValue("ScheduleDelayedRuleRunQueueName", configurationBuilder)
+                };
 
                 return networkConfiguration;
             }
@@ -145,11 +110,9 @@ namespace RedDeer.Surveillance.App.Configuration
                 this.Ec2Check();
 
                 var ruleConfiguration = new SystemDataLayerConfig
-                                            {
-                                                SurveillanceAuroraConnectionString = this.GetValue(
-                                                    "AuroraConnectionString",
-                                                    configurationBuilder)
-                                            };
+                {
+                    SurveillanceAuroraConnectionString = this.GetValue("AuroraConnectionString", configurationBuilder)
+                };
 
                 return ruleConfiguration;
             }
@@ -163,7 +126,11 @@ namespace RedDeer.Surveillance.App.Configuration
 
                 var config = new RefinitivTickPriceHistoryApiConfig
                 {
-                    RefinitivTickPriceHistoryApiAddress = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder)
+                    RefinitivTickPriceHistoryApiAddress = this.GetValue("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
+                    RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.GetValue("RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey", configurationBuilder),
+                    RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
+                    RefinitivTickPriceHistoryApiTimeOutDurationSeconds= this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
+
                 };
 
                 return config;
@@ -183,10 +150,10 @@ namespace RedDeer.Surveillance.App.Configuration
                 bool.TryParse(alwaysRequireAllocations, out var alwaysRequireAllocationValue);
 
                 var ruleConfiguration = new RuleConfiguration
-                                            {
-                                                AutoScheduleRules = autoScheduleRulesValue,
-                                                AlwaysRequireAllocations = alwaysRequireAllocationValue
-                                            };
+                {
+                    AutoScheduleRules = autoScheduleRulesValue,
+                    AlwaysRequireAllocations = alwaysRequireAllocationValue
+                };
 
                 return ruleConfiguration;
             }
@@ -220,19 +187,15 @@ namespace RedDeer.Surveillance.App.Configuration
                     });
 
             var query = new QueryRequest
-                            {
-                                TableName = DynamoDbTable,
-                                KeyConditionExpression = "#NameAttribute = :NameValue",
-                                ExpressionAttributeNames =
-                                    new Dictionary<string, string> { { "#NameAttribute", "name" } },
-                                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                                                                {
-                                                                    {
-                                                                        ":NameValue",
-                                                                        new AttributeValue(environmentClientId)
-                                                                    }
-                                                                }
-                            };
+            {
+                TableName = DynamoDbTable,
+                KeyConditionExpression = "#NameAttribute = :NameValue",
+                ExpressionAttributeNames = new Dictionary<string, string> { { "#NameAttribute", "name" } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    { ":NameValue", new AttributeValue(environmentClientId) }
+                }
+            };
 
             var attributes = new Dictionary<string, string>();
 
@@ -262,23 +225,24 @@ namespace RedDeer.Surveillance.App.Configuration
         private string GetTag(string name)
         {
             var instanceId = EC2InstanceMetadata.InstanceId;
-            var client = new AmazonEC2Client(
-                new AmazonEC2Config
-                    {
-                        RegionEndpoint = RegionEndpoint.EUWest1, ProxyCredentials = CredentialCache.DefaultCredentials
-                    });
+            var amazonEC2Config = new AmazonEC2Config
+            {
+                RegionEndpoint = RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            };
+            var client = new AmazonEC2Client(amazonEC2Config);
 
-            var tags = client.DescribeTagsAsync(
-                new DescribeTagsRequest
-                    {
-                        Filters = new List<Filter>
-                                      {
-                                          new Filter("resource-id", new List<string> { instanceId }),
-                                          new Filter("key", new List<string> { name })
-                                      }
-                    }).Result.Tags;
+            var describeTagsRequest = new DescribeTagsRequest
+            {
+                Filters = new List<Filter>
+                {
+                    new Filter("resource-id", new List<string> { instanceId }),
+                    new Filter("key", new List<string> { name })
+                }
+            };
 
-            return tags?.FirstOrDefault()?.Value;
+            var describeTagsAsyncResult = client.DescribeTagsAsync(describeTagsRequest).Result;
+            return describeTagsAsyncResult?.Tags?.FirstOrDefault()?.Value;
         }
 
         private string GetValue(string field, IConfigurationRoot root)
@@ -296,6 +260,14 @@ namespace RedDeer.Surveillance.App.Configuration
             }
 
             return root.GetValue<string>(field);
+        }
+
+        private int GetSettingOrDefault(string name, IConfigurationRoot config, int defaultValue)
+        {
+            var value = GetValue(name, config);
+            return !int.TryParse(value, out var parsed)
+                ? defaultValue
+                : parsed;
         }
     }
 }

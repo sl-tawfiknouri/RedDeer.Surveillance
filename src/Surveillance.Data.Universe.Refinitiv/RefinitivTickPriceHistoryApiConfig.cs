@@ -7,5 +7,6 @@ namespace Surveillance.Data.Universe.Refinitiv
         public string RefinitivTickPriceHistoryApiAddress { get; set; }
         public int RefinitivTickPriceHistoryApiPollingSeconds { get; set; } = 60;
         public int RefinitivTickPriceHistoryApiTimeOutDurationSeconds { get; set; } = 600;
+        public string RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey { get; set; }
     }
 }

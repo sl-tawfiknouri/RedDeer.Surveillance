@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29503.13
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject
@@ -138,10 +138,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe", "Surveillance.Data.Universe\Surveillance.Data.Universe.csproj", "{0CA13628-52E9-4143-81FD-C4ECAA2C0FFC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.Tests", "Surveillance.Data.Universe.Tests\Surveillance.Data.Universe.Tests.csproj", "{2C425CF5-F8FB-464F-9E17-4004108D931D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClient", "Surveillance.Reddeer.TickPriceHistoryClient\Surveillance.Reddeer.TickPriceHistoryClient.csproj", "{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Reddeer.TickPriceHistoryClientTests", "Surveillance.Reddeer.TickPriceHistoryClientTests\Surveillance.Reddeer.TickPriceHistoryClientTests.csproj", "{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.Refinitiv", "Surveillance.Data.Universe.Refinitiv\Surveillance.Data.Universe.Refinitiv.csproj", "{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}"
 EndProject
@@ -381,14 +377,6 @@ Global
 		{2C425CF5-F8FB-464F-9E17-4004108D931D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C425CF5-F8FB-464F-9E17-4004108D931D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C425CF5-F8FB-464F-9E17-4004108D931D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -473,8 +461,6 @@ Global
 		{5992B0E5-98ED-44CF-806C-B93A272D45F4} = {44EC864D-D335-4ED6-A59D-E6DAED18E94C}
 		{0CA13628-52E9-4143-81FD-C4ECAA2C0FFC} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{2C425CF5-F8FB-464F-9E17-4004108D931D} = {93E57B33-108D-4DF9-840A-693277AAA75B}
-		{F5C60B6A-CB71-462B-B104-5FA4D9A9B11F} = {93E57B33-108D-4DF9-840A-693277AAA75B}
-		{EAFEB6C2-9B79-46A8-82F2-7F5AA6F8F517} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{4AD0ACFD-60C9-4FA4-AE58-09FA8EA9A9F0} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{B893BDB3-E352-4C41-8264-92A757A9C394} = {93E57B33-108D-4DF9-840A-693277AAA75B}
 		{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA} = {5214A434-9675-426D-BD03-A34FE2F963E5}

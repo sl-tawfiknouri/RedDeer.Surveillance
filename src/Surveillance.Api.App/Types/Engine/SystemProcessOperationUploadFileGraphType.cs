@@ -30,6 +30,7 @@
 
             this.Field(i => i.FilePath, true).Description("The path of the file uploaded from disk");
             this.Field(i => i.FileType, true).Description("The type of the file being uploaded");
+            
         }
     }
 }

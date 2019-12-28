@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Services.Interfaces
 {
@@ -7,5 +8,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services.Interfaces
         Task<string> StartQueryExecutionAsync(string database, string queryString, string outputLocation);
 
         Task PoolQueryExecutionAsync(string queryExecutionId);
+
+        Task BatchPoolQueryExecutionAsync(List<string> queryExecutionId, int delayMs = 5000);
     }
 }

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RedDeer.Etl.SqlSriptExecutor.Services.Interfaces;
 using RedDeer.Etl.SqlSriptExecutor.Services.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Services
@@ -48,17 +49,23 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
 
             var requestJson = request != null ? JsonConvert.SerializeObject(request) : "";
             _logger.LogDebug($"Request: '{requestJson}'");
-            
+
+            var queryExecutionIds = new List<string>();
+
             foreach (var script in request.Scripts)
             {
                 _logger.LogDebug($"Executing script: '{JsonConvert.SerializeObject(script)}'");
 
                 var queryString = await _s3ClientService.ReadAllText(script.SqlScriptS3Location);
                 var queryExecutionId = await _athenaService.StartQueryExecutionAsync(script.Database, queryString, script.CsvOutputLocation);
-                await _athenaService.PoolQueryExecutionAsync(queryExecutionId);
+                queryExecutionIds.Add(queryExecutionId);
 
                 _logger.LogDebug($"Executed script: '{JsonConvert.SerializeObject(script)}' with ExecutionId '{queryExecutionId}'.");
             }
+
+            await _athenaService.BatchPoolQueryExecutionAsync(queryExecutionIds);
+
+            _logger.LogDebug($"Completed QueryExecutionIds '{string.Join(", ", queryExecutionIds)}'.");
 
             return await Task.FromResult(true);
         }

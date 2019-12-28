@@ -96,6 +96,65 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
             _logger.LogDebug($"Data Scanned for '{queryExecutionId}': '{queryExecution.Statistics.DataScannedInBytes}' Bytes.");
         }
 
+        public async Task BatchPoolQueryExecutionAsync(List<string> queryExecutionIds, int delayMs = 5000)
+        {
+            var queryExecutions = new List<QueryExecution>();
+
+            var executingStates = new string[] { QueryExecutionState.RUNNING, QueryExecutionState.QUEUED };
+            var unsuccessStates = new string[] { QueryExecutionState.CANCELLED, QueryExecutionState.FAILED };
+
+            var running = new List<string>(queryExecutionIds);
+
+            do
+            {
+                try
+                {
+                    _logger.LogDebug($"BatchPoolQueryExecutionAsync for 'queryExecutionIds': '{string.Join(", ", queryExecutionIds)}'.");
+
+                    var batchGetQueryExecutionRequest = new BatchGetQueryExecutionRequest() { QueryExecutionIds = running };
+
+                    var client = _amazonAthenaClientFactory.Create();
+                    var batchGetQueryExecutionResponse = await client.BatchGetQueryExecutionAsync(batchGetQueryExecutionRequest);
+                    batchGetQueryExecutionResponse.EnsureSuccessStatusCode();
+
+                    foreach (var queryExecution in batchGetQueryExecutionResponse.QueryExecutions)
+                    {
+                        _logger.LogDebug($"BatchPoolQueryExecutionAsync state '{queryExecution.Status.State}', StateChangeReason: '{queryExecution.Status.StateChangeReason}', Data Scanned: '{queryExecution.Statistics.DataScannedInBytes}' Bytes for 'queryExecutionId': '{queryExecution.QueryExecutionId}'.");
+                    }
+
+                    var executingQueryExecutions = batchGetQueryExecutionResponse.QueryExecutions.Where(queryExecution => executingStates.Any(state => queryExecution.Status.State.Equals(state)));
+                    var completedQueryExecutions = batchGetQueryExecutionResponse.QueryExecutions.Where(queryExecution => executingStates.Any(state => !queryExecution.Status.State.Equals(state)));
+
+                    queryExecutions.AddRange(completedQueryExecutions);
+
+                    running = executingQueryExecutions.Select(s => s.QueryExecutionId).ToList();
+
+                    if (running.Any())
+                    {
+                        await Task.Delay(delayMs);
+                    }
+
+                    
+
+                }
+                catch (InvalidRequestException e)
+                {
+                    _logger.LogError(e, $"Exception while executing BatchPoolQueryExecutionAsync for 'queryExecutionIds': '{string.Join(", ", queryExecutionIds)}'.");
+                    throw e;
+                }
+            }
+            while (running.Any());
+
+            var unsuccessQueryExecutions = queryExecutions.Where(queryExecution => unsuccessStates.Any(state => queryExecution.Status.State.Equals(state))).ToList();
+            if (unsuccessQueryExecutions.Any())
+            {
+                var exceptions = unsuccessQueryExecutions.Select(queryExecution => new Exception($"State '{queryExecution.Status.State}', StateChangeReason: '{queryExecution.Status.StateChangeReason}'."));
+                throw new AggregateException($"BatchPoolQueryExecutionAsync for 'queryExecutionIds': '{string.Join(", ", queryExecutionIds)}' failed.", exceptions);
+            }
+
+            _logger.LogDebug($"BatchPoolQueryExecutionAsync for 'queryExecutionIds': '{string.Join(", ", queryExecutionIds)}' completed.");
+        }
+
         public async Task<List<Dictionary<string, string>>> GetQueryResultsAsync(string queryExecutionId)
         {
             var items = new List<Dictionary<string, string>>();

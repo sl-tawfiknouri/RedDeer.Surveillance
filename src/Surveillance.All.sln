@@ -149,11 +149,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Data.Universe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TzConvertFacade", "TzConvertFacade\TzConvertFacade.csproj", "{1EC3AD4F-9DAE-4043-B5B2-2DAFA9F208CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Files.Tests", "SharedKernel.Files.Tests\SharedKernel.Files.Tests.csproj", "{69A3FA7C-7D50-470A-B4AD-BD28636648F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.Files.Tests", "SharedKernel.Files.Tests\SharedKernel.Files.Tests.csproj", "{69A3FA7C-7D50-470A-B4AD-BD28636648F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Refinitiv", "DataSynchroniser.Api.Refinitiv\DataSynchroniser.Api.Refinitiv.csproj", "{232C4EED-9881-47EC-A74D-FEDD3BEDDA90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Refinitiv.Tests", "DataSynchroniser.Api.Refinitiv.Tests\DataSynchroniser.Api.Refinitiv.Tests.csproj", "{CF9322B9-E40B-4746-B771-9C4B9BBD4287}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Refinitiv.Tests", "DataSynchroniser.Api.Refinitiv.Tests\DataSynchroniser.Api.Refinitiv.Tests.csproj", "{CF9322B9-E40B-4746-B771-9C4B9BBD4287}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ETL", "ETL", "{7E3CB2BD-1B2F-4C3F-BDBE-2AC46B5BE831}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedDeer.Etl.SqlSriptExecutor.Lambda", "DataImport\ETL\RedDeer.Etl.SqlSriptExecutor.Lambda\RedDeer.Etl.SqlSriptExecutor.Lambda.csproj", "{3A4F7C79-0F4B-4F48-9D33-02335EF067C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedDeer.Etl.SqlSriptExecutor.Lambda.Tests", "DataImport\ETL\RedDeer.Etl.SqlSriptExecutor.Lambda.Tests\RedDeer.Etl.SqlSriptExecutor.Lambda.Tests.csproj", "{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedDeer.Etl.SqlSriptExecutor", "DataImport\ETL\RedDeer.Etl.SqlSriptExecutor\RedDeer.Etl.SqlSriptExecutor.csproj", "{5408DE43-03F4-490D-ACF8-A0E1559BE0C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -413,6 +421,18 @@ Global
 		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF9322B9-E40B-4746-B771-9C4B9BBD4287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A4F7C79-0F4B-4F48-9D33-02335EF067C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4F7C79-0F4B-4F48-9D33-02335EF067C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4F7C79-0F4B-4F48-9D33-02335EF067C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4F7C79-0F4B-4F48-9D33-02335EF067C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5408DE43-03F4-490D-ACF8-A0E1559BE0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5408DE43-03F4-490D-ACF8-A0E1559BE0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5408DE43-03F4-490D-ACF8-A0E1559BE0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5408DE43-03F4-490D-ACF8-A0E1559BE0C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -481,6 +501,10 @@ Global
 		{69A3FA7C-7D50-470A-B4AD-BD28636648F4} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{232C4EED-9881-47EC-A74D-FEDD3BEDDA90} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
 		{CF9322B9-E40B-4746-B771-9C4B9BBD4287} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
+		{7E3CB2BD-1B2F-4C3F-BDBE-2AC46B5BE831} = {1E88F83E-A7E1-403D-A9BB-82806595669A}
+		{3A4F7C79-0F4B-4F48-9D33-02335EF067C6} = {7E3CB2BD-1B2F-4C3F-BDBE-2AC46B5BE831}
+		{D36DBF5A-7EA0-4D08-A291-9EF07548D9E3} = {7E3CB2BD-1B2F-4C3F-BDBE-2AC46B5BE831}
+		{5408DE43-03F4-490D-ACF8-A0E1559BE0C9} = {7E3CB2BD-1B2F-4C3F-BDBE-2AC46B5BE831}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

@@ -20,7 +20,7 @@ namespace SharedKernel.Files.ExtendedValidators
             if (string.IsNullOrWhiteSpace(propertyValue)) 
                 return true;
 
-            var dateFormats = new string[] { "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd" };
+            var dateFormats = new string[] { "yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd" };
 
             foreach (var dateFormat in dateFormats)
             {

@@ -73,6 +73,7 @@ namespace SharedKernel.Files.Tests.GenericValidators
 
         [TestCase("2010-01-01")]
         [TestCase("2010-01-01T23:59:59")]
+        [TestCase("2019-10-31 14:51:57.000")]
         public void DateParseableValidator_WhenHasValidDateFormatAndAfter2010_IsValid(string dateValue)
         {
             validator

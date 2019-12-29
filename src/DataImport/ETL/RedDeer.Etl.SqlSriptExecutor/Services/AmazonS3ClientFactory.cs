@@ -22,19 +22,18 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
 
         public IAmazonS3 Create()
         {
-            return new AmazonS3Client();
-            //if (_ec2InstanceMetadataProvider.InstanceId() != null)
-            //{
-            //    return new AmazonS3Client();
-            //}
+            if (_ec2InstanceMetadataProvider.InstanceId() != null)
+            {
+                return new AmazonS3Client();
+            }
 
-            //var amazonEC2Config = new AmazonS3Config
-            //{
-            //    RegionEndpoint = RegionEndpoint.EUWest1,
-            //    ProxyCredentials = CredentialCache.DefaultCredentials
-            //};
+            var amazonEC2Config = new AmazonS3Config
+            {
+                RegionEndpoint = RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            };
 
-            //return new AmazonS3Client(amazonEC2Config);
+            return new AmazonS3Client(amazonEC2Config);
         }
     }
 }

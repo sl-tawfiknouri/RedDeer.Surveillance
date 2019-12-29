@@ -17,13 +17,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Lambda.Tests
 {
-    public class UnitTestEC2InstanceMetadataProvider
-        : IEC2InstanceMetadataProvider
-    {
-        public string InstanceId() 
-            => null;
-    }
-
     public class FunctionTest
     {
         [Fact]

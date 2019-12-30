@@ -48,7 +48,7 @@ namespace SharedKernel.Files.Tests.GenericValidators
                 .Where(w => w.PropertyName == nameof(PropertyValidator.PropertyValue))
                 .Where(w => w.ErrorCode == nameof(DateParseableValidator))
                 .Should()
-                .Contain(w => w.ErrorMessage == $"'{FluentValidation.Internal.Extensions.SplitPascalCase(nameof(PropertyValidator.PropertyValue))}' must have a valid date. '{dateValue}' is not recognised using formats: ['yyyy-MM-ddTHH:mm:ss', 'yyyy-MM-dd'].");
+                .Contain(w => w.ErrorMessage == $"'{FluentValidation.Internal.Extensions.SplitPascalCase(nameof(PropertyValidator.PropertyValue))}' must have a valid date. '{dateValue}' is not recognised using formats: ['yyyy-MM-dd HH:mm:ss.fff', 'yyyy-MM-ddTHH:mm:ss', 'yyyy-MM-dd'].");
         }
 
         [TestCase("2009-12-31")]

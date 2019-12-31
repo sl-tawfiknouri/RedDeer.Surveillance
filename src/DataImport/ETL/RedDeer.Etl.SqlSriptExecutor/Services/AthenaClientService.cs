@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Services
 {
-    public class AthenaService 
-        : IAthenaService
+    public class AthenaClientService 
+        : IAthenaClientService
     {
         private readonly IAmazonAthenaClientFactory _amazonAthenaClientFactory;
-        private readonly ILogger<AthenaService> _logger; 
+        private readonly ILogger<AthenaClientService> _logger; 
 
-        public AthenaService(
+        public AthenaClientService(
             IAmazonAthenaClientFactory amazonAthenaClientFactory,
-            ILogger<AthenaService> logger)
+            ILogger<AthenaClientService> logger)
         {
             _amazonAthenaClientFactory = amazonAthenaClientFactory;
             _logger = logger;
@@ -52,7 +52,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
         /// <summary>
         ///  Poll API to determine when the query completed
         /// </summary>
-        public async Task PoolQueryExecutionAsync(string queryExecutionId)
+        public async Task PoolQueryExecutionAsync(string queryExecutionId, int delayMs = 5000)
         {
             QueryExecution queryExecution = null;
 
@@ -83,7 +83,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
                             new Exception($"State '{queryExecution.Status.State}', StateChangeReason: '{queryExecution.Status.StateChangeReason}'."));
                     }
 
-                    await Task.Delay(3000); 
+                    await Task.Delay(delayMs); 
                 }
                 catch (InvalidRequestException e)
                 {
@@ -119,7 +119,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
 
                     foreach (var queryExecution in batchGetQueryExecutionResponse.QueryExecutions)
                     {
-                        _logger.LogDebug($"BatchPoolQueryExecutionAsync state '{queryExecution.Status.State}', StateChangeReason: '{queryExecution.Status.StateChangeReason}', Data Scanned: '{queryExecution.Statistics.DataScannedInBytes}' Bytes for 'queryExecutionId': '{queryExecution.QueryExecutionId}'.");
+                        _logger.LogDebug($"BatchPoolQueryExecutionAsync state '{queryExecution.Status?.State}', StateChangeReason: '{queryExecution.Status?.StateChangeReason}', Data Scanned: '{queryExecution.Statistics?.DataScannedInBytes}' Bytes for 'queryExecutionId': '{queryExecution.QueryExecutionId}'.");
                     }
 
                     var executingQueryExecutions = batchGetQueryExecutionResponse.QueryExecutions.Where(queryExecution => executingStates.Any(state => queryExecution.Status.State.Equals(state)));
@@ -133,9 +133,6 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
                     {
                         await Task.Delay(delayMs);
                     }
-
-                    
-
                 }
                 catch (InvalidRequestException e)
                 {

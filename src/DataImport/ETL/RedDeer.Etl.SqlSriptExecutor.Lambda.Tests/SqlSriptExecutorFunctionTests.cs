@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 
-using Xunit;
 using Amazon.Lambda.TestUtilities;
 
 using RedDeer.Etl.SqlSriptExecutor.Services.Models;
@@ -9,13 +8,14 @@ using RedDeer.Etl.SqlSriptExecutor.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using NUnit.Framework;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Lambda.Tests
 {
-    public class FunctionTest
+    public class SqlSriptExecutorFunctionTests
     {
-        [Fact]
-        public async Task TestToUpperFunction()
+        [Test]
+        public async Task FunctionHandler_WhenExecuted()
         {
             var request = new SqlSriptExecutorRequest();
             request.Scripts = new SqlSriptData[]

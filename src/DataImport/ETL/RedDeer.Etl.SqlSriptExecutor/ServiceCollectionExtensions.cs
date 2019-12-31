@@ -11,7 +11,7 @@ namespace RedDeer.Etl.SqlSriptExecutor
             services.AddTransient<IS3ClientService, S3ClientService>();
             services.AddTransient<IAmazonS3ClientFactory, AmazonS3ClientFactory>();
 
-            services.AddTransient<IAthenaService, AthenaService>();
+            services.AddTransient<IAthenaClientService, AthenaClientService>();
             services.AddTransient<IAmazonAthenaClientFactory, AmazonAthenaClientFactory>();
 
             services.AddTransient<ISqlSriptExecutorService, SqlSriptExecutorService>();

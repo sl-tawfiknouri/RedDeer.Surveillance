@@ -12,16 +12,16 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
         : ISqlSriptExecutorService
     {
         private readonly IS3ClientService _s3ClientService;
-        private readonly IAthenaService _athenaService;
+        private readonly IAthenaClientService _athenaClientService;
         private readonly ILogger<SqlSriptExecutorService> _logger;
 
         public SqlSriptExecutorService(
             IS3ClientService s3ClientService,
-            IAthenaService athenaService,
+            IAthenaClientService athenaClientService,
             ILogger<SqlSriptExecutorService> logger)
         {
             _s3ClientService = s3ClientService;
-            _athenaService = athenaService;
+            _athenaClientService = athenaClientService;
             _logger = logger;
         }
 
@@ -37,16 +37,6 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
                 throw new ArgumentNullException(nameof(request.Scripts));
             }
 
-            //request.Scripts = new SqlSriptData[]
-            //{
-            //    new SqlSriptData
-            //    {
-            //        CsvOutputLocation = "s3://rd-dev-client-mantasmasidlauskas-eu-west-1/surveillance-etl/spike/results",
-            //        Database = "mm-spike",
-            //        SqlScriptS3Location = "script"
-            //    }
-            //};
-
             var requestJson = request != null ? JsonConvert.SerializeObject(request) : "";
             _logger.LogDebug($"Request: '{requestJson}'");
 
@@ -57,13 +47,13 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
                 _logger.LogDebug($"Executing script: '{JsonConvert.SerializeObject(script)}'");
 
                 var queryString = await _s3ClientService.ReadAllText(script.SqlScriptS3Location);
-                var queryExecutionId = await _athenaService.StartQueryExecutionAsync(script.Database, queryString, script.CsvOutputLocation);
+                var queryExecutionId = await _athenaClientService.StartQueryExecutionAsync(script.Database, queryString, script.CsvOutputLocation);
                 queryExecutionIds.Add(queryExecutionId);
 
                 _logger.LogDebug($"Executed script: '{JsonConvert.SerializeObject(script)}' with ExecutionId '{queryExecutionId}'.");
             }
 
-            await _athenaService.BatchPoolQueryExecutionAsync(queryExecutionIds);
+            await _athenaClientService.BatchPoolQueryExecutionAsync(queryExecutionIds);
 
             _logger.LogDebug($"Completed QueryExecutionIds '{string.Join(", ", queryExecutionIds)}'.");
 

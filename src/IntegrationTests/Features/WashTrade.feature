@@ -4,7 +4,7 @@
 Scenario: Basic wash trade rule run
 	Given the wash trade core settings
 	| TimeWindow | AnalysePositionsBy | MinNumberOfTrades | MaxValueChangePercent |
-	| 1 day      | Clustering         | 2                 | 1                     |
+	| 1 day      | Average            | 2                 | 1                     |
 	And the orders
 	| OrderId | _Date               | _EquitySecurity | OrderDirection | OrderAverageFillPrice | _Volume |
 	| 0       | 2018-01-02T15:00:00 | VODAFONE        | BUY            | 3                     | 100     |

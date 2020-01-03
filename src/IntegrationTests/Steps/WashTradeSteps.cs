@@ -37,11 +37,11 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             dto.WindowSize = RuleParameterHelpers.ToWindowSize(config.ValueOrNull("TimeWindow"));
 
             var analysePositionsBy = config.ValueOrNull("AnalysePositionsBy");
-            if (analysePositionsBy == "Clustering")
+            if (analysePositionsBy == "Average")
             {
-                dto.PerformClusteringPositionAnalysis = true;
-                dto.ClusteringPositionMinimumNumberOfTrades = Convert.ToInt32(config.ValueOrNull("MinNumberOfTrades"));
-                dto.ClusteringPercentageValueDifferenceThreshold = Convert.ToDecimal(config.ValueOrNull("MaxValueChangePercent")) / 100;
+                dto.PerformAveragePositionAnalysis = true;
+                dto.AveragePositionMinimumNumberOfTrades = Convert.ToInt32(config.ValueOrNull("MinNumberOfTrades"));
+                dto.AveragePositionMaximumPositionValueChange = Convert.ToDecimal(config.ValueOrNull("MaxValueChangePercent")) / 100;
             }
 
             _ruleRunner.RuleParameterDto.WashTrades = dto.CreateArray();

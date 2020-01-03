@@ -104,9 +104,7 @@
                     }
                     catch (Exception e)
                     {
-                        this._logger.LogError(
-                            e,
-                            $"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus {e}");
+                        this._logger.LogError(e, $"{ruleViolation.RuleBreach.RuleParameterId} encountered an error sending the case message to the bus");
                     }
                 }
 

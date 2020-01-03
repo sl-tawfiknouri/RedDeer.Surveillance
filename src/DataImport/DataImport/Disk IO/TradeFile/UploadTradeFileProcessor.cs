@@ -34,8 +34,7 @@
         protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
         {
             if (this._orderFileSerialiser.FailedParseTotal > 0)
-                this.Logger.LogError(
-                    $"{this.UploadFileProcessorName} had {this._orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
+                this.Logger.LogError($"{this.UploadFileProcessorName} had {this._orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
 
             this._orderFileSerialiser.FailedParseTotal = 0;
         }
@@ -56,9 +55,9 @@
 
                 if (validationResult.Errors.Any())
                 {
-                    var consolidatedErrorMessage = validationResult.Errors.Aggregate(
-                        $"order {record?.OrderId}",
-                        (a, b) => a + " " + b.ErrorMessage);
+                    var consolidatedErrorMessage = validationResult.Errors
+                        .Aggregate($"order {record?.OrderId}", (a, b) => a + " " + b.ErrorMessage);
+
                     this.Logger.LogWarning(consolidatedErrorMessage);
                 }
 
@@ -68,8 +67,7 @@
             var mappedRecord = this._orderFileSerialiser.Map(record);
             if (mappedRecord != null)
             {
-                this.Logger.LogInformation(
-                    $"Upload Trade File Processor successfully validated and mapped record {record?.RowId}");
+                this.Logger.LogInformation($"Upload Trade File Processor successfully validated and mapped record {record?.RowId}");
                 marketUpdates.Add(mappedRecord);
                 return;
             }

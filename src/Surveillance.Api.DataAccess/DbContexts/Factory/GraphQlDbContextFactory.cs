@@ -8,7 +8,7 @@
     using Microsoft.Extensions.Logging;
 
     using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-
+    using Pomelo.EntityFrameworkCore.MySql.Storage;
     using Surveillance.Api.DataAccess.Abstractions.DbContexts;
     using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 
@@ -32,14 +32,10 @@
             if (this._loggerFactory != null) options.UseLoggerFactory(this._loggerFactory);
 
             options
-                .ConfigureWarnings(
-                    warnings => warnings.Throw(
-                        RelationalEventId
-                            .QueryClientEvaluationWarning)) // Throw exception if query will be evaluated locally
-                .UseMySql(
-                    connectionString,
-                    builder => builder.CharSetBehavior(CharSetBehavior.AppendToAllColumns)
-                        .UnicodeCharSet(CharSet.Utf8mb4));
+                .UseMySql(connectionString, builder => builder
+                    .CharSetBehavior(CharSetBehavior.AppendToAllColumns)
+                    .CharSet(CharSet.Utf8Mb4)
+                );
 
             return new GraphQlDbContext(options.Options);
         }

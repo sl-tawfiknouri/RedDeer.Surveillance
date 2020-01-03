@@ -12,8 +12,10 @@
     {
         private static Configuration BuildConfiguration()
         {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .AddEnvironmentVariables()
+                .Build();
 
             var config = ConfigurationHelper.BuildNetworkConfiguration(configurationBuilder);
 

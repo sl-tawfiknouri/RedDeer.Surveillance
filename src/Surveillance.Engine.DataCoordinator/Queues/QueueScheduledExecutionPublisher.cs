@@ -99,8 +99,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError(
-                    $"Exception sending message '{message}' to queue {this.awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
+                this.logger.LogError(e, $"Exception sending message '{message}' to queue {this.awsConfiguration.ScheduledRuleQueueName}.");
             }
         }
     }

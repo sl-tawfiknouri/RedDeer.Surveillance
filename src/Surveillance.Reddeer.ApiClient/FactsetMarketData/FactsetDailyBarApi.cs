@@ -143,7 +143,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError("Get encountered an exception: " + e.Message + " " + e.InnerException?.Message);
+                this.logger?.LogError(e, "Get encountered an exception");
             }
 
             this.logger?.LogInformation("Get received a response from the client. Returning result.");
@@ -257,7 +257,7 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError("HEARTBEAT FOR FACTSET TIME BAR API REPOSITORY NEGATIVE", e);
+                this.logger.LogError(e, "HEARTBEAT FOR FACTSET TIME BAR API REPOSITORY NEGATIVE");
             }
 
             return false;

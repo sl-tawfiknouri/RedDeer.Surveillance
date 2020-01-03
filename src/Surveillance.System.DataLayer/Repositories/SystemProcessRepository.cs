@@ -33,11 +33,11 @@
 
         private readonly IConnectionStringFactory _dbConnectionFactory;
 
-        private readonly ILogger _logger;
+        private readonly ILogger<SystemProcessRepository> _logger;
 
         public SystemProcessRepository(
             IConnectionStringFactory connectionStringFactory,
-            ILogger<ISystemProcessRepository> logger)
+            ILogger<SystemProcessRepository> logger)
         {
             this._dbConnectionFactory = connectionStringFactory
                                         ?? throw new ArgumentNullException(nameof(connectionStringFactory));
@@ -60,8 +60,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"SystemProcessRepository Create Method For {entity?.Id} {entity.MachineId} {e.Message}");
+                this._logger.LogError(e, $"SystemProcessRepository Create Method For {entity?.Id} {entity.MachineId}");
             }
         }
 
@@ -102,7 +101,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"SystemProcessRepository get dashboard method {e.Message}");
+                this._logger.LogError(e, $"SystemProcessRepository get dashboard method");
             }
 
             return new ISystemProcess[0];
@@ -122,7 +121,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"SystemProcessRepository Update Method For {entity?.Id} {e.Message}");
+                this._logger.LogError(e, $"SystemProcessRepository Update Method For {entity?.Id}");
             }
         }
     }

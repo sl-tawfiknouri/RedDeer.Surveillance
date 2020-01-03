@@ -1,13 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1701;</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Firefly.Service.Data.TickPriceHistory.Api.Contracts.Client" Version="1.0.6" />
     <PackageReference Include="Grpc.Auth" Version="2.25.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.25.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+    <PackageReference Include="RedDeer.Extensions.Configuration.EC2Tags" Version="3.0.10" />
     <PackageReference Include="RedDeer.Extensions.Security.Authentication.Jwt" Version="1.0.1" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>

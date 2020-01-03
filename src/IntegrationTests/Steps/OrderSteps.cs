@@ -67,6 +67,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                     row.AddIfNotExists("OrderType", "MARKET");
                     row.AddIfNotExists("InstrumentRic", value);
                     row.AddIfNotExists("MarketIdentifierCode", "RDFI");
+                    row.AddIfNotExists("MarketName", "RDFI");
                     row.AddIfNotExists("InstrumentCfi", "d");
                     
                     var identifier = IdentifierHelpers.ToIsinOrFigi(value);

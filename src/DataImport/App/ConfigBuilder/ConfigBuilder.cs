@@ -147,6 +147,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder),
                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
+                RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.GetSetting("RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey", configurationBuilder),
                 RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
                 RefinitivTickPriceHistoryApiTimeOutDurationSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiTimeOutDurationSeconds", configurationBuilder, 600)
             };

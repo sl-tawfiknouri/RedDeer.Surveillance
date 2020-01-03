@@ -280,6 +280,10 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             var awsQueueClient = A.Fake<IAwsQueueClient>();
             container.Inject(typeof(IAwsQueueClient), awsQueueClient);
 
+            // replace tickPriceHistoryService
+            var tickPriceHistoryServiceClientFactory = A.Fake<ITickPriceHistoryServiceClientFactory>();
+            container.Inject(typeof(ITickPriceHistoryServiceClientFactory), tickPriceHistoryServiceClientFactory);
+
             // upload allocation file
             if (AllocationCsvContent != null)
             {
@@ -449,7 +453,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
             container.Inject(typeof(IMarketOpenCloseApi), marketOpenCloseApi);
             
-            //replace tickPriceHistoryService
+            // replace tickPriceHistoryService
             var tickPriceHistoryServiceClientWrapper = A.Fake<ITickPriceHistoryServiceClientWrapper>();
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.GetEodPricingAsync(A<GetEodPricingRequest>._, null,null,CancellationToken.None))
                 .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync((GetEodPricingRequest) input.Arguments.First()));
@@ -656,7 +660,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                 .ReturnsLazily(input => Task.FromResult(EquityClosePriceMock.GetPrices((FactsetSecurityDailyRequest) input.Arguments.First())));
             container.Inject(typeof(IFactsetDailyBarApi), factsetDailyBarApi);
             
-            //replace tickPriceHistoryService
+            // replace tickPriceHistoryService
             var tickPriceHistoryServiceClientWrapper = A.Fake<ITickPriceHistoryServiceClientWrapper>();
             A.CallTo(() => tickPriceHistoryServiceClientWrapper.Client.GetEodPricingAsync(A<GetEodPricingRequest>._, null,null,CancellationToken.None))
                 .ReturnsLazily(input => FixedIncomeClosePriceMock.GetEodPricingAsync((GetEodPricingRequest) input.Arguments.First()));

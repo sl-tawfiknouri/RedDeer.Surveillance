@@ -351,12 +351,14 @@
             }
             
             var orderUnderAnalysis = this.UniverseEvent.UnderlyingEvent as Order;
-            var activeTrades = history.ActiveTradeHistory();
-            var liveTrades = activeTrades.Where(at => at.OrderStatus() == OrderStatus.Filled).ToList();
-            var filteredLiveTrades = this.FilterOutOtc(liveTrades);
             
-            this.Logger.LogInformation($"EvaluateHighProfits about to filter over clean / dirty with {filteredLiveTrades.Count} trades");
-            var cleanTrades = filteredLiveTrades.Where(_ => _.OrderCleanDirty == OrderCleanDirty.CLEAN).ToList();
+            var activeTrades = history.ActiveTradeHistory();
+            this.Logger.LogInformation($"EvaluateHighProfits about to filter over Filled with {activeTrades.Count} trades");
+            
+            var liveTrades = activeTrades.Where(at => at.OrderStatus() == OrderStatus.Filled).ToList();
+            this.Logger.LogInformation($"EvaluateHighProfits about to filter over clean / dirty with {liveTrades.Count} trades");
+            
+            var cleanTrades = liveTrades.Where(_ => _.OrderCleanDirty == OrderCleanDirty.CLEAN).ToList();
             this.Logger.LogInformation($"EvaluateHighProfits filtered by clean and had {cleanTrades.Count} trades");
 
             if (orderUnderAnalysis == null)
@@ -427,10 +429,9 @@
 
                 var convertedCost = convertedCostTask.Result;
 
-                if (convertedCost == null)
+                if (convertedCost == null || !revenue.Value.DenominatedInCommonCurrency(convertedCost.Value))
                 {
-                    this.Logger.LogError($"Currency of revenue {revenue.Value.Currency} - currency of costs {cost.Value.Currency} for trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}. Could not convert cost to revenue.");
-
+                    this.Logger.LogError($"Could not convert cost to revenue currency. Expected currency '{revenue.Value.Currency}' but received currency '{convertedCost.Value.Currency}'. For trade {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {this.UniverseDateTime}.");
                     return;
                 }
 
@@ -616,29 +617,6 @@
                 true);
 
             this.JudgementService.Judgement(new FixedIncomeHighProfitJudgementContext(noTradesJudgement, false));
-        }
-
-        /// <summary>
-        /// The filter out over the counter trades.
-        /// </summary>
-        /// <param name="orders">
-        /// The orders.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        private List<Order> FilterOutOtc(IReadOnlyCollection<Order> orders)
-        {
-            if (orders == null || !orders.Any())
-            {
-                return new List<Order>();
-            }
-
-            return 
-                orders
-                    .Where(_ => _.Market?.Type != MarketTypes.OTC)
-                    .Where(_ => _.OrderType != OrderTypes.OTC)
-                    .ToList();
         }
 
         /// <summary>

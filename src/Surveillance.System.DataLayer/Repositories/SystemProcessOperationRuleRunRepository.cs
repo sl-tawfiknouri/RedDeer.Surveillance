@@ -104,7 +104,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"System Process Operation Rule Run Repository Get Dashboard method {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Rule Run Repository Get Dashboard method");
             }
 
             return new ISystemProcessOperationRuleRun[0];
@@ -124,8 +124,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"System Process Operation Rule Run Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                this._logger.LogError(e, $"System Process Operation Rule Run Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}.");
             }
         }
     }

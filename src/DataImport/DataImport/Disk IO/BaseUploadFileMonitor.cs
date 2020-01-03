@@ -83,8 +83,7 @@
             }
             catch (Exception e)
             {
-                this.Logger.LogError(
-                    $"Exception in {this._uploadFileMonitorName} {this.UploadDirectoryPath()} {e.Message}");
+                this.Logger.LogError(e, $"Exception in {this._uploadFileMonitorName} {this.UploadDirectoryPath()}");
             }
         }
 
@@ -106,7 +105,7 @@
             }
             catch (Exception a)
             {
-                this.Logger.LogError("BaseUploadFileMonitor had an error in detected file change", a);
+                this.Logger.LogError(a, "BaseUploadFileMonitor had an error in detected file change");
             }
         }
 
@@ -114,22 +113,13 @@
         {
             if (this._retryRestart > 0)
             {
-                this.Logger.LogError(
-                    $"BaseUploadFileMonitor encountered an exception! INVESTIGATE {this._retryRestart} retries left",
-                    e.GetException());
+                this.Logger.LogError(e.GetException(), $"BaseUploadFileMonitor encountered an exception! INVESTIGATE {this._retryRestart} retries left");
                 this._retryRestart -= 1;
                 this.SetFileSystemWatch();
                 return;
             }
 
-            this.Logger.LogCritical(
-                "BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE DATA IMPORT SERVICE",
-                e.GetException());
-
-            var exception = e.GetException();
-            if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
-                this.Logger.LogCritical(
-                    $"INNER EXCEPTION FOR DATA IMPORT SERVICE FAILURE {exception.InnerException.Message}");
+            this.Logger.LogCritical(e.GetException(), "BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE DATA IMPORT SERVICE");
         }
 
         private void ProcessInitialStartupFiles(IReadOnlyCollection<string> files)
@@ -151,7 +141,7 @@
             }
             catch (Exception e)
             {
-                this.Logger.LogError("Base upload file monitor had an error whilst process initial start up files", e);
+                this.Logger.LogError(e, "Base upload file monitor had an error whilst process initial start up files");
             }
         }
 

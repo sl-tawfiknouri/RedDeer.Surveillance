@@ -65,7 +65,7 @@ namespace TestHarness.Engine.OrderStorage
 
         public void OnError(Exception error)
         {
-            this._logger.LogError(error.Message);
+            this._logger.LogError(error, "Exception");
         }
 
         public void OnNext(Order value)
@@ -91,7 +91,7 @@ namespace TestHarness.Engine.OrderStorage
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
+                this._logger.LogError(e, "Exception");
             }
         }
 
@@ -121,7 +121,7 @@ namespace TestHarness.Engine.OrderStorage
                 }
                 catch (Exception a)
                 {
-                    this._logger.LogError(a.Message);
+                    this._logger.LogError(a, "Exception");
                     this._timer.Start();
                 }
             }

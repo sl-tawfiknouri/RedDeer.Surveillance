@@ -1,96 +1,84 @@
 ﻿using Firefly.Service.Data.TickPriceHistory.Shared.Protos;
 using Grpc.Core;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Options;
-//using RedDeer.Extensions.Security.Authentication.Jwt;
-//using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
+using Grpc.Net.Client;
+using Microsoft.Extensions.Configuration;
+using RedDeer.Extensions.Security.Authentication.Jwt;
+using RedDeer.Extensions.Security.Authentication.Jwt.Abstractions;
 using Surveillance.Data.Universe.Refinitiv.Interfaces;
 using System;
-//using System;
-//using System.Threading.Tasks;
+using System.Threading.Tasks;
+using RedDeer.Extensions.Configuration.EC2Tags.Extensions;
 
 namespace Surveillance.Data.Universe.Refinitiv
 {
-    public class TickPriceHistoryServiceClientOptions
-    {
-        public string Address { get; set; }
-
-        public string JwtBearerTokenSymetricSecurityKey { get; set; }
-    }
-
     public class TickPriceHistoryServiceClientFactory : ITickPriceHistoryServiceClientFactory
     {
         private readonly IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig;
-
-        // private readonly IConfiguration configuration;
         // private readonly IOptions<TickPriceHistoryServiceClientOptions> options;
-        // private readonly IJwtTokenService jwtTokenService;
+        private readonly IJwtTokenService jwtTokenService;
+        private readonly IConfiguration configuration;
 
         public TickPriceHistoryServiceClientFactory(
-            IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig
-            // IConfiguration configuration,
-            // IOptions<TickPriceHistoryServiceClientOptions> options,
-            // IJwtTokenService jwtTokenService
-            )
+            IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig,
+            IConfiguration configuration,
+            IJwtTokenService jwtTokenService)
         {
             this.refinitivTickPriceHistoryApiConfig = refinitivTickPriceHistoryApiConfig;
-            //this.configuration = configuration;
-            //this.options = options;
-            //this.jwtTokenService = jwtTokenService;
+            this.configuration = configuration;
+            this.jwtTokenService = jwtTokenService;
         }
 
         public TickPriceHistoryService.TickPriceHistoryServiceClient Create()
         {
-            //var address = configuration["TickPriceHistoryServiceAddress"];
-
             var address = refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiAddress;
             if (string.IsNullOrWhiteSpace(address))
             {
-                throw new ArgumentException($"Address '{address}' is null or empty.", "TickPriceHistoryServiceAddress");
+                throw new ArgumentException($"Address '{address}' is null or empty.", nameof(refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiAddress));
             }
 
-            var channel = new Channel(address, ChannelCredentials.Insecure);
-            var client = new TickPriceHistoryServiceClientWrapper(channel).Client; 
+            var channel = string.IsNullOrWhiteSpace(refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey)
+                ? CreateInsecureChannel()
+                : CreateSecureChannel();
+            
+            var client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
             return client;
         }
 
-        /// <summary>
-        /// Will be used later after service upgrade
-        /// </summary>
-        /// <returns></returns>
-        private TickPriceHistoryService.TickPriceHistoryServiceClient CreateSecure()
+        private ChannelBase CreateInsecureChannel()
+            => new Channel(refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiAddress, ChannelCredentials.Insecure);
+
+        private ChannelBase CreateSecureChannel()
         {
-            //var environmentTag = configuration["EC2TagsEnvironment"];
-            //var customerTag = configuration["EC2TagsCustomer"];
-            //var jwtBearerTokenSymetricSecurityKey = options.Value.JwtBearerTokenSymetricSecurityKey;
+            var getEC2TagOption = configuration.GetEC2TagOptionFromEC2TagsSection();
+            var environmentTag = getEC2TagOption.Environment;
+            var customerTag = getEC2TagOption.Customer;
 
-            //var credentials = CallCredentials.FromInterceptor((context, metadata) =>
-            //{
-            //    var jwtToken = new JwtToken()
-            //        .SetExpires(DateTime.UtcNow.AddMinutes(2))
-            //        .SetIssuer(environmentTag, customerTag, PermissionScopeTypeConstants.TickPriceHistory)
-            //        .SetAudience(environmentTag, customerTag, PermissionScopeTypeConstants.TickPriceHistory);
+            var jwtBearerTokenSymetricSecurityKey = refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey;
 
-            //    var bearerToken = jwtTokenService.Generate(jwtToken, jwtBearerTokenSymetricSecurityKey);
+            var credentials = CallCredentials.FromInterceptor((context, metadata) =>
+            {
+                var jwtToken = new JwtToken()
+                    .SetExpires(DateTime.UtcNow.AddMinutes(2))
+                    .SetIssuer(environmentTag, customerTag, PermissionScopeTypeConstants.TickPriceHistory)
+                    .SetAudience(environmentTag, customerTag, PermissionScopeTypeConstants.TickPriceHistory);
 
-            //    metadata.Add("Authorization", $"Bearer {bearerToken}");
-            //    return Task.CompletedTask;
-            //});
+                var bearerToken = jwtTokenService.Generate(jwtToken, jwtBearerTokenSymetricSecurityKey);
 
-            //var grpcChannelOptions = new GrpcChannelOptions
-            //{
-            //    HttpClient = httpClient,
-            //    LoggerFactory = logFactory,
-            //    Credentials = channelCredentials
-            //};
+                metadata.Add("Authorization", $"Bearer {bearerToken}");
+                return Task.CompletedTask;
+            });
 
-            // var channel = GrpcChannel.ForAddress(options.Value.Address, grpcChannelOptions);
-            //var channel = new Channel("localhost:8888", channelCredentials);
-            var channel = new Channel("localhost:8888", ChannelCredentials.Insecure);
-            // var channel = new Channel(options.Value.Address, ChannelCredentials.Insecure);
-            var client = new TickPriceHistoryService.TickPriceHistoryServiceClient(channel);
 
-            return client;
+            var channelCredentials = ChannelCredentials.Create(new SslCredentials(), credentials);
+            var grpcChannelOptions = new GrpcChannelOptions
+            {
+                //HttpClient = httpClient,
+                // LoggerFactory = logFactory,
+                Credentials = channelCredentials
+            };
+
+            var channel = GrpcChannel.ForAddress(refinitivTickPriceHistoryApiConfig.RefinitivTickPriceHistoryApiAddress, grpcChannelOptions);
+            return channel;
         }
     }
 }

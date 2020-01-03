@@ -85,8 +85,7 @@
         /// </param>
         public void OnError(Exception error)
         {
-            this.logger.LogError(
-                $"Exception passed to Universe Percentage Of Event Completion Logger {error.Message} - {error.InnerException?.Message}");
+            this.logger.LogError(error, $"Exception passed to Universe Percentage Of Event Completion Logger");
         }
 
         /// <summary>

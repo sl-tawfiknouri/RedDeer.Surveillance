@@ -109,7 +109,7 @@
             }
             catch (Exception e)
             {
-                this.logger?.LogError($"exception {e.Message}");
+                this.logger?.LogError(e, $"exception");
             }
         }
 

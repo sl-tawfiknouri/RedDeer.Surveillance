@@ -30,7 +30,7 @@
 
         public void OnError(Exception error)
         {
-            this._logger.LogError("RecordingObserver " + error.Message);
+            this._logger.LogError(error, "RecordingObserver");
         }
 
         public void OnNext(T value)

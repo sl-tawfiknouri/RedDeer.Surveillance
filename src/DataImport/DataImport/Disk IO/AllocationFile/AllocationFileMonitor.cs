@@ -112,9 +112,7 @@
                 }
                 catch (Exception e)
                 {
-                    this.Logger.LogError(
-                        $"AllocationFileMonitor Process File encountered an exception and will be returning false. {path}",
-                        e);
+                    this.Logger.LogError(e, $"AllocationFileMonitor Process File encountered an exception and will be returning false. {path}");
 
                     fileUpload.EndEvent().EndEventWithError(e.Message);
                     return false;

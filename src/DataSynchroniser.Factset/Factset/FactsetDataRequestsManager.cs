@@ -67,9 +67,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"{nameof(FactsetDataRequestsManager)} send method encountered an exception! for operation {systemProcessOperationId}",
-                    e);
+                this._logger.LogError(e, $"{nameof(FactsetDataRequestsManager)} send method encountered an exception! for operation {systemProcessOperationId}");
             }
         }
     }

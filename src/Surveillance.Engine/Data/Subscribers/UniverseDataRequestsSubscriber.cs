@@ -52,7 +52,7 @@
 
         public void OnError(Exception error)
         {
-            this._logger?.LogError($"reached OnError in its universe subscription {error.Message}", error);
+            this._logger?.LogError(error, $"reached OnError in its universe subscription {error.Message}");
         }
 
         public void OnNext(IUniverseEvent value)

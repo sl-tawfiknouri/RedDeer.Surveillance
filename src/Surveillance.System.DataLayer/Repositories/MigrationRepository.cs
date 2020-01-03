@@ -85,7 +85,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError($"Error in migration repository get latest version - {e.Message}");
+                this._logger.LogError(e, $"Error in migration repository get latest version");
             }
 
             this._logger.LogError("MigrationRepository LatestMigrationVersion returning 0 on a bad code path");
@@ -162,9 +162,7 @@
             }
             catch (Exception e)
             {
-                this._logger.LogError(
-                    $"MigrationRepository IMPORTANT something went wrong reading and writing the file {name.FileName}"
-                    + e.Message);
+                this._logger.LogError(e, $"MigrationRepository IMPORTANT something went wrong reading and writing the file {name.FileName}");
             }
         }
 

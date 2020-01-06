@@ -96,9 +96,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
         public string TradeCsvContent { get; set; }
         public string AllocationCsvContent { get; set; }
 
-        public int ExpectedOrderCount { get; set; } = 0;
-        public int ExpectedAllocationCount { get; set; } = 0;
-
         public EquityClosePriceMock EquityClosePriceMock = new EquityClosePriceMock();
         public FixedIncomeClosePriceMock FixedIncomeClosePriceMock = new FixedIncomeClosePriceMock();
 
@@ -119,11 +116,23 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
             using (var dbContext = BuildDbContext())
             {
-                var orderCount = GetOrderCount(dbContext);
-                orderCount.Should().Be(ExpectedOrderCount);
-
-                var allocationCount = GetOrderAllocationCount(dbContext);
-                allocationCount.Should().Be(ExpectedAllocationCount);
+                if (TradeCsvContent != null)
+                {
+                    var orderCount = GetOrderCount(dbContext);
+                    if (orderCount == 0)
+                    {
+                        throw new Exception("No orders were found in the order sql table. Was there an error during data import?");
+                    }
+                }
+                
+                if (AllocationCsvContent != null)
+                {
+                    var allocationCount = GetOrderAllocationCount(dbContext);
+                    if (allocationCount == 0)
+                    {
+                        throw new Exception("No allocations were found in the allocation sql table. Was there an error during data import?");
+                    }
+                }
 
                 await RunRule(false);
 

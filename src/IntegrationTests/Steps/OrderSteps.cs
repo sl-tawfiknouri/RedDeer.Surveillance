@@ -76,7 +76,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             }
 
             _ruleRunner.TradeCsvContent = MakeCsv(rows);
-            _ruleRunner.ExpectedOrderCount = rows.Count();
 
             // default allocations
             var allocationRows = rows.Select(x => new Dictionary<string, string>
@@ -89,9 +88,16 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             });
 
             _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
-            _ruleRunner.ExpectedAllocationCount = allocationRows.Count();
         }
-   
+
+        [Given(@"the allocations")]
+        public void GivenTheAllocations(Table table)
+        {
+            var rows = TableHelpers.ToEnumerableDictionary(table);
+            _ruleRunner.AllocationCsvContent = MakeCsv(rows);
+        }
+
+
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)
         {
             var keys = new HashSet<string>();

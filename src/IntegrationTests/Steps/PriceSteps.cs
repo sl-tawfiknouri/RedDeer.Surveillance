@@ -33,7 +33,8 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
                     Epoch = DateTime.Parse(row["Date"], null, DateTimeStyles.AssumeUniversal),
                     ClosePrice = Convert.ToDecimal(row["ClosePrice"]),
                     Figi = IdentifierHelpers.ToIsinOrFigi(row["_EquitySecurity"]),
-                    Currency = "GBP"
+                    Currency = "GBP",
+                    DailyVolume = row.ValueOrNull("DailyVolume") != null ? Convert.ToInt64(row.ValueOrNull("DailyVolume")) : 0
                 };
 
                 _ruleRunner.EquityClosePriceMock.Add(item);

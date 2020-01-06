@@ -28,8 +28,8 @@
                         return loader.LoadAsync();
                     });
 
-            this.Field(i => i.FilePath).Description("The path of the file uploaded from disk");
-            this.Field(i => i.FileType).Description("The type of the file being uploaded");
+            this.Field(i => i.FilePath, true).Description("The path of the file uploaded from disk");
+            this.Field(i => i.FileType, true).Description("The type of the file being uploaded");
         }
     }
 }

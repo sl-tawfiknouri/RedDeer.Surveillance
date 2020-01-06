@@ -54,16 +54,16 @@
 
             this.Field<InstrumentTypeGraphType>("instrumentType", "The type of the instrument");
 
-            this.Field(i => i.UnderlyingCfi).Description("CFI code for the underlying");
-            this.Field(i => i.UnderlyingName).Description("Name of the underlying instrument");
-            this.Field(i => i.UnderlyingSedol).Description("Sedol of the underlying");
-            this.Field(i => i.UnderlyingIsin).Description("Isin of the underlying");
-            this.Field(i => i.UnderlyingFigi).Description("Figi of the underlying");
-            this.Field(i => i.UnderlyingCusip).Description("Cusip of the underlying");
-            this.Field(i => i.UnderlyingLei).Description("Lei of the underlying");
-            this.Field(i => i.UnderlyingExchangeSymbol).Description("Exchange symbol of the underlying");
-            this.Field(i => i.UnderlyingBloombergTicker).Description("Bloomberg ticker of the underlying");
-            this.Field(i => i.UnderlyingClientIdentifier).Description("Client Identifier of the underlying");
+            this.Field(i => i.UnderlyingCfi, true).Description("CFI code for the underlying");
+            this.Field(i => i.UnderlyingName, true).Description("Name of the underlying instrument");
+            this.Field(i => i.UnderlyingSedol, true).Description("Sedol of the underlying");
+            this.Field(i => i.UnderlyingIsin, true).Description("Isin of the underlying");
+            this.Field(i => i.UnderlyingFigi, true).Description("Figi of the underlying");
+            this.Field(i => i.UnderlyingCusip, true).Description("Cusip of the underlying");
+            this.Field(i => i.UnderlyingLei, true).Description("Lei of the underlying");
+            this.Field(i => i.UnderlyingExchangeSymbol, true).Description("Exchange symbol of the underlying");
+            this.Field(i => i.UnderlyingBloombergTicker, true).Description("Bloomberg ticker of the underlying");
+            this.Field(i => i.UnderlyingClientIdentifier, true).Description("Client Identifier of the underlying");
         }
     }
 }

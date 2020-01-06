@@ -32,7 +32,7 @@
                 .Description("Scheduled rule start before distribution");
             this.Field(i => i.ScheduleRuleInitialEnd, true).Type(new DateTimeGraphType())
                 .Description("Scheduled rule end before distribution");
-            this.Field(i => i.RulesDistributed).Description("Rules distributed by the disassemble operation");
+            this.Field(i => i.RulesDistributed, true).Description("Rules distributed by the disassemble operation");
         }
     }
 }

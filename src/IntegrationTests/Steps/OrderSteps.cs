@@ -78,16 +78,19 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.TradeCsvContent = MakeCsv(rows);
 
             // default allocations
-            var allocationRows = rows.Select(x => new Dictionary<string, string>
+            if (_ruleRunner.AllocationCsvContent == null)
             {
-                ["OrderId"] = x["OrderId"],
-                ["Fund"] = "",
-                ["Strategy"] = "",
-                ["ClientAccountId"] = "",
-                ["OrderFilledVolume"] = x.ValueOrNull("OrderFilledVolume")
-            });
+                var allocationRows = rows.Select(x => new Dictionary<string, string>
+                {
+                    ["OrderId"] = x["OrderId"],
+                    ["Fund"] = "",
+                    ["Strategy"] = "",
+                    ["ClientAccountId"] = "",
+                    ["OrderFilledVolume"] = x.ValueOrNull("OrderFilledVolume")
+                });
 
-            _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
+                _ruleRunner.AllocationCsvContent = MakeCsv(allocationRows);
+            }
         }
 
         [Given(@"the allocations")]

@@ -10,6 +10,7 @@
             string fund,
             string strategy,
             string clientAccountId,
+            string allocationId,
             decimal orderFilledVolume,
             DateTime? createdDate)
         {
@@ -18,6 +19,7 @@
             this.Fund = fund ?? string.Empty;
             this.Strategy = strategy ?? string.Empty;
             this.ClientAccountId = clientAccountId ?? string.Empty;
+            this.AllocationId = allocationId ?? string.Empty;
             this.OrderFilledVolume = orderFilledVolume;
             this.CreatedDate = createdDate;
         }
@@ -34,6 +36,7 @@
             this.Fund = order.OrderFund;
             this.Strategy = order.OrderStrategy;
             this.ClientAccountId = order.OrderClientAccountAttributionId;
+            this.AllocationId = string.Empty;
             this.OrderFilledVolume = order.OrderFilledVolume.GetValueOrDefault(0);
         }
 
@@ -50,6 +53,8 @@
         public string OrderId { get; }
 
         public string Strategy { get; }
+
+        public string AllocationId { get; }
 
         public bool IsValid()
         {

@@ -1,7 +1,5 @@
 ﻿// ReSharper disable UnusedParameter.Local
 
-using Surveillance.Data.Universe.Refinitiv.Interfaces;
-
 namespace RedDeer.DataImport.DataImport.App
 {
     using System;
@@ -60,34 +58,10 @@ namespace RedDeer.DataImport.DataImport.App
             try
             {
                 SetSysLogSettingIfService(args);
-                Container = new Container();
-                var builtConfig = BuildConfiguration();
-                Container.Inject(typeof(IUploadConfiguration), builtConfig);
-                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+
                 SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
-
-                var builtDataLayerConfig = BuildDataLayerConfiguration();
-                Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
-                Container.Inject(typeof(IDataLayerConfiguration), builtDataLayerConfig);
-
-                var builtApiClientConfig = BuildApiClientConfiguration();
-                Container.Inject(typeof(IApiClientConfiguration), builtApiClientConfig);
+                Container = StructureMapContainer.Instance;
                 
-                Container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), builtConfig); 
-
-                Container.Configure(
-                    config =>
-                        {
-                            config.IncludeRegistry<DataImportRegistry>();
-                            config.IncludeRegistry<AppRegistry>();
-                            config.IncludeRegistry<SystemSystemDataLayerRegistry>();
-                            config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
-                            config.IncludeRegistry<DataLayerRegistry>();
-                            config.IncludeRegistry<ReddeerApiClientRegistry>();
-                        });
-
-                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
 
@@ -98,36 +72,6 @@ namespace RedDeer.DataImport.DataImport.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        }
-
-        private static IApiClientConfiguration BuildApiClientConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.BuildApi(configurationBuilder);
-        }
-
-        private static Configuration BuildConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.Build(configurationBuilder);
-        }
-
-        private static IDataLayerConfiguration BuildDataLayerConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder().AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json", true, true).Build();
-
-            var builder = new ConfigBuilder.ConfigBuilder();
-
-            return builder.BuildData(configurationBuilder);
         }
 
         private static void DisableConsoleLog()

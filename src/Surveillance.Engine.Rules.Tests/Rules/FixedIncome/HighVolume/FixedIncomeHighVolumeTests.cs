@@ -10,9 +10,7 @@
     using NUnit.Framework;
 
     using Surveillance.Auditing.Context.Interfaces;
-    using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
     using Surveillance.Engine.Rules.Factories.Interfaces;
-    using Surveillance.Engine.Rules.Judgements.Interfaces;
     using Surveillance.Engine.Rules.Markets.Interfaces;
     using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
     using Surveillance.Engine.Rules.Rules;
@@ -59,24 +57,9 @@
         private ISystemProcessOperationRunRuleContext ruleContext;
 
         /// <summary>
-        /// The judgement service.
-        /// </summary>
-        private IFixedIncomeHighVolumeJudgementService judgementService = null;
-
-        /// <summary>
-        /// The data request subscriber.
-        /// </summary>
-        private IUniverseDataRequestsSubscriber dataRequestSubscriber = null;
-
-        /// <summary>
         /// The market trading hours service.
         /// </summary>
         private IMarketTradingHoursService marketTradingHoursService;
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private ILogger<FixedIncomeHighVolumeRule> logger;
 
         /// <summary>
         /// The trading stack logger.
@@ -96,8 +79,8 @@
                     this.ruleContext,
                     this.equityMarketCacheFactory,
                     this.fixedIncomeMarketCacheFactory,
-                    this.judgementService,
-                    this.dataRequestSubscriber,
+                    null,
+                    null,
                     this.marketTradingHoursService,
                     this._runMode,
                     null,
@@ -116,7 +99,6 @@
             this.equityMarketCacheFactory = A.Fake<IUniverseEquityMarketCacheFactory>();
             this.fixedIncomeMarketCacheFactory = A.Fake<IUniverseFixedIncomeMarketCacheFactory>();
             this.marketTradingHoursService = A.Fake<IMarketTradingHoursService>();
-            this.logger = new NullLogger<FixedIncomeHighVolumeRule>();
             this.tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }
     }

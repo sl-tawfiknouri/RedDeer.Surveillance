@@ -64,12 +64,12 @@
                         return loader.LoadAsync();
                     });
 
-            this.Field(i => i.ClientOrderId).Description("Client Order Id");
-            this.Field(i => i.OrderVersion).Description("Order version");
-            this.Field(i => i.OrderVersionLinkId).Description("Order version link id");
-            this.Field(i => i.OrderGroupId).Description("Order group id");
-            this.Field(i => i.OrderType).Description("Order type");
-            this.Field(i => i.Direction).Description("Order direction");
+            this.Field(i => i.ClientOrderId, true).Description("Client Order Id");
+            this.Field(i => i.OrderVersion, true).Description("Order version");
+            this.Field(i => i.OrderVersionLinkId, true).Description("Order version link id");
+            this.Field(i => i.OrderGroupId, true).Description("Order group id");
+            this.Field(i => i.OrderType, true).Description("Order type");
+            this.Field(i => i.Direction, true).Description("Order direction");
 
             this.Field<OrderDatesGraphType>().Name("orderDates")
                 .Description("Dates of key events in the order life cycle");
@@ -79,9 +79,9 @@
             this.Field<OrderDirectionGraphType>().Name("orderDirection")
                 .Description("Order direction such as buy/sell short/cover");
 
-            this.Field(i => i.Currency).Description("Order currency values are denominated in");
-            this.Field(i => i.SettlementCurrency).Description("Order settlement currency");
-            this.Field(i => i.CleanDirty).Description(
+            this.Field(i => i.Currency, true).Description("Order currency values are denominated in");
+            this.Field(i => i.SettlementCurrency, true).Description("Order settlement currency");
+            this.Field(i => i.CleanDirty, true).Description(
                 "Order values quoted clean or dirty (fixed income with or without accrued interest)");
             this.Field(i => i.AccumulatedInterest, true).Description("Accumulated interest");
             this.Field(i => i.LimitPrice, true).Description("Order limit price (if applicable)");
@@ -93,13 +93,13 @@
 
             this.Field<TraderGraphType>().Name("trader").Description("Trader handling the order salient properties");
 
-            this.Field(i => i.ClearingAgent).Description("Clearing agent used for the trade");
-            this.Field(i => i.DealingInstructions).Description("Instructions for dealer");
+            this.Field(i => i.ClearingAgent, true).Description("Clearing agent used for the trade");
+            this.Field(i => i.DealingInstructions, true).Description("Instructions for dealer");
 
             this.Field(i => i.OptionStrikePrice, true).Description("The strike price of the option instrument");
             this.Field(i => i.OptionExpirationDate, true).Type(new DateTimeGraphType())
                 .Description("The expiration date of the option instrument");
-            this.Field(i => i.OptionEuropeanAmerican).Description("The category of the option. European or American");
+            this.Field(i => i.OptionEuropeanAmerican, true).Description("The category of the option. European or American");
 
             this.Field(i => i.CreatedDate).Type(new DateTimeGraphType())
                 .Description("The date the system created the order on");

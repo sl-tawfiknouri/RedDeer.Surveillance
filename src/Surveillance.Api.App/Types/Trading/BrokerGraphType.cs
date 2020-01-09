@@ -12,8 +12,8 @@
         {
             this.AuthorizeWith(PolicyManifest.UserPolicy);
             this.Field(i => i.Id).Description("Primary key for the broker");
-            this.Field(i => i.Name).Description("Name of the broker");
-            this.Field(i => i.ExternalId).Description("External Id of broker.");
+            this.Field(i => i.Name, true).Description("Name of the broker");
+            this.Field(i => i.ExternalId, nullable: true).Description("External Id of broker.");
             this.Field(i => i.CreatedOn).Type(new DateTimeGraphType()).Description("CreatedOn DateTime.");
         }
     }

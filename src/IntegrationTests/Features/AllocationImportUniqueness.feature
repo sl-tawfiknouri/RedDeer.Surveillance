@@ -1,5 +1,7 @@
 ﻿Feature: AllocationImportUniqueness
 	Testing what fields are used for uniqueness when importing allocations.
+	The high volume rule is being used for testing because allocations contain a volume field.
+	We can test to see if allocation rows are being imported correctly by testing rule breach logic based on the volume field.
 
 Background: 
 	Given the high volume core settings
@@ -12,7 +14,7 @@ Background:
 	| Date       | _EquitySecurity | ClosePrice | DailyVolume |
 	| 2018-01-01 | VODAFONE        | 130        | 1000        |
 
-Scenario: Basic no-breach test
+Scenario: Threshold test - no breach
 	Check that the rule will not trigger with a volume of 99
 	Given the allocations
 	| OrderId | OrderFilledVolume |
@@ -20,7 +22,7 @@ Scenario: Basic no-breach test
 	When the rule is run between "2018-01-01" and "2018-01-01"
 	Then there should be no breaches
 
-Scenario: Basic breach test
+Scenario: Threshold test - breach
 	Check that the rule will trigger with a volume of 100
 	And the allocations
 	| OrderId | OrderFilledVolume |

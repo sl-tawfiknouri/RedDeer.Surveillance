@@ -100,6 +100,30 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.AllocationCsvContent = MakeCsv(rows);
         }
 
+        [When(@"the data importer is run")]
+        public void WhenTheDataImporterIsRun()
+        {
+            _ruleRunner.RunDataImport();
+        }
+
+        [When(@"the auto scheduler is run")]
+        public void WhenTheAutoSchedulerIsRun()
+        {
+            _ruleRunner.RunAutoScheduler();
+        }
+
+        [Then(@"there should be an order with id ""(.*)"" and autoscheduled ""(.*)""")]
+        public void ThenThereShouldBeAnOrderWithIdAndAutoscheduled(string id, bool autoscheduled)
+        {
+            var orders = _ruleRunner.GetAllOrders();
+
+            var order = orders.Where(x => x.ClientOrderId == id && x.Autoscheduled == autoscheduled).SingleOrDefault();
+
+            if (order == null)
+            {
+                throw new Exception($"Could not find order with client id \"{id}\" and autoscheduled \"{autoscheduled}\"");
+            }
+        }
 
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)
         {

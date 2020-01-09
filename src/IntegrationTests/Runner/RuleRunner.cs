@@ -65,6 +65,7 @@ using System.Threading.Tasks;
 using DataSynchroniser.Api.Refinitive;
 using Firefly.Service.Data.TickPriceHistory.Shared.Protos;
 using Grpc.Core;
+using Surveillance.Api.DataAccess.Abstractions.Entities;
 
 namespace RedDeer.Surveillance.IntegrationTests.Runner
 {
@@ -108,10 +109,14 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
         private ILogger<RuleRunner> _logger;
 
-        public async Task Run()
+        public async Task Setup()
         {
             SetupLogger();
             await SetupDatabase();
+        }
+
+        public void RunDataImport()
+        {
             ImportAllocationsAndTrades();
 
             using (var dbContext = BuildDbContext())
@@ -124,7 +129,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                         throw new Exception("No orders were found in the order sql table. Was there an error during data import?");
                     }
                 }
-                
+
                 if (AllocationCsvContent != null)
                 {
                     var allocationCount = GetOrderAllocationCount(dbContext);
@@ -133,14 +138,31 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                         throw new Exception("No allocations were found in the allocation sql table. Was there an error during data import?");
                     }
                 }
+            }
 
-                await RunRule(false);
+            TradeCsvContent = null;
+            AllocationCsvContent = null;
+        }
+
+        public void RunAutoScheduler()
+        {
+            var container = CreateDataImportContainer();
+
+            var autoScheduler = container.GetInstance<IAutoSchedule>();
+            autoScheduler.Scan();
+        }
+
+        public async Task RunRule()
+        {
+            using (var dbContext = BuildDbContext())
+            {
+                await RunRuleEngine(false);
 
                 var dataRequestOperationId = GetDataRequestOperationId(dbContext);
                 if (dataRequestOperationId.HasValue)
                 {
                     await RunDataSynchroniser(dataRequestOperationId.Value);
-                    await RunRule(true);
+                    await RunRuleEngine(true);
                 }
 
                 OriginalRuleBreaches = GetRuleBreaches(dbContext);
@@ -148,8 +170,14 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
                 PrintBreaches();
             }
+        }
 
-            true.Should().Be(true);
+        public IEnumerable<IOrder> GetAllOrders()
+        {
+            using (var dbContext = BuildDbContext())
+            {
+                return GetOrders(dbContext);
+            }
         }
 
         private void SetupLogger()
@@ -243,6 +271,29 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
         {
             Console.WriteLine("Running data import");
 
+            var container = CreateDataImportContainer();
+
+            // upload allocation file
+            if (AllocationCsvContent != null)
+            {
+                var uploadAllocationFileMonitor = container.GetInstance<IUploadAllocationFileMonitor>();
+                WithTempFile(AllocationCsvContent, fileName => uploadAllocationFileMonitor.ProcessFile(fileName));
+            }
+
+            // upload trade file
+            if (TradeCsvContent != null)
+            {
+                var uploadTradeFileMonitor = container.GetInstance<IUploadTradeFileMonitor>();
+                WithTempFile(TradeCsvContent, fileName => uploadTradeFileMonitor.ProcessFile(fileName));
+            }
+
+            // enliven orders with data verifier
+            var dataVerifier = container.GetInstance<IDataVerifier>();
+            dataVerifier.Scan();
+        }
+
+        private Container CreateDataImportContainer()
+        {
             var container = new Container();
 
             // registries
@@ -272,12 +323,12 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             container.Inject(typeof(IAwsConfiguration), apiClientConfiguration);
 
             var refinitivTickPriceHistoryApiConfig = new RefinitivTickPriceHistoryApiConfig
-                {
-                    RefinitivTickPriceHistoryApiAddress = "RefinitivTickPriceHistoryApiAddress",
-                    RefinitivTickPriceHistoryApiPollingSeconds = 60, 
-                    RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
-                };
-            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), refinitivTickPriceHistoryApiConfig);  
+            {
+                RefinitivTickPriceHistoryApiAddress = "RefinitivTickPriceHistoryApiAddress",
+                RefinitivTickPriceHistoryApiPollingSeconds = 60,
+                RefinitivTickPriceHistoryApiTimeOutDurationSeconds = 600
+            };
+            container.Inject(typeof(IRefinitivTickPriceHistoryApiConfig), refinitivTickPriceHistoryApiConfig);
 
             var systemDataLayerConfig = new SystemDataLayerConfig
             {
@@ -293,23 +344,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             var tickPriceHistoryServiceClientFactory = A.Fake<ITickPriceHistoryServiceClientFactory>();
             container.Inject(typeof(ITickPriceHistoryServiceClientFactory), tickPriceHistoryServiceClientFactory);
 
-            // upload allocation file
-            if (AllocationCsvContent != null)
-            {
-                var uploadAllocationFileMonitor = container.GetInstance<IUploadAllocationFileMonitor>();
-                WithTempFile(AllocationCsvContent, fileName => uploadAllocationFileMonitor.ProcessFile(fileName));
-            }
-
-            // upload trade file
-            if (TradeCsvContent != null)
-            {
-                var uploadTradeFileMonitor = container.GetInstance<IUploadTradeFileMonitor>();
-                WithTempFile(TradeCsvContent, fileName => uploadTradeFileMonitor.ProcessFile(fileName));
-            }
-
-            // enliven orders with data verifier
-            var dataVerifier = container.GetInstance<IDataVerifier>();
-            dataVerifier.Scan();
+            return container;
         }
 
         private void WithTempFile(string content, Action<string> action)
@@ -337,7 +372,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             }
         }
 
-        private async Task RunRule(bool isForceRun)
+        private async Task RunRuleEngine(bool isForceRun)
         {
             Console.WriteLine($"Running rule engine (isForceRun = {isForceRun})");
 
@@ -497,6 +532,13 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             // run rule
             var queueRuleSubscriber = container.GetInstance<IQueueRuleSubscriber>();
             await queueRuleSubscriber.ExecuteDistributedMessage(MessageId, message);
+        }
+
+        private IEnumerable<IOrder> GetOrders(IGraphQlDbContext dbContext)
+        {
+            return dbContext
+                .Orders
+                .ToList();
         }
 
         private int GetOrderCount(IGraphQlDbContext dbContext)

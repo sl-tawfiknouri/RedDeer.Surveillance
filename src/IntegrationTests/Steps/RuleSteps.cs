@@ -26,7 +26,8 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.From = DateTime.Parse(from, null, DateTimeStyles.AssumeUniversal);
             _ruleRunner.To = DateTime.Parse(to, null, DateTimeStyles.AssumeUniversal).AddDays(1).AddMilliseconds(-1);
 
-            _ruleRunner.Run().Wait();
+            _ruleRunner.RunDataImport();
+            _ruleRunner.RunRule().Wait();
         }
 
         [Then(@"there should be no breaches")]

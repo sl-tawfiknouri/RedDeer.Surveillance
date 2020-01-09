@@ -24,6 +24,8 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
         {
             _ruleRunner = new RuleRunner();
             _objectContainer.RegisterInstanceAs(_ruleRunner);
+
+            _ruleRunner.Setup().Wait();
         }
 
         [AfterScenario]

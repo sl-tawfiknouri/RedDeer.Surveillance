@@ -123,7 +123,10 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             {
                 if (TradeCsvContent != null)
                 {
-                    var orderCount = GetOrderCount(dbContext);
+                    var orderCount = dbContext
+                        .Orders
+                        .Count();
+
                     if (orderCount == 0)
                     {
                         throw new Exception("No orders were found in the order sql table. Was there an error during data import?");
@@ -132,7 +135,10 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
 
                 if (AllocationCsvContent != null)
                 {
-                    var allocationCount = GetOrderAllocationCount(dbContext);
+                    var allocationCount = dbContext
+                        .OrdersAllocation
+                        .Count();
+
                     if (allocationCount == 0)
                     {
                         throw new Exception("No allocations were found in the allocation sql table. Was there an error during data import?");
@@ -169,14 +175,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
                 RemainingRuleBreaches = OriginalRuleBreaches.ToList();
 
                 PrintBreaches();
-            }
-        }
-
-        public IEnumerable<IOrder> GetAllOrders()
-        {
-            using (var dbContext = BuildDbContext())
-            {
-                return GetOrders(dbContext);
             }
         }
 
@@ -534,27 +532,6 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             await queueRuleSubscriber.ExecuteDistributedMessage(MessageId, message);
         }
 
-        private IEnumerable<IOrder> GetOrders(IGraphQlDbContext dbContext)
-        {
-            return dbContext
-                .Orders
-                .ToList();
-        }
-
-        private int GetOrderCount(IGraphQlDbContext dbContext)
-        {
-            return dbContext
-                .Orders
-                .Count();
-        }
-
-        private int GetOrderAllocationCount(IGraphQlDbContext dbContext)
-        {
-            return dbContext
-                .OrdersAllocation
-                .Count();
-        }
-
         private int? GetDataRequestOperationId(IGraphQlDbContext dbContext)
         {
             var ruleRunIds = dbContext
@@ -623,7 +600,7 @@ namespace RedDeer.Surveillance.IntegrationTests.Runner
             return mappedBreaches;
         }
 
-        private IGraphQlDbContext BuildDbContext()
+        public IGraphQlDbContext BuildDbContext()
         {
             var builder = new ConfigurationBuilder();
             builder.AddInMemoryCollection(new Dictionary<string, string>

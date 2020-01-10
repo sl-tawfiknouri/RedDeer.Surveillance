@@ -211,53 +211,45 @@
 
         private async Task ReadMessage(string messageId, string messageBody)
         {
-            try
+            this._logger.LogDebug($"S3 upload picked up a message with id of {messageId} from the queue (MessageBody: '{messageBody}')");
+
+            var dto = this._mapper.Map(messageBody);
+
+            if (dto == null)
             {
-                this._logger.LogDebug($"S3 upload picked up a message with id of {messageId} from the queue (MessageBody: '{messageBody}')");
-
-                var dto = this._mapper.Map(messageBody);
-
-                if (dto == null)
-                {
-                    this._logger.LogError($"Tried to process a message {messageId} but when deserialising the message '{messageBody}' it had a null result");
-                    return;
-                }
-
-                if (dto.FileSize == 0)
-                {
-                    this._logger.LogDebug($"Deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message. File ({dto}).");
-                    return;
-                }
-
-                var s3ObjectKey = dto.FileName ?? string.Empty;
-                this._logger.LogInformation($"S3Processor received message for '{dto.Bucket}/{s3ObjectKey}'.");
-
-                switch (s3ObjectKey)
-                {
-                    case var objectKey when new Regex(this._configuration.DataImportTradeFileDirectoryPattern).IsMatch(objectKey): // "surveillance-trade":                         
-                        await this.ProcessTradeFile(dto, this._configuration.DataImportTradeFileFtpDirectoryPath, this._configuration.DataImportTradeFileUploadDirectoryPath);
-                        break;
-                    
-                    case var objectKey when new Regex(this._configuration.DataImportAllocationFileDirectoryPattern).IsMatch(objectKey): // "surveillance-allocation":
-                        await this.ProcessAllocationFile(dto, this._configuration.DataImportAllocationFileFtpDirectoryPath, this._configuration.DataImportAllocationFileUploadDirectoryPath);
-                        break;
-                    
-                    case var objectKey when new Regex(this._configuration.DataImportEtlFileDirectoryPattern).IsMatch(objectKey): // "surveillance-etl-order":
-                        await this.ProcessEtlFile(dto, this._configuration.DataImportEtlFileFtpDirectoryPath, this._configuration.DataImportEtlFileUploadDirectoryPath);
-                        break;
-                    
-                    case var objectKey when new Regex(this._configuration.DataImportIgnoreFileDirectoryPattern).IsMatch(objectKey): // "^Surveillance/Surveillance/**/.*.csv.metadata$":
-                        this._logger.LogWarning($"Ignoring file as Ingore file pattern recognized it. (File: '{dto.FileName}' MessageId: '{messageId}').");
-                        break;
-                    
-                    default:
-                        throw new Exception($"Was not able to identify file processor for '{s3ObjectKey}'. (MessageId: '{messageId}', MessageBody: '{messageBody}').");
-                }
+                this._logger.LogError($"Tried to process a message {messageId} but when deserialising the message '{messageBody}' it had a null result");
+                return;
             }
-            catch (Exception e)
+
+            if (dto.FileSize == 0)
             {
-                this._logger.LogError(e, $"Exception while processing message (MessageId: '{messageId}', MessageBody: '{messageBody}').");
-                throw e;
+                this._logger.LogDebug($"Deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message. File ({dto}).");
+                return;
+            }
+
+            var s3ObjectKey = dto.FileName ?? string.Empty;
+            this._logger.LogInformation($"S3Processor received message for '{dto.Bucket}/{s3ObjectKey}'.");
+
+            switch (s3ObjectKey)
+            {
+                case var objectKey when new Regex(this._configuration.DataImportTradeFileDirectoryPattern).IsMatch(objectKey): // "surveillance-trade":                         
+                    await this.ProcessTradeFile(dto, this._configuration.DataImportTradeFileFtpDirectoryPath, this._configuration.DataImportTradeFileUploadDirectoryPath);
+                    break;
+
+                case var objectKey when new Regex(this._configuration.DataImportAllocationFileDirectoryPattern).IsMatch(objectKey): // "surveillance-allocation":
+                    await this.ProcessAllocationFile(dto, this._configuration.DataImportAllocationFileFtpDirectoryPath, this._configuration.DataImportAllocationFileUploadDirectoryPath);
+                    break;
+
+                case var objectKey when new Regex(this._configuration.DataImportEtlFileDirectoryPattern).IsMatch(objectKey): // "surveillance-etl-order":
+                    await this.ProcessEtlFile(dto, this._configuration.DataImportEtlFileFtpDirectoryPath, this._configuration.DataImportEtlFileUploadDirectoryPath);
+                    break;
+
+                case var objectKey when new Regex(this._configuration.DataImportIgnoreFileDirectoryPattern).IsMatch(objectKey): // "^Surveillance/Surveillance/**/.*.csv.metadata$":
+                    this._logger.LogWarning($"Ignoring file as Ingore file pattern recognized it. (File: '{dto.FileName}' MessageId: '{messageId}').");
+                    break;
+
+                default:
+                    throw new Exception($"Was not able to identify file processor for '{s3ObjectKey}'. (MessageId: '{messageId}', MessageBody: '{messageBody}').");
             }
         }
     }

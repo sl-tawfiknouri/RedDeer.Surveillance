@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -228,39 +229,34 @@
                     return;
                 }
 
-                var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
-                var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
+                var s3ObjectKey = dto.FileName ?? string.Empty;
+                this._logger.LogInformation($"S3Processor received message for '{dto.Bucket}/{s3ObjectKey}'.");
 
-                this._logger.LogInformation($"S3Processor received message for '{directoryName}' directory.");
-
-                switch (splitPath)
+                switch (s3ObjectKey)
                 {
-                    case "surveillance-trade":
-                        await this.ProcessTradeFile(
-                            dto,
-                            this._configuration.DataImportTradeFileFtpDirectoryPath,
-                            this._configuration.DataImportTradeFileUploadDirectoryPath);
+                    case var objectKey when new Regex(this._configuration.DataImportTradeFileDirectoryPattern).IsMatch(objectKey): // "surveillance-trade":                         
+                        await this.ProcessTradeFile(dto, this._configuration.DataImportTradeFileFtpDirectoryPath, this._configuration.DataImportTradeFileUploadDirectoryPath);
                         break;
-                    case "surveillance-allocation":
-                        await this.ProcessAllocationFile(
-                            dto,
-                            this._configuration.DataImportAllocationFileFtpDirectoryPath,
-                            this._configuration.DataImportAllocationFileUploadDirectoryPath);
+                    
+                    case var objectKey when new Regex(this._configuration.DataImportAllocationFileDirectoryPattern).IsMatch(objectKey): // "surveillance-allocation":
+                        await this.ProcessAllocationFile(dto, this._configuration.DataImportAllocationFileFtpDirectoryPath, this._configuration.DataImportAllocationFileUploadDirectoryPath);
                         break;
-                    case "surveillance-etl-order":
-                        await this.ProcessEtlFile(
-                            dto,
-                            this._configuration.DataImportEtlFileFtpDirectoryPath,
-                            this._configuration.DataImportEtlFileUploadDirectoryPath);
+                    
+                    case var objectKey when new Regex(this._configuration.DataImportEtlFileDirectoryPattern).IsMatch(objectKey): // "surveillance-etl-order":
+                        await this.ProcessEtlFile(dto, this._configuration.DataImportEtlFileFtpDirectoryPath, this._configuration.DataImportEtlFileUploadDirectoryPath);
                         break;
+                    
+                    case var objectKey when new Regex(this._configuration.DataImportIgnoreFileDirectoryPattern).IsMatch(objectKey): // "^Surveillance/Surveillance/**/.*.csv.metadata$":
+                        this._logger.LogWarning($"Ignoring file as Ingore file pattern recognized it. (File: '{dto.FileName}' MessageId: '{messageId}').");
+                        break;
+                    
                     default:
-                        this._logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file '{dto.FileName}' for MessageId '{messageId}'.");
-                        return;
+                        throw new Exception($"Was not able to identify file processor for '{s3ObjectKey}'. (MessageId: '{messageId}', MessageBody: '{messageBody}').");
                 }
             }
             catch (Exception e)
             {
-                this._logger.LogError(e, $"Exception while processing messageid '{messageId}' with body '{messageBody}'.");
+                this._logger.LogError(e, $"Exception while processing message (MessageId: '{messageId}', MessageBody: '{messageBody}').");
                 throw e;
             }
         }

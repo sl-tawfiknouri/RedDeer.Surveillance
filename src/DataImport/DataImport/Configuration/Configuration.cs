@@ -30,8 +30,15 @@ namespace DataImport.Configuration
 
         public string DataImportTradeFileUploadDirectoryPath { get; set; }
 
+        public string DataImportTradeFileDirectoryPattern { get; set; }
 
+        public string DataImportAllocationFileDirectoryPattern { get; set; }
 
+        public string DataImportEtlFileDirectoryPattern { get; set; }
+
+        public string DataImportIgnoreFileDirectoryPattern { get; set; }
+
+        // data layer
         public string SurveillanceAuroraConnectionString { get; set; }
 
         public string RefinitivTickPriceHistoryApiAddress { get; set; }

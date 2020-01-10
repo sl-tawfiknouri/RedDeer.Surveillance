@@ -141,6 +141,12 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportEtlFileUploadDirectoryPath = this.GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
                 DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder),
+
+                DataImportTradeFileDirectoryPattern = this.GetSettingOrDefault("DataImportTradeFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-trade/.*.csv$"),
+                DataImportAllocationFileDirectoryPattern = this.GetSettingOrDefault("DataImportAllocationFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-allocation/.*.csv$"),
+                DataImportEtlFileDirectoryPattern = this.GetSettingOrDefault("DataImportEtlFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-etl-order/.*.csv$"),
+                DataImportIgnoreFileDirectoryPattern = this.GetSettingOrDefault("DataImportIgnoreFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/.*.csv.metadata$"),
+
                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
                 RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.GetSetting("RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey", configurationBuilder),
                 RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
@@ -206,6 +212,12 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                     }).Result.Tags;
 
             return tags?.FirstOrDefault()?.Value;
+        }
+
+        private string GetSettingOrDefault(string name, IConfigurationRoot config, string defaultValue)
+        {
+            var value = GetSetting(name, config);
+            return string.IsNullOrEmpty(value) ? defaultValue : value;
         }
 
         private int GetSettingOrDefault(string name, IConfigurationRoot config, int defaultValue)

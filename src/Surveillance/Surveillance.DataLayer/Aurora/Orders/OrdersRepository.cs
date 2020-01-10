@@ -470,6 +470,45 @@
                 SELECT LAST_INSERT_ID();";
 
         private const string InsertOrderSql = @"
+            SELECT
+                1
+            INTO
+                @match
+            FROM Orders O
+            WHERE
+                MarketId=@MarketId AND
+                SecurityId=@SecurityReddeerId AND
+                ClientOrderId=@OrderId AND
+                OrderVersion=@OrderVersion AND
+                OrderVersionLinkId=@OrderVersionLinkId AND
+                OrderGroupId=@OrderGroupId AND
+                ((@OrderPlacedDate IS NULL AND PlacedDate IS NULL) OR (PlacedDate = @OrderPlacedDate)) AND
+                ((@OrderBookedDate IS NULL AND BookedDate IS NULL) OR (BookedDate = @OrderBookedDate)) AND
+                ((@OrderAmendedDate IS NULL AND AmendedDate IS NULL) OR (AmendedDate = @OrderAmendedDate)) AND
+                ((@OrderRejectedDate IS NULL AND RejectedDate IS NULL) OR (RejectedDate = @OrderRejectedDate)) AND
+                ((@OrderCancelledDate IS NULL AND CancelledDate IS NULL) OR (CancelledDate = @OrderCancelledDate)) AND
+                ((@OrderFilledDate IS NULL AND FilledDate IS NULL) OR (FilledDate = @OrderFilledDate)) AND
+                ((@OrderStatusChangedDate IS NULL AND StatusChangedDate IS NULL) OR (StatusChangedDate = @OrderStatusChangedDate)) AND
+                OrderType=@OrderType AND
+                Direction=@OrderDirection AND
+                Currency=@OrderCurrency AND
+                SettlementCurrency=@OrderSettlementCurrency AND
+                CleanDirty=@CleanDirty AND
+                ((@AccumulatedInterest IS NULL AND AccumulatedInterest IS NULL) OR (AccumulatedInterest=@AccumulatedInterest)) AND
+                LimitPrice=@OrderLimitPrice AND
+                AverageFillPrice=@OrderAverageFillPrice AND
+                OrderedVolume=@OrderOrderedVolume AND
+                FilledVolume=@OrderFilledVolume AND
+                TraderId=@OrderTraderId AND
+                TraderName = @OrderTraderName AND
+                ((@OrderBrokerId IS NULL AND BrokerId IS NULL) OR (BrokerId = @OrderBrokerId)) AND
+                ClearingAgent=@OrderClearingAgent AND
+                DealingInstructions=@OrderDealingInstructions AND
+                OptionStrikePrice=@OptionStrikePrice AND
+                ((@OptionExpirationDate IS NULL AND OptionExpirationDate IS NULL) OR (OptionExpirationDate=@OptionExpirationDate)) AND
+                OptionEuropeanAmerican=@OptionEuropeanAmerican
+            LIMIT 1;
+
             INSERT INTO Orders(
                 MarketId,
                 SecurityId,
@@ -539,7 +578,9 @@
                 @OptionExpirationDate,
                 @OptionEuropeanAmerican)
             ON DUPLICATE KEY UPDATE
-                ClientOrderId =@OrderId,
+                MarketId=@MarketId,
+                SecurityId=@SecurityReddeerId,
+                ClientOrderId=@OrderId,
                 OrderVersion=@OrderVersion,
                 OrderVersionLinkId=@OrderVersionLinkId,
                 OrderGroupId=@OrderGroupId,
@@ -568,9 +609,18 @@
                 OptionStrikePrice=@OptionStrikePrice,
                 OptionExpirationDate=@OptionExpirationDate,
                 OptionEuropeanAmerican=@OptionEuropeanAmerican,
-                Live = 0,
-                Autoscheduled = 0,
+                Live = IF(
+                    @match = 1,
+                    (SELECT Live FROM Orders O WHERE ClientOrderId = @OrderId),
+                    0
+                ),
+                Autoscheduled = IF(
+                    @match = 1,
+                    (SELECT Autoscheduled FROM Orders O WHERE ClientOrderId = @OrderId),
+                    0
+                ),
                 Id = LAST_INSERT_ID(Id);
+
                 SELECT LAST_INSERT_ID();";
 
         private const string SetOrdersToLivened = @"

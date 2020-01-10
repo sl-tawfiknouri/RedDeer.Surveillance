@@ -47,10 +47,54 @@
                 CreatedDate < @StalenessDate;";
 
         private const string InsertAttributionSql = @"
+            SELECT 1
+            INTO @match
+            FROM OrdersAllocation
+            WHERE
+                OrderId = @OrderId AND
+                Fund = @Fund AND
+                Strategy = @Strategy AND
+                ClientAccountId = @ClientAccountId AND
+                AllocationId = @AllocationId AND
+                OrderFilledVolume = @OrderFilledVolume
+            LIMIT 1;
+
             INSERT INTO 
                 OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, AllocationId, OrderFilledVolume, CreatedDate)
                 VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @AllocationId, @OrderFilledVolume, now())
-            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume, Id = LAST_INSERT_ID(Id), CreatedDate = now(), Live = 0, Autoscheduled = 0;
+            ON DUPLICATE KEY UPDATE
+                OrderFilledVolume = @OrderFilledVolume,
+                CreatedDate = now(),
+                Live = IF(
+                    @match = 1,
+                    (
+                        SELECT Live
+                        FROM OrdersAllocation A
+                        WHERE
+                            OrderId = @OrderId AND
+                            Fund = @Fund AND
+                            Strategy = @Strategy AND
+                            ClientAccountId = @ClientAccountId AND
+                            AllocationId = @AllocationId
+                    ),
+                    0
+                ),
+                Autoscheduled = IF(
+                    @match = 1,
+                    (
+                        SELECT Autoscheduled
+                        FROM OrdersAllocation A
+                        WHERE
+                            OrderId = @OrderId AND
+                            Fund = @Fund AND
+                            Strategy = @Strategy AND
+                            ClientAccountId = @ClientAccountId AND
+                            AllocationId = @AllocationId
+                    ),
+                    0
+                ),
+                Id = LAST_INSERT_ID(Id);
+
             SELECT LAST_INSERT_ID();";
 
         private readonly IConnectionStringFactory _connectionFactory;

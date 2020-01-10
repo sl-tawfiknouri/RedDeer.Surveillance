@@ -98,6 +98,7 @@
                                    Fund = this.PreProcess(rawRecord["Fund"]),
                                    Strategy = this.PreProcess(rawRecord["Strategy"]),
                                    ClientAccountId = this.PreProcess(rawRecord["ClientAccountId"]),
+                                   AllocationId = this.PreProcess(rawRecord["AllocationId"]),
                                    OrderFilledVolume = this.PreProcess(rawRecord["OrderFilledVolume"]),
                                    RowId = rowId
                                };

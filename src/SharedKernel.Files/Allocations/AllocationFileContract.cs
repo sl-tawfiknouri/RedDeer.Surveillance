@@ -20,5 +20,7 @@
         public int RowId { get; set; }
 
         public string Strategy { get; set; }
+
+        public string AllocationId { get; set; }
     }
 }

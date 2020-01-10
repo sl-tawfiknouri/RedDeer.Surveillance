@@ -65,6 +65,9 @@
     <None Update="Migrations\47 - FinancialInstruments ExchangeSymbol update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\48 - Add allocation id to allocation table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\30 - Add rule analytic alert cols for ramping.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

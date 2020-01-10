@@ -62,6 +62,7 @@
                                           "test-fund-1",
                                           "test-strategy-1",
                                           "test-account-1",
+                                          "test-allocation-1",
                                           fiftyPercentVolume,
                                           DateTime.UtcNow),
                                       new OrderAllocation(
@@ -70,6 +71,7 @@
                                           "test-fund-2",
                                           "test-strategy-2",
                                           "test-account-2",
+                                          "test-allocation-2",
                                           fiftyPercentVolume,
                                           DateTime.UtcNow)
                                   };

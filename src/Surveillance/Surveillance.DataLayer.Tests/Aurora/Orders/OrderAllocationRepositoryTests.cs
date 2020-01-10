@@ -39,6 +39,7 @@
                 "my-fund",
                 "my-strategy",
                 "my-account",
+                "my-allocation",
                 1000,
                 DateTime.UtcNow);
             var orderAllocation2 = new OrderAllocation(
@@ -47,6 +48,7 @@
                 "my-fund",
                 "my-strategy",
                 "my-account",
+                "my-allocation",
                 1000,
                 DateTime.UtcNow);
             var allocations = new List<OrderAllocation> { orderAllocation1, orderAllocation2 };
@@ -83,6 +85,7 @@
                 "my-fund",
                 "my-strategy",
                 "my-account",
+                "my-allocation",
                 1000,
                 DateTime.UtcNow);
 
@@ -101,6 +104,7 @@
                 "my-fund",
                 "my-strategy",
                 "my-account",
+                "my-allocation",
                 1000,
                 DateTime.UtcNow);
 

@@ -212,30 +212,26 @@
         {
             try
             {
-                this._logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
+                this._logger.LogDebug($"S3 upload picked up a message with id of {messageId} from the queue (MessageBody: '{messageBody}')");
 
                 var dto = this._mapper.Map(messageBody);
 
                 if (dto == null)
                 {
-                    this._logger.LogError(
-                        $"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
-
+                    this._logger.LogError($"Tried to process a message {messageId} but when deserialising the message '{messageBody}' it had a null result");
                     return;
                 }
 
                 if (dto.FileSize == 0)
                 {
-                    this._logger.LogInformation(
-                        $"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message. File ({dto}).");
-
+                    this._logger.LogDebug($"Deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message. File ({dto}).");
                     return;
                 }
 
                 var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
                 var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
 
-                this._logger.LogInformation($"S3Processor received message for {directoryName}");
+                this._logger.LogInformation($"S3Processor received message for '{directoryName}' directory.");
 
                 switch (splitPath)
                 {
@@ -246,11 +242,10 @@
                             this._configuration.DataImportTradeFileUploadDirectoryPath);
                         break;
                     case "surveillance-allocation":
-                        var paf = this.ProcessAllocationFile(
+                        await this.ProcessAllocationFile(
                             dto,
                             this._configuration.DataImportAllocationFileFtpDirectoryPath,
                             this._configuration.DataImportAllocationFileUploadDirectoryPath);
-                        paf.Wait();
                         break;
                     case "surveillance-etl-order":
                         await this.ProcessEtlFile(
@@ -259,14 +254,14 @@
                             this._configuration.DataImportEtlFileUploadDirectoryPath);
                         break;
                     default:
-                        this._logger.LogInformation(
-                            $"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
+                        this._logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file '{dto.FileName}' for MessageId '{messageId}'.");
                         return;
                 }
             }
             catch (Exception e)
             {
-                this._logger.LogError(e, "S3FileUploadMonitoringProcess");
+                this._logger.LogError(e, $"Exception while processing messageid '{messageId}' with body '{messageBody}'.");
+                throw e;
             }
         }
     }

@@ -32,12 +32,12 @@ namespace RedDeer.Etl.SqlSriptExecutor.Lambda
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
-        public async Task<bool> FunctionHandler(SqlSriptExecutorRequest request, ILambdaContext context)
+        public async Task<bool> FunctionHandler(FunctionRequest request, ILambdaContext context)
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                var sqlSriptExecutor = scope.ServiceProvider.GetRequiredService<ISqlSriptExecutorService>();
-                var result = await sqlSriptExecutor.ExecuteAsync(request);
+                var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+                var result = await functionService.ExecuteAsync(request);
                 return result;
             }
         }

@@ -25,24 +25,19 @@ namespace RedDeer.Etl.SqlSriptExecutor.Services
             _logger = logger;
         }
 
-        public async Task<bool> ExecuteAsync(SqlSriptExecutorRequest request)
+        public async Task<bool> ExecuteAsync(SqlSriptData[] scripts)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            if (request.Scripts == null)
-            {
-                throw new ArgumentNullException(nameof(request.Scripts));
-            }
-
-            var requestJson = request != null ? JsonConvert.SerializeObject(request) : "";
+            var requestJson = scripts != null ? JsonConvert.SerializeObject(scripts) : "";
             _logger.LogDebug($"Request: '{requestJson}'");
+
+            if (scripts == null)
+            {
+                return true;
+            }
 
             var queryExecutionIds = new List<string>();
 
-            foreach (var script in request.Scripts)
+            foreach (var script in scripts)
             {
                 _logger.LogDebug($"Executing script: '{JsonConvert.SerializeObject(script)}'");
 

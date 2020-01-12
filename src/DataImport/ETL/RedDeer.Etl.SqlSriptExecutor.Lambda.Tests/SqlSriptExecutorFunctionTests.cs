@@ -17,7 +17,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Lambda.Tests
         [Test]
         public async Task FunctionHandler_WhenExecuted()
         {
-            var request = new SqlSriptExecutorRequest();
+            var request = new FunctionRequest();
             request.Scripts = new SqlSriptData[]
             {
                 new SqlSriptData

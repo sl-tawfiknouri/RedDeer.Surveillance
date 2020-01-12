@@ -31,10 +31,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Tests.Services
             var scriptDataA = CreateSqlSriptData("a");
             var scriptDataB = CreateSqlSriptData("b");
 
-            var request = new SqlSriptExecutorRequest
-            {
-                Scripts = new SqlSriptData[] { scriptDataA, scriptDataB }
-            };
+            var scripts = new SqlSriptData[] { scriptDataA, scriptDataB };
 
             var scriptA = "SELECT ColumnA FROM TableA";
             A.CallTo(() => _s3ClientService.ReadAllText(A<string>.That.Matches(m => m.Equals(scriptDataA.SqlScriptS3Location))))
@@ -50,7 +47,7 @@ namespace RedDeer.Etl.SqlSriptExecutor.Tests.Services
             A.CallTo(() => _athenaClientService.StartQueryExecutionAsync(A<string>.That.IsEqualTo(scriptDataB.Database), A<string>.That.IsEqualTo(scriptB), A<string>.That.IsEqualTo(scriptDataB.CsvOutputLocation)))
                 .Returns("id-b");
 
-            await _sqlSriptExecutorService.ExecuteAsync(request);
+            await _sqlSriptExecutorService.ExecuteAsync(scripts);
 
             A.CallTo(() => _athenaClientService.StartQueryExecutionAsync(A<string>.That.IsEqualTo(scriptDataA.Database), A<string>.That.IsEqualTo(scriptA), A<string>.That.IsEqualTo(scriptDataA.CsvOutputLocation)))
                 .MustHaveHappenedOnceExactly();

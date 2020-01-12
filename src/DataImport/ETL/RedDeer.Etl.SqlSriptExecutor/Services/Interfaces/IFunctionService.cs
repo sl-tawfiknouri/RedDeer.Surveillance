@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Services.Interfaces
 {
-    public interface ISqlSriptExecutorService
+    public interface IFunctionService
     {
-        Task<bool> ExecuteAsync(SqlSriptData[] scripts);
+        Task<bool> ExecuteAsync(FunctionRequest request);
     }
 }

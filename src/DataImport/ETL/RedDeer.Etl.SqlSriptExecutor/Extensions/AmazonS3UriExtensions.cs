@@ -28,6 +28,16 @@ namespace RedDeer.Etl.SqlSriptExecutor.Extensions
             }
         }
 
+        public static AmazonS3Uri ParseAmazonS3Uri(string uriString)
+        {
+            if (!TryParseAmazonS3Uri(uriString, out AmazonS3Uri amazonS3Uri))
+            {
+                throw new ArgumentException($"Not valid S3 uri '{uriString}'.", nameof(uriString));
+            }
+
+            return amazonS3Uri;
+        }
+
         private static AmazonS3Uri CreateAmazonS3Uri(string bucketName, string objectKey)
             => new AmazonS3Uri(CreateS3Uri(bucketName, objectKey));
 

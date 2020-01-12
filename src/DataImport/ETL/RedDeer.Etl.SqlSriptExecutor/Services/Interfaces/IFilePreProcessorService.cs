@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace RedDeer.Etl.SqlSriptExecutor.Services.Interfaces
 {
-    public interface ISqlSriptExecutorService
+    public interface IFilePreProcessorService
     {
-        Task<bool> ExecuteAsync(SqlSriptData[] scripts);
+        Task<bool> PreProcessAsync(FilePreProcessorData data);
     }
 }

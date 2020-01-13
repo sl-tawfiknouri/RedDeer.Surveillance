@@ -22,9 +22,9 @@
             this.AuthorizeWith(PolicyManifest.AdminPolicy);
 
             this.Field(i => i.Id).Description("Identifier for the system process operation data synchroniser request");
-            this.Field(i => i.QueueMessageId).Description("Queue message id");
+            this.Field(i => i.QueueMessageId, true).Description("Queue message id");
 
-            this.Field(i => i.RuleRunId).Description("Rule run identifier for the data synchroniser");
+            this.Field(i => i.RuleRunId, true).Description("Rule run identifier for the data synchroniser");
             this.Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>(
                 "ruleRun",
                 resolve: context =>

@@ -97,7 +97,7 @@ Task("SetVersion")
 Task("ValidateBranch")
 	.Does(()=>
 	{
-		var validBranchNames = new Regex(@"^(?:origin\/)?(release|uat|master|default|sur-[\d]{1,}|mo-[\d]{1,}|plat-[\d]{1,}|r[a-z]{1,3}?-[\d]{1,}|dan{1,3}?-[\d]{1,}|rc-v[\d\.]+)");//RM-123, sur-123, plat-123, RDPB-12345, DAN-xxx, rc-v1.1.1
+		var validBranchNames = new Regex(@"^(?:origin\/)?(release|uat|master|default|pr-\d+|sur-[\d]{1,}|mo-[\d]{1,}|plat-[\d]{1,}|r[a-z]{1,3}?-[\d]{1,}|dan{1,3}?-[\d]{1,}|rc-v[\d\.]+)");//RM-123, sur-123, plat-123, RDPB-12345, DAN-xxx, rc-v1.1.1
 		if (!validBranchNames.IsMatch(BranchName.ToLowerInvariant()))
 		{
 			throw new Exception($"Invalid branch name '{BranchName}'. Have you forgotten the Jira number prefix?");

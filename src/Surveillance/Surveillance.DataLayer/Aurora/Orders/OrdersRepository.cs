@@ -611,12 +611,12 @@
                 OptionEuropeanAmerican=@OptionEuropeanAmerican,
                 Live = IF(
                     @match = 1,
-                    (SELECT Live FROM Orders O WHERE ClientOrderId = @OrderId),
+                    Live,
                     0
                 ),
                 Autoscheduled = IF(
                     @match = 1,
-                    (SELECT Autoscheduled FROM Orders O WHERE ClientOrderId = @OrderId),
+                    Autoscheduled,
                     0
                 ),
                 Id = LAST_INSERT_ID(Id);

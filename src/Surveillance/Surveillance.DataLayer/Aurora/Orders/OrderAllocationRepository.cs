@@ -67,30 +67,12 @@
                 CreatedDate = now(),
                 Live = IF(
                     @match = 1,
-                    (
-                        SELECT Live
-                        FROM OrdersAllocation A
-                        WHERE
-                            OrderId = @OrderId AND
-                            Fund = @Fund AND
-                            Strategy = @Strategy AND
-                            ClientAccountId = @ClientAccountId AND
-                            AllocationId = @AllocationId
-                    ),
+                    Live,
                     0
                 ),
                 Autoscheduled = IF(
                     @match = 1,
-                    (
-                        SELECT Autoscheduled
-                        FROM OrdersAllocation A
-                        WHERE
-                            OrderId = @OrderId AND
-                            Fund = @Fund AND
-                            Strategy = @Strategy AND
-                            ClientAccountId = @ClientAccountId AND
-                            AllocationId = @AllocationId
-                    ),
+                    Autoscheduled,
                     0
                 ),
                 Id = LAST_INSERT_ID(Id);

@@ -24,4 +24,3 @@ src/.sonarqube/
 
 src/DataImport/App/PlayAllocationFiles/
 src/DataImport/App/PlayTradeFiles/
-/src

@@ -14,8 +14,9 @@ namespace Surveillance.Data.Universe.Refinitiv
     public class TickPriceHistoryServiceClientFactory : ITickPriceHistoryServiceClientFactory
     {
         private readonly IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig;
-        private readonly IConfiguration configuration;
+        // private readonly IOptions<TickPriceHistoryServiceClientOptions> options;
         private readonly IJwtTokenService jwtTokenService;
+        private readonly IConfiguration configuration;
 
         public TickPriceHistoryServiceClientFactory(
             IRefinitivTickPriceHistoryApiConfig refinitivTickPriceHistoryApiConfig,

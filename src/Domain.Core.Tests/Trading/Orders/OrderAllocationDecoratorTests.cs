@@ -117,6 +117,7 @@
                 "allocation-fund",
                 "allocation-strategy",
                 "allocation-account",
+                "allocation-id",
                 orderFilledVolume,
                 DateTime.UtcNow);
         }

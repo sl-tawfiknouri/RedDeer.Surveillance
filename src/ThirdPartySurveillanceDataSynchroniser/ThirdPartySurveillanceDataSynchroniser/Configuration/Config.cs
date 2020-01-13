@@ -10,6 +10,8 @@ namespace DataSynchroniser.Configuration
     {
         public string AuroraConnectionString { get; set; }
 
+        public string OverrideMigrationsFolder { get; set; }
+
         public string BmllServiceUrl { get; set; }
 
         public string CaseMessageQueueName { get; set; }

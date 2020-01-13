@@ -31,6 +31,7 @@
                 contract.Fund,
                 contract.Strategy,
                 contract.ClientAccountId,
+                contract.AllocationId,
                 orderFilledVolume.GetValueOrDefault(0),
                 DateTime.UtcNow);
 

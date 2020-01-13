@@ -22,5 +22,10 @@
 
             return new MySqlConnection(connection);
         }
+
+        public string OverrideMigrationsFolder()
+        {
+            return _config.OverrideMigrationsFolder;
+        }
     }
 }

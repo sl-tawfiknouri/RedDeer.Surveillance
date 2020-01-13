@@ -13,11 +13,7 @@ namespace DataImport.Configuration
         public string OverrideMigrationsFolder { get; set; }
 
         public bool AutoSchedule { get; set; }
-
-        public string CaseMessageQueueName { get; set; }
-
-        public string ClientServiceUrl { get; set; }
-
+        
         public string DataImportAllocationFileFtpDirectoryPath { get; set; }
 
         public string DataImportAllocationFileUploadDirectoryPath { get; set; }
@@ -38,15 +34,17 @@ namespace DataImport.Configuration
 
         public string DataImportTradeFileUploadDirectoryPath { get; set; }
 
+        public string DataImportTradeFileDirectoryPattern { get; set; }
+
+        public string DataImportAllocationFileDirectoryPattern { get; set; }
+
+        public string DataImportEtlFileDirectoryPattern { get; set; }
+
+        public string DataImportIgnoreFileDirectoryPattern { get; set; }
+
         // data layer
-        public string ScheduledRuleQueueName { get; set; }
-
-        public string ScheduleRuleDistributedWorkQueueName { get; set; }
-
         public string SurveillanceAuroraConnectionString { get; set; }
 
-        public string SurveillanceUserApiAccessToken { get; set; }
-        
         public string RefinitivTickPriceHistoryApiAddress { get; set; }
 
         public string RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey { get; set; }

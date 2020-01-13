@@ -17,12 +17,12 @@
             this.AuthorizeWith(PolicyManifest.UserPolicy);
 
             this.Field(i => i.Id).Description("Identifier for the system process operation rule run");
-            this.Field(i => i.CorrelationId).Description("Correlation id for the system process operation rule run");
-            this.Field(i => i.IsBackTest).Description("Back test flag for the rule run");
-            this.Field(i => i.IsForceRun).Description("Force run flag for the rule run");
+            this.Field(i => i.CorrelationId, true).Description("Correlation id for the system process operation rule run");
+            this.Field(i => i.IsBackTest, true).Description("Back test flag for the rule run");
+            this.Field(i => i.IsForceRun, true).Description("Force run flag for the rule run");
             this.Field(i => i.RuleDescription).Description("Rule description for the rule run");
-            this.Field(i => i.RuleParameterId).Description("Rule id");
-            this.Field(i => i.RuleTypeId).Description("Rule category id");
+            this.Field(i => i.RuleParameterId, true).Description("Rule id");
+            this.Field(i => i.RuleTypeId, true).Description("Rule category id");
             this.Field(i => i.RuleVersion).Description("The version of the rule ran");
             this.Field(i => i.ScheduleRuleStart).Type(new DateTimeGraphType()).Description(
                 "The start date for the rule run. The actual data for the rule run is pushed out by the rule time window");

@@ -7,11 +7,11 @@ START TRANSACTION;
 
 	ALTER TABLE OrdersAllocation DROP INDEX unique_orders_allocation;
 
-	ALTER TABLE OrdersAllocation CHANGE OrderId OrderId nvarchar(200);
-    ALTER TABLE OrdersAllocation CHANGE Fund Fund nvarchar(200);
-    ALTER TABLE OrdersAllocation CHANGE Strategy Strategy nvarchar(200);
-    ALTER TABLE OrdersAllocation CHANGE ClientAccountId ClientAccountId nvarchar(200);
-	ALTER TABLE OrdersAllocation ADD AllocationId nvarchar(200);
+	ALTER TABLE OrdersAllocation CHANGE OrderId OrderId nvarchar(200) NOT NULL DEFAULT '';
+    ALTER TABLE OrdersAllocation CHANGE Fund Fund nvarchar(200) NOT NULL DEFAULT '';
+    ALTER TABLE OrdersAllocation CHANGE Strategy Strategy nvarchar(200) NOT NULL DEFAULT '';
+    ALTER TABLE OrdersAllocation CHANGE ClientAccountId ClientAccountId nvarchar(200) NOT NULL DEFAULT '';
+	ALTER TABLE OrdersAllocation ADD AllocationId nvarchar(200) NOT NULL DEFAULT '';
 
 	ALTER TABLE OrdersAllocation ADD CONSTRAINT unique_orders_allocation UNIQUE(OrderId, Fund, Strategy, ClientAccountId, AllocationId);
 

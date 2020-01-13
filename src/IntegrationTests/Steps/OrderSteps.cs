@@ -100,6 +100,64 @@ namespace RedDeer.Surveillance.IntegrationTests.Steps
             _ruleRunner.AllocationCsvContent = MakeCsv(rows);
         }
 
+        [When(@"the data importer is run")]
+        public void WhenTheDataImporterIsRun()
+        {
+            _ruleRunner.RunDataImport();
+        }
+
+        [When(@"the auto scheduler is run")]
+        public void WhenTheAutoSchedulerIsRun()
+        {
+            _ruleRunner.RunAutoScheduler();
+        }
+
+        [Then(@"there should be a single order with id ""(.*)"" and autoscheduled ""(.*)""")]
+        public void ThenThereShouldBeASingleOrderWithIdAndAutoscheduled(string id, bool autoscheduled)
+        {
+            using (var dbContext = _ruleRunner.BuildDbContext())
+            {
+                var orders = dbContext
+                    .Orders
+                    .ToList();
+
+                if (orders.Count > 1)
+                {
+                    throw new Exception("There are more than 1 orders in the database");
+                }
+
+                var order = orders.Where(x => x.ClientOrderId == id && x.Autoscheduled == autoscheduled).SingleOrDefault();
+
+                if (order == null)
+                {
+                    throw new Exception($"Could not find order with client id \"{id}\" and autoscheduled \"{autoscheduled}\"");
+                }
+            }
+        }
+
+        [Then(@"there should be a single allocation with OrderId ""(.*)"" and autoscheduled ""(.*)""")]
+        public void ThenThereShouldBeASingleAllocationWithOrderIdAndAutoscheduled(string orderId, bool autoscheduled)
+        {
+            using (var dbContext = _ruleRunner.BuildDbContext())
+            {
+                var allocations = dbContext
+                    .OrdersAllocation
+                    .ToList();
+
+                if (allocations.Count > 1)
+                {
+                    throw new Exception("There are more than 1 allocations in the database");
+                }
+
+                var allocation = allocations.Where(x => x.OrderId == orderId && x.AutoScheduled == autoscheduled).SingleOrDefault();
+
+                if (allocation == null)
+                {
+                    throw new Exception($"Could not find allocation with order id \"{orderId}\" and autoscheduled \"{autoscheduled}\"");
+                }
+            }
+        }
+
 
         private string MakeCsv(IEnumerable<IDictionary<string, string>> rows)
         {

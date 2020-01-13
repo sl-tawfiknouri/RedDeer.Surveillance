@@ -32,5 +32,7 @@
         IQueryable<ISystemProcess> SystemProcess { get; }
 
         IQueryable<ISystemProcessOperationUploadFile> UploadFile { get; }
+
+        IQueryable<IRuleDataRequest> RuleDataRequest { get; }
     }
 }

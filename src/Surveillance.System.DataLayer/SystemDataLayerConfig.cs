@@ -5,5 +5,6 @@
     public class SystemDataLayerConfig : ISystemDataLayerConfig
     {
         public string SurveillanceAuroraConnectionString { get; set; }
+        public string OverrideMigrationsFolder { get; set; }
     }
 }

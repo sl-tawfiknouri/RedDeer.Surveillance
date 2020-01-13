@@ -318,6 +318,8 @@
                         (a, b, c) => new RefinitivInterDayTimeBarQuery(a, b, c));
                     refinitivInterDayTimeBar.AddRange(refinitivInterDayTimeBarQueries);
                     break;
+                case DataSource.NoPrices:
+                    break;
                 default:
                     this.logger.LogError($"Argument out of range for data source {sub.Source}");
                     break;

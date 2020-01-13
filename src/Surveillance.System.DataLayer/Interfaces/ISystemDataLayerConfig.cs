@@ -3,5 +3,6 @@
     public interface ISystemDataLayerConfig
     {
         string SurveillanceAuroraConnectionString { get; set; }
+        string OverrideMigrationsFolder { get; set; }
     }
 }

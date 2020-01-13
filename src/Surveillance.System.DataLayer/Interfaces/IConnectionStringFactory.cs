@@ -5,5 +5,6 @@
     public interface IConnectionStringFactory
     {
         IDbConnection BuildConn();
+        string OverrideMigrationsFolder();
     }
 }

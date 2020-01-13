@@ -1,7 +1,7 @@
-pipeline{
+pipeline {
     agent { label 'Linux' }
     options { timestamps() }
-    stages{
+    stages {
         stage('Build'){
 	        environment {
                 GITHUB_CREDENTIALS = credentials('reddeer-github-api')
@@ -10,26 +10,32 @@ pipeline{
             }
 	        steps{ sh "./build.sh" }
 	    }
-        stage('Publish'){
-            steps{
-                s3Upload consoleLogLevel: 'INFO',
-                         dontWaitForConcurrentBuildCompletion: false,
-                         entries: [[bucket: 'reddeer-releases/jenkins',
-                                    excludedFile: '',
-                                    flatten: false,
-                                    gzipFiles: false,
-                                    keepForever: false,
-                                    managedArtifacts: true,
-                                    noUploadOnFailure: true,
-                                    selectedRegion: 'eu-west-1',
-                                    showDirectlyInBrowser: false,
-                                    sourceFile: '*.zip',
-                                    storageClass: 'STANDARD',
-                                    uploadFromSlave: true,
-                                    useServerSideEncryption: false]],
-                         pluginFailureResultConstraint: 'FAILURE',
-                         profileName: 'JenkinsS3',
-                         userMetadata: []
+        stage('Publish') {
+            steps {
+                step([
+                    $class: 'S3BucketPublisher',
+                    consoleLogLevel: 'INFO',
+                    dontWaitForConcurrentBuildCompletion: false,
+                    entries: [[
+                        $class: 'Entry',
+                        bucket: 'reddeer-releases/jenkins',
+                        excludedFile: '',
+                        flatten: false,
+                        gzipFiles: false,
+                        keepForever: false,
+                        managedArtifacts: true,
+                        noUploadOnFailure: true,
+                        selectedRegion: 'eu-west-1',
+                        showDirectlyInBrowser: false,
+                        sourceFile: '*.zip',
+                        storageClass: 'STANDARD',
+                        uploadFromSlave: true,
+                        useServerSideEncryption: false
+                    ]],
+                    pluginFailureResultConstraint: 'FAILURE',
+                    profileName: 'JenkinsS3',
+                    userMetadata: []
+                ])
             }
         }
     }

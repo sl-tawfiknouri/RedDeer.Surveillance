@@ -9,3 +9,4 @@ docker-compose.*.yml
 */bin
 */obj
 */*.Tests
+*/.idea/*

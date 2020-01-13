@@ -23,5 +23,13 @@
         string DataImportTradeFileFtpDirectoryPath { get; }
 
         string DataImportTradeFileUploadDirectoryPath { get; }
+
+        string DataImportTradeFileDirectoryPattern { get; }
+
+        string DataImportAllocationFileDirectoryPattern { get; }
+
+        string DataImportEtlFileDirectoryPattern { get; }
+        
+        string DataImportIgnoreFileDirectoryPattern { get; }
     }
 }

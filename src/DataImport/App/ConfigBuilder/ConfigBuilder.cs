@@ -56,12 +56,11 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 {
                     TableName = "reddeer-config",
                     KeyConditionExpression = "#nameAttribute = :nameValue",
-                    ExpressionAttributeNames =
-                                        new Dictionary<string, string> { { "#nameAttribute", "name" } },
+                    ExpressionAttributeNames = new Dictionary<string, string> { { "#nameAttribute", "name" } },
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                                                                {
-                                                                    { ":nameValue", new AttributeValue(dynamoDBName) }
-                                                                }
+                    {
+                        { ":nameValue", new AttributeValue(dynamoDBName) }
+                    }
                 };
 
                 var attributes = new Dictionary<string, string>();
@@ -87,25 +86,21 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             try
             {
                 var client = new AmazonDynamoDBClient(
-               new AmazonDynamoDBConfig
-               {
-                   RegionEndpoint = RegionEndpoint.EUWest1,
-                   ProxyCredentials = CredentialCache.DefaultCredentials
-               });
+                new AmazonDynamoDBConfig
+                {
+                    RegionEndpoint = RegionEndpoint.EUWest1,
+                    ProxyCredentials = CredentialCache.DefaultCredentials
+                });
 
                 var query = new QueryRequest
                 {
                     TableName = dynamoDbName,
                     KeyConditionExpression = "#datetimeAttribute = :datetimeValue",
-                    ExpressionAttributeNames =
-                                        new Dictionary<string, string> { { "#datetimeAttribute", "Datetime" } },
+                    ExpressionAttributeNames = new Dictionary<string, string> { { "#datetimeAttribute", "Datetime" } },
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                                                                {
-                                                                    {
-                                                                        ":datetimeValue",
-                                                                        new AttributeValue(dynamoDbName)
-                                                                    }
-                                                                },
+                    {
+                        { ":datetimeValue", new AttributeValue(dynamoDbName)}
+                    },
                     ScanIndexForward = false
                 };
 
@@ -146,6 +141,12 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportEtlFileUploadDirectoryPath = this.GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
                 DataImportEtlFileFtpDirectoryPath = this.GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFailureNotifications = this.GetSetting("DataImportEtlFailureNotifications", configurationBuilder),
+
+                DataImportTradeFileDirectoryPattern = this.GetSettingOrDefault("DataImportTradeFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-trade/.*.csv$"),
+                DataImportAllocationFileDirectoryPattern = this.GetSettingOrDefault("DataImportAllocationFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-allocation/.*.csv$"),
+                DataImportEtlFileDirectoryPattern = this.GetSettingOrDefault("DataImportEtlFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/surveillance-etl-order/.*.csv$"),
+                DataImportIgnoreFileDirectoryPattern = this.GetSettingOrDefault("DataImportIgnoreFileDirectoryPattern", configurationBuilder, "^Surveillance/Surveillance/.*.csv.metadata$"),
+
                 RefinitivTickPriceHistoryApiAddress = this.GetSetting("RefinitivTickPriceHistoryApiAddress", configurationBuilder),
                 RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey = this.GetSetting("RefinitivTickPriceHistoryApiJwtBearerTokenSymetricSecurityKey", configurationBuilder),
                 RefinitivTickPriceHistoryApiPollingSeconds = this.GetSettingOrDefault("RefinitivTickPriceHistoryApiPollingSeconds", configurationBuilder, 60),
@@ -160,22 +161,17 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             this.SetDynamoConfig();
 
             return new ApiClientConfiguration
-                {
-                    ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
-                    ScheduleRuleDistributedWorkQueueName =
-                        this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                    CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
-                    ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                    SurveillanceUserApiAccessToken =
-                        this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                    AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
-                    BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                    UploadCoordinatorQueueName =
-                        this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
-                    EmailServiceSendEmailQueueName = this.GetSetting(
-                        "EmailServiceSendEmailQueueName",
-                        configurationBuilder)
-                };
+            {
+                ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
+                ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                SurveillanceUserApiAccessToken = this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                UploadCoordinatorQueueName = this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = this.GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
+            };
         }
 
         public IDataLayerConfiguration BuildData(IConfigurationRoot configurationBuilder)
@@ -183,22 +179,17 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             this.SetDynamoConfig();
 
             return new DataLayerConfiguration
-                       {
-                           ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
-                           ScheduleRuleDistributedWorkQueueName =
-                               this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-                           CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
-                           ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-                           SurveillanceUserApiAccessToken =
-                               this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                           AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
-                           BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                           UploadCoordinatorQueueName =
-                               this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
-                           EmailServiceSendEmailQueueName = this.GetSetting(
-                               "EmailServiceSendEmailQueueName",
-                               configurationBuilder)
-                       };
+            {
+                ScheduledRuleQueueName = this.GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = this.GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = this.GetSetting("CaseMessageQueueName", configurationBuilder),
+                ClientServiceUrl = this.GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                SurveillanceUserApiAccessToken = this.GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                AuroraConnectionString = this.GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = this.GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                UploadCoordinatorQueueName = this.GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = this.GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
+            };
         }
 
         private static string GetTag(string name)
@@ -214,13 +205,19 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 new DescribeTagsRequest
                     {
                         Filters = new List<Filter>
-                                      {
-                                          new Filter("resource-id", new List<string> { instanceId }),
-                                          new Filter("key", new List<string> { name })
-                                      }
+                        {
+                            new Filter("resource-id", new List<string> { instanceId }),
+                            new Filter("key", new List<string> { name })
+                        }
                     }).Result.Tags;
 
             return tags?.FirstOrDefault()?.Value;
+        }
+
+        private string GetSettingOrDefault(string name, IConfigurationRoot config, string defaultValue)
+        {
+            var value = GetSetting(name, config);
+            return string.IsNullOrEmpty(value) ? defaultValue : value;
         }
 
         private int GetSettingOrDefault(string name, IConfigurationRoot config, int defaultValue)

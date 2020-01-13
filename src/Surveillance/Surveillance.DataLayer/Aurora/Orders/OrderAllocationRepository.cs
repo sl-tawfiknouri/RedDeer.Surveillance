@@ -23,6 +23,7 @@
                 Fund as Fund,
                 Strategy as Strategy,
                 ClientAccountId as ClientAccountId,
+                AllocationId as AllocationId,
                 OrderFilledVolume as OrderFilledVolume,
                 CreatedDate as CreatedDate
             FROM OrdersAllocation
@@ -36,6 +37,7 @@
                 Fund as Fund,
                 Strategy as Strategy,
                 ClientAccountId as ClientAccountId,
+                AllocationId as AllocationId,
                 OrderFilledVolume as OrderFilledVolume,
                 CreatedDate as CreatedDate
             FROM OrdersAllocation
@@ -45,10 +47,36 @@
                 CreatedDate < @StalenessDate;";
 
         private const string InsertAttributionSql = @"
+            SELECT 1
+            INTO @match
+            FROM OrdersAllocation
+            WHERE
+                OrderId = @OrderId AND
+                Fund = @Fund AND
+                Strategy = @Strategy AND
+                ClientAccountId = @ClientAccountId AND
+                AllocationId = @AllocationId AND
+                OrderFilledVolume = @OrderFilledVolume
+            LIMIT 1;
+
             INSERT INTO 
-                OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume, CreatedDate)
-                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume, now())
-            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume, Id = LAST_INSERT_ID(Id), CreatedDate = now(), Live = 0, Autoscheduled = 0;
+                OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, AllocationId, OrderFilledVolume, CreatedDate)
+                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @AllocationId, @OrderFilledVolume, now())
+            ON DUPLICATE KEY UPDATE
+                OrderFilledVolume = @OrderFilledVolume,
+                CreatedDate = now(),
+                Live = IF(
+                    @match = 1,
+                    Live,
+                    0
+                ),
+                Autoscheduled = IF(
+                    @match = 1,
+                    Autoscheduled,
+                    0
+                ),
+                Id = LAST_INSERT_ID(Id);
+
             SELECT LAST_INSERT_ID();";
 
         private readonly IConnectionStringFactory _connectionFactory;
@@ -224,6 +252,7 @@
                 dto.Fund,
                 dto.Strategy,
                 dto.ClientAccountId,
+                dto.AllocationId,
                 dto.OrderFilledVolume,
                 dto.CreatedDate);
         }
@@ -242,6 +271,7 @@
                 this.Fund = oa.Fund;
                 this.Strategy = oa.Strategy;
                 this.ClientAccountId = oa.ClientAccountId;
+                this.AllocationId = oa.AllocationId;
                 this.OrderFilledVolume = oa.OrderFilledVolume;
                 this.CreatedDate = oa.CreatedDate;
             }
@@ -259,6 +289,8 @@
             public string OrderId { get; set; }
 
             public string Strategy { get; set; }
+
+            public string AllocationId { get; set; }
         }
     }
 }

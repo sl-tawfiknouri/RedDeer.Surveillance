@@ -8,7 +8,8 @@
     using Domain.Surveillance.Scheduling.Interfaces;
     using Domain.Surveillance.Streams;
     using Domain.Surveillance.Streams.Interfaces;
-
+    using Microsoft.Extensions.Logging;
+    using NLog.Extensions.Logging;
     using RedDeer.Contracts.SurveillanceService;
     using RedDeer.Contracts.SurveillanceService.Interfaces;
 
@@ -124,6 +125,10 @@
     {
         public RuleRegistry()
         {
+            var loggerFactory = new NLogLoggerFactory();
+            this.For(typeof(ILoggerFactory)).Use(loggerFactory);
+            this.For(typeof(ILogger<>)).Use(typeof(Logger<>));
+
             this.For<IRulesEngineMediator>().Use<Mediator>();
             this.For<IOriginFactory>().Use<OriginFactory>();
             this.For<ISpoofingRule>().Use<SpoofingRule>();

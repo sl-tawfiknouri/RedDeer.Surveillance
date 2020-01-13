@@ -19,10 +19,11 @@
             var fund = "fund-a";
             var strategy = "strategy-b";
             var clientAccount = "client-account";
+            var allocationId = "allocation-id";
             var orderFilledVolume = 1002;
             var createdDate = new DateTime(2019, 1, 1, 1, 1, 1);
 
-            var alloc = new OrderAllocation(id, orderId, fund, strategy, clientAccount, orderFilledVolume, createdDate);
+            var alloc = new OrderAllocation(id, orderId, fund, strategy, clientAccount, allocationId, orderFilledVolume, createdDate);
 
             Assert.AreEqual(id, alloc.Id);
             Assert.AreEqual(orderId, alloc.OrderId);
@@ -68,6 +69,7 @@
                 "fund-a",
                 "strategy-b",
                 "client-c",
+                "allocation-id",
                 100,
                 DateTime.UtcNow);
 

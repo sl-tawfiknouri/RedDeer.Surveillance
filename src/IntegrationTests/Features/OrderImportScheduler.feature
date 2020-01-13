@@ -13,9 +13,7 @@ Background:
 	| OrderId | OrderFilledVolume |
 	| 0       | 1                 |
 	When the data importer is run
-	Then there should be a single order with id "0" and autoscheduled "false"
-	And there should be a single allocation with OrderId "0" and autoscheduled "false"
-	When the auto scheduler is run
+	And the auto scheduler is run
 	Then there should be a single order with id "0" and autoscheduled "true"
 	And there should be a single allocation with OrderId "0" and autoscheduled "true"
 

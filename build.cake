@@ -46,7 +46,9 @@ var testProjects = new []
 	"src/Domain.Core.Tests/Domain.Core.Tests.csproj",
 	"src/Domain.Surveillance.Tests/Domain.Surveillance.Tests.csproj",
 	"src/Surveillance.Reddeer.ApiClient.Tests/Surveillance.Reddeer.ApiClient.Tests.csproj",
-	"src/SharedKernel.Files.Tests/SharedKernel.Files.Tests.csproj"
+	"src/SharedKernel.Files.Tests/SharedKernel.Files.Tests.csproj",
+	"src/DataImport/ETL/RedDeer.Etl.SqlSriptExecutor.Lambda.Tests/RedDeer.Etl.SqlSriptExecutor.Lambda.Tests.csproj",
+	"src/DataImport/ETL/RedDeer.Etl.SqlSriptExecutor.Tests/RedDeer.Etl.SqlSriptExecutor.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>

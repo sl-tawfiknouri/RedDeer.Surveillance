@@ -61,10 +61,10 @@
 
             INSERT INTO 
                 OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, AllocationId, OrderFilledVolume, CreatedDate)
-                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @AllocationId, @OrderFilledVolume, now())
+                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @AllocationId, @OrderFilledVolume, UTC_TIMESTAMP())
             ON DUPLICATE KEY UPDATE
                 OrderFilledVolume = @OrderFilledVolume,
-                CreatedDate = now(),
+                CreatedDate = UTC_TIMESTAMP(),
                 Live = IF(
                     @match = 1,
                     Live,

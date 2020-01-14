@@ -619,6 +619,7 @@
                     Autoscheduled,
                     0
                 ),
+                CreatedDate = UTC_TIMESTAMP(),
                 Id = LAST_INSERT_ID(Id);
 
                 SELECT LAST_INSERT_ID();";
